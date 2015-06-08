@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="details">
+		<field name="id" type="text" default="0"
+			readonly="true" class="readonly"
+			label="JGLOBAL_FIELD_ID_LABEL" description ="JGLOBAL_FIELD_ID_DESC"/>
+
+		<field name="title" type="text" class="inputbox"
+			size="40" label="COM_J2XML_FIELD_TITLE_LABEL"
+			description="COM_J2XML_FIELD_TITLE_DESC"
+			required="true" />
+
+		<field name="remote_url" type="text" class="inputbox"
+			size="40" label="COM_J2XML_FIELD_SERVER_LABEL"
+			description="COM_J2XML_FIELD_SERVER_DESC" required="true" />
+
+		<field name="username" type="text" class="inputbox"
+			size="40" label="COM_J2XML_FIELD_USERNAME_LABEL"
+			description="COM_J2XML_FIELD_USERNAME_DESC" required="true" />
+
+		<field name="password" type="password" class="inputbox"
+			size="40" label="COM_J2XML_FIELD_PASSWORD_LABEL"
+			description="COM_J2XML_FIELD_PASSWORD_DESC" required="true" />
+
+		<field name="state" type="list"
+			label="JSTATUS" description="COM_J2XML_FIELD_WEBSITE_STATE_DESC"
+			class="inputbox" size="1" default="1"
+		>
+			<option value="1">JPUBLISHED</option>
+			<option value="0">JUNPUBLISHED</option>
+			<option value="2">JARCHIVED</option>
+			<option value="-2">JTRASHED</option>
+		</field>
+
+
+	</fieldset>
+</form>

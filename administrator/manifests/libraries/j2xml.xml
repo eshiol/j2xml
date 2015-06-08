@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="2.5" type="library" method="upgrade">
+	<name>J2XML</name>
+	<libraryname>eshiol/j2xml</libraryname>
+	<creationDate>June 2015</creationDate>
+	<author>Helios Ciancio</author>
+	<authorEmail>info@eshiol.it</authorEmail>
+	<authorUrl>www.eshiol.it</authorUrl>
+	<copyright>(C) 2010-2015, Helios Ciancio. All rights reserved.</copyright>
+	<license>GNU/GPL v3</license>
+	<version>15.6.249</version>
+	<description>LIB_J2XML_XML_DESCRIPTION</description>
+	<packagerurl>http://www.eshiol.it</packagerurl>
+	<files>
+		<filename>exporter.php</filename>
+		<filename>importer.php</filename>
+		<filename>messages.php</filename>
+		<filename>sender.php</filename>
+		<filename>table.php</filename>
+		<filename>version.php</filename>
+		<folder>helper</folder>
+		<folder>table</folder>
+		<folder>form</folder>
+	</files>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.lib_j2xml.ini</language>
+		<language tag="en-GB">en-GB/en-GB.lib_j2xml.sys.ini</language>
+		<language tag="it-IT">it-IT/it-IT.lib_j2xml.ini</language>
+		<language tag="it-IT">it-IT/it-IT.lib_j2xml.sys.ini</language>
+	</languages>
+</extension>
