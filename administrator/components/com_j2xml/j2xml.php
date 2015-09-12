@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.128 administrator/components/com_j2xml/j2xml.php
+ * @version		3.2.138 administrator/components/com_j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -26,6 +26,8 @@ if ($params->get('debug', 0)) {
 	ini_set('display_errors', 'On');
 	error_reporting(E_ALL | E_STRICT);
 }
+JLog::addLogger(array('text_file' => 'j2xml.php', 'extension' => 'com_j2xml'), JLog::ALL, array('lib_j2xml','com_j2xml'));
+JLog::addLogger(array('logger' => 'messagequeue', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
 
 if (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge'))
 {

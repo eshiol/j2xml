@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		15.3.248 libraries/eshiol/j2xml/table/tag.php
+ * @version		15.9.266 libraries/eshiol/j2xml/table/tag.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		14.8.240
@@ -30,37 +30,5 @@ class eshTableTag extends eshTable
 	 */
 	function __construct(& $db) {
 		parent::__construct('#__tags', 'id', $db);
-	}
-
-	/**
-	 * Export item list to xml
-	 *
-	 * @access public
-	 */
-	function toXML($mapKeysToText = false)
-	{
-		$xml = ''; 
-		
-		// Initialise variables.
-		$xml = array();
-		
-		// Open root node.
-		$xml[] = '<tag>';
-		
-		$xml[] = parent::_serialize(
-			array('parent_id','lft','rgt','level','checked_out','checked_out_time','created_user_id','modified_user_id'), 
-			array(
-				'created_by'=>'SELECT username FROM #__users WHERE id = '.(int)$this->created_user_id,
-				'modified_by'=>'SELECT username modified_by FROM #__users WHERE id = '.(int)$this->modified_user_id,
-				'access'=>'SELECT IF(f.id<=6,f.id,f.title) FROM #__viewlevels f RIGHT JOIN #__tags a ON f.id = a.access WHERE a.id = '. (int)$this->id,
-			),
-			array()
-		); // $excluded,$aliases,$jsons
-
-		// Close root node.
-		$xml[] = '</tag>';
-						
-		// Return the XML array imploded over new lines.
-		return implode("\n", $xml);
 	}
 }

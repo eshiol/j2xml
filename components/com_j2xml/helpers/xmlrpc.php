@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.127 components/com_j2xml/helpers/xmlrpc.php
+ * @version		3.2.138 components/com_j2xml/helpers/xmlrpc.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -67,14 +67,15 @@ class plgXMLRPCJ2XMLServices
 	{
 		global $xmlrpcerruser, $xmlrpcI4, $xmlrpcInt, $xmlrpcBoolean, $xmlrpcDouble, $xmlrpcString, $xmlrpcDateTime, $xmlrpcBase64, $xmlrpcArray, $xmlrpcStruct, $xmlrpcValue;
 		
-		JLog::addLogger(array('logger' => 'xmlrpc'), JLOG::ALL, array('j2xml'));
+		JLog::addLogger(array('text_file' => 'j2xml.php', 'extension' => 'com_j2xml'), JLog::ALL, array('lib_j2xml','com_j2xml'));
+		JLog::addLogger(array('logger' => 'xmlrpc', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
 		
 		$app = JFactory::getApplication();
 		$options = array();
 		$result = $app->login(array('username'=>$username, 'password'=>$password), $options);
 				
 		if (JError::isError($result)) {
-			JLog::add(new JLogEntry(JText::_('COM_J2XML_MSG_SETCREDENTIALSFROMREQUEST_FAILED')),JLOG::ERROR,'j2xml');
+			JLog::add(new JLogEntry(JText::_('COM_J2XML_MSG_SETCREDENTIALSFROMREQUEST_FAILED')),JLOG::ERROR,'lib_j2xml');
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
 
@@ -82,7 +83,7 @@ class plgXMLRPCJ2XMLServices
 		if (!$canDo->get('core.create') &&
 				!$canDo->get('core.edit') &&
 				!$canDo->get('core.edit.own')) {
-			JLog::add(new JLogEntry(JText::_('COM_J2XML_MSG_ALERTNOTAUTH')),JLOG::ERROR,'j2xml');
+			JLog::add(new JLogEntry(JText::_('COM_J2XML_MSG_ALERTNOTAUTH')),JLOG::ERROR,'lib_j2xml');
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
 
@@ -107,15 +108,15 @@ class plgXMLRPCJ2XMLServices
 			    switch ($error->level) {
 		    	default:
 		        case LIBXML_ERR_WARNING:
-					JLog::add(new JLogEntry(JText::_($msg)),JLog::WARNING,'j2xml');
+					JLog::add(new JLogEntry(JText::_($msg)),JLog::WARNING,'lib_j2xml');
 					return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		            break;
 		         case LIBXML_ERR_ERROR:
-					JLog::add(new JLogEntry(JText::_($msg)),JLOG::ERROR,'j2xml');
+					JLog::add(new JLogEntry(JText::_($msg)),JLOG::ERROR,'lib_j2xml');
 					return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		         	break;
 		        case LIBXML_ERR_FATAL:
-					JLog::add(new JLogEntry(JText::_($msg)),JLOG::CRITICAL,'j2xml');
+					JLog::add(new JLogEntry(JText::_($msg)),JLOG::CRITICAL,'lib_j2xml');
 					return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		        	break;
 			    }
@@ -125,23 +126,31 @@ class plgXMLRPCJ2XMLServices
 		
 		if(!isset($xml['version']))
 		{
-			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')),JLOG::ERROR,'j2xml');
+			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')),JLOG::ERROR,'lib_j2xml');
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
 
 		jimport('eshiol.j2xml.importer');
-
+		jimport('eshiol.j2xml.version');
+		
 		$xmlVersion = $xml['version'];
 		$version = explode(".", $xmlVersion);
 		$xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1); 
-		if ($xmlVersionNumber == 120500)
+		
+		$j2xmlVersion = J2XMLVersion::$DOCVERSION;
+		$version = explode(".", $j2xmlVersion);
+		$j2xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1); 
+		
+		if ($xmlVersionNumber == $j2xmlVersionNumber)
 		{
 			//set_time_limit(120);
 			$params = JComponentHelper::getParams('com_j2xml');
-			j2xmlImporter::import($xml,$params);
+			$params['logger'] = 'xmlrpc';
+			$importer = new J2XMLImporter();
+			$importer->import($xml,$params);
 		}
 		else
-			JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion)),JLOG::ERROR,'j2xml');
+			JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion)),JLOG::ERROR,'lib_j2xml');
 
 		$app->logout();
 		return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));

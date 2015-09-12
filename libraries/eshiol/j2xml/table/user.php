@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		13.6.110 libraries/eshiol/j2xml/table/user.php
+ * @version		15.9.267 libraries/eshiol/j2xml/table/user.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3beta4.39
@@ -41,24 +41,8 @@ class eshTableUser extends eshTable
 	 */
 	function toXML($mapKeysToText = false)
 	{
-		$xml = ''; 
+		$this->_aliases['group']='SELECT g.title FROM #__j2xml_usergroups g, #__user_usergroup_map m WHERE g.id = m.group_id AND m.user_id = '.(int)$this->id;
 		
-		// Initialise variables.
-		$xml = array();
-		
-		// Open root node.
-		$xml[] = '<user>';
-		
-		$xml[] = parent::_serialize(null, 
-			array(
-				'group'=>'SELECT g.title FROM #__j2xml_usergroups g, #__user_usergroup_map m WHERE g.id = m.group_id AND m.user_id = '.(int)$this->id
-				)
-			); // $excluded,$aliases,$jsons
-
-		// Close root node.
-		$xml[] = '</user>';
-						
-		// Return the XML array imploded over new lines.
-		return implode("\n", $xml);
+		return parent::_serialize();
 	}
 }

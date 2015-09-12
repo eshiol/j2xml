@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		15.9.269 libraries/eshiol/j2xml/table/viewlevel.php
+ * @version		15.9.266 libraries/eshiol/j2xml/table/contact.php
  * @package		J2XML
  * @subpackage	lib_j2xml
- * @since		15.3.248
+ * @since		15.9.261
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
@@ -19,30 +19,33 @@
 defined('_JEXEC') or die('Restricted access');
 
 /**
-* Viewlevel Table class
+* Contact Table class
+* @since 		15.9.261
 */
-class eshTableViewlevel extends eshTable
+class eshTableContact extends eshTable
 {
 	/**
 	 * Constructor
 	 *
 	 * @param object Database connector object
+	 * @since 15.9.261
 	 */
 	function __construct(& $db) {
-		parent::__construct('#__viewlevels', 'id', $db);
+		parent::__construct('#__contact_details', 'id', $db);
 	}
 
 	/**
 	 * Export item list to xml
 	 *
 	 * @access public
+	 * @since 15.9.261
 	 */
 	function toXML($mapKeysToText = false)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		$this->_excluded = array_merge($this->_excluded, array('rules'));
-		$this->_aliases['rule']='SELECT g.title FROM #__j2xml_usergroups g WHERE g.id IN '.str_replace(array("[","]"),array("(",")"),$this->rules);		
-
+		$this->_aliases['user_id']='SELECT username FROM #__users WHERE id = '.(int)$this->user_id;
+		if (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge'))
+			$this->_aliases['tag']='SELECT t.path FROM #__tags t, #__contentitem_tag_map m WHERE type_alias = "com_contact.contact" AND t.id = m.tag_id AND m.content_item_id = '. (int)$this->id;
+		
 		return parent::_serialize();
 	}
 }

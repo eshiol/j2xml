@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.1.117 views/users/view.raw.php
+ * @version		3.2.137 views/users/view.raw.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -19,22 +19,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-class J2XMLViewUsers extends JViewAbstract
-{
-	function display($tpl = null)
-	{
-		$app = JFactory::getApplication();
-		$cid = JRequest::getVar('cid');		
-		$ids = explode(",", $cid);
+jimport('eshiol.j2xml.exporter');
 
-		$params = JComponentHelper::getParams('com_j2xml');
+require_once __DIR__.'/../raw.php';
 
-		if (!J2XMLExporter::export(
-				J2XMLExporter::users($ids),		
-				$params->get('debug', 0), 
-				$params->get('export_gzip', '0')
-			))
-			$app->redirect('index.php?option=com_users');
-	}
-}
+/**
+ * J2XML Component Users View
+ */
+class J2XMLViewUsers extends J2XMLView {}
 ?>

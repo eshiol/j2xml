@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		15.2.246 tables/table.php
+ * @version		15.9.271 libraries/eshiol/j2xml/table.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -48,6 +48,10 @@ class eshTable extends JTable
 	 */
 	public $_db;
 	
+	protected $_excluded;
+	protected $_aliases;
+	protected $_jsons;
+	
 	/**
 	 * Object constructor to set table and key fields.  In most cases this will
 	 * be overridden by child classes to explicitly set the table and key fields
@@ -61,7 +65,48 @@ class eshTable extends JTable
 	function __construct($table, $key, &$db)
 	{
 		parent::__construct($table, $key, $db);
+		
+		$this->_excluded = array('asset_id','parent_id','lft','rgt','level','checked_out','checked_out_time'); 
+		$this->_aliases = array();
+		$this->_jsons = array(); //array('params', 'metadata', 'attribs', 'images', 'urls');
+		
 	}
+	
+	/**
+	 * Method to load a row from the database by primary key and bind the fields
+	 * to the JTable instance properties.
+	 *
+	 * @param   mixed    $keys   An optional primary key value to load the row by, or an array of fields to match.  If not
+	 *                           set the instance property value is used.
+	 * @param   boolean  $reset  True to reset the default values before loading the new row.
+	 *
+	 * @return  boolean  True if successful. False if row not found.
+	 *
+	 * @link    https://docs.joomla.org/JTable/load
+	 * @since   11.1
+	 * @throws  InvalidArgumentException
+	 * @throws  RuntimeException
+	 * @throws  UnexpectedValueException
+	 */
+	public function load($keys = null, $reset = true)
+	{
+		if ($ret = parent::load($keys, $reset))
+		{
+			if (isset($this->created_by))
+				$this->_aliases['created_by']='SELECT username FROM #__users WHERE id = '.(int)$this->created_by;		
+			if (isset($this->created_user_id))
+				$this->_aliases['created_user_id']='SELECT username FROM #__users WHERE id = '.(int)$this->created_user_id;		
+			if (isset($this->modified_by))
+				$this->_aliases['modified_by']='SELECT username FROM #__users WHERE id = '.(int)$this->modified_by;
+			if (isset($this->modified_user_id))
+				$this->_aliases['modified_user_id']='SELECT username FROM #__users WHERE id = '.(int)$this->modified_user_id;
+			if (isset($this->catid))
+				$this->_aliases['catid']='SELECT path FROM #__categories WHERE id = '.(int)$this->catid;
+			if (isset($this->access))
+				$this->_aliases['access']='SELECT IF(f.id<=6,f.id,f.title) FROM #__viewlevels f RIGHT JOIN '.$this->_tbl.' a ON f.id = a.access WHERE a.id = '. (int)$this->id;
+		}
+		return $ret;
+	}	
 	
 	/**
 	 * Export item list to xml
@@ -69,35 +114,37 @@ class eshTable extends JTable
 	 * @access public
 	 * @param boolean Map foreign keys to text values
 	 */
-	protected function _serialize($excluded=array(),$aliases=array(),$jsons=array())
+	protected function _serialize()
 	{
 		// Initialise variables.
 		$xml = array();
+		
+		$xml[] = '<'.strtolower(str_replace('eshTable', '', get_class($this))).'>';
 
 		foreach (get_object_vars($this) as $k => $v)
 		{
 			// If the value is null or non-scalar, or the field is internal ignore it.
 			if (!is_scalar($v) || ($k[0] == '_'))
 				continue;
-			if ($excluded && in_array($k, $excluded))
+			if ($this->_excluded && in_array($k, $this->_excluded))
 				continue;
-			if ($aliases && array_key_exists($k, $aliases))
+			if ($this->_aliases && array_key_exists($k, $this->_aliases))
 				continue;
-			else if ($jsons && in_array($k, $jsons))
-				$v = json_encode($v);
+			else if ($this->_jsons && in_array($k, $this->_jsons))
+				$v = json_encode($v, JSON_NUMERIC_CHECK);
 			// collapse json variable
 				
 			if ($v)
 			{
 				$x = json_decode($v);
 				if (($x != NULL) && ($x != $v))
-					$v = json_encode($x);
+					$v = json_encode($x, JSON_NUMERIC_CHECK);
 			}
 			$xml[] = $this->_setValue($k, $v);
 		}
 
 		$loadColumn = (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge')) ? 'loadColumn' : 'loadResultArray';
-		foreach($aliases as $k => $query)
+		foreach($this->_aliases as $k => $query)
 		{
 			$this->_db->setQuery($query);
 			$v = $this->_db->$loadColumn();
@@ -113,6 +160,9 @@ class eshTable extends JTable
 				$xml[] = '</'.$k.'list>';
 			}
 		}		
+
+		$xml[] = '</'.strtolower(str_replace('eshTable', '', get_class($this))).'>';
+		
 		// Return the XML array imploded over new lines.
 		return implode("\n", $xml);
 	}
@@ -154,5 +204,15 @@ class eshTable extends JTable
 		$xml .= '</'.$k.'>';
 		// Return the XML value.
 		return $xml;
+	}
+	
+	/**
+	 * Export item list to xml
+	 *
+	 * @access public
+	 */
+	function toXML($mapKeysToText = false)
+	{
+		return $this->_serialize();
 	}
 }

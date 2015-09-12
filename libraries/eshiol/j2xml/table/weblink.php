@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		15.3.248 libraries/eshiol/j2xml/table/weblink.php
+ * @version		15.9.266 libraries/eshiol/j2xml/table/weblink.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3beta3.38
@@ -37,30 +37,13 @@ class eshTableWeblink extends eshTable
 	 * Export item list to xml
 	 *
 	 * @access public
+	 * @since 15.9.261
 	 */
 	function toXML($mapKeysToText = false)
 	{
-		// Initialise variables.
-		$xml = array();
+		if (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge'))
+			$this->_aliases['tag']='SELECT t.path FROM #__tags t, #__contentitem_tag_map m WHERE type_alias = "com_weblinks.weblink" AND t.id = m.tag_id AND m.content_item_id = '. (int)$this->id;
 		
-		// Open root node.
-		$xml[] = '<weblink>';
-
-		$xml[] = parent::_serialize( // $excluded,$aliases,$jsons
-			array('checked_out','checked_out_time'), 
-			array(
-				'catid'=>'SELECT path FROM #__categories WHERE id = '.(int)$this->catid,
-				'created_by'=>'SELECT username FROM #__users WHERE id = '.(int)$this->created_by,
-				'modified_by'=>'SELECT username modified_by FROM #__users WHERE id = '.(int)$this->modified_by,
-				'access'=>'SELECT IF(f.id<=6,f.id,f.title) FROM #__viewlevels f RIGHT JOIN #__weblinks a ON f.id = a.access WHERE a.id = '. (int)$this->id,
-			),
-			array() //'attribs', 'metadata', 'images', 'urls')
-			);
-
-		// Close root node.
-		$xml[] = '</weblink>';
-				
-		// Return the XML array imploded over new lines.
-		return implode("\n", $xml);
+		return parent::_serialize();
 	}
 }

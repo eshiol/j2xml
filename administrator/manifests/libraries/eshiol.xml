@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="library" method="upgrade">
-	<name>eshiol</name>
-	<libraryname>eshiol/core</libraryname>
-	<creationDate>June 2015</creationDate>
-	<author>Helios Ciancio</author>
-	<authorEmail>info@eshiol.it</authorEmail>
-	<authorUrl>www.eshiol.it</authorUrl>
-	<copyright>(C) 2012-2015, Helios Ciancio. All rights reserved.</copyright>
-	<license>GNU/GPL v3</license>
-	<version>15.6.13</version>
-	<description>LIB_ESHIOL_XML_DESCRIPTION</description>
-	<packagerurl>http://www.eshiol.it</packagerurl>
-	<files>
-		<filename>index.html</filename>
-		<filename>file.php</filename>
-		<filename>post.php</filename>
-		<filename>send.php</filename>
-		<filename>sendbydate.php</filename>
-		<filename>standard2.php</filename>
-		<filename>xmlrpc.php</filename>
-		<filename>xmlrpcs.php</filename>
-	</files>
-	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.lib_eshiol.ini</language>
-		<language tag="en-GB">en-GB/en-GB.lib_eshiol.sys.ini</language>
-		<language tag="it-IT">it-IT/it-IT.lib_eshiol.ini</language>
-		<language tag="it-IT">it-IT/it-IT.lib_eshiol.sys.ini</language>
-	</languages>
-	<media destination="lib_eshiol_core" folder="media">
-		<folder>images</folder>
-		<folder>js</folder>
-	</media>
+  <name>eshiol</name>
+  <libraryname>eshiol/core</libraryname>
+  <creationDate>June 2015</creationDate>
+  <author>Helios Ciancio</author>
+  <authorEmail>info@eshiol.it</authorEmail>
+  <authorUrl>www.eshiol.it</authorUrl>
+  <copyright>(C) 2012-2015, Helios Ciancio. All rights reserved.</copyright>
+  <license>GNU/GPL v3</license>
+  <version>15.6.13.13</version>
+  <description>LIB_ESHIOL_XML_DESCRIPTION</description>
+  <packagerurl>http://www.eshiol.it</packagerurl>
+  <files>
+    <filename>index.html</filename>
+    <filename>file.php</filename>
+    <filename>send.php</filename>
+    <filename>sendbydate.php</filename>
+    <filename>standard2.php</filename>
+    <filename>xmlrpc.php</filename>
+    <filename>xmlrpcs.php</filename>
+  </files>
+  <languages folder="language">
+    <language tag="en-GB">en-GB/en-GB.lib_eshiol.ini</language>
+    <language tag="en-GB">en-GB/en-GB.lib_eshiol.sys.ini</language>
+    <language tag="it-IT">it-IT/it-IT.lib_eshiol.ini</language>
+    <language tag="it-IT">it-IT/it-IT.lib_eshiol.sys.ini</language>
+  </languages>
+  <media destination="lib_eshiol_core" folder="media">
+    <folder>images</folder>
+    <folder>js</folder>
+  </media>
 </extension>

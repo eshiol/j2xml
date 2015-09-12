@@ -1,13 +1,14 @@
 <?php
 /**
- * @version		14.10.245 libraries/eshiol/j2xml/messages.php
+ * @version		15.9.270 libraries/eshiol/j2xml/messages.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
+ * @since		14.10.245
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2013 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -35,11 +36,17 @@ class J2XMLMessages
 		'LIB_J2XML_MSG_IMAGE_NOT_IMPORTED',
 		'LIB_J2XML_MSG_WEBLINK_IMPORTED',
 		'LIB_J2XML_MSG_WEBLINK_NOT_IMPORTED',
-		'LIB_J2XML_MSG_WEBLINKCAT_NOT_PRESENT',
-		'LIB_J2XML_MSG_XMLRPC_NOT_SUPPORTED',
+		//'LIB_J2XML_MSG_WEBLINKCAT_NOT_PRESENT',
+		15 => 'LIB_J2XML_MSG_XMLRPC_NOT_SUPPORTED',
 		'LIB_J2XML_MSG_CATEGORY_ID_PRESENT',
 		'LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED',
 		'LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN',
-		'JERROR_ALERTNOTAUTH'
+		'JERROR_ALERTNOTAUTH',
+		'LIB_J2XML_MSG_TAG_IMPORTED',
+		'LIB_J2XML_MSG_TAG_NOT_IMPORTED',
+		'LIB_J2XML_MSG_CONTACT_IMPORTED',
+		'LIB_J2XML_MSG_CONTACT_NOT_IMPORTED',
+		'LIB_J2XML_MSG_VIEWLEVEL_IMPORTED',
+		'LIB_J2XML_MSG_VIEWLEVEL_NOT_IMPORTED',
 	);
 }

@@ -1,13 +1,13 @@
 <?php
 /**
- * @version		14.10.245 libraries/eshiol/j2xml/sender.php
+ * @version		15.9.270 libraries/eshiol/j2xml/sender.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3beta3.38
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2014 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -22,30 +22,37 @@ defined('_JEXEC') or die('Restricted access.');
 jimport('eshiol.core.xmlrpc');
 
 jimport('eshiol.j2xml.messages');
+jimport('eshiol.j2xml.version');
 
 class J2XMLSender
 {
 	private static $codes = array(
-		'message',
-		'notice',
-		'message',
-		'notice',
-		//'message',
-		//'notice',
-		6=>'message',
-		'notice',
-		'message',
-		'notice',
-		'message',
-		'notice',
-		'message',
-		'notice',
-		'notice',
-		'error',
-		'notice',
-		'error',
-		'error',
-		'error'
+		'message',		// LIB_J2XML_MSG_ARTICLE_IMPORTED
+		'notice',		// LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED
+		'message',  	// LIB_J2XML_MSG_USER_IMPORTED
+		'notice',		// LIB_J2XML_MSG_USER_NOT_IMPORTED
+		//'message',	// LIB_J2XML_MSG_SECTION_IMPORTED
+		//'notice',		// LIB_J2XML_MSG_SECTION_NOT_IMPORTED
+		6=>'message',	// LIB_J2XML_MSG_CATEGORY_IMPORTED
+		'notice',		// LIB_J2XML_MSG_CATEGORY_NOT_IMPORTED
+		'message',		// LIB_J2XML_MSG_FOLDER_WAS_SUCCESSFULLY_CREATED
+		'notice',		// LIB_J2XML_MSG_ERROR_CREATING_FOLDER
+		'message',		// LIB_J2XML_MSG_IMAGE_IMPORTED
+		'notice',		// LIB_J2XML_MSG_IMAGE_NOT_IMPORTED
+		'message',		// LIB_J2XML_MSG_WEBLINK_IMPORTED
+		'notice',		// LIB_J2XML_MSG_WEBLINK_NOT_IMPORTED
+		//'notice',		// LIB_J2XML_MSG_WEBLINKCAT_NOT_PRESENT
+		15 => 'error',		// LIB_J2XML_MSG_XMLRPC_NOT_SUPPORTED
+		'notice',		// LIB_J2XML_MSG_CATEGORY_ID_PRESENT
+		'error',		// LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED
+		'error',		// LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN
+		'error',		// JERROR_ALERTNOTAUTH
+		'message',		// LIB_J2XML_MSG_TAG_IMPORTED
+		'notice',		// LIB_J2XML_MSG_TAG_NOT_IMPORTED
+		'message',		// LIB_J2XML_MSG_CONTACT_IMPORTED
+		'notice',		// LIB_J2XML_MSG_CONTACT_NOT_IMPORTED
+		'message',		// LIB_J2XML_MSG_VIEWLEVEL_IMPORTED
+		'notice',		// LIB_J2XML_MSG_VIEWLEVEL_NOT_IMPORTED
 	);	
 	
 	/*
@@ -56,10 +63,10 @@ class J2XMLSender
 	 * @param $sid		remote server id
 	 * @since		1.5.3beta3.38
 	 */
-	static function send($xml, $debug, $export_gzip, $sid)
+	static function send($xml, $options, $sid)
 	{
 		$app = JFactory::getApplication();
-/*
+		/*
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select($db->quoteName('element'));
@@ -96,29 +103,31 @@ class J2XMLSender
 		}		
 */		
 		ob_clean();
+		
 		$version = explode(".", J2XMLVersion::$DOCVERSION);
 		$xmlVersionNumber = $version[0].$version[1].substr('0'.$version[2], strlen($version[2])-1);
 		
-		$data = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
-		$data .= J2XMLVersion::$DOCTYPE."\n";
-		$data .= "<j2xml version=\"".J2XMLVersion::$DOCVERSION."\">\n";
-		$data .= $xml; 
-		$data .= "</j2xml>";
+		$dom = new DOMDocument('1.0');
+		$dom->preserveWhiteSpace = false;
+		$dom->formatOutput = true;
+		$dom->loadXML($xml->asXML());
+		$data = $dom->saveXML();
 		
 		// modify the MIME type
-		$document = JFactory::getDocument();
-		if ($export_gzip)
+		//$document = JFactory::getDocument();
+		if ($options['gzip'])
 		{
 //			$document->setMimeEncoding('application/gzip-compressed', true);
 //			JResponse::setHeader('Content-disposition', 'attachment; filename="j2xml'.$xmlVersionNumber.date('YmdHis').'.gz"', true);
 			$data = gzencode($data, 9);
 		}
+		/*
 		else 
 		{
-//			$document->setMimeEncoding('application/xml', true);
-//			JResponse::setHeader('Content-disposition', 'attachment; filename="j2xml'.$xmlVersionNumber.date('YmdHis').'.xml"', true);
+			$document->setMimeEncoding('application/xml', true);
+			JResponse::setHeader('Content-disposition', 'attachment; filename="j2xml'.$xmlVersionNumber.date('YmdHis').'.xml"', true);
 		}
-
+		*/
 		$db = JFactory::getDBO();
 		$query = 'SELECT `title`, `remote_url`, `username`, `password` '
 			. 'FROM `#__j2xml_websites` WHERE `state`= 1 AND `id` = '.$sid;
@@ -142,7 +151,7 @@ class J2XMLSender
 				$data, 
 				$server['username'], 
 				$server['password'], 
-				$debug
+				$options['debug']
 			);
 //		return $res;
 		if ($res->faultcode())
@@ -157,7 +166,7 @@ class J2XMLSender
 				$code = $msg->structmem('code')->scalarval();
 				$string = $msg->structmem('string')->scalarval();
 				if (!isset(J2XMLMessages::$messages[$code]))
-					$app->enqueueMessage($server['title'].': '.$msg->structmem('message')->scalarval());
+					$app->enqueueMessage($server['title'].': '.$msg->structmem('message')->scalarval(),'notice');
 				elseif ($string)
 					$app->enqueueMessage($server['title'].': '.JText::sprintf(J2XMLMessages::$messages[$code], $string), self::$codes[$code]);
 				else

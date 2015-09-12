@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.1.6 cli/j2xml.php
+ * @version		3.2.9 cli/j2xml.php
  * @package		J2XML.CLI
  * @subpackage	cli
  * @since		2.5
@@ -116,7 +116,8 @@ class J2XMLCli extends JApplicationCli
 			exit(1);
 		}
 		
-		JLog::addLogger(array('logger' => 'echo'), JLOG::ALL, array('j2xml'));
+		JLog::addLogger(array('text_file' => 'j2xml.php', 'extension' => 'com_j2xml'), JLog::ALL, array('lib_j2xml','cli_j2xml'));
+		JLog::addLogger(array('logger' => 'echo', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','cli_j2xml'));
 		
 		if (!($data = implode(gzfile($filename))))
 			$data = file_get_contents($filename);
