@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.139 administrator/components/com_j2xml/controllers/cpanel.php
+ * @version		3.2.140 administrator/components/com_j2xml/controllers/cpanel.php
  *
  * @package		J2XML
  * @subpackage	com_j2xml

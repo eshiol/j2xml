@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.138 components/com_j2xml/helpers/xmlrpc.php
+ * @version		3.2.140 components/com_j2xml/helpers/xmlrpc.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2011-2014 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2011-2015 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -141,7 +141,7 @@ class plgXMLRPCJ2XMLServices
 		$version = explode(".", $j2xmlVersion);
 		$j2xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1); 
 		
-		if ($xmlVersionNumber == $j2xmlVersionNumber)
+		if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "120500")) 
 		{
 			//set_time_limit(120);
 			$params = JComponentHelper::getParams('com_j2xml');
