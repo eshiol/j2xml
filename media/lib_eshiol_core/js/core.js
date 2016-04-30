@@ -1,5 +1,5 @@
 /**
- * @version		14.2.10 media/lib_eshiol_core/js/core.js
+ * @version		16.4.18 media/lib_eshiol_core/js/core.js
  * 
  * @package		eshiol Library
  * @subpackage	lib_eshiol
@@ -7,7 +7,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2012-2014 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2012, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * eshiol Library is free software. This version may have been modified 
  * pursuant to the GNU General Public License, and as distributed it includes 
@@ -194,8 +194,10 @@ eshiol.sendAjax = function(name, title, url)
 	}	
 }
 
-eshiol.sendAjaxByDate = function(name, title, url, d1, d2) 
+eshiol.sendAjaxByDate = function(name, title, url) 
 {
+	d1 = $(name+'_begin').value;
+	d2 = $(name+'_end').value;
 	text = $('toolbar-'+name).getElement('button').getElement('span').innerHTML;
 	Joomla.removeMessages();
 	url = Base64.decode(url);
@@ -221,6 +223,10 @@ eshiol.sendAjaxByDate = function(name, title, url, d1, d2)
 		day = "0"+String(start.getDate());
 		iLen = day.length;
 		day = day.substring(iLen, iLen - 2);
+
+		jQuery('input[name="checkall-toggle"]').each(function () {
+			this.checked = false;
+		});
 
 		for (var i = 0; $('cb'+i) != null; i++)
 		{

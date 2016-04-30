@@ -1,7 +1,6 @@
 <?php
 // by Edd Dumbill (C) 1999-2002
 // <edd@usefulinc.com>
-// $Id: xmlrpc.inc,v 1.174 2009/03/16 19:36:38 ggiunta Exp $
 
 // Copyright (c) 1999,2000,2002 Edd Dumbill.
 // All rights reserved.
@@ -35,8 +34,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if (!class_exists('xmlrpc_client'))
-{
 	if(!function_exists('xml_parser_create'))
 	{
 		// For PHP 4 onward, XML functionality is always compiled-in on windows:
@@ -211,7 +208,7 @@ if (!class_exists('xmlrpc_client'))
 	$GLOBALS['xmlrpc_internalencoding']='ISO-8859-1';
 
 	$GLOBALS['xmlrpcName']='XML-RPC for PHP';
-	$GLOBALS['xmlrpcVersion']='3.0.0.beta';
+	$GLOBALS['xmlrpcVersion']='3.0.1';
 
 	// let user errors start at 800
 	$GLOBALS['xmlrpcerruser']=800;
@@ -228,6 +225,7 @@ if (!class_exists('xmlrpc_client'))
 
 	// set to TRUE to enable encoding of php NULL values to <EX:NIL/> instead of <NIL/>
 	$GLOBALS['xmlrpc_null_apache_encoding']=false;
+	$GLOBALS['xmlrpc_null_apache_encoding_ns']='http://ws.apache.org/xmlrpc/namespaces/extensions';
 
 	// used to store state during parsing
 	// quick explanation of components:
@@ -852,7 +850,7 @@ if (!class_exists('xmlrpc_client'))
 		* http://curl.haxx.se/docs/faq.html#7.3)
 		*/
 		var $xmlrpc_curl_handle = null;
-		/// Wheter to use persistent connections for http 1.1 and https
+		/// Whether to use persistent connections for http 1.1 and https
 		var $keepalive = false;
 		/// Charset encodings that can be decoded without problems by the client
 		var $accepted_charset_encodings = array();
@@ -946,7 +944,7 @@ if (!class_exists('xmlrpc_client'))
 
 		/**
 		* Enables/disables the echoing to screen of the xmlrpc responses received
-		* @param integer $debug values 0, 1 and 2 are supported (2 = echo sent msg too, before received response)
+		* @param integer $in values 0, 1 and 2 are supported (2 = echo sent msg too, before received response)
 		* @access public
 		*/
 		function setDebug($in)
@@ -982,7 +980,7 @@ if (!class_exists('xmlrpc_client'))
 
 		/**
 		* Add a CA certificate to verify server with (see man page about
-		* CURLOPT_CAINFO for more details
+		* CURLOPT_CAINFO for more details)
 		* @param string $cacert certificate file name (or dir holding certificates)
 		* @param bool $is_dir set to true to indicate cacert is a dir. defaults to false
 		* @access public
@@ -1064,7 +1062,10 @@ if (!class_exists('xmlrpc_client'))
 			if ($compmethod == 'any')
 				$this->accepted_compression = array('gzip', 'deflate');
 			else
-				$this->accepted_compression = array($compmethod);
+				if ($compmethod == false )
+					$this->accepted_compression = array();
+				else
+					$this->accepted_compression = array($compmethod);
 		}
 
 		/**
@@ -1111,7 +1112,7 @@ if (!class_exists('xmlrpc_client'))
 		/**
 		* Directly set cURL options, for extra flexibility
 		* It allows eg. to bind client to a specific IP interface / address
-		* @param $options array
+		* @param array $options
 		*/
 		function SetCurlOptions( $options )
 		{
@@ -1344,9 +1345,12 @@ if (!class_exists('xmlrpc_client'))
 				$cookieheader = 'Cookie:' . $version . substr($cookieheader, 0, -1) . "\r\n";
 			}
 
+			// omit port if 80
+			$port = ($port == 80) ? '' : (':' . $port);
+
 			$op= 'POST ' . $uri. " HTTP/1.0\r\n" .
 				'User-Agent: ' . $this->user_agent . "\r\n" .
-				'Host: '. $server . ':' . $port . "\r\n" .
+				'Host: '. $server . $port . "\r\n" .
 				$credentials .
 				$proxy_credentials .
 				$accepted_encoding .
@@ -1395,11 +1399,11 @@ if (!class_exists('xmlrpc_client'))
 			}
 			else
 			{
-				// reset errno and errstr on succesful socket connection
+				// reset errno and errstr on successful socket connection
 				$this->errstr = '';
 			}
 			// G. Giunta 2005/10/24: close socket before parsing.
-			// should yeld slightly better execution times, and make easier recursive calls (e.g. to follow http redirects)
+			// should yield slightly better execution times, and make easier recursive calls (e.g. to follow http redirects)
 			$ipd='';
 			do
 			{
@@ -1537,7 +1541,6 @@ if (!class_exists('xmlrpc_client'))
 			// return the header too
 			curl_setopt($curl, CURLOPT_HEADER, 1);
 
-			// will only work with PHP >= 5.0
 			// NB: if we set an empty string, CURL will add http header indicating
 			// ALL methods it is supporting. This is possibly a better option than
 			// letting the user tell what curl can / cannot do...
@@ -1618,6 +1621,13 @@ if (!class_exists('xmlrpc_client'))
 				{
 					curl_setopt($curl, CURLOPT_SSLKEYPASSWD, $keypass);
 				}
+
+				// Upgrade transparently to more stringent check for versions of php which do not support otherwise.
+				// Doing it in constructor would be cleaner; doing it here saves us a couple of function calls
+				if($this->verifyhost == 1 && $info = curl_version() && version_compare($info['version'], '7.28.1') >= 0)
+				{
+					$this->verifyhost = 2;
+				}
 				// whether to verify cert's common name (CN); 0 for no, 1 to verify that it exists, and 2 to verify that it matches the hostname used
 				curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, $this->verifyhost);
 			}
@@ -1669,7 +1679,14 @@ if (!class_exists('xmlrpc_client'))
 			{
 				print "<PRE>\n---CURL INFO---\n";
 				foreach(curl_getinfo($curl) as $name => $val)
-					 print $name . ': ' . htmlentities($val). "\n";
+				{
+					if (is_array($val))
+					{
+						$val = implode("\n", $val);
+					}
+					print $name . ': ' . htmlentities($val) . "\n";
+				}
+
 				print "---END---\n</PRE>";
 			}
 
@@ -1690,6 +1707,12 @@ if (!class_exists('xmlrpc_client'))
 					curl_close($curl);
 				}
 				$resp =& $msg->parseResponse($result, true, $this->return_type);
+				// if we got back a 302, we can not reuse the curl handle for later calls
+				if($resp->faultCode() == $GLOBALS['xmlrpcerr']['http_error'] && $keepalive)
+				{
+					curl_close($curl);
+					$this->xmlrpc_curl_handle = null;
+				}
 			}
 			return $resp;
 		}
@@ -1712,7 +1735,7 @@ if (!class_exists('xmlrpc_client'))
 		* @param array $msgs an array of xmlrpcmsg objects
 		* @param integer $timeout connection timeout (in seconds)
 		* @param string $method the http protocol variant to be used
-		* @param boolean fallback When true, upon receiveing an error during multicall, multiple single calls will be attempted
+		* @param boolean fallback When true, upon receiving an error during multicall, multiple single calls will be attempted
 		* @return array
 		* @access public
 		*/
@@ -2019,7 +2042,7 @@ if (!class_exists('xmlrpc_client'))
 		* with attributes being e.g. 'expires', 'path', domain'.
 		* NB: cookies sent as 'expired' by the server (i.e. with an expiry date in the past)
 		* are still present in the array. It is up to the user-defined code to decide
-		* how to use the received cookies, and wheter they have to be sent back with the next
+		* how to use the received cookies, and whether they have to be sent back with the next
 		* request to the server (using xmlrpc_client::setCookie) or not
 		* @return array array of cookies received from the server
 		* @access public
@@ -2041,7 +2064,14 @@ if (!class_exists('xmlrpc_client'))
 				$this->content_type = 'text/xml; charset=' . $charset_encoding;
 			else
 				$this->content_type = 'text/xml';
+			if ($GLOBALS['xmlrpc_null_apache_encoding'])
+			{
+				$result = "<methodResponse xmlns:ex=\"".$GLOBALS['xmlrpc_null_apache_encoding_ns']."\">\n";
+			}
+			else
+			{
 			$result = "<methodResponse>\n";
+			}
 			if($this->errno)
 			{
 				// G. Giunta 2005/2/13: let non-ASCII response messages be tolerated by clients
@@ -2091,7 +2121,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 
 		/**
 		* @param string $meth the name of the method to invoke
-		* @param array $pars array of parameters to be paased to the method (xmlrpcval objects)
+		* @param array $pars array of parameters to be passed to the method (xmlrpcval objects)
 		*/
 		function xmlrpcmsg($meth, $pars=0)
 		{
@@ -2146,7 +2176,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 			else
 				$this->content_type = 'text/xml';
 			$this->payload=$this->xml_header($charset_encoding);
-			$this->payload.='<methodName>' . $this->methodname . "</methodName>\n";
+			$this->payload.='<methodName>' . xmlrpc_encode_entitites($this->methodname, $GLOBALS['xmlrpc_internalencoding'], $charset_encoding) . "</methodName>\n";
 			$this->payload.="<params>\n";
 			for($i=0; $i<count($this->params); $i++)
 			{
@@ -2175,6 +2205,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 
 		/**
 		* Returns xml representation of the message. XML prologue included
+		* @param string $charset_encoding
 		* @return string the xml representation of the message, xml prologue included
 		* @access public
 		*/
@@ -2228,6 +2259,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 		*      infinite loop in that case, because we cannot trust the caller
 		*      to give us a valid pointer to an open file...
 		* @access public
+		* @param resource $fp stream pointer
 		* @return xmlrpcresp
 		* @todo add 2nd & 3rd param to be passed to ParseResponse() ???
 		*/
@@ -2567,17 +2599,24 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 			$GLOBALS['_xh']['isf_reason']='';
 			$GLOBALS['_xh']['rt']=''; // 'methodcall or 'methodresponse'
 
-			// if response charset encoding is not known / supported, try to use
-			// the default encoding and parse the xml anyway, but log a warning...
-			if (!in_array($resp_encoding, array('UTF-8', 'ISO-8859-1', 'US-ASCII')))
-			// the following code might be better for mb_string enabled installs, but
+			// Since parsing will fail if charset is not specified in the xml prologue,
+			// the encoding is not UTF8 and there are non-ascii chars in the text, we try to work round that...
+			// The following code might be better for mb_string enabled installs, but
 			// makes the lib about 200% slower...
-			//if (!is_valid_charset($resp_encoding, array('UTF-8', 'ISO-8859-1', 'US-ASCII')))
-			{
-				error_log('XML-RPC: '.__METHOD__.': invalid charset encoding of received response: '.$resp_encoding);
-				$resp_encoding = $GLOBALS['xmlrpc_defencoding'];
+			//if (!is_valid_charset($resp_encoding, array('UTF-8')))
+			if (!in_array($resp_encoding, array('UTF-8', 'US-ASCII')) && !has_encoding($data)) {
+				if ($resp_encoding == 'ISO-8859-1') {
+					$data = utf8_encode($data);
+				} else {
+					if (extension_loaded('mbstring')) {
+						$data = mb_convert_encoding($data, 'UTF-8', $resp_encoding);
+					} else {
+						error_log('XML-RPC: ' . __METHOD__ . ': invalid charset encoding of received request: ' . $resp_encoding);
+					}
+				}
 			}
-			$parser = xml_parser_create($resp_encoding);
+
+			$parser = xml_parser_create();
 			xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, true);
 			// G. Giunta 2005/02/13: PHP internally uses ISO-8859-1, so we have to tell
 			// the xml parser to give us back data in the expected charset.
@@ -3057,7 +3096,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 		}
 
 		/**
-		* Checks wheter a struct member with a given name is present.
+		* Checks whether a struct member with a given name is present.
 		* Works only on xmlrpcvals of type struct.
 		* @param string $m the name of the struct member to be looked up
 		* @return boolean
@@ -3534,8 +3573,28 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 		$GLOBALS['_xh']['isf_reason'] = '';
 		$GLOBALS['_xh']['method'] = false;
 		$GLOBALS['_xh']['rt'] = '';
-		/// @todo 'guestimate' encoding
-		$parser = xml_parser_create();
+
+		// 'guestimate' encoding
+		$val_encoding = guess_encoding('', $xml_val);
+
+		// Since parsing will fail if charset is not specified in the xml prologue,
+		// the encoding is not UTF8 and there are non-ascii chars in the text, we try to work round that...
+		// The following code might be better for mb_string enabled installs, but
+		// makes the lib about 200% slower...
+		//if (!is_valid_charset($val_encoding, array('UTF-8')))
+		if (!in_array($val_encoding, array('UTF-8', 'US-ASCII')) && !has_encoding($xml_val)) {
+			if ($val_encoding == 'ISO-8859-1') {
+				$xml_val = utf8_encode($xml_val);
+			} else {
+				if (extension_loaded('mbstring')) {
+					$xml_val = mb_convert_encoding($xml_val, 'UTF-8', $val_encoding);
+				} else {
+					error_log('XML-RPC: ' . __METHOD__ . ': invalid charset encoding of received request: ' . $val_encoding);
+				}
+			}
+		}
+
+        $parser = xml_parser_create();
 		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, true);
 		// What if internal encoding is not in one of the 3 allowed?
 		// we use the broadest one, ie. utf8!
@@ -3656,9 +3715,10 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 	* we SHOULD assume it is strictly US-ASCII. But we try to be more tolerant of unconforming (legacy?) clients/servers,
 	* which will be most probably using UTF-8 anyway...
 	*
-	* @param string $httpheaders the http Content-type header
+	* @param string $httpheader the http Content-type header
 	* @param string $xmlchunk xml content buffer
 	* @param string $encoding_prefs comma separated list of character encodings to be used as default (when mb extension is enabled)
+	* @return string
 	*
 	* @todo explore usage of mb_http_input(): does it detect http headers + post data? if so, use it instead of hand-detection!!!
 	*/
@@ -3747,10 +3807,48 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 	}
 
 	/**
+	 * Helper function: checks if an xml chunk as a charset declaration (BOM or in the xml declaration)
+	 *
+	 * @param string $xmlChunk
+	 * @return bool
+	 */
+	function has_encoding($xmlChunk)
+	{
+		// scan the first bytes of the data for a UTF-16 (or other) BOM pattern
+		//	 (source: http://www.w3.org/TR/2000/REC-xml-20001006)
+		if (preg_match('/^(\x00\x00\xFE\xFF|\xFF\xFE\x00\x00|\x00\x00\xFF\xFE|\xFE\xFF\x00\x00)/', $xmlChunk))
+		{
+			return true;
+		}
+		elseif (preg_match('/^(\xFE\xFF|\xFF\xFE)/', $xmlChunk))
+		{
+			return true;
+		}
+		elseif (preg_match('/^(\xEF\xBB\xBF)/', $xmlChunk))
+		{
+			return true;
+		}
+
+		// test if encoding is specified in the xml declaration
+		// Details:
+		// SPACE:		 (#x20 | #x9 | #xD | #xA)+ === [ \x9\xD\xA]+
+		// EQ:			SPACE?=SPACE? === [ \x9\xD\xA]*=[ \x9\xD\xA]*
+		if (preg_match('/^<\?xml\s+version\s*=\s*' . "((?:\"[a-zA-Z0-9_.:-]+\")|(?:'[a-zA-Z0-9_.:-]+'))" .
+			'\s+encoding\s*=\s*' . "((?:\"[A-Za-z][A-Za-z0-9._-]*\")|(?:'[A-Za-z][A-Za-z0-9._-]*'))/",
+			$xmlChunk, $matches))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	* Checks if a given charset encoding is present in a list of encodings or
 	* if it is a valid subset of any encoding in the list
 	* @param string $encoding charset to be tested
 	* @param mixed $validlist comma separated list of valid charsets (or array of charsets)
+	* @return bool
 	*/
 	function is_valid_charset($encoding, $validlist)
 	{
@@ -3771,8 +3869,8 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 				foreach ($validlist as $allowed)
 					if (in_array($allowed, $charset_supersets[$encoding]))
 						return true;
-				return false;
+			return false;
 		}
 	}
-}
+
 ?>

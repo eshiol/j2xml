@@ -1,0 +1,115 @@
+<?php
+/**
+ * @package		eshiol Library
+ * @subpackage	lib_eshiol
+ * @version		16.4
+ *
+ * @author		Helios Ciancio <info@eshiol.it>
+ * @link		http://www.eshiol.it
+ * @copyright	Copyright (C) 2012, 2016 Helios Ciancio. All Rights Reserved
+ * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * eshiol Library is free software. This version may have been modified 
+ * pursuant to the GNU General Public License, and as distributed it includes 
+ * or is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ */
+?>
+
+----------------------- 16.4.20 Release [23-April-2016] -----------------------
+
+20-April-2016
+  ^ sendbydate button - mobile (build 20)
+  ^ file button - mobile (build 20)
+
+----------------------- 16.4.19 Release  [9-April-2016] -----------------------
+
+9-April-2016
+  ^ file button - plugins (build 19)
+
+----------------------- 16.4.18 Release  [4-April-2016] -----------------------
+
+4-April-2016
+  ^ file button (build 18)
+  ^ sendbydate button (build 17, 18)
+
+---------------------- 16.1.16 Release [25-October-2015] ----------------------
+
+25-October-2015
+  ^ XMLRPC for PHP 3.0.1 (build 16)
+
+--------------------- 16.1.15 Release [17-september-2015] ---------------------
+
+17-September-2015
+  ^ open file from server via jce filebrowser (filter: xml,gz) (build 15)
+
+--------------------- 16.1.14 Release [15-september-2015] ---------------------
+
+15-September-2015
+  $ eshiol (build 14)
+
+------------------------- 15.6.13 Build [5-June-2015] -------------------------
+
+5-June-2015
+  # JToolbarButtonFile (build 13)
+
+---------------------- 15.2.12 Build  [23-February-2015] ----------------------
+
+23-February-2015
+  + Joomla! 1.6 compatibility (build 12)
+  # 1056 - An error has occurred. Invalid controller: name='content', format=" " (build 12)
+
+--------------------- 14.9.11 Release [16-September-2014] ---------------------
+
+16-September-2014
+  + file button (build 11)
+
+--------------------- 14.2.10 Release  [12-February-2014] ---------------------
+
+12-February-2014
+  # send button (build 10)
+  + send by date button (build 10)
+
+---------------------- 13.9.9 Build  [13-September-2013] ----------------------
+
+13-September-2013
+  # send button (build 9)
+
+----------------------- 13.8.8 Release [31-August-2013] -----------------------
+
+29-August-2013
+  # compatibility with Joomla! 3.x (build 8)
+  - mootools (build 8)
+
+----------------------- 13.8.7 Release [08-August-2013] -----------------------
+
+08-August-2013
+  # javascript (build 7)
+
+----------------------- 13.3.6 Release  [11-March-2013] -----------------------
+
+11-March-2013
+  ! Joomla! 3.0 compatible
+  ^ added token to sendAjax (build 6)
+  + italian language (build 5)
+
+---------------------- 12.11.4  Release [6-November-2012] ---------------------
+
+6-November-2012
+  ^ xmlrpc compatibility mode
+
+23-August-2012
+  + Standard2 button
+
+
+22-August-2012
+  + Initial Release for Joomla! 2.5
+
+Legend:
+
+* -> Security Fix
+# -> Bug Fix
+$ -> Language fix or change
++ -> Addition
+^ -> Change
+- -> Removed
+! -> Note

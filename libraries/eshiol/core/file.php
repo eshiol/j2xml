@@ -1,13 +1,13 @@
 <?php
 /**
- * @version		15.6.13 libraries/eshiol/core/file.php
+ * @version		16.4.20 libraries/eshiol/core/file.php
  * @package		J2XML
  * @subpackage	lib_eshiol
  * @since		14.9.11
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2014 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -42,8 +42,8 @@ class JToolbarButtonFile extends JToolbarButton
 	 *
 	 * @since   3.0
 	 */
-	public function fetchButton($type='File', $name = 'File', $open = 'Open', $upload = 'Upload', $task = 'file', $width = 640, $height = 480, $onClose = '')
-	{			
+	public function fetchButton($type='File', $name = 'File', $open = 'Open', $upload = 'Upload', $task = 'file', $width = 640, $height = 480, $onClose = '', $filter = 'xml,gz', $plugins = null)
+	{
 		$jce = file_exists(JPATH_ADMINISTRATOR.'/components/com_jce/helpers/browser.php');
 		$app = JFactory::getApplication();
 		$user = JFactory::getUser();
@@ -52,9 +52,36 @@ class JToolbarButtonFile extends JToolbarButton
 		$jce = ($editor == 'jce');
 		
 		$doc = JFactory::getDocument();
+/*
 		$doc->addStyleDeclaration("#{$name}_local1 {margin-bottom:0;height:14px;}");
 		$doc->addStyleDeclaration("#{$name}_url    {margin-bottom:0;height:14px;}");
 		$doc->addStyleDeclaration("#{$name}_server {margin-bottom:0;height:14px;}");
+*/
+		$doc->addStyleDeclaration("
+#{$name}Form .file-button[type=\"text\"] {
+	margin-bottom:0px;
+	height:14px;
+}
+@media (max-width: 480px) {
+#{$name}Form .file-button[type=\"text\"] {
+	margin-left:10px;
+}
+#{$name}Form .btn { width:32px!important; margin-left:0px; }
+#{$name}Form .btn span { display:none; }
+}
+");
+		$doc->addScriptDeclaration("
+jQuery(window).on('resize', function(){
+	width = jQuery(window).width();
+	if (width < 480) 
+		width = width - 150;
+	else
+		width = 137;
+	jQuery('#{$name}_local1').width(width);
+	jQuery('#{$name}_url').width(width + 32);
+	jQuery('#{$name}_server').width(width + 32);
+});
+");
 		
 		// Store all data to the options array for use with JLayout
 		$class = $this->fetchIconClass($name);
@@ -67,7 +94,7 @@ class JToolbarButtonFile extends JToolbarButton
 		$doAction = "index.php?option=com_$component&amp;task=$task";
 
 		$html = array();
-		$html[] = "<form name=\"".$name."Form\" method=\"post\" enctype=\"multipart/form-data\" action=\"$doAction\" style=\"margin:0\">\n";
+		$html[] = "<form id=\"".$name."Form\" name=\"".$name."Form\" method=\"post\" enctype=\"multipart/form-data\" action=\"$doAction\" style=\"margin:0\">\n";
 		
 		$html[] = "<div class=\"btn-group input-append\" style=\"margin:0;\">";
 			
@@ -107,16 +134,16 @@ class JToolbarButtonFile extends JToolbarButton
 		
 		$html[] = "<button id=\"".$name."_local_open\" onclick=\"javascript:".$name."_local.click();return false;\" class=\"btn btn-small\" >";
 		$html[] = "<i class=\"icon-folder\"></i>";
-		$html[] = $open;
+		$html[] = "<span> $open</span>";
 		$html[] = "</button>";
 				
 		if ($jce)
 		{
 			require_once(JPATH_ADMINISTRATOR.'/components/com_jce/helpers/browser.php');
-			$doTask = JUri::base().WFBrowserHelper::getBrowserLink($name.'_server', 'xml');
+			$doTask = JUri::base().WFBrowserHelper::getBrowserLink($name.'_server', $filter);
 			$html[] = "<button id=\"{$name}_server_open\" onclick=\"{$doTask}\" class=\"btn btn-small modal\" data-toggle=\"modal\" data-target=\"#{$name}_server_modal\" >";
 			$html[] = "<i class=\"icon-folder\"></i>";
-			$html[] = $open;
+			$html[] = "<span> $open</span>";
 			$html[] = "</button>";
 		
 			// Place modal div and scripts in a new div
@@ -130,10 +157,30 @@ class JToolbarButtonFile extends JToolbarButton
 			$html[] = JHtml::_('bootstrap.renderModal', $name.'_server_modal', $params);
 			$html[] = '</div>';
 		}
-		$html[] = "<button title=\"$title\" class=\"btn btn-small hasTooltip\" type=\"submit\" data-original-title=\"$title\">";
-		$html[] = "<i class=\"icon-upload\"></i> $upload";
-		$html[] = "</button>";
-	
+		
+		if (is_array($plugins) && (count($plugins) > 0))
+		{
+			if (count($plugins) > 1)
+			{
+				$html[] = "</div>";
+				$html[] = "<div class=\"btn-group input-append\" style=\"margin:0;\">";
+				$i = 0;
+				foreach ($plugins as $v => $n)
+					if (strlen($v) > $i)
+						$i = strlen($v);
+				$html[] = "<input type=\"text\" id=\"".$name."_plugin\" class=\"btn btn-small input-append\" name=\"".$name."_plugin\" value=\"".key($plugins)."\" readonly=\"readonly\" style=\"width:".$i."em\" />";
+				$html[] = "<button title=\"\" class=\"btn btn-small hasTooltip\" data-toggle=\"dropdown\">";
+				$html[] = "<i class=\"caret\" style=\"margin-bottom:0\"></i>";
+				$html[] = "</button>";
+				$html[] = "<ul class=\"dropdown-menu\">";
+				foreach ($plugins as $v => $n)
+					$html[] = "<li><a href=\"#\" onclick=\"$('".$name."_plugin').value='$v';\">$n</a></li>";
+				$html[] = "</ul>";
+			}
+			else
+				$html[] = "<input type=\"hidden\" id=\"".$name."_plugin\" name=\"".$name."_plugin\" value=\"".key($plugins)."\" />";
+		}
+
 		$html[] = '<script>
 		var jQuery;
 		(function ($) {
@@ -169,6 +216,12 @@ class JToolbarButtonFile extends JToolbarButton
 			})(jQuery);
 			</script>';
 		
+		
+		$html[] = "<button title=\"$title\" class=\"btn btn-small hasTooltip\" type=\"submit\" data-original-title=\"$title\">";
+		$html[] = "<i class=\"icon-upload\"></i>";
+		$html[] = "<span> $upload</span>";
+		$html[] = "</button>";
+			
 		$html[] = '</div>';
 		$html[] = JHTML::_('form.token');
 		$html[] = '</form>';		
