@@ -2,11 +2,10 @@
 # Reserved files
 # =========================
 
-*.cmd
-jce_j2xml_profile.xml
-CHANGELOG
-LICENSE
-.*
+# Eclipse
+.settings
+.buildpath
+.project
 
 # Windows image file caches
 Thumbs.db
