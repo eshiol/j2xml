@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		15.9.270 libraries/eshiol/j2xml/importer.php
+ * @version		16.1.277 libraries/eshiol/j2xml/importer.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010-2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -21,6 +21,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_weblinks/tables');
 JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_contact/tables');
+JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_buttons/tables');
 
 //jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
@@ -112,7 +113,7 @@ class J2XMLImporter
 		
 		//gc_enable(); // Enable Garbage Collector
 		$db = JFactory::getDBO();
-		
+	
 		$import_users = $params->get('import_users', '1');
 		$keep_user_id = $params->get('keep_user_id', '0');
 		$keep_user_attribs = $params->get('keep_user_attribs', '1');
@@ -166,7 +167,7 @@ class J2XMLImporter
 					if (!$keep_user_attribs)
 						$data['attribs'] = null;
 		
-					JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));	
+					//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));	
 					if ($table->save($data))
 					{
 						if (!$user && ($keep_user_id == 1))
@@ -268,7 +269,7 @@ class J2XMLImporter
 				}
 				$data['rules'] = json_encode($rules_id, JSON_NUMERIC_CHECK);
 
-				JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));				
+				//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));				
 				if ($table->save($data))
 				{
 					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_VIEWLEVEL_IMPORTED', $table->title),JLOG::INFO,'lib_j2xml'));
@@ -287,9 +288,11 @@ class J2XMLImporter
 		
 		if ($import_categories)
 		{
+			JLog::add(new JLogEntry('*** Importing categories... ***', JLOG::DEBUG, 'lib_j2xml'));
 			foreach($xml->xpath("//j2xml/category[not(title = '')]") as $record)
 			{
 				$this->prepareData($record, $data, $params);
+				// TODO: check extension
 				
 				$alias = $data['alias']; // = JApplication::stringURLSafe($data['alias']);
 				$id = $data['id'];
@@ -304,10 +307,7 @@ class J2XMLImporter
 				$query = 'SELECT id, title'
 					. ' FROM #__categories'
 					. ' WHERE extension = '. $db->Quote($data['extension'])
-					. ' AND'. ((($keep_id == 1) && ($id > 1))
-					? ' id = '.$id
-					: ' path = '.$db->Quote($path)
-					)
+					. ' AND'. ((($keep_id == 1) && ($id > 1)) ? ' id = '.$id : ' path = '.$db->Quote($path))
 					;
 				JLog::add(new JLogEntry($query,JLOG::DEBUG,'lib_j2xml'));
 				$db->setQuery($query);
@@ -317,6 +317,18 @@ class J2XMLImporter
 				{
 					$table = JTable::getInstance('category');
 	
+					if (!$category && ($keep_id == 1))
+					{
+						$query = 'SELECT id, title'
+							. ' FROM #__categories'
+							. ' WHERE path = '.$db->Quote($path)
+							. ' AND extension = '. $db->Quote($data['extension'])
+							;
+						JLog::add(new JLogEntry($query,JLOG::DEBUG,'lib_j2xml'));
+						$db->setQuery($query);
+						$category = $db->loadObject();
+					}					
+					
 					if (!$category) // new category
 					{
 						$data['id'] = null;
@@ -364,14 +376,14 @@ class J2XMLImporter
 							$data['created'] = $now;
 							$data['created_user_id'] = $user_id;
 							$data['created_by_alias'] = null;
-							$data['modified'] = $nullDate;
+							$data['modified'] = $this->_nullDate;
 							$data['modified_user_id'] = null;
 							$data['version'] = 1;
 						}
 						*/							
 					}
 										
-					JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
+					//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
 					if ($table->save($data))
 					{
 						if (!$category && ($keep_id == 1) && ($id > 1))
@@ -404,7 +416,7 @@ class J2XMLImporter
 						$table->rebuildPath();
 
 						if ($keep_id && ($id > 0) && ($id != $table->id))
-							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_CATEGORY_ID_PRESENT', $table->title), JLOG::WARNING, 'lib_j2xml'));
+							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_CATEGORY_ID_PRESENT', $table->title, $id, $table->id), JLOG::WARNING, 'lib_j2xml'));
 						else
 							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_CATEGORY_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
 					}
@@ -454,25 +466,13 @@ class J2XMLImporter
 			$frontpage = (int)$db->loadResult();			
 		}
 		
+		JLog::add(new JLogEntry('*** Importing tags... ***', JLOG::DEBUG, 'lib_j2xml'));
 		foreach($xml->xpath("//j2xml/tag") as $record)
 		{
-			$data = array();
-			foreach($record->children() as $key => $value)
-			{
-				if ($value->children())
-				{
-					$d = array();
-					foreach($value->children() as $v)
-						$d[] = trim($v);
-					$data[trim($key)] = $d;
-				}
-				else
-					$data[trim($key)] = trim($value);
-			}
+			$this->prepareData($record, $data, $params);
+				
 			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tags/tables');
 			$data['id'] = 0;
-			$data['title'] = html_entity_decode($data['title'], ENT_QUOTES, 'UTF-8');
-			$data['description'] = html_entity_decode($data['description'], ENT_QUOTES, 'UTF-8');
 				
 			$path = $data['path'];
 			$i = strrpos($path, '/');
@@ -492,7 +492,7 @@ class J2XMLImporter
 			}							
 			$table = JTable::getInstance('Tag', 'TagsTable');
 			$table->setLocation($data['parent_id'], 'last-child');
-			JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
+			//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
 			$table->save($data);
 
 			JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_TAG_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
@@ -501,21 +501,11 @@ class J2XMLImporter
 		$dispatcher = JDispatcher::getInstance();
 		JPluginHelper::importPlugin('content');
 
+		JLog::add(new JLogEntry('*** Importing articles... ***', JLOG::DEBUG, 'lib_j2xml'));
 		foreach($xml->xpath("//j2xml/content[not(name = '')]") as $record)
 		{				
-			$data = array();
-			foreach($record->children() as $key => $value)
-			{
-				if ($value->children())
-				{
-					$d = array();
-					foreach($value->children() as $v)
-						$d[] = trim($v);
-					$data[trim($key)] = $d;
-				}
-				else
-					$data[trim($key)] = trim($value);
-			}
+			$this->prepareData($record, $data, $params);
+
 			$id = $data['id'];
 			if (empty($data['alias']))
 			{
@@ -524,9 +514,6 @@ class J2XMLImporter
 			}
 			$alias = $data['alias'];
 			$catid = $data['catid'];
-			$data['title'] = html_entity_decode($data['title'], ENT_QUOTES, 'UTF-8');							
-			$data['introtext'] = html_entity_decode($data['introtext'], ENT_QUOTES, 'UTF-8');
-			$data['fulltext'] = html_entity_decode($data['fulltext'], ENT_QUOTES, 'UTF-8');
 			
 			$category_path = $data['catid'];
 			
@@ -696,7 +683,7 @@ class J2XMLImporter
 					$data['created'] = $now;
 					$data['created_by'] = $user_id; 
 					$data['created_by_alias'] = null; 				
-					$data['modified'] = $nullDate; 
+					$data['modified'] = $this->_nullDate; 
 					$data['modified_by'] = null; 
 					$data['version'] = 1; 
 				}
@@ -799,9 +786,12 @@ class J2XMLImporter
 									$rating->content_id = $table->id;
 									$rating->rating_count = $data['rating_count'];
 									$rating->rating_sum = $data['rating_sum'];
-									$rating->lastip = $_SERVER['REMOTE_ADDR'];
-									if (!$db->insertObject('#__content_rating', $rating))
+									$rating->lastip = $_SERVER['REMOTE_ADDR'];	
+									try {
+										$db->insertObject('#__content_rating', $rating);
+									} catch (Exception $e) {
 										$db->updateObject('#__content_rating', $rating, 'content_id');
+									}
 								}
 								else
 								{
@@ -839,6 +829,8 @@ class J2XMLImporter
 		$is_enabled = $db->loadResult();
 		if ($is_enabled)
 		{
+			JLog::add(new JLogEntry('*** Importing weblinks... ***', JLOG::DEBUG, 'lib_j2xml'));
+			$import_weblinks = $params->get('import_weblinks', '1');
 			foreach($xml->xpath("//j2xml/weblink[not(title = '')]") as $record)
 			{
 				$attributes = $record->attributes();
@@ -859,7 +851,7 @@ class J2XMLImporter
 				if (!$weblink || $import_weblinks)
 				{
 					$data['checked_out'] = 0;
-					$data['checked_out_time'] = $nullDate;
+					$data['checked_out_time'] = $this->_nullDate;
 			
 					$table = JTable::getInstance('Weblink', 'WeblinksTable');
 			
@@ -877,16 +869,18 @@ class J2XMLImporter
 					{
 						// category already loaded
 						$data['catid'] = $categories_id['com_weblinks/'.$data['catid']];
+						JLog::add(new JLogEntry('com_weblinks/'.$data['catid'].' -> '.$data['catid'], JLOG::DEBUG, 'lib_j2xml'));
 					}
 					else
 					{
 						// load category
 						$query = 'SELECT id'
 							. ' FROM #__categories'
-							. ' WHERE alias = '. $db->Quote($data['catid'])
+							. ' WHERE path = '. $db->Quote($data['catid'])
 							. ' AND extension = '. $db->Quote('com_weblinks')
 	//						. ' AND level = 1'
 							;
+						JLog::add(new JLogEntry($query, JLOG::DEBUG, 'lib_j2xml'));
 						$db->setQuery($query);
 						$category_id = (int)$db->loadResult();
 						if ($category_id > 0)
@@ -917,7 +911,96 @@ class J2XMLImporter
 				}
 			}
 		}
+
+		/*
+		 * Import Buttons
+		 */
+		// Check if component is installed
+		$db = JFactory::getDbo();
+		$db->setQuery("SELECT enabled FROM #__extensions WHERE name = 'com_buttons'");
+		$is_enabled = $db->loadResult();
+		if ($is_enabled)
+		{
+			$import_buttons = $params->get('import_buttons', '1');
+			foreach($xml->xpath("//j2xml/button[not(title = '')]") as $record)
+			{
+				$attributes = $record->attributes();
+				$data = array();
+				foreach($record->children() as $key => $value)
+					$data[trim($key)] = trim($value);
+					$alias = $data['alias'];
+					$data['title'] = html_entity_decode($data['title'], ENT_QUOTES, 'UTF-8');
+					$data['description'] = html_entity_decode($data['description'], ENT_QUOTES, 'UTF-8');
 						
+					$query = 'SELECT id, title'
+						. ' FROM #__buttons'
+						. ' WHERE alias = '. $db->Quote($alias)
+						;
+					$db->setQuery($query);
+					$button = $db->loadObject();
+										
+					if (!$button || $import_buttons)
+					{
+						$data['checked_out'] = 0;
+						$data['checked_out_time'] = $this->_nullDate;
+							
+						$table = JTable::getInstance('Button', 'ButtonsTable');
+							
+						if (!$button)
+						{ // new button
+							$data['id'] = null;
+						}
+						else // button already exists
+						{
+							$data['id'] = $button->id;
+							$table->load($data['id']);
+						}
+
+						if (isset($categories_id['com_buttons/'.$data['catid']]))
+						{
+							// category already loaded
+							$data['catid'] = $categories_id['com_buttons/'.$data['catid']];
+						}
+						else
+						{
+							// load category
+							$query = 'SELECT id'
+								. ' FROM #__categories'
+								. ' WHERE alias = '. $db->Quote($data['catid'])
+								. ' AND extension = '. $db->Quote('com_buttons')
+								//						. ' AND level = 1'
+								;
+							$db->setQuery($query);
+							$category_id = (int)$db->loadResult();
+							if ($category_id > 0)
+							{
+								$categories_id['com_buttons/'.$data['catid']] = $category_id;
+								$data['catid'] = $category_id;
+							}
+							else
+							{
+								JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_BUTTON_NOT_IMPORTED', $data['title']), JLOG::ERROR, 'lib_j2xml'));
+								JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_CATEGORY_NOT_FOUND', $data['catid']), JLOG::ERROR, 'lib_j2xml'));
+								continue;
+							}
+						}
+						// Trigger the onContentBeforeSave event.
+						$table->bind($data);
+						if ($table->store())
+						{
+							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_BUTTON_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
+							// Trigger the onContentAfterSave event.
+						}
+						else
+						{
+							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_BUTTON_NOT_IMPORTED', $data['title']), JLOG::ERROR, 'lib_j2xml'));
+							JLog::add(new JLogEntry($table->getError(), JLOG::ERROR, 'lib_j2xml'));
+						}
+						$table = null;
+					}
+			}
+		}
+		
 		if ($import_images)
 		{
 			jimport('joomla.filesystem.folder');
@@ -1016,7 +1099,7 @@ class J2XMLImporter
 						}
 					}					
 					
-					JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
+					//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
 					if ($table->save($data))
 					{
 						if (!$contact && ($keep_user_id == 1))
@@ -1066,7 +1149,8 @@ class J2XMLImporter
 		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
 		
 		$db = JFactory::getDBO();
-
+		$execute = (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge')) ? 'execute' : 'query';
+		
 		// tag
 		if (version_compare(JPlatform::RELEASE, '12', 'ge'))
 		{
@@ -1088,7 +1172,10 @@ class J2XMLImporter
 		$db->setQuery("DELETE FROM `#__ucm_history` WHERE `ucm_type_id` IN (SELECT `type_id` FROM `#__content_types` WHERE `type_alias` = 'com_content.article')")->$execute();
 		$db->setQuery("DELETE FROM `#__assets` WHERE `name` LIKE 'com_content.article.%'")->$execute();
 		$db->setQuery("TRUNCATE `#__content`")->$execute();
+		$db->setQuery("TRUNCATE `#__content_frontpage`")->$execute();
+		$db->setQuery("TRUNCATE `#__content_rating`")->$execute();
 		$db->setQuery("DELETE FROM `#__ucm_history` WHERE `ucm_type_id` IN (SELECT `type_id` FROM `#__content_types` WHERE `type_alias` = 'com_content.category')")->$execute();
+		$db->setQuery("DELETE FROM `#__ucm_content` WHERE `core_type_alias`='com_content.article'")->$execute();
 		$db->setQuery("DELETE FROM `#__assets` WHERE `name` LIKE 'com_content.category.%' AND `Title` <> 'Uncategorised'")->$execute();
 		$db->setQuery("DELETE FROM `#__categories` WHERE `extension` = 'com_content' AND `Title` <> 'Uncategorised'")->$execute();
 		JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_CONTENT_CLEANED'),JLOG::NOTICE,'lib_j2xml'));
@@ -1105,14 +1192,15 @@ class J2XMLImporter
 		// usergroups
 		$db->setQuery("DELETE FROM `#__usergroups` WHERE `id` > 9")->$execute();
 		JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_USERGROUPS_CLEANED'),JLOG::NOTICE,'lib_j2xml'));		
-		
+		/*
 		JPluginHelper::importPlugin('j2xml');
 		$dispatcher = JDispatcher::getInstance();
 		// Trigger the onAfterImport event.
 		$dispatcher->trigger('onClean', array($this->_option.'.'.__FUNCTION__, &$xml, $params));
+		*/
 	}
 	
-	function getArticledId($path)
+	function getArticleId($path)
 	{
 		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
 		
@@ -1239,7 +1327,7 @@ class J2XMLImporter
 			$data['modified_user_id'] = self::getUserId($data['modified_user_id'], 0);
 		if (isset($data['access']))
 			$data['access'] = self::getAccessId($data['access']);
-		JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
+		//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
 	}
 }
 ?>

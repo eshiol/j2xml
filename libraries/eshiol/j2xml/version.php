@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		15.9.271 libraries/eshiol/j2xml/version.php
+ * @version		16.1.275 libraries/eshiol/j2xml/version.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3
@@ -23,15 +23,15 @@ class J2XMLVersion
 	/** @public static string Product */
 	public static $PRODUCT	= 'J2XML';
 	/** @public static int Main Release Level */
-	public static $RELEASE	= '15.9';
+	public static $RELEASE	= '16.1';
 	/** @public static int Sub Release Level */
-	public static $DEV_LEVEL	= '5';
+	public static $DEV_LEVEL	= '1';
 	/** @public static string Development Status */
-	public static $DEV_STATUS	= ''; //dev < alpha = a < beta = b < RC = rc < # < pl = p
+	public static $DEV_STATUS	= 'alpha'; //dev < alpha = a < beta = b < RC = rc < # < pl = p
 	/** @public static int build Number */
-	public static $BUILD		= '271';
+	public static $BUILD		= '275';
 	/** @public static string Codename */
-	public static $CODENAME	= 'cerasella';
+	public static $CODENAME	= 'Cacciuttiello';
 	/** @public static string Copyright Text */
 	public static $COPYRIGHT	= 'Copyright &copy; 2010-2015 Helios Ciancio <a href="http://www.eshiol.it" title="eshiol.it"><img src="../media/com_j2xml/images/eshiol.png" alt="eshiol.it" /></a>. All rights reserved.';
 	/** @public static string License */

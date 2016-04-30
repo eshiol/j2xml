@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		15.9.271 libraries/eshiol/j2xml/exporter.php
+ * @version		16.1.275 libraries/eshiol/j2xml/exporter.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -21,11 +21,11 @@ defined('_JEXEC') or die('Restricted access.');
 
 //Import filesystem libraries.
 jimport('joomla.filesystem.file');
-
 jimport('joomla.log.log');
-
 jimport('eshiol.j2xml.table');
 jimport('eshiol.j2xml.version');
+
+use Joomla\Registry\Registry;
 
 class J2XMLExporter
 {
@@ -129,6 +129,17 @@ class J2XMLExporter
 			foreach ($ids_contact as $id_contact)
 				self::_contact($id_contact, $xml, $options);
 		}
+
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true)
+			->select('id')
+			->from('#__user_notes')
+			->where('user_id = '.$id);
+		$db->setQuery($query);
+	
+		$ids_usernote = $db->loadColumn();
+		foreach ($ids_usernote as $id_usernote)
+			self::_usernote($id_usernote, $xml, $options);
 	}
 	
 	
@@ -171,7 +182,7 @@ class J2XMLExporter
 	 * @return	void
 	 * @since		15.8.253
 	 */	
-	private function _article($id, &$xml, $options)
+	private function _content($id, &$xml, $options)
 	{
 		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
 		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
@@ -184,7 +195,12 @@ class J2XMLExporter
 		$item = JTable::getInstance('content', 'eshTable');
 		if (!$item->load($id))
 			return;
-				
+		
+		$params = new JRegistry($options);
+		$dispatcher = JDispatcher::getInstance();
+		JPluginHelper::importPlugin('j2xml');
+		$results = $dispatcher->trigger('onBeforeContentExport', array('lib_j2xml.article', &$item, $params));
+		
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 		$fragment->appendXML($item->toXML());
@@ -315,21 +331,26 @@ class J2XMLExporter
 		
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
-	
-		if (isset($options['content']) && $options['content'])
+
+		$allowed_extensions = array('com_content','com_buttons');
+		if (in_array($item->extension, $allowed_extensions))
 		{
-			$db = JFactory::getDbo();
-			$query = $db->getQuery(true)
-				->select('id')
-				->from('#__content')
-				->where('catid = '.$id);
-			$db->setQuery($query);
-			$ids_content = $db->loadColumn();
-			$options['categories'] = 0;
-			foreach ($ids_content as $id_content)
-				self::_article($id_content, $xml, $options);
+			if (isset($options['content']) && $options['content'])
+			{
+				$table = '#__'.substr($item->extension, 4);
+				$extension = '_'.substr($item->extension, 4);
+				$db = JFactory::getDbo();
+				$query = $db->getQuery(true)
+					->select('id')
+					->from($table)
+					->where('catid = '.$id);
+				$db->setQuery($query);
+				$ids_content = $db->loadColumn();
+				$options['categories'] = 0;
+				foreach ($ids_content as $id_content)
+					self::$extension($id_content, $xml, $options);
+			}
 		}
-	
 		$options['content'] = 0;
 	
 		if ($item->parent_id > 1)
@@ -448,7 +469,7 @@ class J2XMLExporter
 		}
 		
 		foreach($ids as $id)
-			self::_article($id, $xml, $options);
+			self::_content($id, $xml, $options);
 		
 		$params = new JRegistry($options);
 		JPluginHelper::importPlugin('j2xml');
@@ -721,5 +742,128 @@ class J2XMLExporter
 	
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);		
+	}
+
+	/**
+	 * Export button
+	 *
+	 * @param	int					$id		the id
+	 * @param	SimpleXMLElement	$xml	xml
+	 * @param	array				$options	options
+	 * @throws
+	 * @return	void
+	 * @since	16.1.275
+	 */
+	private function _buttons($id, &$xml, $options)
+	{
+		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
+	
+		jimport('eshiol.j2xml.table.button');
+		$item = JTable::getInstance('button', 'eshTable');
+		if (!$item->load($id))
+			return;
+
+		if ($xml->xpath("//j2xml/button/id[text() = '".$id."']"))
+			return;
+		
+		$doc = dom_import_simplexml($xml)->ownerDocument;
+		$fragment = $doc->createDocumentFragment();
+		$fragment->appendXML($item->toXML());
+		$doc->documentElement->appendChild($fragment);
+	
+		if ($options['users'])
+		{
+			if ($item->created_by)
+				self::_user($item->created_by, $xml, $options);
+			if ($item->modified_by)
+				self::_user($item->modified_by, $xml, $options);
+		}
+	
+		if ($options['images'])
+		{
+			$img = null;
+			$text = $item->description;
+			$_image = preg_match_all($this->_image_match_string,$text,$matches,PREG_PATTERN_ORDER);
+			if (count($matches[1]) > 0)
+			{
+				for ($i = 0; $i < count($matches[1]); $i++)
+				{
+					if ($_image = $matches[1][$i])
+						self::_image($_image, $xml, $options);
+				}
+			}
+	
+			if ($imgs = json_decode($item->images))
+			{
+				if (isset($imgs->image))
+					self::_image($imgs->image, $xml, $options);
+			}
+		}
+	
+		if ($options['categories'] && ($item->catid > 0))
+			self::_category($item->catid, $xml, $options);
+	
+		if (class_exists('JHelperTags'))
+		{
+			$htags = new JHelperTags;
+			$itemtags = $htags->getItemTags('com_buttons.button', $id);
+			foreach ($itemtags as $itemtag)
+				self::_tag($itemtag->tag_id, $xml, $options);
+		}
+
+		return $xml;
+	}
+
+	/*
+	 * Export user note
+	 * @return
+	 * @since		16.1.276
+	 */
+	private function _usernote($id, &$xml, $options)
+	{
+		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
+	
+		jimport('eshiol.j2xml.table.usernote');
+		$item = JTable::getInstance('usernote','eshTable');
+		if (!$item->load($id))
+			return;
+
+		if ($xml->xpath("//j2xml/usernote/id[text() = '".$item->id."']"))
+			return;
+	
+		$doc = dom_import_simplexml($xml)->ownerDocument;
+		$fragment = $doc->createDocumentFragment();
+		$fragment->appendXML($item->toXML());
+		$doc->documentElement->appendChild($fragment);
+
+		if ($options['users'])
+		{
+			if ($item->created_by)
+				self::_user($item->created_user_id, $xml, $options);
+			if ($item->modified_by)
+				self::_user($item->modified_user_id, $xml, $options);
+		}
+
+		if ($options['images'])
+		{
+			$img = null;
+			$text = html_entity_decode($item->body);
+			$_image = preg_match_all($this->_image_match_string,$text,$matches,PREG_PATTERN_ORDER);
+			if (count($matches[1]) > 0)
+			{
+				for ($i = 0; $i < count($matches[1]); $i++)
+				{
+					if ($_image = $matches[1][$i])
+						self::_image($_image, $xml, $options);
+				}
+			}
+		}
+		
+		if ($options['categories'] && ($item->catid > 0))
+			self::_category($item->catid, $xml, $options);
 	}
 }

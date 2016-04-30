@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		15.9.270 libraries/eshiol/j2xml/messages.php
+ * @version		16.1.275 libraries/eshiol/j2xml/messages.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -48,5 +48,7 @@ class J2XMLMessages
 		'LIB_J2XML_MSG_CONTACT_NOT_IMPORTED',
 		'LIB_J2XML_MSG_VIEWLEVEL_IMPORTED',
 		'LIB_J2XML_MSG_VIEWLEVEL_NOT_IMPORTED',
+		'LIB_J2XML_MSG_BUTTON_IMPORTED',
+		'LIB_J2XML_MSG_BUTTON_NOT_IMPORTED',
 	);
 }

@@ -1,0 +1,321 @@
+<?php
+/**
+ * @package		J2XML
+ * @subpackage	lib_j2xml
+ * @version		16.1
+ *
+ * @author		Helios Ciancio <info@eshiol.it>
+ * @link		http://www.eshiol.it
+ * @copyright	Copyright (C) 2010-2016 Helios Ciancio. All Rights Reserved
+ * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * J2XML is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ */
+?>
+
+
+---------------------- 16.1.277 Release [8-January-2016] ----------------------
+
+8-January-2016
+  # weblinks import (build 277)
+
+6-December-2015
+  + export user notes (build 276)
+
+4-December-2015
+  + buttons support (build 275)
+  # category import (build 274)
+
+--------------------- 16.1.273 Release  [25-October-2015] ---------------------
+
+25-October-2015
+  # send (build 273)
+
+-------------------- 16.1.272 Release  [21-September-2015] --------------------
+
+21-September-2015
+  # plgXMLRPCJ2XMLServices::import($xml, $username, $password) (build 272)
+  ^ logs (build 272)
+  $ J2XML (build 272)
+  # J2XMLImporter::getArticleId($path) (build 272)
+  + onContentBeforeExport (build 272)
+
+-------------------- 15.9.271 Release  [11-September-2015] --------------------
+
+11-September-2015
+  # export (build 271)
+
+7-September-2015
+  # changed j2xml file format 15.9.0 (build 270)
+  # import view levels (build 270)
+
+6-September-2015
+  # export view levels (build 269)
+  # import categories (build 268)
+  # export/import users (build 267)
+
+5-September-2015
+  # import contacts (build 266)
+  # export tag users (build 265)
+  # export category tags (build 264,265)
+  # export category users (build 263)
+
+--------------------- 15.9.262 Release [5-september-2015] ---------------------
+
+4-September-2015
+  + import contacts (build 262)
+
+3-September-2015
+  + export contacts (build 261)
+
+--------------------- 15.8.260 Release [1-september-2015] ---------------------
+
+1-September-2015
+  # export (build 260)
+  ^ third party plugin log (build 259)
+
+30-August-2015
+  ^ clean attachments (build 258)
+  - clean redirect links (build 258)
+  ^ import tags log (build 258)
+  ^ send (build 257)
+  ^ import weblinks (build 257)
+  # export categories (build 257)
+
+29-August-2015
+  # export users (build 256)
+
+----------------------- 15.8.255 Build [28-August-2015] -----------------------
+
+28-August-2015
+  + J2XMLImporter::getArticledId($path) (build 255)
+  + J2XMLImporter::getUserId($username) (build 255)
+
+26-August-2015
+  ^ onAfterImport (build 254)
+
+22-August-2015
+  + onAfterExport (build 253)
+
+20-August-2015
+  ^ export (build 252)
+
+------------------------ 15.6.251 Build [22-June-2015] ------------------------
+
+22-June-2015
+  ^ rebuild links (build 251)
+
+------------------------ 15.6.250 Build [18-June-2015] ------------------------
+
+18-June-2015
+  + rebuild links (build 250)
+
+------------------------ 15.6.249  Build [7-June-2015] ------------------------
+
+8-June-2015
+  + canonical field to content table (build 249)
+  ^ clean redirect links (build 249)
+
+12-March-2015
+  + export custom viewing access level (build 248)
+
+11-March-2015
+  # import tags (build 247)
+
+23-February-2015
+  + Joomla! 1.6 compatibility (build 246)
+
+15-October-2014
+  # undefined currentAssetId on Joomla 2.5 (build 245)
+
+13-October-2014
+  # tags on Joomla 2.5 (build 244)
+
+12-October-2014
+  + auto send compatibility (build 244)
+
+8-October-2014
+  # tags on Joomla 2.5 (build 243)
+  # featured (build 242)
+
+7-October-2014
+  # send to multilanguage site (build 241)
+
+26-August-2014
+  + article tag export (build 240)
+  # image export (build 240)
+
+22-August-2014
+  # featured ordering (build 239)
+
+12-August-2014
+  # PHP 5.2.4 compatibility (build 238)
+
+---------------------- 14.3.237 Release  [26-March-2014] ----------------------
+
+26-March-2014
+  # sender (build 237)
+  # DIRECTORY_SEPARATOR (build 236)
+
+24-March-2014
+  # images export (build 235)
+
+5-March-2014
+  # DS (build 234)
+  # HTTP/1.1 301 (build 233)
+  # HTTP/1.1 303 (build 233)  
+
+16-January-2013
+  # images url decode (build 232)
+
+12-October-2013
+  # user import (build 231)
+
+12-September-2013
+  # import (build 230)
+
+11-September-2013
+  # xmlrpc fatal error (build 229)
+
+10-September-2013
+  # import category (build 228)
+
+--------------------- 13.8.226 Release [3-September-2013] ---------------------
+
+3-September-2013
+  # import category (build 226)
+  # export categories (build 226)
+
+26-August-2013
+  # send (build 225)
+
+24-August-2013
+  $ italian (build 224)
+
+23-August-2013
+  # xmlrpc (build 223)
+
+22-August-2013
+  ^ reduced memory usage (build 222)
+  # categories (build 222)
+  # alias (build 221)
+  # blank alias (build 220)
+
+----------------------- 13.7.118 Release  [1-July-2013] -----------------------
+
+1-July-2013
+  # weblink import (build 118)
+
+----------------------- 13.6.117 Release [28-June-2013] -----------------------
+
+28-June-2013
+  # weblink export (build 117)
+
+27-June-2013
+  # json compatibility (build 116)
+
+18-June-2013
+  # import author (build 115)
+  # export access field (build 115)
+  
+----------------------- 13.6.114 Release [12-June-2013] -----------------------
+
+12-June-2013
+  ^ import user basic settings (build 114)
+
+9-June-2013
+  + export Intro image and Full article image (build 113)
+
+----------------------- 13.6.112 Release  [6-June-2013] -----------------------
+
+6-June-2013
+  # sanitize xml (build 112)
+
+5-June-2013
+  # importing group list (build 111)
+  + User group (build 110)
+
+----------------------- 13.5.109 Release  [17-May-2013] -----------------------
+
+17-May-2013
+  ^ decode fields (build 109)
+  ^ export null fields (build 108)
+  ^ umlaut in user name (build 107)
+  ^ keep ids (build 106)
+  ^ PHP 5.4 compatibility (build 106)
+  ^ platform 12 compatibility (build 106)
+  
+---------------------- 13.3.105 Release  [11-March-2013] ----------------------
+
+11-March-2013
+  + export weblinks (build 105)
+  # export content (build 104)
+  
+---------------------- 13.3.103 Release  [10-March-2013] ----------------------
+
+10-March-2013
+  + italian language (build 103)
+  # raising of onContentBeforeSave event (build 102)
+  # cli compatibility (build 101)
+
+----------------------- 13.2.100 Release [2-March-2013] -----------------------
+
+2-March-2013
+  # php 5.2.17 issues in images exporting (build 100)
+  # send function (build 99)
+
+--------------------- 13.2.98 Release  [14-February-2013] ---------------------
+
+14-February-2013
+  # category doesn't exists
+  
+8-February-2013
+  # fix Class 'JFolder' not found in importer.php on line 648 (build 97)
+
+7-February-2013
+  # fix php 5.2.17 issues (build 96)
+
+5-February-2013
+  # Call to undefined method SimpleXMLElement::count() in php 5.2.17 (build 95)
+
+18-January-2013
+  # user groups (build 94)
+
+18-January-2013
+  # JTableAsset: :store failed (build 93)
+  
+18-January-2013
+  + platform 12.1 compatibility (build 92)
+
+17-January-2013
+  # user sending (build 91)
+
+--------------------- 12.5.90  Release [4-September-2012] ---------------------
+
+4-September-2012
+  ^ importer parameters to importer function (build 90)
+
+1-September-2012
+  + onContentBeforeSave event (build 89)
+  + onContentAfterSave event (build 89)
+  
+25-July-2012
+  + keep category ids
+
+24-July-2012
+  + import/export users
+
+27-May-2012
+  + Initial Release for Joomla! 2.5 (build 85)
+
+Legend:
+
+* -> Security Fix
+# -> Bug Fix
+$ -> Language fix or change
++ -> Addition
+^ -> Change
+- -> Removed
+! -> Note
