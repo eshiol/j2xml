@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<extension type="package" version="1.6" method="upgrade">
+<extension type="package" version="3.0" method="upgrade">
   <name>PKG_J2XML</name>
   <author>Helios Ciancio</author>
-  <creationDate>September 2015</creationDate>
+  <creationDate>Aprile 2016</creationDate>
   <packagename>j2xml</packagename>
-  <version>3.2.10.386</version>
+  <version>3.3.11.392</version>
   <url>http://www.eshiol.it</url>
   <packager>Helios Ciancio</packager>
   <packagerurl>http://www.eshiol.it/</packagerurl>
