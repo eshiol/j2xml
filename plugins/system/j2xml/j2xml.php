@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.31 plugins/system/j2xml/j2xml.php
+ * @version		3.4.34 plugins/system/j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	plg_system_j2xml
@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -67,6 +67,7 @@ class plgSystemJ2XML extends JPlugin
 				|| ($option == 'com_users') && (!$view || $view == 'users')
 				|| ($option == 'com_weblinks') && (!$view || $view == 'weblinks')
 				|| ($option == 'com_categories') && ($extension == 'com_content') && (!$view || $view == 'categories')
+				|| ($option == 'com_categories') && ($extension == 'com_buttons') && (!$view || $view == 'categories')
 			) {			
 				$toolbar = JToolBar::getInstance('toolbar');
 				$control = substr($option, 4);
@@ -123,7 +124,12 @@ class plgSystemJ2XML extends JPlugin
 			->where('state = 1')
 			;
 		$db->setQuery($query);
-		return $db->loadObjectList();
+		try {
+			$websites = $db->loadObjectList();
+		} catch (Exception $e) {
+			$websites = null;
+		}
+		return $websites;
 	}
 }
 ?>

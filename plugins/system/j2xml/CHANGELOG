@@ -1,0 +1,84 @@
+<?php
+/**
+ * @package		J2XML
+ * @subpackage	plg_system_j2xml
+ * @version		3.4
+ *
+ * @author		Helios Ciancio <info@eshiol.it>
+ * @link		http://www.eshiol.it
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * J2XML is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ */
+?>
+
+------------------------ 3.4.34 Release [2-March-2016] ------------------------
+
+2-March-2016
+  ^ check #__j2xml_websites (build 34)
+
+----------------------- 3.4.33 Release [8-January-2016] -----------------------
+
+8-January-2016
+  - Joomla! 2.5 compatibility (build 33)
+
+4-December-2015
+  + Buttons support (build 32)
+
+----------------------- 3.2.31 Build [24-February-2015] -----------------------
+
+24-February-2015
+  + Joomla! 1.6 compatibility (build 31)
+
+13-September-2013
+  # export button in Joomla! 3.x (build 30)
+
+---------------------- 3.1.29 Release [5-September-2013] ----------------------
+
+5-September-2013
+  # send button in Joomla! 2.5 (build 29)
+
+----------------------- 3.1.28 Release [31-August-2013] -----------------------
+
+29-August-2013
+  + send from category manager (build 28)
+
+------------------------ 3.1.27 Release [18-June-2013] ------------------------
+
+18-June-2013
+  + export from category manager (build 27)
+
+----------------------- 3.1.26 Release  [16-April-2013] -----------------------
+
+16-April-2013
+  + export button in Joomla! 3.0+ (build 26)
+
+----------------------- 3.0.25 Release  [11-March-2013] -----------------------
+
+11-March-2013
+  + export/send button in weblinks manager Joomla! 2.5 (build 25)
+  + Joomla! 3 compatibility (build 24)
+  + Italian language (build 23)
+
+---------------------- 2.5.22 Release [1-September-2012] ----------------------
+
+1-September-2012
+
+24-July-2012
+  + export users
+
+27-May-2012
+  + Initial Release for Joomla! 2.5
+  
+Legend:
+
+* -> Security Fix
+# -> Bug Fix
+$ -> Language fix or change
++ -> Addition
+^ -> Change
+- -> Removed
+! -> Note

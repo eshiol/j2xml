@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="2.5.0" type="plugin" group="system" method="upgrade">
+<extension version="3.0" type="plugin" group="system" method="upgrade">
   <name>PLG_SYSTEM_J2XML</name>
   <author>Helios Ciancio</author>
-  <creationDate>February 2015</creationDate>
-  <copyright>(C) 2010-2015, Helios Ciancio. All rights reserved.</copyright>
+  <creationDate>March 2016</creationDate>
+  <copyright>(C) 2010, 2016 Helios Ciancio. All rights reserved.</copyright>
   <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <version>3.2.31.32</version>
+  <version>3.4.34.52</version>
   <description>PLG_SYSTEM_J2XML_XML_DESCRIPTION</description>
   <scriptfile>enable.php</scriptfile>
   <files>
@@ -20,8 +20,4 @@
     <language tag="it-IT">it-IT/it-IT.plg_system_j2xml.ini</language>
     <language tag="it-IT">it-IT/it-IT.plg_system_j2xml.sys.ini</language>
   </languages>
-  <media destination="plg_system_j2xml" folder="media">
-    <folder>images</folder>
-    <filename>index.html</filename>
-  </media>
 </extension>
