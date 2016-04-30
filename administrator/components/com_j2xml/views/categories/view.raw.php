@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.137 administrator/components/com_j2xml/views/categories/view.raw.php
+ * @version		3.3.144 administrator/components/com_j2xml/views/categories/view.raw.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -21,7 +21,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 jimport('eshiol.j2xml.exporter');
 
-require_once __DIR__.'/../raw.php';
+require_once dirname(__FILE__).'/../raw.php';
 
 /**
  * J2XML Component Categories View

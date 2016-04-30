@@ -1,0 +1,205 @@
+<?php
+/**
+ * @package		J2XML
+ * @subpackage	com_j2xml
+ * @version		3.3
+ *
+ * @author		Helios Ciancio <info@eshiol.it>
+ * @link		http://www.eshiol.it
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * J2XML is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ */
+?>
+
+----------------------- 3.3.148 Release  [4-April-2016] -----------------------
+
+4-April-2016
+  + html for j2xml support (build 148)
+
+----------------------- 3.3.147  Release [3-March-2016] -----------------------
+
+3-March-2016
+  # Installation (build 147)
+  $ COM_J2XML_FIELD_SERVER_* (build 146)
+
+---------------------- 3.3.145 Release [23-October-2015] ----------------------
+
+23-October-2015
+  ^ clean (build 145)
+
+---------------------- 3.3.144 Release [20-October-2015] ----------------------
+
+20-October-2015
+  # PHP 5.2 compatibility (build 144)
+
+--------------------- 3.3.143 Release [24-September-2015] ---------------------
+
+24-September-2015
+  + login xmlrpc (build 143)
+  ^ import xmlrpc (build 143)
+
+21-September-2015
+  ^ logs (build 142)
+  - import for Joomla! 2.5 (build 142)
+
+16-September-2015
+  ^ logs (build 141)
+
+--------------------- 3.2.140 Release [12-September-2015] ---------------------
+
+12-September-2015
+  # restored j2xml file format 12.5.0 (build 140)
+
+7-September-2015
+  # changed j2xml file format 15.9.0 (build 139)
+  + import view levels (build 139)
+
+5-September-2015
+  ^ logs (build 138)
+
+3-September-2015
+  + export contacts (build 137)
+
+--------------------- 3.2.136  Release [1-September-2015] ---------------------
+
+1-September-2015
+  ^ third party plugin log (build 136)
+
+30-August-2015
+  ^ export weblinks (build 135)
+  ^ send (build 134)
+
+----------------------- 3.2.133 Build  [22-August-2015] -----------------------
+
+22-August-2015
+  ^ export (build 133)
+
+------------------------ 3.2.132 Build  [18-June-2015] ------------------------
+
+18-June-2015
+  + rebuild links (build 132)
+
+------------------------- 3.2.131 Build [7-June-2015] -------------------------
+
+7-June-2015
+  + support J2XML redirect (build 131)
+  + support J2XML grab images (build 131)
+  ^ develop delete icon replace by purge icon (build 131)
+  ^ upload file (build 131)
+
+------------------------- 3.2.130 Build [2-June-2015] -------------------------
+
+2-June-2015
+  + file format check (build 130)
+
+------------------------ 3.2.129 Build [11-March-2015] ------------------------
+
+11-March-2015
+  ^ develop function (build 129)
+
+24-February-2015
+  + Joomla! 1.6 compatibility (build 128)
+
+10-November-2014
+  - filemanager library support (build 126)
+  + Auto send support (build 126)
+  $ minor language fix (build 125)
+  # minor bug fixes (build 122,123,124,125,127)
+
+22-September-2014
+  # minor bug fixes (build 121)
+  + import from server (build 121)
+
+30-August-2014
+  + import from external url (build 120)
+
+12-August-2014
+  + articles and categories cleaning (build 119)
+  # logout xmlrpc user (build 118)
+
+  
+------------------------ 3.1.117 Release [21-May-2014] ------------------------
+
+21-May-2014
+  # minor bug fixes (build 117)
+  # large dataset XML parse error - Libxml < 2.7.0 compatibility (build 116)
+
+----------------------- 3.1.115 Release [26-March-2014] -----------------------
+
+26-March-2014
+  # large dataset XML parse error (build 115)
+
+--------------------- 3.1.114 Release  [3-September-2013] ---------------------
+
+5-Semptember-2013
+  # import button in Joomla! 3.x (build 114)
+
+--------------------- 3.1.113 Release  [3-September-2013] ---------------------
+
+3-Semptember-2013
+  # xmlrpc messages (build 113)
+
+31-August-2013
+  # Websites compatibility with Joomla! 3.x (build 112)
+  # send categories (build 111)
+  # export categories (build 111)
+  
+25-August-2013
+  # JLogLogger compatibility with Joomla! 2.5 (build 110)
+
+23-August-2013
+  $ italian (build 109)
+
+23-August-2013
+  # xmlrpc (build 108)
+
+22-August-2013
+  # corrupted xml files (build 107)
+  # Format discovery
+
+------------------------ 3.1.103 Build  [29-July-2013] ------------------------
+
+29-July-2013
+  # Joomla! 3.1.4 compatibility
+
+18-June-2013
+  + export from category manager (build 101)
+
+------------------------- 3.1.101 Build [6-June-2013] -------------------------
+
+6-June-2013
+  # 5 - Extra content at the end of the document at line ...
+  # sanitize xml (build 100)
+
+5-June-2013
+  # Users exporting (build 99)
+
+----------------------- 3.1.98 Release  [16-April-2013] -----------------------
+
+16-April-2013
+  # J2XML Options
+
+----------------------- 3.0.97 Release  [11-March-2013] -----------------------
+
+11-March-2013
+  + export weblinks (build 97)
+  + export articles (build 96)
+
+----------------------- 3.0.95 Release  [10-March-2013] -----------------------
+
+10-March-2013
+  ! Initial Release for Joomla! 3 (only import)
+
+Legend:
+
+* -> Security Fix
+# -> Bug Fix
+$ -> Language fix or change
++ -> Addition
+^ -> Change
+- -> Removed
+! -> Note

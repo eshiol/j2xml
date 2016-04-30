@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.140 components/com_j2xml/helpers/xmlrpc.php
+ * @version		3.3.143 components/com_j2xml/helpers/xmlrpc.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -63,22 +63,51 @@ class plgXMLRPCJ2XMLServices
 	 * @return string
 	 * @since 1.5
 	 */
-	public static function import($xml, $username='', $password='')
+	public static function import($sessionid, $xml)
 	{
+		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry($sessionid,JLOG::DEBUG,'lib_j2xml'));
+		//JLog::add(new JLogEntry($xml,JLOG::DEBUG,'lib_j2xml'));
 		global $xmlrpcerruser, $xmlrpcI4, $xmlrpcInt, $xmlrpcBoolean, $xmlrpcDouble, $xmlrpcString, $xmlrpcDateTime, $xmlrpcBase64, $xmlrpcArray, $xmlrpcStruct, $xmlrpcValue;
-		
-		JLog::addLogger(array('text_file' => 'j2xml.php', 'extension' => 'com_j2xml'), JLog::ALL, array('lib_j2xml','com_j2xml'));
-		JLog::addLogger(array('logger' => 'xmlrpc', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
-		
+				
 		$app = JFactory::getApplication();
 		$options = array();
-		$result = $app->login(array('username'=>$username, 'password'=>$password), $options);
-				
-		if (JError::isError($result)) {
-			JLog::add(new JLogEntry(JText::_('COM_J2XML_MSG_SETCREDENTIALSFROMREQUEST_FAILED')),JLOG::ERROR,'lib_j2xml');
+		
+		/*
+		$cookieName = 'fa73a482f1c240dc4319b2fa73a8a9ee';
+		JLog::add(new JLogEntry($cookieName,JLOG::DEBUG,'lib_j2xml'));
+		
+		JLog::add(new JLogEntry(
+		get_class (JFactory::getApplication()->input->cookie)
+				,JLOG::DEBUG,'lib_j2xml'));
+		$sessionid = JFactory::getApplication()->input->cookie->get($cookieName);
+		JLog::add(new JLogEntry($sessionid,JLOG::DEBUG,'lib_j2xml'));
+		// Check for the cookie
+		if ($sessionid)
+		{
+			JFactory::getApplication()->login(array('username' => ''), array('silent' => true));
+		}
+		*/
+		/*
+		$id = JFactory::getSession()->getId();
+		JLog::add(new JLogEntry($id,JLOG::DEBUG,'com_j2xml'));
+		// TODO: use JSession
+		//JSession::getInstance('database', array('id'=>$sessionid));
+		 */
+		session_write_close();             // End the previously-started session
+		//$jd = new JSessionStorageDatabase();
+		session_id($sessionid);   // Set the new session ID
+		session_start();                   // Start it
+/*
+		if (!JSession::checkToken('get'))
+		{
+			JLog::add(new JLogEntry(JText::_('COM_J2XML_MSG_TOKEN_ERROR')),JLOG::ERROR,'lib_j2xml');
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
-
+		
+			JLog::add(new JLogEntry(JText::_('COM_J2XML_MSG_OK')),JLOG::ERROR,'lib_j2xml');
+			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
+*/		
 		$canDo	= J2XMLHelper::getActions();
 		if (!$canDo->get('core.create') &&
 				!$canDo->get('core.edit') &&
@@ -87,8 +116,8 @@ class plgXMLRPCJ2XMLServices
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
 
-		$xml = base64_decode($xml);
-		
+		//$xml = base64_decode($xml);
+
 		$data = self::gzdecode($xml);
 		if (!$data)
 			$data = $xml;
@@ -152,7 +181,7 @@ class plgXMLRPCJ2XMLServices
 		else
 			JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion)),JLOG::ERROR,'lib_j2xml');
 
-		$app->logout();
+//		$app->logout();
 		return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 	}
 
@@ -325,4 +354,38 @@ class plgXMLRPCJ2XMLServices
 				), "struct"
 			);
 	}	
+
+	/**
+	 * Import articles from xml file
+	 *
+	 * @param base64 $xml
+	 * @param string $username Username
+	 * @param string $password Password
+	 * @return string
+	 * @since 1.5
+	 */
+	public static function login($username='', $password='')
+	{
+		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'com_j2xml'));
+		JLog::add(new JLogEntry($username,JLOG::DEBUG,'com_j2xml'));
+		JLog::add(new JLogEntry($password,JLOG::DEBUG,'com_j2xml'));
+		global $xmlrpcerruser, $xmlrpcI4, $xmlrpcInt, $xmlrpcBoolean, $xmlrpcDouble, $xmlrpcString, $xmlrpcDateTime, $xmlrpcBase64, $xmlrpcArray, $xmlrpcStruct, $xmlrpcValue;
+		
+		$app = JFactory::getApplication();
+		//$options = array('remember'=>true);
+		$options = array();
+		
+		$result = $app->login(array('username'=>$username, 'password'=>$password), $options);
+		
+		if (JError::isError($result))
+			JLog::add(new JLogEntry(JText::_('COM_J2XML_MSG_SETCREDENTIALSFROMREQUEST_FAILED'),JLOG::ERROR,'com_j2xml'));
+		else
+		{
+//			jimport('joomla.user.helper');
+//			JLog::add(new JLogEntry(JUserHelper::getShortHashedUserAgent(),JLOG::INFO,'com_j2xml'));
+			JLog::add(new JLogEntry(JFactory::getSession()->getId(),JLOG::INFO,'com_j2xml'));
+		}
+		return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
+		
+	}
 }

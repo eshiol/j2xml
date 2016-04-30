@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.131 administrator/components/com_j2xml/models/cpanel/view.html.php
+ * @version		3.3.145 administrator/components/com_j2xml/models/cpanel/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,16 +8,13 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2014 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-
-// No direct access
-defined('_JEXEC') or die;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
@@ -93,28 +90,19 @@ class J2XMLViewCpanel extends JViewAbstract
 			$doc->addStyleDeclaration($icon_48_j2xml);
 			if (class_exists('JPlatform'))
 			{
-				if (version_compare(JPlatform::RELEASE, '12', 'lt'))
-				{
-					$icon_32_import = " .icon-32-j2xml-import {background:url(../media/com_j2xml/images/icon-32-import.png) no-repeat; }"; 
-					$doc->addStyleDeclaration($icon_32_import);
-					$icon_32_open = " .icon-32-j2xml-open {background:url(../media/com_j2xml/images/icon-32-open.png) no-repeat; }";
-					$doc->addStyleDeclaration($icon_32_open);
-					$toolbar->loadButtonType('Import', true);
-					$toolbar->appendButton('Import', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'cpanel.import');
-				}
-				else 
+				if (version_compare(JPlatform::RELEASE, '12', 'ge'))
 				{
 					jimport('eshiol.core.file');
 					$toolbar = JToolBar::getInstance('toolbar');
-					$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400);
+					$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null, 'xml,gz');
 				}
 			}
 //			$params = JComponentHelper::getParams('com_j2xml');
-			$hostname = JFactory::getURI()->getHost();
+//			$hostname = JFactory::getURI()->getHost();
 			if (
 //					($params->get('deveopment') &&
-					($hostname == 'localhost') &&
-					(JRequest::getCmd('develop', '0') === '1') 
+//					($hostname == 'localhost') &&
+					(JRequest::getCmd('d3v3l0p', '0') === '1') 
 			)
 				$toolbar->appendButton('Link', 'purge', 'COM_J2XML_CONTENT_DELETE', 'index.php?option=com_j2xml&task=cpanel.clean&develop=1&'.JSession::getFormToken().'=1');
 			JToolBarHelper::divider();

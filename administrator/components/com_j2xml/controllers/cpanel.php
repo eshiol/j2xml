@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.140 administrator/components/com_j2xml/controllers/cpanel.php
+ * @version		3.3.148 administrator/components/com_j2xml/controllers/cpanel.php
  *
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -19,7 +19,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-class j2xmlControllerCpanel extends JControllerAbstract
+class J2xmlControllerCpanel extends JControllerAbstract
 {
 	/**
 	 * Custom Constructor
@@ -103,6 +103,7 @@ class j2xmlControllerCpanel extends JControllerAbstract
 					return false;
 				}
 				$filename = $file['tmp_name'];
+				$extn = end(explode(".", $file['name']));
 				break;
 			case 2:
 				if (!($filename = JRequest::getVar('j2xml_url')))
@@ -110,6 +111,7 @@ class j2xmlControllerCpanel extends JControllerAbstract
 					$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
 					return false;
 				}
+				$extn = end(explode(".", $filename));
 				break;
 			case 3:
 				if ($filename = JRequest::getVar('j2xml_server', null))
@@ -119,6 +121,7 @@ class j2xmlControllerCpanel extends JControllerAbstract
 					$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
 					return false;
 				}
+				$extn = end(explode(".", $filename));
 				break;
 			default:
 				$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
@@ -126,6 +129,24 @@ class j2xmlControllerCpanel extends JControllerAbstract
 		}		
 		if (!($data = implode(gzfile($filename))))
 			$data = file_get_contents($filename);
+		
+		if (in_array($extn, array ('htm', 'html')) && (class_exists("tidy")))
+		{
+			JLog::add('tidy', JLog::DEBUG, 'com_j2xml');
+			// Specify configuration
+			$config = array(
+					'indent'         => true,
+					'output-xhtml'   => true,
+					'wrap'           => 200);
+			
+			// Tidy
+			$tidy = new tidy;
+			$tidy->parseString($data, $config, 'utf8');
+			$tidy->cleanRepair();
+			$data = $tidy;
+		}
+		
+		JLog::add($data, JLog::DEBUG, 'com_j2xml');
 		
 		$data = substr($data, strpos($data, '<?xml version="1.0" encoding="UTF-8" ?>'));
 		$data = self::stripInvalidXml($data);
@@ -223,6 +244,10 @@ class j2xmlControllerCpanel extends JControllerAbstract
 			else
 				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
 		}
+		elseif (strtoupper($xml->getName()) == 'HTML')
+		{
+			$app->enqueueMessage(JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLHTML'),'error');
+		}
 		else
 			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
 		$this->setRedirect('index.php?option=com_j2xml');	
@@ -233,10 +258,10 @@ class j2xmlControllerCpanel extends JControllerAbstract
 		// Check for request forgeries
 		JSession::checkToken('get') or die(JText::_('JINVALID_TOKEN'));
 //		$params = JComponentHelper::getParams('com_j2xml');
-		$hostname = JFactory::getURI()->getHost();
+//		$hostname = JFactory::getURI()->getHost();
 		if (
 //				($params->get('deveopment') &&
-				($hostname == 'localhost') &&
+//				($hostname == 'localhost') &&
 				(JRequest::getCmd('d3v3l0p', '0') === '1') 
 		)
 		{

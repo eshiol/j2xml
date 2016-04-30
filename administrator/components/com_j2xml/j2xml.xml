@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="2.5.0" type="component" method="upgrade">
+<extension version="3" type="component" method="upgrade">
   <name>COM_J2XML</name>
-  <creationDate>September 2015</creationDate>
+  <creationDate>April 2016</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <copyright>(C) 2010-2015, Helios Ciancio. All rights reserved.</copyright>
+  <copyright>(C) 2010, 2016 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>3.2.140.179</version>
+  <version>3.3.148.208</version>
   <description>COM_J2XML_XML_DESCRIPTION</description>
+  <scriptfile>script.php</scriptfile>
   <install>
     <sql>
       <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
