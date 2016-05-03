@@ -2,18 +2,19 @@
 <extension version="3.0" type="library" method="upgrade">
   <name>eshiol</name>
   <libraryname>eshiol/core</libraryname>
-  <creationDate>April 2016</creationDate>
+  <creationDate>May 2016</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright>(C) 2012, 2016 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>16.4.20.100</version>
+  <version>16.4.21.110</version>
   <description>LIB_ESHIOL_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
   <files>
     <filename>index.html</filename>
     <filename>file.php</filename>
+    <filename>link2.php</filename>
     <filename>send.php</filename>
     <filename>sendbydate.php</filename>
     <filename>standard2.php</filename>
