@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.131 administrator/components/com_j2xml/views/cpanel/tmpl/default.php
+ * @version		3.3.149 administrator/components/com_j2xml/views/cpanel/tmpl/default.php
  * @package		J2XML
  * @subpackage	com_j2xml
  * @since		1.5.3
@@ -56,16 +56,14 @@ foreach($files as $file)
 				$attr = $xml->attributes();
 				if ($attr['type'] == 'plugin')
 				{
-					$lang->load('plg_'.$attr['group'].'_'.$extension, JPATH_SITE, null, false, false)
-					|| $lang->load('plg_'.$attr['group'].'_'.$extension, JPATH_ADMINISTRATOR, null, false, false)
-					|| $lang->load('plg_'.$attr['group'].'_'.$extension, JPATH_SITE, null, true)
-					|| $lang->load('plg_'.$attr['group'].'_'.$extension, JPATH_ADMINISTRATOR, null, true);
+					$lang->load('plg_'.$attr['group'].'_'.$extension, JPATH_PLUGINS.'/'.$attr['group'].'/'.$extension, null, false, false)
+					|| $lang->load('plg_'.$attr['group'].'_'.$extension, JPATH_PLUGINS.'/'.$attr['group'].'/'.$extension, null, true);
 				}
 				else if ($attr['type'] = 'library')
 				{
 					$lang->load('lib_'.$extension, JPATH_SITE, null, false, false)
 					|| $lang->load('lib_'.$extension, JPATH_ADMINISTRATOR, null, false, false)
-					// Fallback to the lib_joomla file in the default language
+					// Fallback to the library file in the default language
 					|| $lang->load('lib_'.$extension, JPATH_SITE, null, true)
 					|| $lang->load('lib_'.$extension, JPATH_ADMINISTRATOR, null, true);
 				}

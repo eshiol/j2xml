@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3" type="component" method="upgrade">
   <name>COM_J2XML</name>
-  <creationDate>April 2016</creationDate>
+  <creationDate>May 2016</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright>(C) 2010, 2016 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>3.3.148.208</version>
+  <version>3.3.149.223</version>
   <description>COM_J2XML_XML_DESCRIPTION</description>
-  <scriptfile>script.php</scriptfile>
   <install>
     <sql>
       <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
@@ -20,11 +19,6 @@
       <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
     </sql>
   </uninstall>
-  <update>
-    <schemas>
-      <schemapath type="mysql">sql/updates</schemapath>
-    </schemas>
-  </update>
   <files folder="site">
     <filename>index.html</filename>
     <filename>j2xml.php</filename>
@@ -50,17 +44,12 @@
       <folder>buttons</folder>
       <folder>controllers</folder>
       <folder>helpers</folder>
+      <folder>language</folder>
       <folder>models</folder>
       <folder>sql</folder>
       <folder>tables</folder>
       <folder>views</folder>
     </files>
-    <languages folder="admin/language">
-      <language tag="en-GB">en-GB/en-GB.com_j2xml.ini</language>
-      <language tag="en-GB">en-GB/en-GB.com_j2xml.sys.ini</language>
-      <language tag="it-IT">it-IT/it-IT.com_j2xml.ini</language>
-      <language tag="it-IT">it-IT/it-IT.com_j2xml.sys.ini</language>
-    </languages>
   </administration>
   <media destination="com_j2xml" folder="media">
     <folder>files</folder>
