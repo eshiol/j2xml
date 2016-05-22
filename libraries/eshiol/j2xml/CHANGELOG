@@ -16,6 +16,12 @@
 ?>
 
 
+----------------------- 16.5.279 Release  [22-May-2016] -----------------------
+
+21-May-2016
+  # usergroup null (build 279)
+  + import users with clear password (build 278)
+
 ---------------------- 16.1.277 Release [8-January-2016] ----------------------
 
 8-January-2016

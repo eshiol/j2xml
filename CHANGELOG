@@ -1,11 +1,11 @@
 <?php
 /**
  * @package		J2XML
- * @version		3.2
+ * @version		3.3
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -13,6 +13,31 @@
  * other free or open source software licenses.
  */
 ?>
+
+---------------------------- 3.3.18  [22-May-2016] ----------------------------
+
+lib_eshiol-16.4.21
+  + link2 button - window.open (build 21)
+  ^ sendbydate button - mobile (build 20)
+  ^ file button - mobile (build 20)
+  ^ file button - plugins (build 19)
+  ^ file button (build 18)
+  ^ sendbydate button (18)
+  
+lib_j2xml-16.5.279
+  # usergroup null (build 279)
+  + import users with clear password (build 278)
+
+com_j2xml-3.3.150
+  ^ user group numeric (build 150)
+  + onContentPrepareData (build 150)
+  - html for j2xml support (build 150)
+  # installation (build 149)
+  + html for j2xml support (build 148)
+
+cli_j2xml-3.3.11
+
+plg_system-3.4.34
 
 ---------------------------- 3.3.17 [3-march-2016] ----------------------------
 
