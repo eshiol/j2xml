@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		16.1.277 libraries/eshiol/j2xml/importer.php
+ * @version		16.5.279 libraries/eshiol/j2xml/importer.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -19,12 +19,15 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
+use Joomla\Registry\Registry;
+
 JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_weblinks/tables');
 JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_contact/tables');
 JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_buttons/tables');
 
 //jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
+jimport('joomla.user.helper');
 
 if (class_exists('JHelperTags'))
 	jimport('eshiol.j2xml.helper.tags');
@@ -109,6 +112,7 @@ class J2XMLImporter
 	
 	function import($xml, $params)
 	{
+		JLog::addLogger(array('text_file' => 'j2xml.php', 'extension' => 'lib_j2xml'), JLog::ALL, array('lib_j2xml'));
 		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
 		
 		//gc_enable(); // Enable Garbage Collector
@@ -121,82 +125,103 @@ class J2XMLImporter
 		
 		if ($import_users)
 		{
+			require_once JPATH_ADMINISTRATOR.'/components/com_users/models/user.php';
+			JFactory::getLanguage()->load('com_users', JPATH_SITE);
+			
+			$autoincrement = 0;
+			$query = "SELECT max(`id`) from #__users";
+			$db->setQuery($query);
+			$maxid = $db->loadResult();
+			
 			foreach($xml->xpath("//j2xml/user[not(username = '')]") as $record)
 			{
 				$this->prepareData($record, $data, $params);
 				
-				$alias = $data['username'];
-				$id = $data['id'];
+				$registry = new Registry($data['params']);
+				$data['params'] = $registry->toArray();
+				
+				if (isset($data['group']))
+				{
+					$data['group'] = $this->getUsergroupId($data['group']);
+				}
+				elseif (isset($data['grouplist']))
+				{
+					$data['groups'] = array();
+					foreach ($data['grouplist'] as $v)
+						$data['groups'][] = $this->getUsergroupId($v);
+					unset($data['grouplist']);
+				}
+				
+				if (isset($data['password']))
+				{
+					$data['password_crypted'] = $data['password2'] = $data['password'];
+				}
+				elseif (isset($data['password_clear']))
+				{
+					$data['password'] = $data['password2'] = $data['password_clear'];
+				}
+				else
+				{
+					$data['password'] = $data['password2'] = JUserHelper::genRandomPassword();
+				}
+
+				$user_id = $data['id'];
+				unset($data['id']);
 				$query = 'SELECT id, name'
 					. ' FROM #__users'
 					. ' WHERE'. (($keep_user_id == 1)
-					? ' id = '.$id
-					: ' username = '.$db->Quote($alias)
+					? ' id = '.$user_id
+					: ' username = '.$db->q($data['username'])
 					)
 					;
 				$db->setQuery($query);
-				$user = $db->loadObject();
-				if (!$user || ($import_users == 2))
+				$data['id'] = $db->loadResult();
+				if (!$data['id'] || ($import_users == 2))
 				{
-					$table = JTable::getInstance('user');
-					if (!$user)
+					$user = new UsersModelUser();
+					if ($user->save($data) && isset($data['password_crypted']))
 					{
-						$data['id'] = null;
-					}
-					else
-					{
-						$data['id'] = $user->id;
-						$table->load($data['id']);
-					}
-	
-					// Add the groups to the user data.
-					$groups_id = array();
-					if (isset($data['group']))
-						$groups_id[] = $data['group'];
-					if (isset($data['grouplist']))
-						foreach ($data['grouplist'] as $v)
-							$groups_id[] = $v;
-											
-					for($i = 0; $i < count($groups_id); $i++)
-						$groups_id[$i] = $this->getUsergroupId($groups_id[$i]);
-					$data['groups'] = $groups_id;
+						// set password
+						$db  = JFactory::getDbo();
+						$query = $db->getQuery(true)
+							->update('#__users')
+							->set($db->qn('password') . ' = ' . $db->q($data['password_crypted']))
+							->where($db->qn('id') . ' = ' . $user->getState('user.id'))
+							;
+						$db->setQuery($query);
+						$db->execute();
 
-					if (count($data['groups']) == 0)
-						$data['groups']['Public'] = 1;
-
-					if (!$keep_user_attribs)
-						$data['attribs'] = null;
-		
-					//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));	
-					if ($table->save($data))
-					{
-						if (!$user && ($keep_user_id == 1))
+						if ($user_id && !$data['id'] && ($keep_user_id == 1))
 						{
-							$query = "UPDATE #__users SET id = {$id} WHERE id = {$table->id}";
+							$id = $user->getState('user.id');
+							$query = "UPDATE #__users SET id = {$user_id} WHERE id = {$id}";
 							$db->setQuery($query);
 							$db->query();
-							$query = "UPDATE #__user_usergroup_map SET user_id={$id} WHERE user_id={$table->id}";
+							$query = "UPDATE #__user_usergroup_map SET user_id={$user_id} WHERE user_id={$id}";
 							$db->setQuery($query);
 							$db->query();
-							$table->id = $id;
-		
-							$query = "SELECT max(`id`)+1 from #__users";
-							$db->setQuery($query);
-							$maxid = $db->loadResult();
-		
-							$query = "ALTER TABLE #__users AUTO_INCREMENT = {$maxid}";
-							$db->setQuery($query);
-							$db->query();
+							if ($user_id >= $autoincrement)
+							{
+								$autoincrement = $user_id + 1;
+							}
 						}
-						JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_USER_IMPORTED', $table->name),JLOG::INFO,'lib_j2xml'));
+
+						JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_USER_IMPORTED', $data['name']),JLOG::INFO,'lib_j2xml'));
 					}
 					else
 					{
 						JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_USER_NOT_IMPORTED', $data['name']),JLOG::ERROR,'lib_j2xml'));
-						JLog::add(new JLogEntry($table->getError(), JLOG::ERROR, 'lib_j2xml'));
 					}
-					$table = null;
 				}
+			}
+			if ($autoincrement)
+			{
+				 if ($autoincrement > $maxid)
+				 {
+					 $query = "ALTER TABLE #__users AUTO_INCREMENT = {$autoincrement}";
+					 $db->setQuery($query);
+					 $db->query();
+				 }
 			}
 		}
 
@@ -1237,33 +1262,51 @@ class J2XMLImporter
 	function getUsergroupId($usergroup)
 	{
 		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		$db = JFactory::getDBO();		
-		$query = $db->getQuery(true);
-		$query->select($db->quoteName('id'));
-		$query->from($db->quoteName('#__j2xml_usergroups'));
-		$query->where($db->quoteName('title').'='.$db->quote($usergroup));
-		$db->setQuery($query);
-		if (!($usergroup_id = $db->loadResult()))
+		
+		if (empty($usergroup))
 		{
-			$groups = json_decode($usergroup);
-			$g = array();
-			$usergroup_id = 0;
-			for ($j = 0; $j < count($groups); $j++)
+			$usergroup_id = JComponentHelper::getParams('com_users')->get('new_usertype');
+		} 
+		elseif (!is_numeric($usergroup))
+		{
+			$db = JFactory::getDBO();		
+			$query = $db->getQuery(true);
+			$query->select($db->quoteName('id'));
+			$query->from($db->quoteName('#__j2xml_usergroups'));
+			$query->where($db->quoteName('title').'='.$db->quote($usergroup));
+			$db->setQuery($query);
+			if (!($usergroup_id = $db->loadResult()))
 			{
-				$g[] = $groups[$j];
-				$group = json_encode($g, JSON_NUMERIC_CHECK);
-				if (isset($this->_usergroups[$group]))
+				$groups = json_decode($usergroup);
+				$g = array();
+				$usergroup_id = 0;
+				for ($j = 0; $j < count($groups); $j++)
 				{
-					$usergroup_id = $this->_usergroups[$group];
+					$g[] = $groups[$j];
+					$group = json_encode($g, JSON_NUMERIC_CHECK);
+					if (isset($this->_usergroups[$group]))
+					{
+						$usergroup_id = $this->_usergroups[$group];
+					}
+					else // if import usergroup
+					{
+						$u = JTable::getInstance('Usergroup');
+						$u->save(array('title'=>$groups[$j], 'parent_id'=>$usergroup_id));
+						$this->_usergroups[$group] = $usergroup_id = $u->id;
+						JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_USERGROUP_IMPORTED', $group),JLOG::INFO,'lib_j2xml'));
+					}
 				}
-				else // if import usergroup
-				{
-					$u = JTable::getInstance('Usergroup');
-					$u->save(array('title'=>$groups[$j], 'parent_id'=>$usergroup_id));
-					$this->_usergroups[$group] = $usergroup_id = $u->id;
-					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_USERGROUP_IMPORTED', $group),JLOG::INFO,'lib_j2xml'));
-				}
+				if ($usergroup_id == 0)
+					$usergroup_id = JComponentHelper::getParams('com_users')->get('new_usertype');			
 			}
+		}
+		elseif ($usergroup > 0)
+		{
+			$usergroup_id = $usergroup;
+		}
+		else
+		{
+			$usergroup_id = JComponentHelper::getParams('com_users')->get('new_usertype');
 		}
 		JLog::add(new JLogEntry($usergroup.' -> '.$usergroup_id,JLOG::DEBUG,'lib_j2xml'));
 		return $usergroup_id;
