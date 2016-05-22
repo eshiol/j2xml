@@ -179,36 +179,50 @@ class J2XMLImporter
 				if (!$data['id'] || ($import_users == 2))
 				{
 					$user = new UsersModelUser();
-					if ($user->save($data) && isset($data['password_crypted']))
-					{
-						// set password
-						$db  = JFactory::getDbo();
-						$query = $db->getQuery(true)
-							->update('#__users')
-							->set($db->qn('password') . ' = ' . $db->q($data['password_crypted']))
-							->where($db->qn('id') . ' = ' . $user->getState('user.id'))
-							;
-						$db->setQuery($query);
-						$db->execute();
+					$result = $user->save($data);
 
-						if ($user_id && !$data['id'] && ($keep_user_id == 1))
+					$db->setQuery('SELECT id FROM #__users WHERE username = '.$db->q($data['username']));
+					if ($id = $db->loadResult())
+					{
+						
+						if ($error = $user->getError())
 						{
-							$id = $user->getState('user.id');
-							$query = "UPDATE #__users SET id = {$user_id} WHERE id = {$id}";
+							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_USER_IMPORTED_WITH_ERRORS', $data['name']),JLOG::WARNING,'lib_j2xml'));
+							JLog::add(new JLogEntry($error,JLOG::WARNING,'lib_j2xml'));
+						}
+						else
+						{
+							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_USER_IMPORTED', $data['name']),JLOG::INFO,'lib_j2xml'));
+						}
+						if(isset($data['password_crypted']))
+						{
+							// set password
+							$db  = JFactory::getDbo();
+							$query = $db->getQuery(true)
+								->update('#__users')
+								->set($db->qn('password') . ' = ' . $db->q($data['password_crypted']))
+								->where($db->qn('id') . ' = ' . $id)
+								;
 							$db->setQuery($query);
-							$db->query();
-							$query = "UPDATE #__user_usergroup_map SET user_id={$user_id} WHERE user_id={$id}";
-							$db->setQuery($query);
-							$db->query();
-							if ($user_id >= $autoincrement)
+							$db->execute();
+	
+							if ($user_id && !$data['id'] && ($keep_user_id == 1))
 							{
-								$autoincrement = $user_id + 1;
+								$id = $user->getState('user.id');
+								$query = "UPDATE #__users SET id = {$user_id} WHERE id = {$id}";
+								$db->setQuery($query);
+								$db->query();
+								$query = "UPDATE #__user_usergroup_map SET user_id={$user_id} WHERE user_id={$id}";
+								$db->setQuery($query);
+								$db->query();
+								if ($user_id >= $autoincrement)
+								{
+									$autoincrement = $user_id + 1;
+								}
 							}
 						}
-
-						JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_USER_IMPORTED', $data['name']),JLOG::INFO,'lib_j2xml'));
 					}
-					else
+					else 
 					{
 						JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_USER_NOT_IMPORTED', $data['name']),JLOG::ERROR,'lib_j2xml'));
 					}
