@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.3.148 administrator/components/com_j2xml/controllers/cpanel.php
+ * @version		3.3.150 administrator/components/com_j2xml/controllers/cpanel.php
  *
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -128,26 +128,15 @@ class J2xmlControllerCpanel extends JControllerAbstract
 				return false;
 		}		
 		if (!($data = implode(gzfile($filename))))
-			$data = file_get_contents($filename);
-		
-		if (in_array($extn, array ('htm', 'html')) && (class_exists("tidy")))
 		{
-			JLog::add('tidy', JLog::DEBUG, 'com_j2xml');
-			// Specify configuration
-			$config = array(
-					'indent'         => true,
-					'output-xhtml'   => true,
-					'wrap'           => 200);
-			
-			// Tidy
-			$tidy = new tidy;
-			$tidy->parseString($data, $config, 'utf8');
-			$tidy->cleanRepair();
-			$data = $tidy;
+			$data = file_get_contents($filename);
 		}
-		
-		JLog::add($data, JLog::DEBUG, 'com_j2xml');
-		
+
+		$dispatcher = JDispatcher::getInstance();
+		JPluginHelper::importPlugin('j2xml');
+
+		$results = $dispatcher->trigger('onContentPrepareData', array('com_j2xml.cpanel', &$data));
+
 		$data = substr($data, strpos($data, '<?xml version="1.0" encoding="UTF-8" ?>'));
 		$data = self::stripInvalidXml($data);
 		if (!defined('LIBXML_PARSEHUGE'))
@@ -182,8 +171,6 @@ class J2xmlControllerCpanel extends JControllerAbstract
 			return false;
 		}
 		
-		$dispatcher = JDispatcher::getInstance();
-		JPluginHelper::importPlugin('j2xml');
 		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
 		
 		if (!$xml)

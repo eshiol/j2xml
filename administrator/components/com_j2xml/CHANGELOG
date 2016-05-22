@@ -15,7 +15,12 @@
  */
 ?>
 
------------------------- 3.3.149 Release [12-May-2016] ------------------------
+------------------------ 3.3.150 Release [18-May-2016] ------------------------
+
+18-May-2016
+  ^ user group numeric (build 150)
+  + onContentPrepareData (build 150)
+  - html for j2xml support (build 150)
 
 12-May-2016
   # installation (build 149)
