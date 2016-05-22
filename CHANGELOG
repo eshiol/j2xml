@@ -14,7 +14,7 @@
  */
 ?>
 
----------------------------- 3.3.18  [22-May-2016] ----------------------------
+---------------------------- 3.3.16  [22-May-2016] ----------------------------
 
 lib_eshiol-16.4.21
   + link2 button - window.open (build 21)
@@ -22,7 +22,7 @@ lib_eshiol-16.4.21
   ^ file button - mobile (build 20)
   ^ file button - plugins (build 19)
   ^ file button (build 18)
-  ^ sendbydate button (18)
+  ^ sendbydate button (17, 18)
   
 lib_j2xml-16.5.279
   # usergroup null (build 279)
@@ -34,19 +34,6 @@ com_j2xml-3.3.150
   - html for j2xml support (build 150)
   # installation (build 149)
   + html for j2xml support (build 148)
-
-cli_j2xml-3.3.11
-
-plg_system-3.4.34
-
----------------------------- 3.3.17 [3-march-2016] ----------------------------
-
-lib_eshiol-16.2.17
-  ^ sendbydate button (build 17)
-
-lib_j2xml-16.1.277
-
-com_j2xml-3.3.147
   # Installation (build 147)
   $ COM_J2XML_FIELD_SERVER_* (build 146)
 
