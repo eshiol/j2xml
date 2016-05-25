@@ -14,7 +14,7 @@
  */
 ?>
 
----------------------------- 3.3.16  [22-May-2016] ----------------------------
+---------------------------- 3.3.17  [25-May-2016] ----------------------------
 
 lib_eshiol-16.4.21
   + link2 button - window.open (build 21)
@@ -28,7 +28,7 @@ lib_j2xml-16.5.279
   # usergroup null (build 279)
   + import users with clear password (build 278)
 
-com_j2xml-3.3.150
+com_j2xml-3.3.151
   ^ user group numeric (build 150)
   + onContentPrepareData (build 150)
   - html for j2xml support (build 150)

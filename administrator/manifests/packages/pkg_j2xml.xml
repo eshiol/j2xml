@@ -4,7 +4,7 @@
   <author>Helios Ciancio</author>
   <creationDate>May 2016</creationDate>
   <packagename>j2xml</packagename>
-  <version>3.3.16.461</version>
+  <version>3.3.17.463</version>
   <url>http://www.eshiol.it</url>
   <packager>Helios Ciancio</packager>
   <packagerurl>http://www.eshiol.it/</packagerurl>
@@ -13,11 +13,11 @@
     <server type="extension" priority="1" name="J2XML Updates">http://www.eshiol.it/updates/packages/j2xml-updates?format=xml&amp;dummy=extension.xml</server>
   </updateservers>
   <files>
-    <folder type="library" id="eshiol/core">lib_eshiol-16.5.21.117.zip</folder>
-    <folder type="library" id="eshiol/j2xml">lib_j2xml-16.5.279.487.zip</folder>
-    <folder type="component" id="j2xml">com_j2xml-3.3.150.226.zip</folder>
-    <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.4.34.59.zip</folder>
-    <folder type="file" id="j2xml">cli_j2xml-3.3.12.27.zip</folder>
+    <folder type="library" id="eshiol/core">lib_eshiol-16.5.21.119.zip</folder>
+    <folder type="library" id="eshiol/j2xml">lib_j2xml-16.5.279.489.zip</folder>
+    <folder type="component" id="j2xml">com_j2xml-3.3.151.228.zip</folder>
+    <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.4.34.61.zip</folder>
+    <folder type="file" id="j2xml">cli_j2xml-3.3.12.29.zip</folder>
   </files>
   <languages folder="language">
     <language tag="en-GB">en-GB/en-GB.pkg_j2xml.sys.ini</language>
