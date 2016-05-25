@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.131 administrator/components/com_j2xml/models/cpanel/view.html.php
+ * @version		3.2.144 administrator/components/com_j2xml/models/cpanel/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2014 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -18,9 +18,6 @@
 
 // No direct access
 defined('_JEXEC') or die;
-
-// no direct access
-defined('_JEXEC') or die('Restricted access.');
 
 jimport('joomla.html.html.tabs');
 
@@ -121,7 +118,13 @@ class J2XMLViewCpanel extends JViewAbstract
 		}	
 		if ($canDo->get('core.admin')) {
 			JToolBarHelper::preferences('com_j2xml');
-		}		
+		}
+		
+		if (version_compare(JPlatform::RELEASE, '12', 'ge'))
+		{
+			$doc->addStyleDeclaration('#toolbar-credit{float:right;}');
+			$toolbar->appendButton('Link', 'credit', 'COM_J2XML_DONATE', 'http://www.eshiol.it/'.Jtext::_('COM_J2XML_DONATE_1'));
+		}
 	}
 }
 ?>

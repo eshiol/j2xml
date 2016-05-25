@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `#__j2xml_websites` (
 	`checked_out` int(11) NOT NULL DEFAULT '0',
 	`checked_out_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 	PRIMARY KEY  (`id`)
-	) ENGINE=MyISAM CHARACTER SET `utf8` COLLATE `utf8_general_ci`;	
+	) ENGINE=InnoDB  DEFAULT CHARSET=utf8;	
 
 CREATE TABLE IF NOT EXISTS `#__j2xml_usergroups` (
 	`id` int(10) unsigned NOT NULL,
