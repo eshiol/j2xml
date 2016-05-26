@@ -6,9 +6,9 @@
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <copyright>(C) 2010-2016, Helios Ciancio. All rights reserved.</copyright>
+  <copyright>(C) 2010, 2016 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>16.5.279.489</version>
+  <version>16.5.280.490</version>
   <description>LIB_J2XML_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
   <files>

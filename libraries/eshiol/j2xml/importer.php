@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		16.5.279 libraries/eshiol/j2xml/importer.php
+ * @version		16.5.280 libraries/eshiol/j2xml/importer.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -154,7 +154,8 @@ class J2XMLImporter
 				
 				if (isset($data['password']))
 				{
-					$data['password_crypted'] = $data['password2'] = $data['password'];
+					$data['password_crypted'] = $data['password'];
+					$data['password2'] = $data['password'] = JText::_('LIB_J2XML_PASSWORD_NOT_AVAILABLE');
 				}
 				elseif (isset($data['password_clear']))
 				{
