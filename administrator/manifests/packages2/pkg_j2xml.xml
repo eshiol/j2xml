@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="package" version="3.0" method="upgrade">
+  <name>pkg_j2xml</name>
+  <author>Helios Ciancio</author>
+  <creationDate>November 2016</creationDate>
+  <packagename>j2xml</packagename>
+  <version>3.6.160.471</version>
+  <url>http://www.eshiol.it</url>
+  <packager>Helios Ciancio</packager>
+  <packagerurl>http://www.eshiol.it/</packagerurl>
+  <description>PKG_J2XML_XML_DESCRIPTION</description>
+  <files>
+    <folder type="library" id="eshiol">lib_eshiol-16.5.21.122.zip</folder>
+    <folder type="library" id="j2xml">lib_j2xml-16.7.283.500.zip</folder>
+    <folder type="component" id="j2xml">com_j2xml-3.3.153.237.zip</folder>
+    <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.4.34.64.zip</folder>
+  </files>
+  <languages folder="language">
+    <language tag="en-GB">en-GB/en-GB.pkg_j2xml.sys.ini</language>
+    <language tag="it-IT">it-IT/it-IT.pkg_j2xml.sys.ini</language>
+  </languages>
+</extension>

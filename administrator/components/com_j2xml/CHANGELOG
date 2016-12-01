@@ -1,24 +1,42 @@
-<?php
-/**
- * @package		J2XML
- * @subpackage	com_j2xml
- * @version		3.3
- *
- * @author		Helios Ciancio <info@eshiol.it>
- * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
- * J2XML is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- */
-?>
+--------------------- 3.6.160 Release  [29-November-2016] ---------------------
+
+29-November-2016
+  + ajax (build 160)
+  - 2.5 compatibility (build 160)
+  + import Ajax (build 159)
+  + PHP Console (build 158)
+  + OAuth2 (build 158)
+
+---------------------- 3.6.157 Release [31-October-2016] ----------------------
+
+31-October-2016
+  ^ debug (build 157)
+  ^ utf8_encode (build 156)
+
+---------------------- 3.3.155 Release [17-October-2016] ----------------------
+
+17-October-2016
+  ^ purify xml (build 155)
+
+--------------------- 3.3.154 Release [19-September-2016] ---------------------
+
+19-September-2016
+  # messages (build 154)
+
+------------------------ 3.3.153 Release [31-May-2016] ------------------------
+
+31-May-2016
+  # log (build 153)
+
+------------------------ 3.3.152 Release [26-May-2016] ------------------------
+
+26-May-2016
+  # manifest (build 152)
 
 ------------------------ 3.3.151 Release [25-May-2016] ------------------------
 
 25-May-2016
-  ! stable release
+  ! stable release (build 151)
 
 18-May-2016
   ^ user group numeric (build 150)

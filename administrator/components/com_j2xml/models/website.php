@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.126 administrator/com_j2xml/models/website.php
+ * @version		3.6.158 administrator/com_j2xml/models/website.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2014 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -24,7 +24,7 @@ jimport('joomla.application.component.modeladmin');
 /**
  * Website model
  */
-class J2XMLModelWebsiteBase extends JModelAdmin
+class J2XMLModelWebsite extends JModelAdmin
 {
 	/**
 	 * Method to test whether a record can be deleted.
@@ -35,6 +35,8 @@ class J2XMLModelWebsiteBase extends JModelAdmin
 	 */
 	protected function canDelete($record)
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		
 		if (!empty($record->id)) {
 			if ($record->state != -2) {
 				return ;
@@ -54,6 +56,8 @@ class J2XMLModelWebsiteBase extends JModelAdmin
 	 */
 	protected function canEditState($record)
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		
 		$user = JFactory::getUser();
 
 		return $user->authorise('core.edit.state', 'com_j2xml');
@@ -70,6 +74,8 @@ class J2XMLModelWebsiteBase extends JModelAdmin
 	 */
 	public function getTable($type = 'Website', $prefix = 'J2XMLTable', $config = array())
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -83,6 +89,8 @@ class J2XMLModelWebsiteBase extends JModelAdmin
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		
 		// Get the form.
 		$form = $this->loadForm('com_j2xml.website', 'website', array('control' => 'jform', 'load_data' => $loadData));
 		if (empty($form)) {
@@ -100,6 +108,8 @@ class J2XMLModelWebsiteBase extends JModelAdmin
 	 */
 	protected function loadFormData()
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		
 		// Check the session for previously entered form data.
 		$data = JFactory::getApplication()->getUserState('com_j2xml.edit.website.data', array());
 
@@ -109,37 +119,65 @@ class J2XMLModelWebsiteBase extends JModelAdmin
 
 		return $data;
 	}
-}
 
-if (version_compare(JPlatform::RELEASE, '12', 'ge'))
-{
-	class J2XMLModelWebsite extends J2XMLModelWebsiteBase
+	/**
+	 * Prepare and sanitise the table data prior to saving.
+	 *
+	 * @param	JTable	A JTable object.
+	 * @since	1.6
+	 */
+	protected function prepareTable($table)
 	{
-		/**
-		 * Prepare and sanitise the table data prior to saving.
-		 *
-		 * @param	JTable	A JTable object.
-		 * @since	1.6
-		 */
-		protected function prepareTable($table)
-		{
-			$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
-		}
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		
+		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 	}
-}
-else 
-{
-	class J2XMLModelWebsite extends J2XMLModelWebsiteBase 	
+
+	/**
+	 * Method to save the form data.
+	 *
+	 * @param   array  $data  The form data.
+	 *
+	 * @return  boolean  True on success.
+	 *
+	 * @since	3.7
+	 */
+	public function save($data)
 	{
-		/**
-		 * Prepare and sanitise the table data prior to saving.
-		 *
-		 * @param	JTable	A JTable object.
-		 * @since	1.6
-		 */
-		protected function prepareTable(&$table)
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+	
+		if ($data['type'] == 1)
 		{
-			$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
+			$data['username'] = $data['client_id'];
+			$data['password'] = $data['client_secret'];
 		}
+	
+		return parent::save($data);
+	}
+
+
+	/**
+	 * Method to get a single record.
+	 *
+	 * @param   integer  $pk  The id of the primary key.
+	 *
+	 * @return  mixed  Object on success, false on failure.
+	 *
+	 * @since   3.7
+	 */
+	public function getItem($pk = null)
+	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+
+		if ($item = parent::getItem($pk))
+		{
+			if ($item->type == 1)
+			{
+				$item->client_id = $item->username;
+				$item->client_secret = $item->password;
+			}
+		}
+
+		return $item;
 	}
 }

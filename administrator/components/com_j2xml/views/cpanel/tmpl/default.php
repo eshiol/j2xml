@@ -1,13 +1,13 @@
 <?php
 /**
- * @version		3.3.149 administrator/components/com_j2xml/views/cpanel/tmpl/default.php
+ * @version		3.6.160 administrator/components/com_j2xml/views/cpanel/tmpl/default.php
  * @package		J2XML
  * @subpackage	com_j2xml
  * @since		1.5.3
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -56,16 +56,11 @@ foreach($files as $file)
 				$attr = $xml->attributes();
 				if ($attr['type'] == 'plugin')
 				{
-					$lang->load('plg_'.$attr['group'].'_'.$extension, JPATH_PLUGINS.'/'.$attr['group'].'/'.$extension, null, false, false)
-					|| $lang->load('plg_'.$attr['group'].'_'.$extension, JPATH_PLUGINS.'/'.$attr['group'].'/'.$extension, null, true);
+					$lang->load('plg_'.$attr['group'].'_'.$extension);
 				}
 				else if ($attr['type'] = 'library')
 				{
-					$lang->load('lib_'.$extension, JPATH_SITE, null, false, false)
-					|| $lang->load('lib_'.$extension, JPATH_ADMINISTRATOR, null, false, false)
-					// Fallback to the library file in the default language
-					|| $lang->load('lib_'.$extension, JPATH_SITE, null, true)
-					|| $lang->load('lib_'.$extension, JPATH_ADMINISTRATOR, null, true);
+					$lang->load('lib_'.$extension);
 				}
 				$exts = $exts + array(JText::_((string)$xml->name)
 					//.' '.ucfirst($attr['group'])

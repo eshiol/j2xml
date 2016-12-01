@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		16.1.275 libraries/eshiol/j2xml/messages.php
+ * @version		16.10.286 libraries/eshiol/j2xml/messages.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -50,5 +50,10 @@ class J2XMLMessages
 		'LIB_J2XML_MSG_VIEWLEVEL_NOT_IMPORTED',
 		'LIB_J2XML_MSG_BUTTON_IMPORTED',
 		'LIB_J2XML_MSG_BUTTON_NOT_IMPORTED',
+		//'LIB_J2XML_MSG_UNKNOWN_ERROR',
+		//'LIB_J2XML_MSG_UNKNOWN_WARNING',
+		//'LIB_J2XML_MSG_UNKNOWN_NOTICE',
+		//'LIB_J2XML_MSG_UNKNOWN_MESSAGE',
+		32 => 'LIB_J2XML_XMLRPC_DISABLED',
 	);
 }

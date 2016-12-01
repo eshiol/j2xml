@@ -132,4 +132,3 @@ class plgSystemJ2XML extends JPlugin
 		return $websites;
 	}
 }
-?>

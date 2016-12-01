@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.1.112 administrator/components/com_j2xml/views/vebsites/view.html.php
+ * @version		3.6.158 administrator/components/com_j2xml/views/vebsites/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2013 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -51,7 +51,7 @@ class J2XMLViewWebsites extends JViewAbstract
 			$this->sidebar = JHtmlSidebar::render();
 		}
 		$this->addToolbar();
-		
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
 			JError::raiseError(500, implode("\n", $errors));
@@ -75,7 +75,7 @@ class J2XMLViewWebsites extends JViewAbstract
 		$doc = JFactory::getDocument();
 		$icon_48_websites = " .icon-48-websites {background:url(../media/com_j2xml/images/icon-48-websites.png) no-repeat; }";
 		$doc->addStyleDeclaration($icon_48_websites);
-		
+
 		JToolBarHelper::title(JText::_('COM_J2XML_MANAGER_WEBSITES'), 'websites.png');
 		if ($canDo->get('core.create')) {
 			JToolBarHelper::addNew('website.add');
@@ -89,6 +89,7 @@ class J2XMLViewWebsites extends JViewAbstract
 			JToolBarHelper::unpublish('websites.unpublish', 'JTOOLBAR_UNPUBLISH', true);
 			JToolBarHelper::divider();
 			JToolBarHelper::checkin('websites.checkin');
+			JToolBarHelper::divider();
 		}
 		if ($this->state->get('filter.state') == -2 && $canDo->get('core.delete')) {
 			JToolBarHelper::deleteList('', 'websites.delete', 'JTOOLBAR_EMPTY_TRASH');

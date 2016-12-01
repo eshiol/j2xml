@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		16.4.20 libraries/eshiol/core/file.php
+ * @version		16.11.25 libraries/eshiol/core/file.php
  * @package		J2XML
  * @subpackage	lib_eshiol
  * @since		14.9.11
@@ -37,12 +37,15 @@ class JToolbarButtonFile extends JToolbarButton
 	 * @param   integer  $height   Height of popup
 	 * @param   string   $onClose  JavaScript for the onClose event.
 	 * @param   string   $title    The title text
+	 * @param   string   $filter   ['xml,gz'] The file type filter
+	 * @param	mixed    $plugins  The plugins (string or array)
+	 * @param	string	 $ajax     The javascript code to implement the ajax request
 	 *
 	 * @return  string  HTML string for the button
 	 *
 	 * @since   3.0
 	 */
-	public function fetchButton($type='File', $name = 'File', $open = 'Open', $upload = 'Upload', $task = 'file', $width = 640, $height = 480, $onClose = '', $filter = 'xml,gz', $plugins = null)
+	public function fetchButton($type='File', $name = 'File', $open = 'Open', $upload = 'Upload', $task = 'file', $width = 640, $height = 480, $onClose = '', $filter = 'xml,gz', $plugins = null, $ajax = null)
 	{
 		$jce = file_exists(JPATH_ADMINISTRATOR.'/components/com_jce/helpers/browser.php');
 		$app = JFactory::getApplication();
@@ -200,35 +203,52 @@ jQuery(window).on('resize', function(){
 		</script>';
 
 //		if ($jce)
-			$html[] = '<script>
-			var jQuery;
-			(function ($) {
-				$(document).ready(function () {
-//					$(\'#'.$name.'_server\').attr(\'readonly\',\'readonly\');
-					$(\'#'.$name.'_server\').hide();
-					$(\'#'.$name.'_server_open\').hide();
-						'.(strlen($onClose) >= 1 ? '$(\'#'.$name.'_server_modal\').on(\'hide\', function () {'.$onClose.';});' : '').'
-//					$(\'#'.$name.'_server\').on(\'click\', function () {
-//						$(\'#'.$name.'_server_open\').click();
-//						return false;
-//					});
-				});
-			})(jQuery);
-			</script>';
+		$html[] = '<script>
+		var jQuery;
+		(function ($) {
+			$(document).ready(function () {
+//				$(\'#'.$name.'_server\').attr(\'readonly\',\'readonly\');
+				$(\'#'.$name.'_server\').hide();
+				$(\'#'.$name.'_server_open\').hide();
+					'.(strlen($onClose) >= 1 ? '$(\'#'.$name.'_server_modal\').on(\'hide\', function () {'.$onClose.';});' : '').'
+//				$(\'#'.$name.'_server\').on(\'click\', function () {
+//					$(\'#'.$name.'_server_open\').click();
+//					return false;
+//				});
+			});
+		})(jQuery);
+		</script>';
 		
-		
-		$html[] = "<button title=\"$title\" class=\"btn btn-small hasTooltip\" type=\"submit\" data-original-title=\"$title\">";
+		$html[] = '<script>
+		var jQuery;
+		(function ($) {
+			$(document).ready(function () {
+//				$(\'#'.$name.'_server\').attr(\'readonly\',\'readonly\');
+				$(\'#'.$name.'_server\').hide();
+				$(\'#'.$name.'_server_open\').hide();
+					'.(strlen($onClose) >= 1 ? '$(\'#'.$name.'_server_modal\').on(\'hide\', function () {'.$onClose.';});' : '').'
+//				$(\'#'.$name.'_server\').on(\'click\', function () {
+//					$(\'#'.$name.'_server_open\').click();
+//					return false;
+//				});
+			});
+		})(jQuery);
+		</script>';
+				
+		$html[] = "<button title=\"{$title}\" class=\"btn btn-small hasTooltip\" type=\"submit\" id=\"{$name}_upload\"".
+			($ajax ? " onclick=\"return !{$ajax}('{$name}', '{$doAction}');\"" : "")
+			." data-original-title=\"{$title}\">";
 		$html[] = "<i class=\"icon-upload\"></i>";
-		$html[] = "<span> $upload</span>";
+		$html[] = "<span> {$upload}</span>";
 		$html[] = "</button>";
 			
 		$html[] = '</div>';
 		$html[] = JHTML::_('form.token');
-		$html[] = '</form>';		
+		$html[] = '</form>';
 		
 		return implode("\n", $html);
 	}
-	
+				
 	/**
 	 * Get the button id
 	 *
@@ -243,7 +263,7 @@ jQuery(window).on('resize', function(){
 	{
 		return $this->_parent->getName() . '-file-' . $name;
 	}
-	
+				
 	/**
 	 * Get the JavaScript command for the button
 	 *
@@ -263,3 +283,4 @@ jQuery(window).on('resize', function(){
 		return $url;
 	}
 }
+				

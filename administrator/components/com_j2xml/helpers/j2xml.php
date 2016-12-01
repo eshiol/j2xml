@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.1.112 helpers/j2xml.php
+ * @version		3.3.156 administrator/components/cm_j2xml/helpers/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2013 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -49,7 +49,7 @@ class J2XMLHelper
 
 		return $result;
 	}
-	
+
 	/**
 	 * @return	boolean
 	 * @since	2.5
@@ -58,7 +58,7 @@ class J2XMLHelper
 	{
 		return true;
 	}
-	
+
 	public static function copyright()
 	{
 		if ($xml = JFactory::getXML(JPATH_COMPONENT_ADMINISTRATOR.'/j2xml.xml'))
@@ -88,5 +88,42 @@ class J2XMLHelper
 				'index.php?option=com_j2xml&view=websites',
 				$vName == 'websites'
 		);
+	}
+
+	/**
+	 * Removes invalid XML
+	 *
+	 * @access public
+	 * @param string $value
+	 * @return string
+	 */
+	static function stripInvalidXml($value)
+	{
+	    $ret = "";
+	    $current;
+	    if (empty($value)) 
+	    {
+	        return $ret;
+	    }
+	
+	    $length = strlen($value);
+	    for ($i=0; $i < $length; $i++)
+	    {
+	        $current = ord($value{$i});
+	        if (($current == 0x9) ||
+	            ($current == 0xA) ||
+	            ($current == 0xD) ||
+	            (($current >= 0x20) && ($current <= 0xD7FF)) ||
+	            (($current >= 0xE000) && ($current <= 0xFFFD)) ||
+	            (($current >= 0x10000) && ($current <= 0x10FFFF)))
+	        {
+	            $ret .= chr($current);
+	        }
+	        else
+	        {
+	            $ret .= " ";
+	        }
+	    }
+	    return $ret;
 	}
 }

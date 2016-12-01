@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.3.150 administrator/components/com_j2xml/controllers/cpanel.php
+ * @version		3.6.160 administrator/components/com_j2xml/controllers/cpanel.php
  *
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -19,13 +19,17 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-class J2xmlControllerCpanel extends JControllerAbstract
+require_once JPATH_ADMINISTRATOR.'/components/com_j2xml/helpers/j2xml.php';
+
+class J2xmlControllerCpanel extends JControllerLegacy
 {
 	/**
 	 * Custom Constructor
 	 */
 	function __construct( $default = array())
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
+		
 		parent::__construct($default);
 	}
 
@@ -35,46 +39,11 @@ class J2xmlControllerCpanel extends JControllerAbstract
 		JRequest::setVar('layout', 'default');
 		parent::display($cachable, $urlparams);
 	}
-
-	/**
-	 * Removes invalid XML
-	 *
-	 * @access public
-	 * @param string $value
-	 * @return string
-	 */
-	static function stripInvalidXml($value)
-	{
-	    $ret = "";
-	    $current;
-	    if (empty($value)) 
-	    {
-	        return $ret;
-	    }
-	
-	    $length = strlen($value);
-	    for ($i=0; $i < $length; $i++)
-	    {
-	        $current = ord($value{$i});
-	        if (($current == 0x9) ||
-	            ($current == 0xA) ||
-	            ($current == 0xD) ||
-	            (($current >= 0x20) && ($current <= 0xD7FF)) ||
-	            (($current >= 0xE000) && ($current <= 0xFFFD)) ||
-	            (($current >= 0x10000) && ($current <= 0x10FFFF)))
-	        {
-	            $ret .= chr($current);
-	        }
-	        else
-	        {
-	            $ret .= " ";
-	        }
-	    }
-	    return $ret;
-	}
 	
 	function import()
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
+		
 		// Check for request forgeries
 		JRequest::checkToken() or jexit('Invalid Token');
 		
@@ -103,7 +72,8 @@ class J2xmlControllerCpanel extends JControllerAbstract
 					return false;
 				}
 				$filename = $file['tmp_name'];
-				$extn = end(explode(".", $file['name']));
+				$x = explode(".", $file['name']);
+				$extn = end($x);
 				break;
 			case 2:
 				if (!($filename = JRequest::getVar('j2xml_url')))
@@ -111,7 +81,8 @@ class J2xmlControllerCpanel extends JControllerAbstract
 					$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
 					return false;
 				}
-				$extn = end(explode(".", $filename));
+				$x = explode(".", $filename);
+				$extn = end($x);
 				break;
 			case 3:
 				if ($filename = JRequest::getVar('j2xml_server', null))
@@ -121,7 +92,8 @@ class J2xmlControllerCpanel extends JControllerAbstract
 					$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
 					return false;
 				}
-				$extn = end(explode(".", $filename));
+				$x = explode(".", $filename);
+				$extn = end($x);
 				break;
 			default:
 				$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
@@ -132,15 +104,23 @@ class J2xmlControllerCpanel extends JControllerAbstract
 			$data = file_get_contents($filename);
 		}
 
+		if (!($data = implode(gzfile($filename))))
+		{
+			$data = file_get_contents($filename);
+		}
+		$data = utf8_encode($data);
+		
 		$dispatcher = JDispatcher::getInstance();
 		JPluginHelper::importPlugin('j2xml');
 
 		$results = $dispatcher->trigger('onContentPrepareData', array('com_j2xml.cpanel', &$data));
-
-		$data = substr($data, strpos($data, '<?xml version="1.0" encoding="UTF-8" ?>'));
-		$data = self::stripInvalidXml($data);
+		$data = strstr($data, '<?xml version="1.0" ');
+		
+		$data = J2XMLHelper::stripInvalidXml($data);
 		if (!defined('LIBXML_PARSEHUGE'))
+		{
 			define(LIBXML_PARSEHUGE, 524288);
+		}
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 		
 		if (!$xml)
@@ -164,6 +144,14 @@ class J2xmlControllerCpanel extends JControllerAbstract
 			libxml_clear_errors();
 			$this->setRedirect('index.php?option=com_j2xml');	
 		}
+		
+		if (!$xml)
+		{
+			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+			return false;
+		}
+		
+		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
 		
 		if (!$xml)
 		{

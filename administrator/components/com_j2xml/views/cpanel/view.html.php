@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.3.151 administrator/components/com_j2xml/models/cpanel/view.html.php
+ * @version		3.6.160 administrator/components/com_j2xml/models/cpanel/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -21,7 +21,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 jimport('joomla.html.html.tabs');
 
-class J2XMLViewCpanel extends JViewAbstract
+class J2XMLViewCpanel extends JViewLegacy
 {
 	function display($tpl = null)
 	{
@@ -86,17 +86,12 @@ class J2XMLViewCpanel extends JViewAbstract
 		
 		$doc = JFactory::getDocument();
 		if ($canDo->get('core.create') || ($canDo->get('core.edit'))) {
-			$icon_48_j2xml = " .icon-48-j2xml {background:url(../media/com_j2xml/images/icon-48-j2xml.png) no-repeat; }"; 
-			$doc->addStyleDeclaration($icon_48_j2xml);
-			if (class_exists('JPlatform'))
-			{
-				if (version_compare(JPlatform::RELEASE, '12', 'ge'))
-				{
-					jimport('eshiol.core.file');
-					$toolbar = JToolBar::getInstance('toolbar');
-					$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null, 'xml,gz');
-				}
-			}
+			jimport('eshiol.core.file');
+			$doc->addScript("../media/lib_eshiol_core/js/encryption.js");
+			$doc->addScript("../media/lib_eshiol_core/js/core.js");
+			$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml.js");
+			$toolbar = JToolBar::getInstance('toolbar');
+			$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null, 'xml,gz', null, $this->params->get('ajax', 1) ? 'eshiol.j2xml.import' : null);
 //			$params = JComponentHelper::getParams('com_j2xml');
 //			$hostname = JFactory::getURI()->getHost();
 			if (

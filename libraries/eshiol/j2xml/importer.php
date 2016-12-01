@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		16.5.280 libraries/eshiol/j2xml/importer.php
+ * @version		16.11.287 libraries/eshiol/j2xml/importer.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -42,7 +42,7 @@ class J2XMLImporter
 	
 	function __construct()
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		
 		// Merge the default translation with the current translation
 		$jlang = JFactory::getLanguage();
@@ -112,8 +112,7 @@ class J2XMLImporter
 	
 	function import($xml, $params)
 	{
-		JLog::addLogger(array('text_file' => 'j2xml.php', 'extension' => 'lib_j2xml'), JLog::ALL, array('lib_j2xml'));
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		
 		//gc_enable(); // Enable Garbage Collector
 		$db = JFactory::getDBO();
@@ -142,7 +141,8 @@ class J2XMLImporter
 				
 				if (isset($data['group']))
 				{
-					$data['group'] = $this->getUsergroupId($data['group']);
+					$data['groups'][] = $this->getUsergroupId($data['group']);
+					unset($data['group']);
 				}
 				elseif (isset($data['grouplist']))
 				{
@@ -168,12 +168,13 @@ class J2XMLImporter
 
 				$user_id = $data['id'];
 				unset($data['id']);
-				$query = 'SELECT id, name'
+				$query = 'SELECT id'
 					. ' FROM #__users'
-					. ' WHERE'. (($keep_user_id == 1)
-					? ' id = '.$user_id
-					: ' username = '.$db->q($data['username'])
-					)
+//					. ' WHERE'. (($keep_user_id == 1)
+//					? ' id = '.$user_id
+//					: ' username = '.$db->q($data['username'])
+//					)
+					. ' WHERE username = '.$db->q($data['username'])
 					;
 				$db->setQuery($query);
 				$data['id'] = $db->loadResult();
@@ -309,7 +310,7 @@ class J2XMLImporter
 				}
 				$data['rules'] = json_encode($rules_id, JSON_NUMERIC_CHECK);
 
-				//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));				
+				//JLog::add(new JLogEntry(print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));				
 				if ($table->save($data))
 				{
 					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_VIEWLEVEL_IMPORTED', $table->title),JLOG::INFO,'lib_j2xml'));
@@ -349,7 +350,7 @@ class J2XMLImporter
 					. ' WHERE extension = '. $db->Quote($data['extension'])
 					. ' AND'. ((($keep_id == 1) && ($id > 1)) ? ' id = '.$id : ' path = '.$db->Quote($path))
 					;
-				JLog::add(new JLogEntry($query,JLOG::DEBUG,'lib_j2xml'));
+				JLog::add(new JLogEntry($query, JLOG::DEBUG, 'lib_j2xml'));
 				$db->setQuery($query);
 				$category = $db->loadObject();
 				
@@ -364,7 +365,7 @@ class J2XMLImporter
 							. ' WHERE path = '.$db->Quote($path)
 							. ' AND extension = '. $db->Quote($data['extension'])
 							;
-						JLog::add(new JLogEntry($query,JLOG::DEBUG,'lib_j2xml'));
+						JLog::add(new JLogEntry($query, JLOG::DEBUG, 'lib_j2xml'));
 						$db->setQuery($query);
 						$category = $db->loadObject();
 					}					
@@ -423,7 +424,7 @@ class J2XMLImporter
 						*/							
 					}
 										
-					//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
+					//JLog::add(new JLogEntry(print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
 					if ($table->save($data))
 					{
 						if (!$category && ($keep_id == 1) && ($id > 1))
@@ -532,7 +533,7 @@ class J2XMLImporter
 			}							
 			$table = JTable::getInstance('Tag', 'TagsTable');
 			$table->setLocation($data['parent_id'], 'last-child');
-			//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
+			//JLog::add(new JLogEntry(print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
 			$table->save($data);
 
 			JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_TAG_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
@@ -542,320 +543,331 @@ class J2XMLImporter
 		JPluginHelper::importPlugin('content');
 
 		JLog::add(new JLogEntry('*** Importing articles... ***', JLOG::DEBUG, 'lib_j2xml'));
-		foreach($xml->xpath("//j2xml/content[not(name = '')]") as $record)
-		{				
-			$this->prepareData($record, $data, $params);
 
-			$id = $data['id'];
-			if (empty($data['alias']))
-			{
-				$data['alias'] = $data['title'];
-				$data['alias'] = str_replace(' ', '-', $data['alias']);
-			}
-			$alias = $data['alias'];
-			$catid = $data['catid'];
-			
-			$category_path = $data['catid'];
-			
-			// force category
-			if ($keep_category == 2)
-			{
-				$data['sectionid'] = 0;
-				$data['catid'] = $params->get('category');
-			}
-			else //if ($keep_category == 1)
-			{
-				// keep category
-				if (!isset($data['sectionid']) && !isset($data['catid']))
+		$query = 'SELECT id, path'
+			. ' FROM #__categories'
+			. ' WHERE id = '.$params->get('category')
+			. ' AND extension = '. $db->q('com_content')
+			;
+		$db->setQuery($query);
+		
+		if ($default_cat = $db->loadObject())
+		{
+			foreach($xml->xpath("//j2xml/content[not(name = '')]") as $record)
+			{				
+				$this->prepareData($record, $data, $params);
+	
+				$id = $data['id'];
+				if (empty($data['alias']))
 				{
-					// uncategorised
-					$data['catid'] = $uncategorised->id;
-					$category_path = $uncategorised->path;
+					$data['alias'] = $data['title'];
+					$data['alias'] = str_replace(' ', '-', $data['alias']);
 				}
-				else if (isset($categories_id['com_content/'.$data['catid']]))
+				$alias = $data['alias'];
+				$catid = $data['catid'];
+				
+				$category_path = $data['catid'];
+				
+				// force category
+				if ($keep_category == 2)
 				{
-					// category already loaded
-					$data['catid'] = $categories_id['com_content/'.$data['catid']];
+					$data['sectionid'] = 0;
+					$data['catid'] = $params->get('category');
 				}
-				else
+				else //if ($keep_category == 1)
 				{
-					// load category
-					$query = 'SELECT id'
-						. ' FROM #__categories'
-						. ' WHERE path = '.$db->Quote($data['catid'])
-						. ' AND extension = '.$db->Quote('com_content')
-						;
-					$db->setQuery($query);
-					$category_id = (int)$db->loadResult();
-					if ($category_id > 0)
+					// keep category
+					if (!isset($data['sectionid']) && !isset($data['catid']))
 					{
-						$categories_id['com_content/'.$data['catid']] = $category_id;
-						$data['catid'] = $category_id;
+						// uncategorised
+						$data['catid'] = $default_cat->id;
+						$category_path = $default_cat->path;
+					}
+					else if (isset($categories_id['com_content/'.$data['catid']]))
+					{
+						// category already loaded
+						$data['catid'] = $categories_id['com_content/'.$data['catid']];
 					}
 					else
 					{
-						$data['catid'] = $uncategorised->id;
-						$category_path = $uncategorised->path;
-					}
-				}
-			}
-			
-			if ($keep_id == 1)
-				$query = 'SELECT id, title'
-					. ' FROM #__content'
-					. ' WHERE id = '.$id
-					;
-			else
-				$query = 'SELECT #__content.id, #__content.title'
-					. ' FROM #__content LEFT JOIN #__categories'
-					. ' ON #__content.catid = #__categories.id'
-					. ' WHERE #__categories.path = '. $db->Quote($category_path)
-					. ' AND #__content.alias = '. $db->Quote($alias)
-					;
-			$db->setQuery($query);
-			$content = $db->loadObject();
-				
-			$table = JTable::getInstance('content');
-			
-			if (!$content || $import_content == 2)			
-			{
-				$data['checked_out'] = 0;
-				$data['checked_out_time'] = $this->_nullDate;
-				
-				if (!$content)
-				{ // new article
-					$isNew = true; 
-					$data['id'] = null;
-					if ($keep_access > 0)
-						$data['access'] = $keep_access;
-					if ($keep_state < 2)
-						// Force the state
-						$data['state'] = $keep_state;
-					
-					if (!$keep_attribs)
-						$data['attribs'] = '{"category_layout":"","image":""}';
-					
-					if (!$keep_metadata)
-					{
-						$data['metadata'] = '{"author":"","robots":""}';
-						$data['metakey'] = '';
-						$data['metadesc'] = '';
-					}
-				}
-				else // article already exists
-				{
-					$isNew = false; 
-					$data['id'] = $content->id;
-
-					if ($keep_access > 0)
-						// don't modify the access level
-						$data['access'] = null;
-					
-					if ($keep_state != 0)  
-						// don't modify the state
-						$data['state'] = null;
-					//else keep the original state		
-
-					if (!$keep_attribs)
-						$data['attribs'] = null;
-					
-					if (!$keep_metadata)
-					{
-						$data['metadata'] = null;
-						$data['metakey'] = null;
-						$data['metadesc'] = null;
-					}
-				}
-											
-				if ($keep_author)
-				{
-					if (isset($users_id[$data['created_by']]))
-						$data['created_by'] = $users_id[$data['created_by']];
-					else
-					{
+						// load category
 						$query = 'SELECT id'
-							. ' FROM #__users'
-							. ' WHERE username = '. $db->Quote($data['created_by'])
+							. ' FROM #__categories'
+							. ' WHERE path = '.$db->Quote($data['catid'])
+							. ' AND extension = '.$db->Quote('com_content')
 							;
 						$db->setQuery($query);
-						$userid = (int)$db->loadResult();
-						if ($userid > 0)
+						$category_id = (int)$db->loadResult();
+						if ($category_id > 0)
 						{
-							$users_id[$data['created_by']] = $userid;
-							$data['created_by'] = $userid;
+							$categories_id['com_content/'.$data['catid']] = $category_id;
+							$data['catid'] = $category_id;
 						}
 						else
-							$data['created_by'] = $user_id;
+						{
+							$data['catid'] = $default_cat->id;
+							$category_path = $default_cat->path;
+						}
 					}
-					if (isset($data['modified_by']))
+				}
+				
+				if ($keep_id == 1)
+					$query = 'SELECT id, title'
+						. ' FROM #__content'
+						. ' WHERE id = '.$id
+						;
+				else
+					$query = 'SELECT #__content.id, #__content.title'
+						. ' FROM #__content LEFT JOIN #__categories'
+						. ' ON #__content.catid = #__categories.id'
+						. ' WHERE #__categories.path = '. $db->Quote($category_path)
+						. ' AND #__content.alias = '. $db->Quote($alias)
+						;
+				$db->setQuery($query);
+				$content = $db->loadObject();
+					
+				$table = JTable::getInstance('content');
+				
+				if (!$content || $import_content == 2)			
+				{
+					$data['checked_out'] = 0;
+					$data['checked_out_time'] = $this->_nullDate;
+					
+					if (!$content)
+					{ // new article
+						$isNew = true; 
+						$data['id'] = null;
+						if ($keep_access > 0)
+							$data['access'] = $keep_access;
+						if ($keep_state < 2)
+							// Force the state
+							$data['state'] = $keep_state;
+						
+						if (!$keep_attribs)
+							$data['attribs'] = '{"category_layout":"","image":""}';
+						
+						if (!$keep_metadata)
+						{
+							$data['metadata'] = '{"author":"","robots":""}';
+							$data['metakey'] = '';
+							$data['metadesc'] = '';
+						}
+					}
+					else // article already exists
 					{
-						if (isset($users_id[$data['modified_by']]))
-							$data['modified_by'] = $users_id[$data['modified_by']];
+						$isNew = false; 
+						$data['id'] = $content->id;
+	
+						if ($keep_access > 0)
+							// don't modify the access level
+							$data['access'] = null;
+						
+						if ($keep_state != 0)  
+							// don't modify the state
+							$data['state'] = null;
+						//else keep the original state		
+	
+						if (!$keep_attribs)
+							$data['attribs'] = null;
+						
+						if (!$keep_metadata)
+						{
+							$data['metadata'] = null;
+							$data['metakey'] = null;
+							$data['metadesc'] = null;
+						}
+					}
+												
+					if ($keep_author)
+					{
+						if (isset($users_id[$data['created_by']]))
+							$data['created_by'] = $users_id[$data['created_by']];
 						else
 						{
 							$query = 'SELECT id'
 								. ' FROM #__users'
-								. ' WHERE username = '. $db->Quote($data['modified_by'])
+								. ' WHERE username = '. $db->Quote($data['created_by'])
 								;
 							$db->setQuery($query);
 							$userid = (int)$db->loadResult();
 							if ($userid > 0)
 							{
-								$users_id[$data['modified_by']] = $userid;
-								$data['modified_by'] = $userid;
+								$users_id[$data['created_by']] = $userid;
+								$data['created_by'] = $userid;
 							}
 							else
-								$data['modified_by'] = $user_id;
+								$data['created_by'] = $this->_user_id;
 						}
-					}
-				}
-				else if ($content)
-				{
-					$data['created'] = null;
-					$data['created_by'] = null; 
-					$data['created_by_alias'] = null; 				
-					$data['modified'] = null; 
-					$data['modified_by'] = null; 
-					$data['version'] = null; 
-				}
-				else
-				{
-					$data['created'] = $now;
-					$data['created_by'] = $user_id; 
-					$data['created_by_alias'] = null; 				
-					$data['modified'] = $this->_nullDate; 
-					$data['modified_by'] = null; 
-					$data['version'] = 1; 
-				}
-
-				if (!$keep_frontpage)
-					$data['featured'] = 0;
-				elseif ($data['featured'] > 0)
-				{
-					$data['ordering'] = $data['featured'];
-					$data['featured'] = 1;
-				}
-/*
-				if (isset($data['sourcelist']))
-				{
-					$attribs = json_decode($data['attribs']);
-					$attribs->sourcelist = $data['sourcelist'];
-					$data['attribs'] = json_encode($attribs, JSON_NUMERIC_CHECK);
-				}
-				elseif (isset($data['source']))
-				{
-					$attribs = json_decode($data['attribs']);
-					$attribs->sourcelist = array($data['source']);
-					$data['attribs'] = json_encode($attribs, JSON_NUMERIC_CHECK);
-				}
-*/				
-				$table->bind($data);
-				
-				if (class_exists('JHelperTags'))
-				{
-					$tags = array();
-					if (isset($data['tag']))
-						$tags[] = $data['tag'];
-					elseif (isset($data['taglist']))
-					{
-						foreach ($data['taglist'] as $v)
-							$tags[] = $v;
-					}
-					$table->newTags = eshHelperTags::convertPathsToIds($tags);
-				}
-				
-				// Trigger the onContentBeforeSave event.
-				$result = $dispatcher->trigger('onContentBeforeSave', array($this->_option.'.article', &$table, $isNew));
-				
-				if (!in_array(false, $result, true))
-				{
-					// Undefined currentAssetId fix
-					if (!class_exists('JPlatform') || version_compare(JPlatform::RELEASE, '12', 'lt'))
-					{
-						$error_level = error_reporting();
-						error_reporting(0);
-					}						
-					if ($table->store())
-					{
-						if (!$content && ($keep_id == 1))
+						if (isset($data['modified_by']))
 						{
-							$query = "UPDATE #__content SET `id` = {$id} WHERE `id` = {$table->id}";
-							$db->setQuery($query);
-							$db->query();
-							$table->id = $id;
-							$query = "UPDATE #__assets SET `name` = 'com_content.article.{$id}' WHERE `id` = {$table->asset_id}";
-							$db->setQuery($query);
-							$db->query();
-							
-							$query = "SELECT max(`id`)+1 from #__content";
-							$db->setQuery($query);
-							$maxid = $db->loadResult();
-									
-							$query = "ALTER TABLE #__content AUTO_INCREMENT = {$maxid}";
-							$db->setQuery($query);
-							$db->query();
-						}
-						
-						if ($keep_frontpage)
-						{
-							if ($data['featured'] == 0)
-								$query = "DELETE FROM #__content_frontpage WHERE content_id = ".$table->id;
-							else if($keep_id)
-								$query = 
-									  ' INSERT IGNORE INTO `#__content_frontpage`'
-									. ' SET content_id = '.$table->id.','
-									. '     ordering = '.$data['ordering'];
+							if (isset($users_id[$data['modified_by']]))
+								$data['modified_by'] = $users_id[$data['modified_by']];
 							else
 							{
-								$frontpage++;
-								$query = 
-									  ' INSERT IGNORE INTO `#__content_frontpage`'
-									. ' SET content_id = '.$table->id.','
-									. '     ordering = '.$frontpage;
-							}
-							$db->setQuery($query);
-							$db->query();
-						}
-	
-						if ($keep_rating)
-						{
-							if (isset($data['rating_count']))
-								if ($data['rating_count'] > 0)
+								$query = 'SELECT id'
+									. ' FROM #__users'
+									. ' WHERE username = '. $db->Quote($data['modified_by'])
+									;
+								$db->setQuery($query);
+								$userid = (int)$db->loadResult();
+								if ($userid > 0)
 								{
-									$rating = new stdClass();
-									$rating->content_id = $table->id;
-									$rating->rating_count = $data['rating_count'];
-									$rating->rating_sum = $data['rating_sum'];
-									$rating->lastip = $_SERVER['REMOTE_ADDR'];	
-									try {
-										$db->insertObject('#__content_rating', $rating);
-									} catch (Exception $e) {
-										$db->updateObject('#__content_rating', $rating, 'content_id');
-									}
+									$users_id[$data['modified_by']] = $userid;
+									$data['modified_by'] = $userid;
 								}
 								else
-								{
-									$query = "DELETE FROM `#__content_rating` WHERE `content_id`=".$table->id;
-									$db->setQuery($query);
-									$db->query();
-								}
+									$data['modified_by'] = $this->_user_id;
+							}
 						}
-						JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
-
-						// Trigger the onContentAfterSave event.
-						$dispatcher->trigger('onContentAfterSave', array($this->_option.'.article', &$table, $isNew));
+					}
+					else if ($content)
+					{
+						$data['created'] = null;
+						$data['created_by'] = null; 
+						$data['created_by_alias'] = null; 				
+						$data['modified'] = null; 
+						$data['modified_by'] = null; 
+						$data['version'] = null; 
 					}
 					else
 					{
-						JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'].' (id='.$id.')'), JLOG::ERROR, 'lib_j2xml'));
-						if ($data['catid'])
-							JLog::add(new JLogEntry($table->getError(), JLOG::ERROR, 'lib_j2xml'));
-						else
-							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_CATEGORY_NOT_FOUND', $catid), JLOG::ERROR, 'lib_j2xml'));
+						$data['created'] = $now;
+						$data['created_by'] = $user_id; 
+						$data['created_by_alias'] = null; 				
+						$data['modified'] = $this->_nullDate; 
+						$data['modified_by'] = null; 
+						$data['version'] = 1; 
 					}
-					// Undefined currentAssetId fix
-					if (!class_exists('JPlatform') || version_compare(JPlatform::RELEASE, '12', 'lt'))
-						error_reporting($error_level);
+	
+					if (!$keep_frontpage)
+						$data['featured'] = 0;
+					elseif ($data['featured'] > 0)
+					{
+						$data['ordering'] = $data['featured'];
+						$data['featured'] = 1;
+					}
+	/*
+					if (isset($data['sourcelist']))
+					{
+						$attribs = json_decode($data['attribs']);
+						$attribs->sourcelist = $data['sourcelist'];
+						$data['attribs'] = json_encode($attribs, JSON_NUMERIC_CHECK);
+					}
+					elseif (isset($data['source']))
+					{
+						$attribs = json_decode($data['attribs']);
+						$attribs->sourcelist = array($data['source']);
+						$data['attribs'] = json_encode($attribs, JSON_NUMERIC_CHECK);
+					}
+	*/				
+					$table->bind($data);
+					
+					if (class_exists('JHelperTags'))
+					{
+						$tags = array();
+						if (isset($data['tag']))
+							$tags[] = $data['tag'];
+						elseif (isset($data['taglist']))
+						{
+							foreach ($data['taglist'] as $v)
+								$tags[] = $v;
+						}
+						$table->newTags = eshHelperTags::convertPathsToIds($tags);
+					}
+					
+					// Trigger the onContentBeforeSave event.
+					$result = $dispatcher->trigger('onContentBeforeSave', array($this->_option.'.article', &$table, $isNew));
+					
+					if (!in_array(false, $result, true))
+					{
+						// Undefined currentAssetId fix
+						if (!class_exists('JPlatform') || version_compare(JPlatform::RELEASE, '12', 'lt'))
+						{
+							$error_level = error_reporting();
+							error_reporting(0);
+						}						
+						if ($table->store())
+						{
+							if (!$content && ($keep_id == 1))
+							{
+								$query = "UPDATE #__content SET `id` = {$id} WHERE `id` = {$table->id}";
+								$db->setQuery($query);
+								$db->query();
+								$table->id = $id;
+								$query = "UPDATE #__assets SET `name` = 'com_content.article.{$id}' WHERE `id` = {$table->asset_id}";
+								$db->setQuery($query);
+								$db->query();
+								
+								$query = "SELECT max(`id`)+1 from #__content";
+								$db->setQuery($query);
+								$maxid = $db->loadResult();
+										
+								$query = "ALTER TABLE #__content AUTO_INCREMENT = {$maxid}";
+								$db->setQuery($query);
+								$db->query();
+							}
+							
+							if ($keep_frontpage)
+							{
+								if ($data['featured'] == 0)
+									$query = "DELETE FROM #__content_frontpage WHERE content_id = ".$table->id;
+								else if($keep_id)
+									$query = 
+										  ' INSERT IGNORE INTO `#__content_frontpage`'
+										. ' SET content_id = '.$table->id.','
+										. '     ordering = '.$data['ordering'];
+								else
+								{
+									$frontpage++;
+									$query = 
+										  ' INSERT IGNORE INTO `#__content_frontpage`'
+										. ' SET content_id = '.$table->id.','
+										. '     ordering = '.$frontpage;
+								}
+								$db->setQuery($query);
+								$db->query();
+							}
+		
+							if ($keep_rating)
+							{
+								if (isset($data['rating_count']))
+									if ($data['rating_count'] > 0)
+									{
+										$rating = new stdClass();
+										$rating->content_id = $table->id;
+										$rating->rating_count = $data['rating_count'];
+										$rating->rating_sum = $data['rating_sum'];
+										$rating->lastip = $_SERVER['REMOTE_ADDR'];	
+										try {
+											$db->insertObject('#__content_rating', $rating);
+										} catch (Exception $e) {
+											$db->updateObject('#__content_rating', $rating, 'content_id');
+										}
+									}
+									else
+									{
+										$query = "DELETE FROM `#__content_rating` WHERE `content_id`=".$table->id;
+										$db->setQuery($query);
+										$db->query();
+									}
+							}
+							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
+	
+							// Trigger the onContentAfterSave event.
+							$dispatcher->trigger('onContentAfterSave', array($this->_option.'.article', &$table, $isNew));
+						}
+						else
+						{
+							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'].' (id='.$id.')'), JLOG::ERROR, 'lib_j2xml'));
+							if ($data['catid'])
+								JLog::add(new JLogEntry($table->getError(), JLOG::ERROR, 'lib_j2xml'));
+							else
+								JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_CATEGORY_NOT_FOUND', $catid), JLOG::ERROR, 'lib_j2xml'));
+						}
+						// Undefined currentAssetId fix
+						if (!class_exists('JPlatform') || version_compare(JPlatform::RELEASE, '12', 'lt'))
+							error_reporting($error_level);
+					}
 				}
 			}
 		}
@@ -1139,7 +1151,7 @@ class J2XMLImporter
 						}
 					}					
 					
-					//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
+					//JLog::add(new JLogEntry(print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
 					if ($table->save($data))
 					{
 						if (!$contact && ($keep_user_id == 1))
@@ -1186,7 +1198,7 @@ class J2XMLImporter
 	
 	static function clean()
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		
 		$db = JFactory::getDBO();
 		$execute = (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge')) ? 'execute' : 'query';
@@ -1242,7 +1254,7 @@ class J2XMLImporter
 	
 	function getArticleId($path)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		
 		$db = JFactory::getDBO();
 		$i = strrpos($path, '/');
@@ -1255,13 +1267,13 @@ class J2XMLImporter
 		$query->where($db->quoteName('cc.path').'='.$db->quote(substr($path, 0, $i)));
 		$db->setQuery($query);
 		$article_id = $db->loadResult();
-		JLog::add(new JLogEntry($path.' -> '.$article_id,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry($path.' -> '.$article_id, JLOG::DEBUG, 'lib_j2xml'));
 		return $article_id;
 	}
 	
 	function getUserId($username, $default_user_id)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		$db = JFactory::getDBO();		
 		$query = $db->getQuery(true);
 		$query->select($db->quoteName('id'));
@@ -1270,13 +1282,13 @@ class J2XMLImporter
 		$db->setQuery($query);
 		if (!($user_id = $db->loadResult()))
 			$user_id = $default_user_id;
-		JLog::add(new JLogEntry($username.' -> '.$user_id,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry($username.' -> '.$user_id, JLOG::DEBUG, 'lib_j2xml'));
 		return $user_id;
 	}
 	
 	function getUsergroupId($usergroup)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		
 		if (empty($usergroup))
 		{
@@ -1323,13 +1335,13 @@ class J2XMLImporter
 		{
 			$usergroup_id = JComponentHelper::getParams('com_users')->get('new_usertype');
 		}
-		JLog::add(new JLogEntry($usergroup.' -> '.$usergroup_id,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry($usergroup.' -> '.$usergroup_id, JLOG::DEBUG, 'lib_j2xml'));
 		return $usergroup_id;
 	}
 	
 	function getAccessId($access)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		
 		if (is_numeric($access)) return $access;
 		$db = JFactory::getDBO();
@@ -1341,13 +1353,13 @@ class J2XMLImporter
 		$access_id = $db->loadResult();
 		if (!$access_id)
 			$access_id = 3;
-		JLog::add(new JLogEntry($access.' -> '.$access_id,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry($access.' -> '.$access_id, JLOG::DEBUG, 'lib_j2xml'));
 		return $access_id;
 	}
 	
 	function getCategoryId($category, $extension)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		
 		if (is_numeric($category)) return $category;
 		$db = JFactory::getDBO();
@@ -1360,13 +1372,13 @@ class J2XMLImporter
 		$category_id = $db->loadResult();
 		if (!$category_id)
 			$category_id = 1;
-		JLog::add(new JLogEntry($extension.'/'.$category.' -> '.$category_id,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry($extension.'/'.$category.' -> '.$category_id, JLOG::DEBUG, 'lib_j2xml'));
 		return $category_id;
 	}
 	
 	public function prepareData($record, &$data, $params)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		
 		$data = array();
 		foreach($record->children() as $key => $value)
@@ -1385,7 +1397,66 @@ class J2XMLImporter
 			$data['modified_user_id'] = self::getUserId($data['modified_user_id'], 0);
 		if (isset($data['access']))
 			$data['access'] = self::getAccessId($data['access']);
-		//JLog::add(new JLogEntry(print_r($data, true),JLOG::DEBUG,'lib_j2xml'));
+		if (isset($data['publish_up']))
+		{
+			$date = new JDate($data['publish_up']);
+			$data['publish_up'] = $date->toISO8601(false);
+		}
+		if (isset($data['publish_down']))
+		{
+			$date = new JDate($data['publish_down']);
+			$data['publish_down'] = $date->toISO8601(false);
+		}
+		if (isset($data['created']))
+		{
+			$date = new JDate($data['created']);
+			$data['created'] = $date->toISO8601(false);
+		}
+		if (isset($data['modified']))
+		{
+			$date = new JDate($data['modified']);
+			$data['modified'] = $date->toISO8601(false);
+		}
+		//JLog::add(new JLogEntry(print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
+	}
+
+	/**
+	 * Removes invalid XML
+	 *
+	 * @access public
+	 * @param string $value
+	 * @return string
+	 */
+	static function stripInvalidXml($value)
+	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		
+		$ret = "";
+		$current;
+		if (empty($value))
+		{
+			return $ret;
+		}
+	
+		$length = strlen($value);
+		for ($i=0; $i < $length; $i++)
+		{
+			$current = ord($value{$i});
+			if (($current == 0x9) ||
+					($current == 0xA) ||
+					($current == 0xD) ||
+					(($current >= 0x20) && ($current <= 0xD7FF)) ||
+					(($current >= 0xE000) && ($current <= 0xFFFD)) ||
+					(($current >= 0x10000) && ($current <= 0x10FFFF)))
+			{
+				$ret .= chr($current);
+			}
+			else
+			{
+				$ret .= " ";
+			}
+		}
+		return $ret;
 	}
 }
 ?>

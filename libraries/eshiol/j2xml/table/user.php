@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		16.1.276 libraries/eshiol/j2xml/table/user.php
+ * @version		15.9.267 libraries/eshiol/j2xml/table/user.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3beta4.39

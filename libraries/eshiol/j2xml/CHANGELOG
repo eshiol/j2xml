@@ -1,20 +1,36 @@
-<?php
-/**
- * @package		J2XML
- * @subpackage	lib_j2xml
- * @version		16.1
- *
- * @author		Helios Ciancio <info@eshiol.it>
- * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2016 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
- * J2XML is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- */
-?>
+-------------------- 16.11.288 Release  [29-November-2016] --------------------
 
+29-November-2016
+  + import Ajax (build 288)
+  # import (build 287)
+
+--------------------- 16.10.286 Release [31-October-2016] ---------------------
+
+31-October-2016
+  ^ debug (build 286)
+
+-------------------- 16.9.285 Release  [19-September-2016] --------------------
+
+19-September-2016
+  # import user (build 284, 285)
+
+---------------------- 16.7.283 Release  [28-July-2016] ----------------------
+
+28-July-2016
+  # import user groups (build 283)
+
+----------------------- 16.7.282 Release [6-July-2016] -----------------------
+
+6-July-2016
+  # publish_up (build 282)
+  # publish_down (build 282)
+  # created (build 282)
+  # modified (build 282)
+
+----------------------- 16.5.281 Release  [31-May-2016] -----------------------
+
+31-May-2016
+  # send (build 281)
 
 ----------------------- 16.5.279 Release  [22-May-2016] -----------------------
 

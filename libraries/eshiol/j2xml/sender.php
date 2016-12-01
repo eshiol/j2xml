@@ -1,13 +1,13 @@
 <?php
 /**
- * @version		16.1.275 libraries/eshiol/j2xml/sender.php
+ * @version		16.10.286 libraries/eshiol/j2xml/sender.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3beta3.38
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -18,15 +18,13 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-// Includes the required class file for the XML-RPC Client
-jimport('eshiol.core.xmlrpc');
-
 jimport('eshiol.j2xml.messages');
 jimport('eshiol.j2xml.version');
 
 class J2XMLSender
 {
 	private static $codes = array(
+		'-1'=>'message',
 		'message',		// LIB_J2XML_MSG_ARTICLE_IMPORTED
 		'notice',		// LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED
 		'message',  	// LIB_J2XML_MSG_USER_IMPORTED
@@ -43,72 +41,38 @@ class J2XMLSender
 		'notice',		// LIB_J2XML_MSG_WEBLINK_NOT_IMPORTED
 		//'notice',		// LIB_J2XML_MSG_WEBLINKCAT_NOT_PRESENT
 		15 => 'error',		// LIB_J2XML_MSG_XMLRPC_NOT_SUPPORTED
-		'notice',		// LIB_J2XML_MSG_CATEGORY_ID_PRESENT
-		'error',		// LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED
-		'error',		// LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN
-		'error',		// JERROR_ALERTNOTAUTH
-		'message',		// LIB_J2XML_MSG_TAG_IMPORTED
-		'notice',		// LIB_J2XML_MSG_TAG_NOT_IMPORTED
-		'message',		// LIB_J2XML_MSG_CONTACT_IMPORTED
-		'notice',		// LIB_J2XML_MSG_CONTACT_NOT_IMPORTED
-		'message',		// LIB_J2XML_MSG_VIEWLEVEL_IMPORTED
-		'notice',		// LIB_J2XML_MSG_VIEWLEVEL_NOT_IMPORTED
-		'message',		// LIB_J2XML_MSG_BUTTON_IMPORTED
-		'notice',		// LIB_J2XML_MSG_BUTTON_NOT_IMPORTED
+		'notice',		// LIB_J2XML_MSG_CATEGORY_ID_PRESENT 16
+		'error',		// LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED 17
+		'error',		// LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN 18
+		'error',		// JERROR_ALERTNOTAUTH 19
+		'message',		// LIB_J2XML_MSG_TAG_IMPORTED 20 
+		'notice',		// LIB_J2XML_MSG_TAG_NOT_IMPORTED 21
+		'message',		// LIB_J2XML_MSG_CONTACT_IMPORTED 22
+		'notice',		// LIB_J2XML_MSG_CONTACT_NOT_IMPORTED 23
+		'message',		// LIB_J2XML_MSG_VIEWLEVEL_IMPORTED 24
+		'notice',		// LIB_J2XML_MSG_VIEWLEVEL_NOT_IMPORTED 25
+		'message',		// LIB_J2XML_MSG_BUTTON_IMPORTED 26
+		'notice',		// LIB_J2XML_MSG_BUTTON_NOT_IMPORTED 27
+		'error',		// LIB_J2XML_MSG_UNKNOWN_ERROR 28
+		'warning',		// LIB_J2XML_MSG_UNKNOWN_WARNING 29 
+		'notice',		// LIB_J2XML_MSG_UNKNOWN_NOTICE 30
+		'message',		// LIB_J2XML_MSG_UNKNOWN_MESSAGE 31
+		32 => 'notice',		// LIB_J2XML_MSG_XMLRPC_DISABLED 32
 	);	
 	
 	/*
 	 * Send data
 	 * @param $xml		data
-	 * @param $debug
-	 * @param $export_gzip
+	 * @param $options
 	 * @param $sid		remote server id
 	 * @since		1.5.3beta3.38
 	 */
 	static function send($xml, $options, $sid)
 	{
-		if (defined('JDEBUG') && JDEBUG)
-			JLog::addLogger(array('text_file' => 'j2xml.php', 'extension' => 'lib_j2xml'), JLog::ALL, array('lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry('xml: '.$xml->asXML(),JLOG::DEBUG,'lib_j2xml'));
 		
 		$app = JFactory::getApplication();
-		/*
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select($db->quoteName('element'));
-		$query->from($db->quoteName('#__extensions'));
-		$query->where($db->quoteName('type') . ' = ' . $db->quote('library'));
-		$query->where($db->quoteName('element') . ' = ' . $db->quote('xmlrpc'));
-		$query->where($db->quoteName('enabled') . ' = 1');
-		$db->setQuery($query);
-		$xmlrpclib = ($db->loadResult() != null);
-
-		if (!$xmlrpclib)
-		{
-			// Merge the default translation with the current translation
-			$jlang = JFactory::getLanguage();
-			// Back-end translation
-			$jlang->load('lib_j2xml', JPATH_SITE, 'en-GB', true);
-			$jlang->load('lib_j2xml', JPATH_SITE, $jlang->getDefault(), true);
-			$jlang->load('lib_j2xml', JPATH_SITE, null, true);
-			
-			$app->enqueueMessage(JText::_('LIB_J2XML_XMLRPC_ERROR'), 'error');
-			return;
-		}
-*/
-/*
-		if ($debug > 0)
-		{
-			$data = ob_get_contents();
-			if ($data)
-			{	
-				$app->enqueueMessage(JText::_('LIB_J2XML_MSG_ERROR_EXPORT'), 'error');
-					$app->enqueueMessage($data, 'error');
-				return false;
-			}
-		}		
-*/		
-		ob_clean();
-		
 		$version = explode(".", J2XMLVersion::$DOCVERSION);
 		$xmlVersionNumber = $version[0].$version[1].substr('0'.$version[2], strlen($version[2])-1);
 		
@@ -118,28 +82,16 @@ class J2XMLSender
 		$dom->loadXML($xml->asXML());
 		$data = $dom->saveXML();
 		
-		// modify the MIME type
-		//$document = JFactory::getDocument();
 		if ($options['gzip'])
 		{
-//			$document->setMimeEncoding('application/gzip-compressed', true);
-//			JResponse::setHeader('Content-disposition', 'attachment; filename="j2xml'.$xmlVersionNumber.date('YmdHis').'.gz"', true);
 			$data = gzencode($data, 9);
 		}
-		/*
-		else 
-		{
-			$document->setMimeEncoding('application/xml', true);
-			JResponse::setHeader('Content-disposition', 'attachment; filename="j2xml'.$xmlVersionNumber.date('YmdHis').'.xml"', true);
-		}
-		*/
+
 		$db = JFactory::getDBO();
 		$query = 'SELECT `title`, `remote_url`, `username`, `password` '
 			. 'FROM `#__j2xml_websites` WHERE `state`= 1 AND `id` = '.$sid;
 		$db->setQuery($query);
-		$server = $db->loadAssoc();		
-
-		if (!$server) return;
+		if (!($server = $db->loadAssoc())) return;
 		
 		$str = $server['remote_url'];
 
@@ -148,136 +100,43 @@ class J2XMLSender
 				
 		if ($str[strlen($str)-1] != '/')
 			$server['remote_url'] .= '/';
-		$server['remote_url'] .= 'index.php?option=com_j2xml&task=services.xmlrpc&format=xmlrpc';
-
-		$msg = new xmlrpcmsg('j2xml.login');
-		$p1 = new xmlrpcval($server['username'], 'string');
-		$msg->addparam($p1);
-		$p2 = new xmlrpcval($server['password'], 'string');
-		$msg->addparam($p2);
-		$res = self::_xmlrpc_send($server['remote_url'], $msg, $options['debug']);
-
-		if ($res->faultcode())
-		{
-			$app->enqueueMessage($server['title'].': '.JText::_($res->faultString()), 'error');
-		}
-
-		$token = $res->value()->arraymem(0)->structmem('message')->scalarval();
+		$server['remote_url'] .= 'index.php?option=com_j2xml&task=services.import&format=xmlrpc';
 		
-		$msg = new xmlrpcmsg('j2xml.import');
-		$p1 = new xmlrpcval($token, 'string');
-		$msg->addparam($p1);
-		$p2 = new xmlrpcval($data, 'base64');
-		$msg->addparam($p2);
-		$res = 	self::_xmlrpc_send($server['remote_url'], $msg, $options['debug']);
+		xmlrpc_set_type($data, 'base64');
+		JLog::add(new JLogEntry(print_r(array('http' => array(
+			'method' => "POST",
+			'url' => $server['remote_url'],
+			'header' => "Content-Type: text/xml",
+			'user_agent' => J2XMLVersion::$PRODUCT.' '.J2XMLVersion::getFullVersion(),		
+			'content' => xmlrpc_encode_request('j2xml.import', array($data, $server['username'], '********'))
+		)), true),JLOG::DEBUG,'lib_j2xml'));
+		$request = xmlrpc_encode_request('j2xml.import', array($data, $server['username'], $server['password']));
+		$context = stream_context_create(array('http' => array(
+			'method' => "POST",
+			'header' => "Content-Type: text/xml",
+			'user_agent' => J2XMLVersion::$PRODUCT.' '.J2XMLVersion::getFullVersion(),		
+			'content' => $request
+		)));
+		$file = file_get_contents($server['remote_url'], false, $context);
+		$response = xmlrpc_decode($file);
 		
-		if ($res->faultcode())
-			$app->enqueueMessage($server['title'].': '.JText::_($res->faultString()), 'error');
-		else
+		JLog::add(new JLogEntry(print_r($response, true),JLOG::DEBUG,'lib_j2xml'));
+		if ($response && xmlrpc_is_fault($response)) 
 		{
-			$msgs = $res->value();
-			$len=$msgs->arraysize();
-			for ($i = 0; $i < $len; $i++)
+			$app->enqueueMessage($server['title'].': '.JText::_($response['faultString']), 'error');
+		} 
+		elseif (is_array($response))
+		{
+			foreach($response as $msg)
 			{
-				$msg=$msgs->arraymem($i);
-				$code = $msg->structmem('code')->scalarval();
-				$string = $msg->structmem('string')->scalarval();
-				if (!isset(J2XMLMessages::$messages[$code]))
-					$app->enqueueMessage($server['title'].': '.$msg->structmem('message')->scalarval(),'notice');
-				elseif ($string)
-					$app->enqueueMessage($server['title'].': '.JText::sprintf(J2XMLMessages::$messages[$code], $string), self::$codes[$code]);
+				if (isset(J2XMLMessages::$messages[$msg['code']]))
+					$app->enqueueMessage($server['title'].': '.JText::sprintf(J2XMLMessages::$messages[$msg['code']], $msg['string']), self::$codes[$msg['code']]);
+				elseif (isset(self::$codes[$msg['code']]))
+					$app->enqueueMessage($server['title'].': '.$msg['message'],self::$codes[$msg['code']]);
 				else
-					$app->enqueueMessage($server['title'].': '.JText::_(J2XMLMessages::$messages[$code]), self::$codes[$code]);
+					$app->enqueueMessage($server['title'].': '.$msg['message'],'notice');
 			}
 		}
-	}
-
-	/**
-	* Send xml data to
-	* @param string $remote_url
-	* @param xmlrpcmsg $msg
-	* @param int $debug when 1 (or 2) will enable debugging of the underlying xmlrpc call (defaults to 0)
-	* @return xmlrpcresp obj instance
-	*/
-	private static function _xmlrpc_send($remote_url, $msg, $debug=0) 
-	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry($remote_url,JLOG::DEBUG,'lib_j2xml'));		
-		$GLOBALS['xmlrpc_internalencoding'] = 'UTF-8';
-		$client = new xmlrpc_client($remote_url);
-		$client->return_type = 'xmlrpcvals';
-		$client->request_charset_encoding = 'UTF-8';
-		$client->user_agent = J2XMLVersion::$PRODUCT.' '.J2XMLVersion::getFullVersion();
-		$client->setDebug($debug);
-		
-		$protocol = '';
-		$res = $client->send($msg, 0);
-		
-		if (!$res->faultcode())
-			return $res;
-		
-		if ($res->faultString() == "Didn't receive 200 OK from remote server. (HTTP/1.1 301 Foun)")
-		{
-			$res = $client->send($msg, 0, $protocol = 'http11');
-			if (!$res->faultcode())
-				return $res;
-		}
-		if ($res->faultString() == "Didn't receive 200 OK from remote server. (HTTP/1.1 303 See other)")
-		{
-			$headers = http_parse_headers($res->raw_data);
-			$url = $headers['Location'];
-			$parse = parse_url($url);
-			if (!isset($parse['host']))
-			{
-				$parse = parse_url($remote_url);
-				$url = $parse['scheme'].'://'.$parse['host'].$url;
-			}
-			$client = new xmlrpc_client($url);
-			$client->return_type = 'xmlrpcvals';
-			$client->request_charset_encoding = 'UTF-8';
-			$client->user_agent = J2XMLVersion::$PRODUCT.' '.J2XMLVersion::getFullVersion();
-			$client->setDebug($debug);
-			$res = $client->send($msg, 0, $protocol);
-		}
-		return $res;
-	}
-}
-
-if (!function_exists('http_parse_headers'))
-{
-	function http_parse_headers($raw_headers)
-	{
-		$headers = array();
-		$key = '';
-
-		foreach(explode("\n", $raw_headers) as $i => $h)
-		{
-			$h = explode(':', $h, 2);
-
-			if (isset($h[1]))
-			{
-				if (!isset($headers[$h[0]]))
-					$headers[$h[0]] = trim($h[1]);
-				elseif (is_array($headers[$h[0]]))
-				{
-					$headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1])));
-				}
-				else
-				{
-					$headers[$h[0]] = array_merge(array($headers[$h[0]]), array(trim($h[1]))); // [+]
-				}
-				$key = $h[0];
-			}
-			else
-			{
-				if (substr($h[0], 0, 1) == "\t")
-					$headers[$key] .= "\r\n\t".trim($h[0]);
-				elseif (!$key)
-				$headers[0] = trim($h[0]);trim($h[0]);
-			}
-		}
-
-		return $headers;
 	}
 }
 ?>

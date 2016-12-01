@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.2.125 administrator/components/com_j2xml/views/vebsites/tmpl/default.php
+ * @version		3.6.158 administrator/components/com_j2xml/views/vebsites/tmpl/default.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -43,6 +43,8 @@ $canEdit    = $canDo->get('core.edit');
 
 $sortFields = $this->getSortFields();
 $lang = JFactory::getLanguage();
+
+$now = JFactory::getDate();
 ?>
 <script type="text/javascript">
 	Joomla.orderTable = function()
@@ -162,15 +164,29 @@ $lang = JFactory::getLanguage();
 						<?php if ($item->checked_out) : ?>
 							<?php echo JHtml::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'clients.', $canCheckin); ?>
 						<?php endif; ?>
+						<span class="icon-<?php echo ($item->type ? 'key' : 'user'); ?><?php 
+						if ($item->type) 
+						{
+							if (!$item->access_token)
+							{
+								echo ' text-error';
+ 							}
+							elseif ($now->toSql() > $item->expire_time)
+ 							{
+								echo ' text-warning" title="expired';
+ 							}
+							else
+ 							{
+								echo ' text-success';
+ 							}
+						} ?>"></span>
 						<?php if ($canEdit) : ?>
-							<a href="<?php echo JRoute::_('index.php?option=com_j2xml&task=website.edit&id='.(int) $item->id); ?>">
-								<?php echo $this->escape($item->title); ?></a>
+							<a href="<?php echo JRoute::_('index.php?option=com_j2xml&task=website.edit&id='.(int) $item->id); ?>"><?php echo $this->escape($item->title); ?></a>
 						<?php else : ?>
 								<?php echo $this->escape($item->title); ?>
 						<?php endif; ?>
-						<!-- 
-						<p class="smallsub">(<span>Alias</span>: <?php echo $item->alias; ?>)</p>
-						-->
+						<br/><?php  echo 'now: '.$now->toSql(); ?>
+						<br/><?php  echo 'expire_time: '.$item->expire_time; ?>
 					</td>
 					<td>
 						<?php echo $item->remote_url;?>
@@ -281,7 +297,20 @@ JHtml::_('behavior.tooltip');
 					<?php echo $item->remote_url;?>
 				</td>
 				<td>
-					<?php echo $item->username;?>
+					<?php
+					if ($item->type == 0)
+					{
+						echo $item->username;
+					}
+					else
+					{
+						if ($item->username)
+						{
+							echo $item->username.'/';
+						}
+						echo $item->client_id;
+					}
+					?>
 				</td>
 				<td class="center">
 					<?php echo JHtml::_('jgrid.published', $item->state, $i, 'websites.', $canChange);?>

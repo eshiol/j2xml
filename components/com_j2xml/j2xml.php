@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.1.113 /components/com_j2xml/j2xml.php
+ * @version		3.6.158 /components/com_j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2013 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -19,21 +19,16 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-// Merge the default translation with the current translation
-$lang = JFactory::getLanguage();
+$params = JComponentHelper::getParams('com_j2xml');
 
-$lang->load('com_j2xml', JPATH_SITE, 'en-GB', true);
-$lang->load('com_j2xml', JPATH_SITE, $lang->getDefault(), true);
-$lang->load('com_j2xml', JPATH_SITE, null, true);
-
-$lang->load('lib_j2xml', JPATH_SITE, null, false, false)
-|| $lang->load('lib_j2xml', JPATH_ADMINISTRATOR, null, false, false)
-// Fallback to the lib_j2xml file in the default language
-|| $lang->load('lib_j2xml', JPATH_SITE, null, true)
-|| $lang->load('lib_j2xml', JPATH_ADMINISTRATOR, null, true);
+jimport('joomla.log.log');
+if ($params->get('debug') || defined('JDEBUG') && JDEBUG)
+{
+	JLog::addLogger(array('text_file' => $params->get('log', 'eshiol.log.php'), 'extension' => 'com_j2xml_file'), JLog::DEBUG, array('lib_j2xml','com_j2xml'));
+}
 
 $controllerClass = 'J2XMLController';
-$task = JRequest::getCmd('task', 'cpanel');
+$task = JRequest::getCmd('task', 'services');
 
 if (strpos($task, '.') === false) 
 	$controllerPath	= JPATH_COMPONENT.'/controller.php';
@@ -49,7 +44,22 @@ else
 	
 	$format = JRequest::getCmd('format');
 	if ($format == 'xmlrpc')
+	{
+		JLog::addLogger(array('logger' => 'xmlrpc', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
 		$controllerPath .= '.'.strtolower($format);
+	}
+	else 
+	{
+		JLog::addLogger(array('logger' => 'messagequeue', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
+		if ($params->get('phpconsole'))
+		{
+			if (jimport('eshiol.core.logger.phpconsole'))
+			{
+				JLog::addLogger(array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'),  JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
+			}
+		}
+	}
+	JLog::add(new JLogEntry('J2XML', JLog::DEBUG, 'com_j2xml'));
 	$controllerPath	.= '.php';
 	// Set the name for the controller and instantiate it
 	$controllerClass .= ucfirst($controllerName);

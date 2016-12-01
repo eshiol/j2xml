@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.1.112 administrator/components/com_j2xml/models/vebsite.php
+ * @version		3.6.158 administrator/components/com_j2xml/models/website.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2013 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -74,7 +74,7 @@ class J2XMLModelWebsites extends JModelList
 		// List state information.
 		parent::populateState('a.title', 'asc');
 	}
-	
+
 	/**
 	 * Method to get a store id based on model configuration state.
 	 *
@@ -118,7 +118,9 @@ class J2XMLModelWebsites extends JModelList
 				'a.username AS username,'.
 				'a.state AS state,'.
 				'a.checked_out AS checked_out,'.
-				'a.checked_out_time AS checked_out_time'
+				'a.checked_out_time AS checked_out_time,'.
+				//'a.access_token, a.refresh_token, a.expire_time,'.'
+				'a.type'
 			)
 		);
 
@@ -136,6 +138,12 @@ class J2XMLModelWebsites extends JModelList
 			$query->where('(a.state IN (0, 1))');
 		}
 
+		$params = $this->getState('params');
+		if ($params->get('oauth2', 0) == 0)
+		{
+			$query->where('a.type = 0');
+		}
+		
 		// Filter by search in title
 		$search = $this->getState('filter.search');
 		if (!empty($search)) {

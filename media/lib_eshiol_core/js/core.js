@@ -1,5 +1,5 @@
 /**
- * @version		16.4.18 media/lib_eshiol_core/js/core.js
+ * @version		16.11.25 media/lib_eshiol_core/js/core.js
  * 
  * @package		eshiol Library
  * @subpackage	lib_eshiol
@@ -14,6 +14,8 @@
  * or is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
+
+if (console) console.log('eshiol Library version 16.11.25');
 
 if (typeof(eshiol) === 'undefined') {
 	var eshiol = {};
@@ -313,3 +315,15 @@ eshiol.sendAjaxByDate = function(name, title, url)
 		AJAX_QUEUE[0].send();
 	}	
 }
+
+eshiol.XMLToString = function(xmlDom)
+{
+//	console.log("eshiol.XMLToString");
+//	console.log(xmlDom);
+	x =
+		(typeof XMLSerializer!=="undefined")
+        ? (new window.XMLSerializer()).serializeToString(xmlDom)
+        : xmlDom.xml;
+//    console.log(x);
+	return x;
+}   

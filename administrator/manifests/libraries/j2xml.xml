@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="2.5" type="library" method="upgrade">
-  <name>J2XML</name>
+<extension version="3" type="library" method="upgrade">
+  <name>j2xml</name>
   <libraryname>eshiol/j2xml</libraryname>
-  <creationDate>May 2016</creationDate>
+  <creationDate>November 2016</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright>(C) 2010, 2016 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>16.5.280.490</version>
+  <version>16.11.288.559</version>
   <description>LIB_J2XML_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
   <files>
@@ -28,4 +28,7 @@
     <language tag="it-IT">it-IT/it-IT.lib_j2xml.ini</language>
     <language tag="it-IT">it-IT/it-IT.lib_j2xml.sys.ini</language>
   </languages>
+  <media destination="lib_eshiol_j2xml" folder="media">
+    <folder>js</folder>
+  </media>
 </extension>

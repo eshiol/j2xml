@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.1.112 administrator/components/com_j2xml/views/vebsite/view.html.php
+ * @version		3.6.158 administrator/components/com_j2xml/views/website/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2013 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -20,7 +20,6 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
-//JLoader::register('BannersHelper', JPATH_COMPONENT.'/helpers/banners.php');
 
 /**
  * View to edit a website
@@ -48,6 +47,18 @@ class J2XMLViewWebsite extends JViewAbstract
 		}
 
 		$this->addToolbar();
+		
+		$this->form->setValue('redirect_uri', null, rtrim(JUri::base(), '/').'/index.php?option=com_j2xml&task=website.oauth2');
+
+		if ($this->item->id != 0)
+		{
+			if ($this->item->type == 1)
+			{
+				$this->form->setFieldAttribute('username', 'readonly', 'true', $group = null);
+			}		
+			$this->form->setFieldAttribute('type', 'readonly', 'true', $group = null);
+		}
+		
 		parent::display($tpl);
 	}
 
@@ -65,10 +76,6 @@ class J2XMLViewWebsite extends JViewAbstract
 		$checkedOut	= !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
 		$canDo		= J2XMLHelper::getActions();
 
-		$doc = JFactory::getDocument();
-		$icon_48_websites = " .icon-48-websites {background:url(../media/com_j2xml/images/icon-48-websites.png) no-repeat; }";
-		$doc->addStyleDeclaration($icon_48_websites);
-		
 		JToolBarHelper::title($isNew ? JText::_('COM_J2XML_MANAGER_WEBSITE_NEW') : JText::_('COM_J2XML_MANAGER_WEBSITE_EDIT'), 'websites.png');
 
 		// If not checked out, can save the item.
@@ -84,7 +91,7 @@ class J2XMLViewWebsite extends JViewAbstract
 		if (!$isNew && $canDo->get('core.create')) {
 			JToolBarHelper::save2copy('website.save2copy');
 		}
-
+		
 		if (empty($this->item->id))  {
 			JToolBarHelper::cancel('website.cancel');
 		} else {

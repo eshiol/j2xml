@@ -2,17 +2,16 @@
 <extension version="3.0" type="library" method="upgrade">
   <name>eshiol</name>
   <libraryname>eshiol/core</libraryname>
-  <creationDate>May 2016</creationDate>
+  <creationDate>November 2016</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright>(C) 2012, 2016 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>16.5.21.119</version>
+  <version>16.11.25.145</version>
   <description>LIB_ESHIOL_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
   <files>
-    <filename>index.html</filename>
     <filename>file.php</filename>
     <filename>link2.php</filename>
     <filename>send.php</filename>
@@ -28,7 +27,6 @@
     <language tag="it-IT">it-IT/it-IT.lib_eshiol.sys.ini</language>
   </languages>
   <media destination="lib_eshiol_core" folder="media">
-    <folder>images</folder>
     <folder>js</folder>
   </media>
 </extension>

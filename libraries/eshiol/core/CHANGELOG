@@ -1,21 +1,12 @@
-<?php
-/**
- * @package		eshiol Library
- * @subpackage	lib_eshiol
- * @version		16.4
- *
- * @author		Helios Ciancio <info@eshiol.it>
- * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2012, 2016 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
- * eshiol Library is free software. This version may have been modified 
- * pursuant to the GNU General Public License, and as distributed it includes 
- * or is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- */
-?>
+--------------------- 16.11.25 Release [29-November-2016] ---------------------
 
------------------------- 16.4.21 Release  [1-May-2016] ------------------------
+29-November-2016
+  - PHP Console (build 25)
+  + import Ajax (build 24)
+  - Joomla 2.5 compatibility (build 23)
+  + PHP Console (build 22)
+
+------------------------ 16.5.21 Release  [1-May-2016] ------------------------
 
 1-May-2016
   + link2 button - window.open (build 21)

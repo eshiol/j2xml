@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.1.113 components/com_j2xml/helpers/log.php
+ * @version		3.3.156 components/com_j2xml/helpers/log.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2013 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2013, 2016 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -45,16 +45,16 @@ if (version_compare(JPlatform::RELEASE, '12', 'ge'))
 				case JLog::ALERT:
 				case JLog::CRITICAL:
 				case JLog::ERROR:
-					plgXMLRPCJ2XMLServices::enqueueMessage($entry->message, 'error');
+					XMLRPCJ2XMLServices::enqueueMessage($entry->message, 'error');
 					break;
 				case JLog::WARNING:
-					plgXMLRPCJ2XMLServices::enqueueMessage($entry->message, 'warning');
+					XMLRPCJ2XMLServices::enqueueMessage($entry->message, 'warning');
 					break;
 				case JLog::NOTICE:
-					plgXMLRPCJ2XMLServices::enqueueMessage($entry->message, 'notice');
+					XMLRPCJ2XMLServices::enqueueMessage($entry->message, 'notice');
 					break;
 				case JLog::INFO:
-					plgXMLRPCJ2XMLServices::enqueueMessage($entry->message, 'message');
+					XMLRPCJ2XMLServices::enqueueMessage($entry->message, 'message');
 					break;
 				default:
 					// Ignore other priorities.
@@ -84,16 +84,16 @@ if (version_compare(JPlatform::RELEASE, '12', 'ge'))
 				case JLog::ALERT:
 				case JLog::CRITICAL:
 				case JLog::ERROR:
-					plgXMLRPCJ2XMLServices::enqueueMessage($entry->message, 'error');
+					XMLRPCJ2XMLServices::enqueueMessage($entry->message, 'error');
 					break;
 				case JLog::WARNING:
-					plgXMLRPCJ2XMLServices::enqueueMessage($entry->message, 'warning');
+					XMLRPCJ2XMLServices::enqueueMessage($entry->message, 'warning');
 					break;
 				case JLog::NOTICE:
-					plgXMLRPCJ2XMLServices::enqueueMessage($entry->message, 'notice');
+					XMLRPCJ2XMLServices::enqueueMessage($entry->message, 'notice');
 					break;
 				case JLog::INFO:
-					plgXMLRPCJ2XMLServices::enqueueMessage($entry->message, 'message');
+					XMLRPCJ2XMLServices::enqueueMessage($entry->message, 'message');
 					break;
 				default:
 					// Ignore other priorities.
