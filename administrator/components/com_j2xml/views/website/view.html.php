@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.158 administrator/components/com_j2xml/views/website/view.html.php
+ * @version		3.6.161 administrator/components/com_j2xml/views/website/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -24,7 +24,7 @@ jimport('joomla.application.component.view');
 /**
  * View to edit a website
  */
-class J2XMLViewWebsite extends JViewAbstract
+class J2XMLViewWebsite extends JViewLegacy
 {
 	protected $form;
 	protected $item;

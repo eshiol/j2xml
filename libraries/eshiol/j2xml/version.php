@@ -1,13 +1,13 @@
 <?php
 /**
- * @version		16.10.286 libraries/eshiol/j2xml/version.php
+ * @version		17.1.289 libraries/eshiol/j2xml/version.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -23,13 +23,13 @@ class J2XMLVersion
 	/** @public static string Product */
 	public static $PRODUCT	= 'J2XML';
 	/** @public static int Main Release Level */
-	public static $RELEASE	= '16';
+	public static $RELEASE	= '17';
 	/** @public static int Sub Release Level */
-	public static $DEV_LEVEL	= '10';
+	public static $DEV_LEVEL	= '1';
 	/** @public static string Development Status */
 	public static $DEV_STATUS	= ''; //dev < alpha = a < beta = b < RC = rc < # < pl = p
 	/** @public static int build Number */
-	public static $BUILD		= '286';
+	public static $BUILD		= '289';
 	/** @public static string Codename */
 	public static $CODENAME	= ' ';
 	/** @public static string Copyright Text */

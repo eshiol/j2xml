@@ -2,12 +2,12 @@
 <extension version="3.0" type="plugin" group="system" method="upgrade">
   <name>plg_system_j2xml</name>
   <author>Helios Ciancio</author>
-  <creationDate>November 2016</creationDate>
-  <copyright>(C) 2010, 2016 Helios Ciancio. All rights reserved.</copyright>
+  <creationDate>January 2017</creationDate>
+  <copyright>(C) 2010, 2017 Helios Ciancio. All rights reserved.</copyright>
   <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <version>3.6.35.64</version>
+  <version>3.6.36.66</version>
   <description>PLG_SYSTEM_J2XML_XML_DESCRIPTION</description>
   <scriptfile>enable.php</scriptfile>
   <files>

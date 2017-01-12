@@ -30,11 +30,9 @@ class J2XMLViewCpanel extends JViewLegacy
 		$params = JComponentHelper::getParams('com_j2xml');
 		$this->assignRef('params', $params);
 
-		if (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge'))
-		{
-			J2XMLHelper::addSubmenu('cpanel');
-			$this->sidebar = JHtmlSidebar::render();
-		}
+		J2XMLHelper::addSubmenu('cpanel');
+		$this->sidebar = JHtmlSidebar::render();
+
 		$this->addToolbar();		
 		parent::display($tpl);
 	}
@@ -90,6 +88,7 @@ class J2XMLViewCpanel extends JViewLegacy
 			$doc->addScript("../media/lib_eshiol_core/js/encryption.js");
 			$doc->addScript("../media/lib_eshiol_core/js/core.js");
 			$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml.js");
+
 			$toolbar = JToolBar::getInstance('toolbar');
 			$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null, 'xml,gz', null, $this->params->get('ajax', 1) ? 'eshiol.j2xml.import' : null);
 //			$params = JComponentHelper::getParams('com_j2xml');

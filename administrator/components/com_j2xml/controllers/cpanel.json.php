@@ -70,6 +70,7 @@ class J2XMLControllerCpanel extends JControllerLegacy
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
+		libxml_use_internal_errors(true);
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 		
 		if (!$xml)

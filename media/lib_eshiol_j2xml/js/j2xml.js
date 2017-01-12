@@ -1,5 +1,5 @@
 /**
- * @version		16.11.288 media/lib_eshiol_j2xml/js/j2xml.js
+ * @version		17.1.289 media/lib_eshiol_j2xml/js/j2xml.js
  * 
  * @package		eshiol Library
  * @subpackage	lib_eshiol
@@ -7,7 +7,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2012, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2012, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * eshiol Library is free software. This version may have been modified 
  * pursuant to the GNU General Public License, and as distributed it includes 
@@ -31,7 +31,7 @@
 	});
 }());
   
-console.log('j2xml Library version 16.11.288');
+console.log('j2xml Library version 17.1.289');
 
 if (typeof(eshiol) === 'undefined') {
 	eshiol = {};
@@ -39,6 +39,75 @@ if (typeof(eshiol) === 'undefined') {
 
 if (typeof(eshiol.j2xml) === 'undefined') {
 	eshiol.j2xml = {};
+}
+
+
+/**
+ * process item
+ *
+ * @param {string} nodes the array of item
+ * @param {int}	n
+ * @param {int}	tot
+ * 
+ * @return  {boolean}  true on success.
+ */ 
+eshiol.j2xml.send = function($nodes, n, tot) 
+{   
+	console.log('eshiol.j2xml.send');
+
+	if ($nodes.length > 0)
+	{
+//		item = $nodes.pop();
+		item = $nodes.shift();
+		item = '<?xml version="1.0" encoding="UTF-8" ?>'+item;
+		console.log(item);
+		jQuery.post(
+			'index.php?option=com_j2xml&task=cpanel.import&format=json',
+			{
+			'j2xml_data': escape(item)
+		    },
+		    function(response, textStatus, jqXHR){
+			    // Callback handler that will be called on success
+		        console.log('done');
+		        console.log(response);
+				if (!response.success && response.message)
+				{
+					eshiol.renderMessages({
+						'error': [response.message]
+					});
+				}
+				else if (response.messages)
+				{
+					eshiol.renderMessages(response.messages);
+				}
+		    },'json'
+		)
+		.fail(function(jqXHR, textStatus, error) {
+			console.log('fail');
+			console.log('jqXHR: '+eshiol.dump(jqXHR));
+			console.log('textStatus: '+textStatus);
+			console.log('error: '+error);
+			Joomla.ajaxErrorsMessages(jqXHR, textStatus, error);
+		})
+		.always(function() {
+			console.log('always');
+			n++;
+			if (n == tot)
+			{
+				button.innerHTML = button_text+'ed... 100%';
+		        setTimeout(function(){
+		        	button.innerHTML = button_text;			        	
+		        },2000);
+			}
+			else
+			{
+				x = Math.floor(n/tot*100);
+		        button.innerHTML = button_text+'ing... '+x+'%';
+			}
+			document.getElementById('j-main-container').scrollIntoView();
+			eshiol.j2xml.send($nodes, n, tot);
+		});
+	}
 }
 
 /**
@@ -122,22 +191,21 @@ eshiol.j2xml.import = function(name, url)
 	
 	file = input.files[0];
 	 
-//	jQuery('#'+name+'_local').val('');
-//	jQuery('#'+name+'_local1').val('');
+	jQuery('#'+name+'_local').val('');
+	jQuery('#'+name+'_local1').val('');
 	
     fr = new FileReader();
     fr.onload = function() {
     	var xml = fr.result;
-//    	console.log(xml);
 		xmlDoc = jQuery.parseXML(xml);
-//		console.log(xmlDoc);
 		$xml = jQuery(xmlDoc);
-//    	console.log($xml);
 		root = $xml.find(":root")[0];
 		if (root.nodeName != "j2xml")
 		{
 			return true;
 		}
+		console.log(jQuery(root).attr('version'));
+		
 		var $nodes = Array();
 		$root = jQuery(root);
         $root.find("user").each(function(index) {
@@ -150,7 +218,6 @@ eshiol.j2xml.import = function(name, url)
             $nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
             });
         $root.children().each(function(index) {
-//            console.log(this.nodeName);
 			if (this.nodeName == "user") return;
 			if (this.nodeName == "category") return;
 			if (this.nodeName == "content") return;
@@ -168,6 +235,8 @@ eshiol.j2xml.import = function(name, url)
     	button_text = button.innerHTML;
         button.innerHTML = button_text+'ing... 0%';
 
+		eshiol.j2xml.send($nodes, n, tot);
+        /*
         $nodes.each(function(item, index, object)
         {
         	item = '<?xml version="1.0" encoding="UTF-8" ?>'+item;
@@ -218,6 +287,7 @@ eshiol.j2xml.import = function(name, url)
 				document.getElementById('j-main-container').scrollIntoView();
 			});
         });
+        */
     };
 	fr.readAsText(file);
 	return true;

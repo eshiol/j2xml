@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.158 administrator/components/com_j2xml/j2xml.php
+ * @version		3.6.161 administrator/components/com_j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -22,7 +22,8 @@ defined('_JEXEC') or die('Restricted access.');
 if(!defined('DS')) define('DS',DIRECTORY_SEPARATOR);
 
 $params = JComponentHelper::getParams('com_j2xml');
-if ($params->get('debug', 0)) {
+if ($params->get('debug', 0)) 
+{
 	ini_set('display_errors', 'On');
 	error_reporting(E_ALL | E_STRICT);
 }
@@ -33,40 +34,11 @@ if ($params->get('debug') || defined('JDEBUG') && JDEBUG)
 	JLog::addLogger(array('text_file' => $params->get('log', 'eshiol.log.php'), 'extension' => 'com_j2xml_file'), JLog::DEBUG, array('lib_j2xml','com_j2xml'));
 }
 JLog::addLogger(array('logger' => 'messagequeue', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
-if ($params->get('phpconsole'))
+if ($params->get('phpconsole') && class_exists('JLogLoggerPhpconsole'))
 {
-	if (jimport('eshiol.core.logger.phpconsole'))
-	{
-		JLog::addLogger(array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'),  JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
-	}
+	JLog::addLogger(array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'),  JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
 }
 JLog::add(new JLogEntry('J2XML', JLog::DEBUG, 'com_j2xml'));
-
-if (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge'))
-{
-	if (!class_exists('JControllerAbstract'))
-	{
-		abstract class JControllerAbstract extends JControllerLegacy {}
-	}
-	if (!class_exists('JViewAbstract'))
-	{
-		abstract class JViewAbstract extends JViewLegacy {}
-	}
-}
-else
-{
-	jimport('joomla.application.component.controller');
-	jimport('joomla.application.component.view');
-
-	if (!class_exists('JControllerAbstract'))
-	{
-		abstract class JControllerAbstract extends JController {}
-	}
-	if (!class_exists('JViewAbstract'))
-	{
-		abstract class JViewAbstract extends JView {}
-	}
-}
 
 if (file_exists(JPATH_LIBRARIES.'/vendor/eshiol/oauth2-joomla/src/Provider/JoomlaProvider.php'))
 {
@@ -89,12 +61,18 @@ $lang->load('lib_j2xml', JPATH_SITE, null, false, false)
 
 $controllerClass = 'J2XMLController';
 if (class_exists('JPlatform'))
+{
 	$task = JRequest::getCmd('task', 'cpanel');
+}
 elseif ($view = JRequest::getCmd('view') == 'websites')
+{
 	JFactory::getApplication()->redirect(JRoute::_('index.php?option=com_j2xml', false));
+}
 
-if (strpos($task, '.') === false) 
+if (strpos($task, '.') === false)
+{
 	$controllerPath	= JPATH_COMPONENT_ADMINISTRATOR.DS.'controller.php';
+}
 else
 {
 	// We have a defined controller/task pair -- lets split them out
@@ -106,22 +84,32 @@ else
 	$controllerPath	= JPATH_COMPONENT_ADMINISTRATOR.DS.'controllers'.DS.$controllerName;
 	$format = JRequest::getCmd('format');
 	if ($format == 'json')
+	{
 		$controllerPath .= '.'.strtolower($format);
+	}
 	$controllerPath	.= '.php';
 	// Set the name for the controller and instantiate it
 	$controllerClass .= ucfirst($controllerName);
 }
 
 // If the controller file path exists, include it ... else lets die with a 500 error
-if (file_exists($controllerPath)) {
+if (file_exists($controllerPath)) 
+{
 	require_once($controllerPath);
-} else {
+} 
+else
+{
 	JError::raiseError(500, 'Invalid Controller '.$controllerName);
 }
 
-if (class_exists($controllerClass)) {
+JLog::add(new JLogEntry($controllerClass, JLog::DEBUG, 'com_j2xml'));
+
+if (class_exists($controllerClass)) 
+{
 	$controller = new $controllerClass();
-} else {
+} 
+else 
+{
 	JError::raiseError(500, 'Invalid Controller Class - '.$controllerClass );
 }
 

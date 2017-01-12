@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.0.94 controller.php
+ * @version		3.6.161 administrator/components/com_j2xml/controller.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010-2013 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -24,7 +24,7 @@ jimport('joomla.application.component.controller');
 /**
  * J2XML master display controller
  */
-class J2XMLController extends JControllerAbstract
+class J2XMLController extends JControllerLegacy
 {
 	/**
 	 * Method to display a view.

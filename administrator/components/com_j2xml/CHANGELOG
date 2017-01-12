@@ -1,6 +1,7 @@
---------------------- 3.6.160 Release  [29-November-2016] ---------------------
+---------------------- 3.6.161 Release [11-January-2017] ----------------------
 
-29-November-2016
+11-January-2017
+  + export contacts (build 161)
   + ajax (build 160)
   - 2.5 compatibility (build 160)
   + import Ajax (build 159)
