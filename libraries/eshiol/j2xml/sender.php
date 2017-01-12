@@ -1,13 +1,13 @@
 <?php
 /**
- * @version		16.10.286 libraries/eshiol/j2xml/sender.php
+ * @version		17.1.291 libraries/eshiol/j2xml/sender.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3beta3.38
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -69,8 +69,8 @@ class J2XMLSender
 	 */
 	static function send($xml, $options, $sid)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('xml: '.$xml->asXML(),JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('xml: '.$xml->asXML(), JLOG::DEBUG, 'lib_j2xml'));
 		
 		$app = JFactory::getApplication();
 		$version = explode(".", J2XMLVersion::$DOCVERSION);
@@ -109,7 +109,7 @@ class J2XMLSender
 			'header' => "Content-Type: text/xml",
 			'user_agent' => J2XMLVersion::$PRODUCT.' '.J2XMLVersion::getFullVersion(),		
 			'content' => xmlrpc_encode_request('j2xml.import', array($data, $server['username'], '********'))
-		)), true),JLOG::DEBUG,'lib_j2xml'));
+		)), true), JLOG::DEBUG, 'lib_j2xml'));
 		$request = xmlrpc_encode_request('j2xml.import', array($data, $server['username'], $server['password']));
 		$context = stream_context_create(array('http' => array(
 			'method' => "POST",
@@ -117,24 +117,40 @@ class J2XMLSender
 			'user_agent' => J2XMLVersion::$PRODUCT.' '.J2XMLVersion::getFullVersion(),		
 			'content' => $request
 		)));
-		$file = file_get_contents($server['remote_url'], false, $context);
-		$response = xmlrpc_decode($file);
 		
-		JLog::add(new JLogEntry(print_r($response, true),JLOG::DEBUG,'lib_j2xml'));
-		if ($response && xmlrpc_is_fault($response)) 
+		$headers = get_headers($server['remote_url']);
+		if (substr($headers[0], 9, 3) != "200")
 		{
-			$app->enqueueMessage($server['title'].': '.JText::_($response['faultString']), 'error');
-		} 
-		elseif (is_array($response))
+			JLog::add(new JLogEntry("GET ".$server['remote_url']."\n".print_r($headers, true), JLOG::DEBUG, 'lib_j2xml'));
+			$app->enqueueMessage($server['title'].': '.$headers[0], 'error');
+		}
+		else
 		{
-			foreach($response as $msg)
+			$file = file_get_contents($server['remote_url'], false, $context);
+			if ($file === false) {
+				// Handle the error
+			}
+			else
 			{
-				if (isset(J2XMLMessages::$messages[$msg['code']]))
-					$app->enqueueMessage($server['title'].': '.JText::sprintf(J2XMLMessages::$messages[$msg['code']], $msg['string']), self::$codes[$msg['code']]);
-				elseif (isset(self::$codes[$msg['code']]))
-					$app->enqueueMessage($server['title'].': '.$msg['message'],self::$codes[$msg['code']]);
-				else
-					$app->enqueueMessage($server['title'].': '.$msg['message'],'notice');
+				$response = xmlrpc_decode($file);
+				
+				JLog::add(new JLogEntry(print_r($response, true), JLOG::DEBUG, 'lib_j2xml'));
+				if ($response && xmlrpc_is_fault($response)) 
+				{
+					$app->enqueueMessage($server['title'].': '.JText::_($response['faultString']), 'error');
+				} 
+				elseif (is_array($response))
+				{
+					foreach($response as $msg)
+					{
+						if (isset(J2XMLMessages::$messages[$msg['code']]))
+							$app->enqueueMessage($server['title'].': '.JText::sprintf(J2XMLMessages::$messages[$msg['code']], $msg['string']), self::$codes[$msg['code']]);
+						elseif (isset(self::$codes[$msg['code']]))
+							$app->enqueueMessage($server['title'].': '.$msg['message'],self::$codes[$msg['code']]);
+						else
+							$app->enqueueMessage($server['title'].': '.$msg['message'],'notice');
+					}
+				}
 			}
 		}
 	}
