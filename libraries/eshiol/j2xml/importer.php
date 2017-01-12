@@ -323,6 +323,38 @@ class J2XMLImporter
 			}
 		}
 
+		JLog::add(new JLogEntry('*** Importing tags... ***', JLOG::DEBUG, 'lib_j2xml'));
+		foreach($xml->xpath("//j2xml/tag") as $record)
+		{
+			$this->prepareData($record, $data, $params);
+		
+			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tags/tables');
+			$data['id'] = 0;
+		
+			$path = $data['path'];
+			$i = strrpos($path, '/');
+			if ($i === false) {
+				$data['parent_id'] = 1;
+			} else {
+				$parent_path = substr($path, 0, $i);
+				if (!isset($parent_ids[$parent_path])) {
+					$query = 'SELECT id'
+							. ' FROM #__tags'
+									. ' WHERE path = '. $db->q($parent_path)
+									;
+									$db->setQuery($query);
+									$parent_ids[$parent_path] = $db->loadResult();
+				}
+				$data['parent_id'] = $parent_ids[$parent_path];
+			}
+			$table = JTable::getInstance('Tag', 'TagsTable');
+			$table->setLocation($data['parent_id'], 'last-child');
+			//JLog::add(new JLogEntry(print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
+			$table->save($data);
+		
+			JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_TAG_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
+		}
+		
 		$import_categories = $params->get('import_categories', '1');
 		$keep_id = $params->get('keep_id', '0');
 		
@@ -433,7 +465,26 @@ class J2XMLImporter
 						}
 											
 						//JLog::add(new JLogEntry(print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
-						if ($table->save($data))
+
+						$table->bind($data);
+
+						$tags = array();
+						if (isset($data['tag']))
+						{
+							$tags[] = $data['tag'];
+						}
+						elseif (isset($data['taglist']))
+						{
+							foreach ($data['taglist'] as $v)
+								$tags[] = $v;
+						}
+						$table->newTags = eshHelperTags::convertPathsToIds($tags);
+							
+						// Trigger the onContentBeforeSave event.
+//						$result = $dispatcher->trigger('onContentBeforeSave', array($this->_option.'.category', &$table, $isNew));
+//						if (!in_array(false, $result, true))
+
+						if ($table->store())
 						{
 							if (!$category && ($keep_id == 1) && ($id > 1))
 							{
@@ -479,10 +530,10 @@ class J2XMLImporter
 				}
 			}
 		}
-		
+
 		$import_content = $params->get('import_content', '2');
 		$import_images = $params->get('import_images', '1');
-		
+
 		$keep_access = $params->get('keep_access', '0');
 		$keep_state = $params->get('keep_state', '2');
 		$keep_author = $params->get('keep_author', '1');
@@ -506,7 +557,6 @@ class J2XMLImporter
 		$users_id[0] = 0;
 		*/
 
-
 		if ($keep_frontpage)
 		{
 			$query = 'SELECT max(ordering)'
@@ -514,38 +564,6 @@ class J2XMLImporter
 				;
 			$db->setQuery($query);
 			$frontpage = (int)$db->loadResult();			
-		}
-		
-		JLog::add(new JLogEntry('*** Importing tags... ***', JLOG::DEBUG, 'lib_j2xml'));
-		foreach($xml->xpath("//j2xml/tag") as $record)
-		{
-			$this->prepareData($record, $data, $params);
-				
-			JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tags/tables');
-			$data['id'] = 0;
-				
-			$path = $data['path'];
-			$i = strrpos($path, '/');
-			if ($i === false) {
-				$data['parent_id'] = 1;
-			} else {
-				$parent_path = substr($path, 0, $i);
-				if (!isset($parent_ids[$parent_path])) {
-					$query = 'SELECT id'
-						. ' FROM #__tags'
-						. ' WHERE path = '. $db->q($parent_path)
-						;
-					$db->setQuery($query);
-					$parent_ids[$parent_path] = $db->loadResult();
-				}
-				$data['parent_id'] = $parent_ids[$parent_path];
-			}							
-			$table = JTable::getInstance('Tag', 'TagsTable');
-			$table->setLocation($data['parent_id'], 'last-child');
-			//JLog::add(new JLogEntry(print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
-			$table->save($data);
-
-			JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_TAG_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
 		}
 		
 		$dispatcher = JDispatcher::getInstance();

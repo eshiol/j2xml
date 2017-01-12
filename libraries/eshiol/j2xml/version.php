@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.1.289 libraries/eshiol/j2xml/version.php
+ * @version		17.1.290 libraries/eshiol/j2xml/version.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3
@@ -29,7 +29,7 @@ class J2XMLVersion
 	/** @public static string Development Status */
 	public static $DEV_STATUS	= ''; //dev < alpha = a < beta = b < RC = rc < # < pl = p
 	/** @public static int build Number */
-	public static $BUILD		= '289';
+	public static $BUILD		= '290';
 	/** @public static string Codename */
 	public static $CODENAME	= ' ';
 	/** @public static string Copyright Text */

@@ -1,5 +1,5 @@
 /**
- * @version		17.1.289 media/lib_eshiol_j2xml/js/j2xml.js
+ * @version		17.1.290 media/lib_eshiol_j2xml/js/j2xml.js
  * 
  * @package		eshiol Library
  * @subpackage	lib_eshiol
@@ -208,21 +208,29 @@ eshiol.j2xml.import = function(name, url)
 		
 		var $nodes = Array();
 		$root = jQuery(root);
-        $root.find("user").each(function(index) {
+
+		$root.children("user").each(function(index) {
             $nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
-            });
-        $root.find("category").each(function(index) {
+        });
+
+        $root.children("tag").each(function(index) {
             $nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
-            });
-        $root.find("content").each(function(index){
+        });
+
+        $root.children("category").each(function(index) {
             $nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
-            });
+        });
+
+        $root.children("content").each(function(index){
+            $nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
+        });
+
         $root.children().each(function(index) {
-			if (this.nodeName == "user") return;
-			if (this.nodeName == "category") return;
-			if (this.nodeName == "content") return;
-            $nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
-            });
+        	if (["user","tag","category","content"].indexOf(this.nodeName) == -1)
+        	{
+        		$nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
+        	}
+        });
 
         tot = $nodes.length;
         if (tot == 0)
