@@ -4,14 +4,17 @@
   <author>Helios Ciancio</author>
   <creationDate>January 2017</creationDate>
   <packagename>j2xml</packagename>
-  <version>3.6.161.494</version>
+  <version>3.6.161.505</version>
   <url>http://www.eshiol.it</url>
   <packager>Helios Ciancio</packager>
   <packagerurl>http://www.eshiol.it/</packagerurl>
   <description>PKG_J2XML_XML_DESCRIPTION</description>
+  <updateservers>
+    <server type="extension" priority="2" name="J2XML">https://www.eshiol.it/download/j2xml/j2xml.xml</server>
+  </updateservers>
   <files>
-    <folder type="library" id="eshiol">lib_eshiol-16.11.25.145.zip</folder>
-    <folder type="library" id="j2xml">lib_j2xml-17.1.289.570.zip</folder>
+    <folder type="library" id="eshiol">lib_eshiol-17.1.26.155.zip</folder>
+    <folder type="library" id="j2xml">lib_j2xml-17.1.291.580.zip</folder>
     <folder type="component" id="j2xml">com_j2xml-3.6.161.357.zip</folder>
     <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.6.36.66.zip</folder>
   </files>

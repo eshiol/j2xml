@@ -1,11 +1,11 @@
 <?php
 /**
  * @package		J2XML
- * @version		3.3
+ * @version		3.6
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -13,6 +13,40 @@
  * other free or open source software licenses.
  */
 ?>
+
+-------------------------- 3.6.161 [13-January-2017] --------------------------
+
+pkg_j2xml-3.6.161
+  + Joomla Update System (build 161)
+
+lib_eshiol-17.1.26
+  + Joomla Update System (build 26)
+  
+lib_j2xml-17.1.291
+  # sender (build 291)
+  $ LIB_J2XML_XMLRPC_DISABLED (build 291)
+  # import tag (build 290)
+  + export contacts (build 289)
+  # import category (build 289)
+
+com_j2xml-3.6.161
+  + export contacts (build 161)
+  + ajax (build 160)
+  - 2.5 compatibility (build 160)
+  + import Ajax (build 159)
+  + PHP Console (build 158)
+  + OAuth2 (build 158)
+  ^ debug (build 157)
+  ^ utf8_encode (build 156)
+  ^ purify xml (build 155)
+  # messages (build 154)
+  # log (build 153)
+  # manifest (build 152)
+  
+plg_system-3.6.36
+  + export contacts (build 36)
+  ^ log (build 35)
+  $ language files (build 35)
 
 ------------------------- 3.6.160  [29-November-2016] -------------------------
 
