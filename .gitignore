@@ -7,6 +7,9 @@
 .buildpath
 .project
 
+# Joomla
+.repository
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
