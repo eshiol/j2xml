@@ -49,7 +49,7 @@ class J2XMLControllerCpanel extends JControllerLegacy
 	
 	function import()
 	{
-		JLog::add(new JLogEntry(__LINE__.' '.__METHOD__, JLog::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		$data = utf8_encode(urldecode($this->app->input->post->get('j2xml_data', '', 'RAW')));
 
@@ -70,15 +70,12 @@ class J2XMLControllerCpanel extends JControllerLegacy
 			define(LIBXML_PARSEHUGE, 524288);
 		}
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-JLog::add(new JLogEntry(__LINE__, JLog::DEBUG, 'com_j2xml'));
 		
 		JLog::add(new JLogEntry('data: '.$data, JLog::DEBUG, 'com_j2xml'));
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 		
-JLog::add(new JLogEntry(__LINE__, JLog::DEBUG, 'com_j2xml'));
 		if (!$xml)
 		{
-JLog::add(new JLogEntry(__LINE__, JLog::DEBUG, 'com_j2xml'));
 			$errors = libxml_get_errors();
 			foreach ($errors as $error) {
 				$msg = $error->code.' - '.$error->message.' at line '.$error->line;
