@@ -15,7 +15,7 @@
  * other free or open source software licenses.
  */
 
-if (console) console.log('eshiol Library version 16.11.25');
+if (console) console.log('eshiol Library v16.11.25');
 
 if (typeof(eshiol) === 'undefined') {
 	var eshiol = {};
