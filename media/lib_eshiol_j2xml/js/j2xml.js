@@ -1,5 +1,5 @@
 /**
- * @version		17.1.290 media/lib_eshiol_j2xml/js/j2xml.js
+ * @version		17.1.292 media/lib_eshiol_j2xml/js/j2xml.js
  * 
  * @package		eshiol Library
  * @subpackage	lib_eshiol
@@ -31,7 +31,7 @@
 	});
 }());
   
-console.log('j2xml Library version 17.1.289');
+console.log('j2xml Library version 17.1.292');
 
 if (typeof(eshiol) === 'undefined') {
 	eshiol = {};
@@ -41,6 +41,9 @@ if (typeof(eshiol.j2xml) === 'undefined') {
 	eshiol.j2xml = {};
 }
 
+if (typeof(eshiol.j2xml.convert) === 'undefined') {
+	eshiol.j2xml.convert = [];
+}
 
 /**
  * process item
@@ -197,7 +200,12 @@ eshiol.j2xml.import = function(name, url)
     fr = new FileReader();
     fr.onload = function() {
     	var xml = fr.result;
-		xmlDoc = jQuery.parseXML(xml);
+
+    	eshiol.j2xml.convert.each(function(fn) {
+			xml = fn(xml);
+        });
+    	
+    	xmlDoc = jQuery.parseXML(xml);
 		$xml = jQuery(xmlDoc);
 		root = $xml.find(":root")[0];
 		if (root.nodeName != "j2xml")
@@ -244,58 +252,6 @@ eshiol.j2xml.import = function(name, url)
         button.innerHTML = button_text+'ing... 0%';
 
 		eshiol.j2xml.send($nodes, n, tot);
-        /*
-        $nodes.each(function(item, index, object)
-        {
-        	item = '<?xml version="1.0" encoding="UTF-8" ?>'+item;
-			console.log(item);
-			jQuery.post(
-				'index.php?option=com_j2xml&task=cpanel.import&format=json',
-				{
-				'j2xml_data': escape(item)
-			    },
-			    function(response, textStatus, jqXHR){
-				    // Callback handler that will be called on success
-			        console.log('done');
-			        console.log(response);
-					if (!response.success && response.message)
-					{
-						eshiol.renderMessages({
-							'error': [response.message]
-						});
-					}
-					else if (response.messages)
-					{
-						eshiol.renderMessages(response.messages);
-					}
-			    },'json'
-			)
-			.fail(function(jqXHR, textStatus, error) {
-				console.log('fail');
-				console.log('jqXHR: '+eshiol.dump(jqXHR));
-				console.log('textStatus: '+textStatus);
-				console.log('error: '+error);
-				Joomla.ajaxErrorsMessages(jqXHR, textStatus, error);
-			})
-			.always(function() {
-				console.log('always');
-				n++;
-				if (n == tot)
-				{
-					button.innerHTML = button_text+'ed... 100%';
-			        setTimeout(function(){
-			        	button.innerHTML = button_text;			        	
-			        },2000);
-				}
-				else
-				{
-					x = Math.floor(n/tot*100);
-			        button.innerHTML = button_text+'ing... '+x+'%';
-				}
-				document.getElementById('j-main-container').scrollIntoView();
-			});
-        });
-        */
     };
 	fr.readAsText(file);
 	return true;

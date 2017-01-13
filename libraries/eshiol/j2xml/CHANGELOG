@@ -1,6 +1,7 @@
---------------------- 17.1.291 Release [13-January-2017] ----------------------
+--------------------- 17.1.292 Release [13-January-2017] ----------------------
 
 13-January-2016
+  + client side xsl transformation (build 292) 
   # sender (build 291)
   $ LIB_J2XML_XMLRPC_DISABLED (build 291)
   # import tag (build 290)
