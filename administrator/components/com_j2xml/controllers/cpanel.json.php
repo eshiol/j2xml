@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.160 administrator/components/com_j2xml/controllers/cpanel.json.php
+ * @version		3.6.162 administrator/components/com_j2xml/controllers/cpanel.json.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -49,10 +49,9 @@ class J2XMLControllerCpanel extends JControllerLegacy
 	
 	function import()
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-		
-		$data = urldecode($this->app->input->post->get('j2xml_data', '', 'RAW'));
-		JLog::add(new JLogEntry('data: '.$data, JLog::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry(__LINE__.' '.__METHOD__, JLog::DEBUG, 'com_j2xml'));
+
+		$data = utf8_encode(urldecode($this->app->input->post->get('j2xml_data', '', 'RAW')));
 
 		// Send json mime type.
 		$this->app->mimeType = 'application/json';
@@ -64,17 +63,22 @@ class J2XMLControllerCpanel extends JControllerLegacy
 
 		$results = $dispatcher->trigger('onContentPrepareData', array('com_j2xml.cpanel', &$data));
 		$data = strstr($data, '<?xml version="1.0" ');
-
+		
 		$data = J2XMLHelper::stripInvalidXml($data);
 		if (!defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
-		libxml_use_internal_errors(true);
+		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
+JLog::add(new JLogEntry(__LINE__, JLog::DEBUG, 'com_j2xml'));
+		
+		JLog::add(new JLogEntry('data: '.$data, JLog::DEBUG, 'com_j2xml'));
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 		
+JLog::add(new JLogEntry(__LINE__, JLog::DEBUG, 'com_j2xml'));
 		if (!$xml)
 		{
+JLog::add(new JLogEntry(__LINE__, JLog::DEBUG, 'com_j2xml'));
 			$errors = libxml_get_errors();
 			foreach ($errors as $error) {
 				$msg = $error->code.' - '.$error->message.' at line '.$error->line;

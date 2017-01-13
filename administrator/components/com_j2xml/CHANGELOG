@@ -1,10 +1,10 @@
----------------------- 3.6.161 Release [11-January-2017] ----------------------
+---------------------- 3.6.162 Release [13-January-2017] ----------------------
 
-11-January-2017
+13-January-2017
   + export contacts (build 161)
   + ajax (build 160)
   - 2.5 compatibility (build 160)
-  + import Ajax (build 159)
+  + import Ajax (build 159, 162)
   + PHP Console (build 158)
   + OAuth2 (build 158)
 

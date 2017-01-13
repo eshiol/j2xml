@@ -14,26 +14,27 @@
  */
 ?>
 
--------------------------- 3.6.161 [13-January-2017] --------------------------
+-------------------------- 3.6.162 [13-January-2017] --------------------------
 
-pkg_j2xml-3.6.161
+pkg_j2xml-3.6.162
   + Joomla Update System (build 161)
 
 lib_eshiol-17.1.26
   + Joomla Update System (build 26)
   
-lib_j2xml-17.1.291
+lib_j2xml-17.1.292
+  + client side xsl transformation (build 292)
   # sender (build 291)
   $ LIB_J2XML_XMLRPC_DISABLED (build 291)
   # import tag (build 290)
   + export contacts (build 289)
   # import category (build 289)
 
-com_j2xml-3.6.161
+com_j2xml-3.6.162
   + export contacts (build 161)
   + ajax (build 160)
   - 2.5 compatibility (build 160)
-  + import Ajax (build 159)
+  + import Ajax (build 159, 162)
   + PHP Console (build 158)
   + OAuth2 (build 158)
   ^ debug (build 157)

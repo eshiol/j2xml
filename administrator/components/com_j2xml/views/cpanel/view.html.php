@@ -25,6 +25,10 @@ class J2XMLViewCpanel extends JViewLegacy
 {
 	function display($tpl = null)
 	{
+		// Trigger the onAfterDispatch event.
+		JPluginHelper::importPlugin('j2xml');
+		JFactory::getApplication()->triggerEvent('onAfterDispatch');
+		
 		$info = $this->get('Info');
 		$this->assignRef('info', $info);
 		$params = JComponentHelper::getParams('com_j2xml');
