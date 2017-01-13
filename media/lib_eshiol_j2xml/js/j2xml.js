@@ -31,7 +31,7 @@
 	});
 }());
   
-console.log('j2xml Library version 17.1.292');
+console.log('j2xml Library v17.1.292');
 
 if (typeof(eshiol) === 'undefined') {
 	eshiol = {};
@@ -201,13 +201,14 @@ eshiol.j2xml.import = function(name, url)
     fr.onload = function() {
     	var xml = fr.result;
 
-    	eshiol.j2xml.convert.each(function(fn) {
+		eshiol.j2xml.convert.each(function(fn) {
 			xml = fn(xml);
         });
     	
-    	xmlDoc = jQuery.parseXML(xml);
+       	xmlDoc = jQuery.parseXML(xml);
 		$xml = jQuery(xmlDoc);
 		root = $xml.find(":root")[0];
+
 		if (root.nodeName != "j2xml")
 		{
 			return true;
