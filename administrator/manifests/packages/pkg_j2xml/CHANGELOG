@@ -45,6 +45,7 @@ com_j2xml-3.6.162
   # manifest (build 152)
   
 plg_system-3.6.36
+  + client side xsl transformation (build 37)
   + export contacts (build 36)
   ^ log (build 35)
   $ language files (build 35)

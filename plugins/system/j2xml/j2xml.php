@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.36 plugins/system/j2xml/j2xml.php
+ * @version		3.6.37 plugins/system/j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	plg_system_j2xml
@@ -105,6 +105,11 @@ class plgSystemJ2XML extends JPlugin
 				$toolbar->appendButton('Send', 'out', 'PLG_SYSTEM_J2XML_BUTTON_SEND', $websites, true);
 			}
 		}
+
+		// Trigger the onAfterDispatch event.
+		JPluginHelper::importPlugin('j2xml');
+		JFactory::getApplication()->triggerEvent('onLoadJS');
+		
 		return true;
 	}
 	

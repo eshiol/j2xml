@@ -1,6 +1,7 @@
----------------------- 3.6.36 Release  [11-January-2017] ----------------------
+---------------------- 3.6.37 Release  [13-January-2017] ----------------------
 
-11-January-2017
+13-January-2017
+  + client side xsl transformation (build 37)
   + export contacts (build 36)
 
 29-November-2016
