@@ -7,7 +7,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2012, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * eshiol Library is free software. This version may have been modified 
  * pursuant to the GNU General Public License, and as distributed it includes 
@@ -35,7 +35,7 @@ eshiol.renderMessages = function(messages) {
 	Object.each(messages, function (item, type) {
 		if (type == 'message')
 			type = 'success';
-		
+
 		var div = $$('#system-message-container div.alert.alert-'+type);
 		if (!div[0])
 		{
@@ -74,21 +74,21 @@ eshiol.renderMessages = function(messages) {
 		}, this);
 //		divList.inject(div);
 	}, this);
-};		
+};
 
 
 eshiol.dump = function (arr,level) {
 	var dumped_text = "";
 	if(!level) level = 0;
-	
+
 	//The padding given at the beginning of the line.
 	var level_padding = "";
 	for(var j=0;j<level+1;j++) level_padding += "    ";
-	
+
 	if(typeof(arr) == 'object') { //Array/Hashes/Objects 
 		for(var item in arr) {
 			var value = arr[item];
-			
+
 			if(typeof(value) == 'object') { //If it is an array,
 				dumped_text += level_padding + "'" + item + "' ...\n";
 				dumped_text += dump(value,level+1);
@@ -109,7 +109,7 @@ eshiol.sendAjax = function(name, title, url)
 	url = Base64.decode(url);
 	while (url.charCodeAt(url.length-1) == 0)
 		url = url.substr(0,url.length-1);
-	
+
 	var n = 0;
 	var tot = 0;
 	var AJAX_QUEUE = [];
@@ -183,7 +183,7 @@ eshiol.sendAjax = function(name, title, url)
 						AJAX_QUEUE[n].send();
 					}
 				}
-			});	
+			});
 			AJAX_QUEUE.push(x);
 			tot++;
 		}
@@ -193,7 +193,7 @@ eshiol.sendAjax = function(name, title, url)
 		n = 0;
 		$('toolbar-'+name).getElement('button').getElement('span').innerHTML = text+'... 0%';
 		AJAX_QUEUE[0].send();
-	}	
+	}
 }
 
 eshiol.sendAjaxByDate = function(name, title, url) 
@@ -205,7 +205,7 @@ eshiol.sendAjaxByDate = function(name, title, url)
 	url = Base64.decode(url);
 	while (url.charCodeAt(url.length-1) == 0)
 		url = url.substr(0,url.length-1);
-	
+
 	var n = 0;
 	var tot = 0;
 	var AJAX_QUEUE = [];
@@ -217,11 +217,11 @@ eshiol.sendAjaxByDate = function(name, title, url)
 	while (start <= end)
 	{
 		year = start.getFullYear();
-		
+
 		month = "0"+String(start.getMonth()+1);
 		iLen = month.length;
 		month = month.substring(iLen, iLen - 2);
-		
+
 		day = "0"+String(start.getDate());
 		iLen = day.length;
 		day = day.substring(iLen, iLen - 2);
@@ -300,20 +300,20 @@ eshiol.sendAjaxByDate = function(name, title, url)
 							AJAX_QUEUE[n].send();
 						}
 					}
-				});	
+				});
 				AJAX_QUEUE.push(x);
 				tot++;
 			}
 		}
 		start.setDate(start.getDate() + 1);
 	}
-		
+
 	if (AJAX_QUEUE.length)
 	{
 		n = 0;
 		$('toolbar-'+name).getElement('button').getElement('span').innerHTML = text+'... 0%';
 		AJAX_QUEUE[0].send();
-	}	
+	}
 }
 
 eshiol.XMLToString = function(xmlDom)

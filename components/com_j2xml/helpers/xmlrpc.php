@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2011, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -46,7 +46,7 @@ class XMLRPCJ2XMLServices
 	 * @since  3.1.107
 	 */
 	protected static $_messageQueue = array();
-	
+
 	/**
 	 * Import articles from xml file
 	 *
@@ -60,19 +60,19 @@ class XMLRPCJ2XMLServices
 	{
 		global $xmlrpcerruser, $xmlrpcI4, $xmlrpcInt, $xmlrpcBoolean, $xmlrpcDouble, $xmlrpcString, $xmlrpcDateTime, $xmlrpcBase64, $xmlrpcArray, $xmlrpcStruct, $xmlrpcValue;
 		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'com_j2xml'));
-		
+
 		$lang = JFactory::getLanguage();
 		$lang->load('lib_j2xml', JPATH_SITE, null, false, false)
 			// Fallback to the library file in the default language
 			|| $lang->load('lib_j2xml', JPATH_SITE, null, true);
-		
+
 		$params = JComponentHelper::getParams('com_j2xml');
 		if ((int)$params->get('xmlrpc', 0) == 0)
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_XMLRPC_DISABLED')),JLOG::ERROR,'com_j2xml');
 			self::enqueueMessage(JText::_('LIB_J2XML_XMLRPC_DISABLED'), 0);
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
-		}		
+		}
 
 		JLog::add(new JLogEntry($xml,JLOG::DEBUG,'com_j2xml'));
 
@@ -85,7 +85,7 @@ class XMLRPCJ2XMLServices
 			self::enqueueMessage(JText::_('JGLOBAL_AUTH_NO_USER'), 0);
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
-		
+
 		$canDo	= J2XMLHelper::getActions();
 		if (!$canDo->get('core.create') &&
 				!$canDo->get('core.edit') &&
@@ -98,7 +98,7 @@ class XMLRPCJ2XMLServices
 		$data = self::gzdecode($xml);
 		if (!$data)
 			$data = $xml;
-		
+
 		libxml_use_internal_errors(true);
 		$xml = simplexml_load_string($data);
 		if (!$xml) {
@@ -107,17 +107,17 @@ class XMLRPCJ2XMLServices
 		}
 
 		$data = utf8_encode(trim($data));
-		
+
 		$dispatcher = JDispatcher::getInstance();
 		JPluginHelper::importPlugin('j2xml');
-		
+
 		$data = strstr($data, '<?xml version="1.0" ');
-		
+
 		$data = J2XMLHelper::stripInvalidXml($data);
 		if (!defined('LIBXML_PARSEHUGE'))
 			define(LIBXML_PARSEHUGE, 524288);
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-		
+
 		if (!$xml)
 		{
 			$errors = libxml_get_errors();
@@ -144,9 +144,9 @@ class XMLRPCJ2XMLServices
 			}
 			libxml_clear_errors();
 		}
-		
+
 		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.xmlrpc', &$xml));
-		
+
 		if(!isset($xml['version']))
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')),JLOG::ERROR,'com_j2xml');
@@ -156,15 +156,15 @@ class XMLRPCJ2XMLServices
 
 		jimport('eshiol.j2xml.importer');
 		jimport('eshiol.j2xml.version');
-		
+
 		$xmlVersion = $xml['version'];
 		$version = explode(".", $xmlVersion);
 		$xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1); 
-		
+
 		$j2xmlVersion = J2XMLVersion::$DOCVERSION;
 		$version = explode(".", $j2xmlVersion);
 		$j2xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1); 
-		
+
 		if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "120500")) 
 		{
 			//set_time_limit(120);
@@ -180,7 +180,7 @@ class XMLRPCJ2XMLServices
 		return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 	}
 
-	
+
 	static function gzdecode($data,&$filename='',&$error='',$maxlength=null)
 	{
 	    $len = strlen($data);
@@ -292,7 +292,7 @@ class XMLRPCJ2XMLServices
 	    }
 	    return $data;
 	}
-	
+
 	/**
 	 * Enqueue a system message.
 	 *
@@ -308,7 +308,7 @@ class XMLRPCJ2XMLServices
 		$codes=array('error'=>28, 'warning'=>29, 'notice'=>30, 'message'=>31);
 		JLog::add(__METHOD__, JLOG::DEBUG, 'com_j2xml');
 		JLog::add($priority.' - '.(isset($codes[$priority]) ? $codes[$priority] : 29).' - '.$message, JLOG::DEBUG, 'com_j2xml');
-		
+
 		$found = false;
 		$msgs = array();
 
@@ -329,7 +329,7 @@ class XMLRPCJ2XMLServices
 			else
 			{
 				$pattern = '/'.str_replace(array('(', ')', '.', '%s'), array('\(', '\)', '\.', '(.+)'), JText::_($m)).'/i';
-				
+
 				if (preg_match($pattern, $message, $matches))
 				{
 					self::$_messageQueue[] = new xmlrpcval(
@@ -352,5 +352,5 @@ class XMLRPCJ2XMLServices
 					"message" => new xmlrpcval($message, 'string')
 				), "struct"
 			);
-	}	
+	}
 }

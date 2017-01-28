@@ -7,7 +7,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -19,7 +19,7 @@
 defined('_JEXEC') or die('Restricted access.');
 
 class eshTableContent extends eshTable
-{	
+{
 	/**
 	* @param database A database connector object
 	*/
@@ -52,10 +52,10 @@ class eshTableContent extends eshTable
 				INNER JOIN #__categories c ON a.catid = c.id 
 				LEFT JOIN #__menu m ON m.link = CONCAT(\'index.php?option=com_content&view=article&id=\',a.id)
 				WHERE a.id = '.(int)$this->id;
-*/					
+*/
 		if (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge'))
 			$this->_aliases['tag']='SELECT t.path FROM #__tags t, #__contentitem_tag_map m WHERE type_alias = "com_content.article" AND t.id = m.tag_id AND m.content_item_id = '. (int)$this->id;
-		
+
 		return parent::_serialize();
 	}
 }

@@ -23,7 +23,7 @@
 			class="inputbox" default="0"
 			onchange="jQuery('#jform_username').val('');jQuery('#jform_username').attr('readonly', this.value == 1);"
 			/>
-		
+
 		<field name="username" type="text" class="inputbox"
 			size="40" label="COM_J2XML_FIELD_USERNAME_LABEL"
 			description="COM_J2XML_FIELD_USERNAME_DESC"

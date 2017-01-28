@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -45,7 +45,7 @@ class JFormFieldAuthType extends JFormFieldList
 	{
 		$options = array();
 		$options[] = (object)['value' => 0, 'text' => JText::_('COM_J2XML_FIELD_AUTH_TYPE_USERNAMEPASSWORD')];
-		$params = JComponentHelper::getParams('com_j2xml');		
+		$params = JComponentHelper::getParams('com_j2xml');
 		if ($params->get('oauth2', 0) == 1)
 		{
 			$options[] = (object)['value' => 1, 'text' => JText::_('COM_J2XML_FIELD_AUTH_TYPE_OAUTH2')];

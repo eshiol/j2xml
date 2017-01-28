@@ -29,7 +29,7 @@ class J2XMLView extends JViewLegacy
 	function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
-		$cid = JRequest::getVar('cid');		
+		$cid = JRequest::getVar('cid');
 		$ids = explode(",", $cid);
 
 		$params = JComponentHelper::getParams('com_j2xml');
@@ -39,7 +39,7 @@ class J2XMLView extends JViewLegacy
 		$options['users'] = $params->get('export_users', '1');
 		$options['categories'] = 1;
 		$options['contacts'] = $params->get('export_contacts', '1');
-		
+
 		$j2xml = new J2XMLExporter();
 		$get_xml = strtolower(str_replace('J2XMLView', '', get_class($this)));
 		$j2xml->$get_xml($ids, $xml, $options);
@@ -47,8 +47,8 @@ class J2XMLView extends JViewLegacy
 		$options = array();
 		$options['debug'] = $params->get('debug', 0);
 		$options['gzip'] = $params->get('export_gzip', '0');
-		
-		if (!$j2xml->export($xml, $options))	
+
+		if (!$j2xml->export($xml, $options))
 			$app->redirect('index.php?option=com_categories&extension=com_content');
 	}
 }

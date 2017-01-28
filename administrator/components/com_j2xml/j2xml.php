@@ -77,7 +77,7 @@ else
 {
 	// We have a defined controller/task pair -- lets split them out
 	list($controllerName, $task) = explode('.', $task);
-	
+
 	// Define the controller name and path
 	$controllerName	= strtolower($controllerName);
 
@@ -99,7 +99,7 @@ if (file_exists($controllerPath))
 } 
 else
 {
-	JError::raiseError(500, 'Invalid Controller '.$controllerName);
+	throw new JException('Invalid Controller '.$controllerName);
 }
 
 JLog::add(new JLogEntry($controllerClass, JLog::DEBUG, 'com_j2xml'));
@@ -110,7 +110,7 @@ if (class_exists($controllerClass))
 } 
 else 
 {
-	JError::raiseError(500, 'Invalid Controller Class - '.$controllerClass );
+	throw new JException('Invalid Controller Class '.$controllerClass);
 }
 
 //$config	= JFactory::getConfig();

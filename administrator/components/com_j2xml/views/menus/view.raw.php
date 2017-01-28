@@ -1,10 +1,9 @@
 <?php
 /**
- * @version		3.2.142 administrator/components/com_j2xml/views/categories/view.raw.php
- * 
+ * @version		3.6.164 administrator/views/menus/view.raw.php
  * @package		J2XML
  * @subpackage	com_j2xml
- * @since		1.5.3beta5.43
+ * @since		3.6.164
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
@@ -24,7 +23,7 @@ jimport('eshiol.j2xml.exporter');
 require_once dirname(__FILE__).'/../raw.php';
 
 /**
- * J2XML Component Categories View
+ * J2XML Component Menus View
  */
-class J2XMLViewCategories extends J2XMLView {}
+class J2XMLViewMenus extends J2XMLView {}
 ?>

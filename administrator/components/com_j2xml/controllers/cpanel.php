@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.160 administrator/components/com_j2xml/controllers/cpanel.php
+ * @version		3.6.163 administrator/components/com_j2xml/controllers/cpanel.php
  *
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -29,7 +29,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 	function __construct( $default = array())
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct($default);
 	}
 
@@ -39,14 +39,14 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		JRequest::setVar('layout', 'default');
 		parent::display($cachable, $urlparams);
 	}
-	
+
 	function import()
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-		
+
 		// Check for request forgeries
 		JRequest::checkToken() or jexit('Invalid Token');
-		
+
 		$app = JFactory::getApplication('administrator');
 		$msg='';
 		$db = JFactory::getDBO();
@@ -86,7 +86,9 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				break;
 			case 3:
 				if ($filename = JRequest::getVar('j2xml_server', null))
+				{
 					$filename = JPATH_ROOT.'/'.$filename;
+				}
 				else 
 				{
 					$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
@@ -98,7 +100,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			default:
 				$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
 				return false;
-		}		
+		}
 		if (!($data = implode(gzfile($filename))))
 		{
 			$data = file_get_contents($filename);
@@ -109,20 +111,20 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			$data = file_get_contents($filename);
 		}
 		$data = utf8_encode($data);
-		
+
 		$dispatcher = JDispatcher::getInstance();
 		JPluginHelper::importPlugin('j2xml');
 
 		$results = $dispatcher->trigger('onContentPrepareData', array('com_j2xml.cpanel', &$data));
 		$data = strstr($data, '<?xml version="1.0" ');
-		
+
 		$data = J2XMLHelper::stripInvalidXml($data);
 		if (!defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-		
+
 		if (!$xml)
 		{
 			$errors = libxml_get_errors();
@@ -142,64 +144,65 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				}
 			}
 			libxml_clear_errors();
-			$this->setRedirect('index.php?option=com_j2xml');	
+			$this->setRedirect('index.php?option=com_j2xml');
 		}
-		
+
 		if (!$xml)
 		{
 			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
 			return false;
 		}
-		
+
 		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
-		
+
 		if (!$xml)
 		{
 			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
-			return false;
 		}
-		
-		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
-		
-		if (!$xml)
-			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
 		elseif (strtoupper($xml->getName()) == 'J2XML')
 		{
 			if(!isset($xml['version']))
+			{
    				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+			}
 			else 
 			{
 				jimport('eshiol.j2xml.importer');
 				jimport('eshiol.j2xml.version');
-				
+
 				$xmlVersion = $xml['version'];
 				$version = explode(".", $xmlVersion);
 				$xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1); 
-				
+
 				$j2xmlVersion = J2XMLVersion::$DOCVERSION;
 				$version = explode(".", $j2xmlVersion);
 				$j2xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1); 
-				
+
 				if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "120500")) 
 				{
+					$params->set('filename', $filename);
+
 					//set_time_limit(120);
-					$params = JComponentHelper::getParams('com_j2xml');
 					$j2xml = new J2XMLImporter();
-					$j2xml->import($xml,$params);
+					$j2xml->import($xml, $params);
 				}
 				elseif ($xmlVersionNumber == 10506)
 				{
 					$app->enqueueMessage(JText::sprintf('COM_J2XML_MSG_FILE_FORMAT_J2XML15', $xmlVersion),'error');
 				}
 				else
+				{
 					$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion),'error');
-			}	
+				}
+			}
 		}
 		elseif (strtoupper($xml->getName()) == 'RSS')
 		{
 			$namespaces = $xml->getNamespaces(true);
 			if (isset($namespaces['wp']))
+			{
 				if ($generator = $xml->xpath('/rss/channel/generator'))
+				{
 					if (preg_match("/http:\/\/wordpress.(org|com)\//", (string)$generator[0]) != false)
 					{
 						$xml->registerXPathNamespace('wp', $namespaces['wp']);
@@ -213,19 +216,29 @@ class J2xmlControllerCpanel extends JControllerLegacy
 							$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
 					}
 					else
+					{
 						$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+					}
+				}
 				else
+				{
 					$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+				}
+			}
 			else
+			{
 				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+			}
 		}
 		elseif (strtoupper($xml->getName()) == 'HTML')
 		{
 			$app->enqueueMessage(JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLHTML'),'error');
 		}
 		else
+		{
 			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
-		$this->setRedirect('index.php?option=com_j2xml');	
+		}
+		$this->setRedirect('index.php?option=com_j2xml');
 	}
 
 	function clean()
@@ -241,11 +254,11 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		)
 		{
 			jimport('eshiol.j2xml.importer');
-			
+
 			J2XMLImporter::clean();
 			$app = JFactory::getApplication('administrator');
 			$app->enqueueMessage(JText::_('COM_J2XML_MSG_CLEANED','info'));
 		}
-		$this->setRedirect('index.php?option=com_j2xml');	
+		$this->setRedirect('index.php?option=com_j2xml');
 	}
 }

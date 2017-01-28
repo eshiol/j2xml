@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -28,7 +28,7 @@ class J2XMLViewCpanel extends JViewLegacy
 		// Trigger the onAfterDispatch event.
 		JPluginHelper::importPlugin('j2xml');
 		JFactory::getApplication()->triggerEvent('onAfterDispatch');
-		
+
 		$info = $this->get('Info');
 		$this->assignRef('info', $info);
 		$params = JComponentHelper::getParams('com_j2xml');
@@ -37,7 +37,7 @@ class J2XMLViewCpanel extends JViewLegacy
 		J2XMLHelper::addSubmenu('cpanel');
 		$this->sidebar = JHtmlSidebar::render();
 
-		$this->addToolbar();		
+		$this->addToolbar();
 		parent::display($tpl);
 	}
 
@@ -55,7 +55,7 @@ class J2XMLViewCpanel extends JViewLegacy
 		}
 
 		$lang = JFactory::getLanguage();
-		
+
 		if (!class_exists('JPlatform') || version_compare(JPlatform::RELEASE, '12', 'lt'))
 		{
 		?>
@@ -80,12 +80,12 @@ class J2XMLViewCpanel extends JViewLegacy
 	{
 		require_once JPATH_COMPONENT.'/helpers/j2xml.php';
 		$canDo	= j2xmlHelper::getActions();
-		
+
 		$toolbar = JToolBar::getInstance('toolbar');
 		$toolbar->addButtonPath(JPATH_COMPONENT.DS.'buttons');
-		
+
 		JToolBarHelper::title(JText::_('COM_J2XML_TOOLBAR_J2XML'), 'j2xml.png');
-		
+
 		$doc = JFactory::getDocument();
 		if ($canDo->get('core.create') || ($canDo->get('core.edit'))) {
 			jimport('eshiol.core.file');
@@ -104,10 +104,10 @@ class J2XMLViewCpanel extends JViewLegacy
 			)
 				$toolbar->appendButton('Link', 'purge', 'COM_J2XML_CONTENT_DELETE', 'index.php?option=com_j2xml&task=cpanel.clean&develop=1&'.JSession::getFormToken().'=1');
 			JToolBarHelper::divider();
-		}	
+		}
 		if ($canDo->get('core.admin')) {
 			JToolBarHelper::preferences('com_j2xml');
-		}		
+		}
 
 		$doc->addStyleDeclaration('#toolbar-credit{float:right;}');
 		$toolbar->appendButton('Link', 'credit', 'COM_J2XML_DONATE', 'http://www.eshiol.it/'.Jtext::_('COM_J2XML_DONATE_1'));

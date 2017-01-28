@@ -47,7 +47,7 @@ class J2XMLViewWebsite extends JViewLegacy
 		}
 
 		$this->addToolbar();
-		
+
 		$this->form->setValue('redirect_uri', null, rtrim(JUri::base(), '/').'/index.php?option=com_j2xml&task=website.oauth2');
 
 		if ($this->item->id != 0)
@@ -55,10 +55,10 @@ class J2XMLViewWebsite extends JViewLegacy
 			if ($this->item->type == 1)
 			{
 				$this->form->setFieldAttribute('username', 'readonly', 'true', $group = null);
-			}		
+			}
 			$this->form->setFieldAttribute('type', 'readonly', 'true', $group = null);
 		}
-		
+
 		parent::display($tpl);
 	}
 
@@ -91,7 +91,7 @@ class J2XMLViewWebsite extends JViewLegacy
 		if (!$isNew && $canDo->get('core.create')) {
 			JToolBarHelper::save2copy('website.save2copy');
 		}
-		
+
 		if (empty($this->item->id))  {
 			JToolBarHelper::cancel('website.cancel');
 		} else {

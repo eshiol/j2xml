@@ -7,7 +7,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2012, 2017 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * eshiol Library is free software. This version may have been modified 
  * pursuant to the GNU General Public License, and as distributed it includes 
@@ -62,7 +62,6 @@ eshiol.j2xml.send = function($nodes, n, tot)
 	{
 //		item = $nodes.pop();
 		item = $nodes.shift();
-		item = '<?xml version="1.0" encoding="UTF-8" ?>'+item;
 		console.log(item);
 		jQuery.post(
 			'index.php?option=com_j2xml&task=cpanel.import&format=json',
@@ -99,7 +98,7 @@ eshiol.j2xml.send = function($nodes, n, tot)
 			{
 				button.innerHTML = button_text+'ed... 100%';
 		        setTimeout(function(){
-		        	button.innerHTML = button_text;			        	
+		        	button.innerHTML = button_text;			        
 		        },2000);
 			}
 			else
@@ -125,7 +124,7 @@ eshiol.j2xml.import = function(name, url)
 	console.log('eshiol.j2xml.import');
 	console.log(name);
 	console.log(url);
-	
+
 	console.log('filetype: '+jQuery('#'+name+'_filetype').val());
 
 	switch(jQuery('#'+name+'_filetype').val()) {
@@ -165,7 +164,7 @@ eshiol.j2xml.import = function(name, url)
 		alert('The File APIs are not fully supported in this browser.');
 		return false;
 	}   
-	
+
 	Joomla.removeMessages();
 
 	var AJAX_QUEUE = [];
@@ -176,14 +175,14 @@ eshiol.j2xml.import = function(name, url)
     	alert("Um, couldn't find the fileinput element.");
     	return false;
 	}
-	
+
 	input = input[0];
 	if (!input.files)
 	{
 		alert("This browser doesn't seem to support the `files` property of file inputs.");
 		return false;
 	}
-	
+
 	if (!input.files[0])
 	{
 		alert("Please select a file before clicking 'Load'");
@@ -191,55 +190,67 @@ eshiol.j2xml.import = function(name, url)
 	}
 
 	output_default = jQuery('#'+name+'_upload').find('span')[0].html;
-	
+
 	file = input.files[0];
 	 
 	jQuery('#'+name+'_local').val('');
 	jQuery('#'+name+'_local1').val('');
-	
+
     fr = new FileReader();
     fr.onload = function() {
     	var xml = fr.result;
-
-		eshiol.j2xml.convert.each(function(fn) {
+    
+	    eshiol.j2xml.convert.forEach(function(fn) {
 			xml = fn(xml);
         });
-    	
-       	xmlDoc = jQuery.parseXML(xml);
-		$xml = jQuery(xmlDoc);
-		root = $xml.find(":root")[0];
 
-		if (root.nodeName != "j2xml")
-		{
-			return true;
-		}
-		console.log(jQuery(root).attr('version'));
-		
+    	var xmlDoc;
 		var $nodes = Array();
-		$root = jQuery(root);
+		try {
+	       	xmlDoc = jQuery.parseXML(xml);
+			$xml = jQuery(xmlDoc);
+			root = $xml.find(":root")[0];
 
-		$root.children("user").each(function(index) {
-            $nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
-        });
+			if (root.nodeName == "j2xml")
+			{
+				console.log(jQuery(root).attr('version'));
 
-        $root.children("tag").each(function(index) {
-            $nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
-        });
+				$root = jQuery(root);
+				header = 
+					'<?xml version="1.0" encoding="UTF-8" ?>'+"\n"+
+					'<j2xml version="'+$root.attr("version")+'">'+"\n";
+				footer = "\n</j2xml>";
 
-        $root.children("category").each(function(index) {
-            $nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
-        });
+				$root.children("user").each(function(index) {
+		            $nodes.push(header+eshiol.XMLToString(this)+footer);
+		        });
 
-        $root.children("content").each(function(index){
-            $nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
-        });
+		        $root.children("tag").each(function(index) {
+		            $nodes.push(header+eshiol.XMLToString(this)+footer);
+		        });
 
-        $root.children().each(function(index) {
-        	if (["user","tag","category","content"].indexOf(this.nodeName) == -1)
-        	{
-        		$nodes.push('<j2xml version="'+$root.attr("version")+'">'+"\n"+eshiol.XMLToString(this)+"\n</j2xml>");
-        	}
-        });
+		        $root.children("category").each(function(index) {
+		            $nodes.push(header+eshiol.XMLToString(this)+footer);
+		        });
+
+		        $root.children("content").each(function(index){
+		            $nodes.push(header+eshiol.XMLToString(this)+footer);
+		        });
+
+		        $root.children().each(function(index) {
+		        	if (["user","tag","category","content"].indexOf(this.nodeName) == -1)
+		        	{
+			            $nodes.push(header+eshiol.XMLToString(this)+footer);
+		        	}
+		        });
+			}
+			else
+			{
+	            $nodes.push(xml);
+			}
+		} catch(e) {
+            $nodes.push(xml);
+		}
 
         tot = $nodes.length;
         if (tot == 0)

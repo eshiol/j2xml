@@ -1,4 +1,12 @@
----------------------- 3.6.162 Release [13-January-2017] ----------------------
+---------------------- 3.6.164 Release [27-January-2017] ----------------------
+
+27-January-2017
+  + export menus (build 164)
+
+25-January-2017
+  + link source file (build 163)
+  + backlink (build 163)
+  + filename (build 163)
 
 13-January-2017
   + export contacts (build 161)

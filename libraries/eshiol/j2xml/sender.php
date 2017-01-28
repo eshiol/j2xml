@@ -58,8 +58,8 @@ class J2XMLSender
 		'notice',		// LIB_J2XML_MSG_UNKNOWN_NOTICE 30
 		'message',		// LIB_J2XML_MSG_UNKNOWN_MESSAGE 31
 		32 => 'notice',		// LIB_J2XML_MSG_XMLRPC_DISABLED 32
-	);	
-	
+	);
+
 	/*
 	 * Send data
 	 * @param $xml		data
@@ -71,17 +71,17 @@ class J2XMLSender
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		JLog::add(new JLogEntry('xml: '.$xml->asXML(), JLOG::DEBUG, 'lib_j2xml'));
-		
+
 		$app = JFactory::getApplication();
 		$version = explode(".", J2XMLVersion::$DOCVERSION);
 		$xmlVersionNumber = $version[0].$version[1].substr('0'.$version[2], strlen($version[2])-1);
-		
+
 		$dom = new DOMDocument('1.0');
 		$dom->preserveWhiteSpace = false;
 		$dom->formatOutput = true;
 		$dom->loadXML($xml->asXML());
 		$data = $dom->saveXML();
-		
+
 		if ($options['gzip'])
 		{
 			$data = gzencode($data, 9);
@@ -92,32 +92,32 @@ class J2XMLSender
 			. 'FROM `#__j2xml_websites` WHERE `state`= 1 AND `id` = '.$sid;
 		$db->setQuery($query);
 		if (!($server = $db->loadAssoc())) return;
-		
+
 		$str = $server['remote_url'];
 
 		if (strpos($str, "://") === false)
 			$server['remote_url'] = "http://".$server['remote_url'];
-				
+
 		if ($str[strlen($str)-1] != '/')
 			$server['remote_url'] .= '/';
 		$server['remote_url'] .= 'index.php?option=com_j2xml&task=services.import&format=xmlrpc';
-		
+
 		xmlrpc_set_type($data, 'base64');
 		JLog::add(new JLogEntry(print_r(array('http' => array(
 			'method' => "POST",
 			'url' => $server['remote_url'],
 			'header' => "Content-Type: text/xml",
-			'user_agent' => J2XMLVersion::$PRODUCT.' '.J2XMLVersion::getFullVersion(),		
+			'user_agent' => J2XMLVersion::$PRODUCT.' '.J2XMLVersion::getFullVersion(),
 			'content' => xmlrpc_encode_request('j2xml.import', array($data, $server['username'], '********'))
 		)), true), JLOG::DEBUG, 'lib_j2xml'));
 		$request = xmlrpc_encode_request('j2xml.import', array($data, $server['username'], $server['password']));
 		$context = stream_context_create(array('http' => array(
 			'method' => "POST",
 			'header' => "Content-Type: text/xml",
-			'user_agent' => J2XMLVersion::$PRODUCT.' '.J2XMLVersion::getFullVersion(),		
+			'user_agent' => J2XMLVersion::$PRODUCT.' '.J2XMLVersion::getFullVersion(),
 			'content' => $request
 		)));
-		
+
 		$headers = get_headers($server['remote_url']);
 		if (substr($headers[0], 9, 3) != "200")
 		{
@@ -133,7 +133,7 @@ class J2XMLSender
 			else
 			{
 				$response = xmlrpc_decode($file);
-				
+
 				JLog::add(new JLogEntry(print_r($response, true), JLOG::DEBUG, 'lib_j2xml'));
 				if ($response && xmlrpc_is_fault($response)) 
 				{

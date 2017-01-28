@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.162 administrator/components/com_j2xml/controllers/cpanel.json.php
+ * @version		3.6.163 administrator/components/com_j2xml/controllers/cpanel.json.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -32,7 +32,7 @@ require_once JPATH_ADMINISTRATOR.'/components/com_j2xml/helpers/j2xml.php';
  * Content controller class.
  */
 class J2XMLControllerCpanel extends JControllerLegacy
-{			
+{
 	/**
 	 * The application object.
 	 *
@@ -40,13 +40,13 @@ class J2XMLControllerCpanel extends JControllerLegacy
 	 * @since  3.6.160
 	 */
 	protected $app;
-	
+
 	function __construct($default = array())
 	{
 		parent::__construct();
 		$this->app = JFactory::getApplication();
 	}
-	
+
 	function import()
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
@@ -57,23 +57,25 @@ class J2XMLControllerCpanel extends JControllerLegacy
 		$this->app->mimeType = 'application/json';
 		$this->app->setHeader('Content-Type', $this->app->mimeType . '; charset=' . $this->app->charSet);
 		$this->app->sendHeaders();
-		
+
 		$dispatcher = JEventDispatcher::getInstance();
 		JPluginHelper::importPlugin('j2xml');
 
+		$params = JComponentHelper::getParams('com_j2xml');
+
 		$results = $dispatcher->trigger('onContentPrepareData', array('com_j2xml.cpanel', &$data));
 		$data = strstr($data, '<?xml version="1.0" ');
-		
+
 		$data = J2XMLHelper::stripInvalidXml($data);
 		if (!defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-		
+
 		JLog::add(new JLogEntry('data: '.$data, JLog::DEBUG, 'com_j2xml'));
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-		
+
 		if (!$xml)
 		{
 			$errors = libxml_get_errors();
@@ -94,32 +96,23 @@ class J2XMLControllerCpanel extends JControllerLegacy
 			}
 			libxml_clear_errors();
 		}
-		
+
 		if (!$xml)
 		{
 			echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
 			$this->app->close();
 			return false;
 		}
-		
+
 		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
-		
+
 		if (!$xml)
 		{
 			echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
 			$this->app->close();
 			return false;
 		}
-		
-		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
-		
-		if (!$xml)
-		{
-			echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
-			$this->app->close();
-			return false;
-		}
-		
+
 		if (strtoupper($xml->getName()) == 'J2XML')
 		{
 			if(!isset($xml['version']))
@@ -139,10 +132,11 @@ class J2XMLControllerCpanel extends JControllerLegacy
 
 			if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "120500"))
 			{
+				$params->set('filename', $filename);
+
 				//set_time_limit(120);
-				$params = JComponentHelper::getParams('com_j2xml');
 				$j2xml = new J2XMLImporter();
-				$j2xml->import($xml,$params);
+				$j2xml->import($xml, $params);
 			}
 			elseif ($xmlVersionNumber == 10506)
 			{
@@ -175,9 +169,9 @@ class J2XMLControllerCpanel extends JControllerLegacy
 						}
 						else if ($wp_version[0] == '1.2')
 						{
-								echo new JResponseJson($response = null, $message = JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLWP'), $error = true, $ignoreMessages = false);
-								$this->app->close();
-								return false;
+							echo new JResponseJson($response = null, $message = JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLWP'), $error = true, $ignoreMessages = false);
+							$this->app->close();
+							return false;
 						}
 						else if ($wp_version[0] == '1.1')
 						{
@@ -225,10 +219,10 @@ class J2XMLControllerCpanel extends JControllerLegacy
 			$this->app->close();
 			return false;
 		}
-	
+
 		JLog::add(new JLogEntry(print_r($this->app->getMessageQueue(), true), JLog::DEBUG, 'com_j2xml'));
-		
+
 		echo new JResponseJson($response = null, $message = $this->app->getMessageQueue(), $error = false, $ignoreMessages = false);
-		$this->app->close();	
+		$this->app->close();
 	}
 }

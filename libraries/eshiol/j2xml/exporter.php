@@ -1,21 +1,21 @@
 <?php
 /**
- * @version		17.1.289 libraries/eshiol/j2xml/exporter.php
- * 
- * @package		J2XML
- * @subpackage	lib_j2xml
- * @since		1.5.2.14
- *
- * @author		Helios Ciancio <info@eshiol.it>
- * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
- * J2XML is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- */
- 
+ * @version		17.1.294 libraries/eshiol/j2xml/exporter.php
+*
+* @package		J2XML
+* @subpackage	lib_j2xml
+* @since		1.5.2.14
+*
+* @author		Helios Ciancio <info@eshiol.it>
+* @link		http://www.eshiol.it
+* @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
+* @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+* J2XML is free software. This version may have been modified pursuant
+* to the GNU General Public License, and as distributed it includes or
+* is derivative of works licensed under the GNU General Public License or
+* other free or open source software licenses.
+*/
+
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
@@ -35,7 +35,7 @@ class J2XMLExporter
 	private $_admin = 'admin';
 
 	private $_option = '';
-	
+
 	/**
 	 * CONSTRUCTOR
 	 * @param object $subject The object to observe
@@ -44,9 +44,8 @@ class J2XMLExporter
 	 */
 	function __construct()
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-				
-		$execute = (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge')) ? 'execute' : 'query';
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+
 		$db = JFactory::getDBO();
 		$db->setQuery("
 					CREATE TABLE IF NOT EXISTS `#__j2xml_usergroups` (
@@ -54,11 +53,11 @@ class J2XMLExporter
 						`parent_id` int(10) unsigned NOT NULL DEFAULT '0',
 						`title` varchar(100) NOT NULL DEFAULT ''
 					) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-					")->$execute();
+					")->execute();
 		$db->setQuery("
 					TRUNCATE TABLE
 						`#__j2xml_usergroups`;
-					")->$execute();
+					")->execute();
 		$db->setQuery("
 					INSERT INTO
 						`#__j2xml_usergroups`
@@ -66,7 +65,7 @@ class J2XMLExporter
 						`id`,`parent_id`,CONCAT('[\"',REPLACE(`title`,'\"','\\\"'),'\"]')
 					FROM
 						`#__usergroups`;
-					")->$execute();
+					")->execute();
 		do {
 			$db->setQuery("
 					UPDATE
@@ -78,7 +77,7 @@ class J2XMLExporter
 					SET
 						j.parent_id = g.parent_id,
 						j.title = CONCAT('[\"',REPLACE(`g`.`title`,'\"','\\\"'), '\",', SUBSTR(`j`.`title`,2));
-					")->$execute();
+					")->execute();
 			$n = $db->setQuery("
 					SELECT
 						COUNT(*)
@@ -88,47 +87,47 @@ class J2XMLExporter
 						`parent_id` > 0;
 					")->loadResult();
 		} while ($n > 0);
-		
+
 		$this->option = (PHP_SAPI != 'cli') ? JRequest::getCmd('option') : 'cli_'.strtolower(get_class(JApplicationCli::getInstance()));
 	}
-	
+
 	/*
 	 * Export user
-	 * @return 		
+	 * @return
 	 * @since		15.8.253
 	 */
 	private function _user($id, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
-	
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
 		if ($xml->xpath("//j2xml/user/id[text() = '".$id."']"))
 		{
 			return;
 		}
-		
+
 		jimport('eshiol.j2xml.table.user');
 		$item = JTable::getInstance('user','eshTable');
 		if (!$item->load($id))
 		{
 			return;
 		}
-		
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
-		
+
 		if ($options['contacts'])
 		{
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true)
-				->select('id')
-				->from('#__contact_details')
-				->where('user_id = '.$id);
+			->select('id')
+			->from('#__contact_details')
+			->where('user_id = '.$id);
 			$db->setQuery($query);
-		
+
 			$ids_contact = $db->loadColumn();
 			foreach ($ids_contact as $id_contact)
 			{
@@ -138,46 +137,46 @@ class J2XMLExporter
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
-			->select('id')
-			->from('#__user_notes')
-			->where('user_id = '.$id);
+		->select('id')
+		->from('#__user_notes')
+		->where('user_id = '.$id);
 		$db->setQuery($query);
-	
+
 		$ids_usernote = $db->loadColumn();
 		foreach ($ids_usernote as $id_usernote)
 		{
 			self::_usernote($id_usernote, $xml, $options);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Export user
 	 *
 	 * @param	string	$_image  Image name
 	 * @param	SimpleXMLElement	$xml	xml
 	 * @param	array	$options	options
-	 * @throws	
+	 * @throws
 	 * @return	void
 	 * @since		15.8.253
-	 */	
+	 */
 	private function _image($_image, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('image: '.$_image,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
-		
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('image: '.$_image, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
 		if($xml->xpath("//j2xml/img[@src = '".htmlentities($_image, ENT_QUOTES, "UTF-8")."']"))
 			return;
 
-		//$file_path = JPATH_SITE.DIRECTORY_SEPARATOR.str_replace("/", DIRECTORY_SEPARATOR, urldecode($_image));
-		$file_path = JPATH_SITE.DIRECTORY_SEPARATOR.urldecode($_image);
-		if (JFile::exists($file_path))
-		{
-			$img = $xml->addChild('img', base64_encode(file_get_contents($file_path)));
-			$img->addAttribute('src', htmlentities($_image, ENT_QUOTES, "UTF-8"));
-			JLog::add(new JLogEntry('image added: '.$_image,JLOG::DEBUG,'lib_j2xml'));
-		}
+			//$file_path = JPATH_SITE.DIRECTORY_SEPARATOR.str_replace("/", DIRECTORY_SEPARATOR, urldecode($_image));
+			$file_path = JPATH_SITE.DIRECTORY_SEPARATOR.urldecode($_image);
+			if (JFile::exists($file_path))
+			{
+				$img = $xml->addChild('img', base64_encode(file_get_contents($file_path)));
+				$img->addAttribute('src', htmlentities($_image, ENT_QUOTES, "UTF-8"));
+				JLog::add(new JLogEntry('image added: '.$_image, JLOG::DEBUG, 'lib_j2xml'));
+			}
 	}
 
 	/**
@@ -186,37 +185,32 @@ class J2XMLExporter
 	 * @param	string	$_image  Image name
 	 * @param	SimpleXMLElement	$xml	xml
 	 * @param	array	$options	options
-	 * @throws	
+	 * @throws
 	 * @return	void
 	 * @since		15.8.253
-	 */	
+	 */
 	private function _content($id, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
-		
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
 		if ($xml->xpath("//j2xml/content/id[text() = '".$id."']"))
 		{
 			return;
 		}
-		
+
 		jimport('eshiol.j2xml.table.content');
 		$item = JTable::getInstance('content', 'eshTable');
 		if (!$item->load($id))
 		{
 			return;
 		}
-		
+
 		$params = new JRegistry($options);
 		$dispatcher = JDispatcher::getInstance();
 		JPluginHelper::importPlugin('j2xml');
 		$results = $dispatcher->trigger('onBeforeContentExport', array('lib_j2xml.article', &$item, $params));
-		
-		$doc = dom_import_simplexml($xml)->ownerDocument;
-		$fragment = $doc->createDocumentFragment();
-		$fragment->appendXML($item->toXML());
-		$doc->documentElement->appendChild($fragment);
 
 		if ($options['users'])
 		{
@@ -252,7 +246,7 @@ class J2XMLExporter
 				{
 					self::_image($imgs->image_fulltext, $xml, $options);
 				}
-				
+
 				if (isset($imgs->image_intro))
 				{
 					self::_image($imgs->image_intro, $xml, $options);
@@ -274,10 +268,15 @@ class J2XMLExporter
 				self::_tag($itemtag->tag_id, $xml, $options);
 			}
 		}
-		
+
+		$doc = dom_import_simplexml($xml)->ownerDocument;
+		$fragment = $doc->createDocumentFragment();
+		$fragment->appendXML($item->toXML());
+		$doc->documentElement->appendChild($fragment);
+
 		return $xml;
 	}
-	
+
 	/*
 	 * Export tag
 	 * @return 		xml string
@@ -285,68 +284,68 @@ class J2XMLExporter
 	 */
 	private function _tag($id, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
 
 		jimport('eshiol.j2xml.table.tag');
 		$item = JTable::getInstance('tag', 'eshTable');
 		if (!$item->load($id))
 			return;
-				
-		if ($xml->xpath("//j2xml/tag/id[text() = '".$id."']"))
-		{
-			return;
-		}
-		if ($item->parent_id > 1)
-		{
-			self::_tag($item->parent_id, $xml, $options);
-		}
-		
-		$doc = dom_import_simplexml($xml)->ownerDocument;
-		$fragment = $doc->createDocumentFragment();
-		$fragment->appendXML($item->toXML());
-		$doc->documentElement->appendChild($fragment);
-				
-		if ($options['images'])
-		{
-			$text = html_entity_decode($item->description);
-			$_image = preg_match_all($this->_image_match_string,$text,$matches,PREG_PATTERN_ORDER);
-			if (count($matches[1]) > 0)
+
+			if ($xml->xpath("//j2xml/tag/id[text() = '".$id."']"))
 			{
-				for ($i = 0; $i < count($matches[1]); $i++)
+				return;
+			}
+			if ($item->parent_id > 1)
+			{
+				self::_tag($item->parent_id, $xml, $options);
+			}
+
+			$doc = dom_import_simplexml($xml)->ownerDocument;
+			$fragment = $doc->createDocumentFragment();
+			$fragment->appendXML($item->toXML());
+			$doc->documentElement->appendChild($fragment);
+
+			if ($options['images'])
+			{
+				$text = html_entity_decode($item->description);
+				$_image = preg_match_all($this->_image_match_string,$text,$matches,PREG_PATTERN_ORDER);
+				if (count($matches[1]) > 0)
 				{
-					if ($_image = $matches[1][$i])
+					for ($i = 0; $i < count($matches[1]); $i++)
 					{
-						self::_image($_image.'1', $xml, $options);
+						if ($_image = $matches[1][$i])
+						{
+							self::_image($_image.'1', $xml, $options);
+						}
+					}
+				}
+				if ($imgs = json_decode($item->images))
+				{
+					if (isset($imgs->image_fulltext))
+					{
+						self::_image($imgs->image_fulltext, $xml, $options);
+					}
+
+					if (isset($imgs->image_intro))
+					{
+						self::_image($imgs->image_intro, $xml, $options);
 					}
 				}
 			}
-			if ($imgs = json_decode($item->images))
+
+			if ($options['users'] && $item->created_user_id)
 			{
-				if (isset($imgs->image_fulltext))
-				{
-					self::_image($imgs->image_fulltext, $xml, $options);
-				}
-			
-				if (isset($imgs->image_intro))
-				{
-					self::_image($imgs->image_intro, $xml, $options);
-				}
+				self::_user($item->created_user_id, $xml, $options);
 			}
-		}
-		
-		if ($options['users'] && $item->created_user_id)
-		{
-			self::_user($item->created_user_id, $xml, $options);
-		}
-		
-		if ($options['users'] && $item->modified_user_id)
-		{
-			self::_user($item->modified_user_id, $xml, $options);
-		}
-		
-		return $xml;
+
+			if ($options['users'] && $item->modified_user_id)
+			{
+				self::_user($item->modified_user_id, $xml, $options);
+			}
+
+			return $xml;
 	}
 
 
@@ -357,22 +356,22 @@ class J2XMLExporter
 	 */
 	private function _category($id, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
 
 		if ($xml->xpath("//j2xml/category/id[text() = '".$id."']"))
 		{
 			return;
 		}
-		
+
 		jimport('eshiol.j2xml.table.category');
 		$item = JTable::getInstance('category', 'eshTable');
 		if (!$item->load($id))
 		{
 			return;
 		}
-		
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 
@@ -385,9 +384,9 @@ class J2XMLExporter
 				$extension = '_'.substr($item->extension, 4);
 				$db = JFactory::getDbo();
 				$query = $db->getQuery(true)
-					->select('id')
-					->from($table)
-					->where('catid = '.$id);
+				->select('id')
+				->from($table)
+				->where('catid = '.$id);
 				$db->setQuery($query);
 				$ids_content = $db->loadColumn();
 				$options['categories'] = 0;
@@ -398,7 +397,7 @@ class J2XMLExporter
 			}
 		}
 		$options['content'] = 0;
-	
+
 		if ($item->parent_id > 1)
 		{
 			self::_category($item->parent_id, $xml, $options);
@@ -406,22 +405,22 @@ class J2XMLExporter
 
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
-		
+
 		if ($options['users'] && $item->created_user_id)
 		{
 			self::_user($item->created_user_id, $xml, $options);
 		}
-		
+
 		if ($options['users'] && $item->modified_user_id)
 		{
 			self::_user($item->modified_user_id, $xml, $options);
 		}
-		
+
 		if ($item->access > 6)
 		{
 			self::_viewlevel($item->access, $xml, $options);
 		}
-		
+
 		if ($options['images'])
 		{
 			$img = null;
@@ -437,16 +436,16 @@ class J2XMLExporter
 					}
 				}
 			}
-	
+
 			if ($imgs = json_decode($item->params))
 			{
 				if (isset($imgs->image))
 				{
-					self::_image($imgs->image, $xml, $options);				
+					self::_image($imgs->image, $xml, $options);
 				}
 			}
 		}
-		
+
 		if (class_exists('JHelperTags'))
 		{
 			$htags = new JHelperTags;
@@ -457,24 +456,24 @@ class J2XMLExporter
 			}
 		}
 	}
-	
+
 	function export($xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+
 		if ($options['debug'] > 0)
 		{
 			$app = JFactory::getApplication();
 			$data = ob_get_contents();
 			if ($data)
-			{	
+			{
 				$app->enqueueMessage(JText::_('LIB_J2XML_MSG_ERROR_EXPORT'), 'error');
 				$app->enqueueMessage($data, 'error');
 				return false;
 			}
 		}
 		ob_clean();
-			
+
 		$version = explode(".", J2XMLVersion::$DOCVERSION);
 		$xmlVersionNumber = $version[0].$version[1].substr('0'.$version[2], strlen($version[2])-1);
 
@@ -483,7 +482,7 @@ class J2XMLExporter
 		$dom->formatOutput = true;
 		$dom->loadXML($xml->asXML());
 		$data = $dom->saveXML();
-		
+
 		// modify the MIME type
 		$document = JFactory::getDocument();
 		if ($options['gzip'])
@@ -492,7 +491,7 @@ class J2XMLExporter
 			JResponse::setHeader('Content-disposition', 'attachment; filename="j2xml'.$xmlVersionNumber.date('YmdHis').'.gz"', true);
 			$data = gzencode($data, 9);
 		}
-		else 
+		else
 		{
 			$document->setMimeEncoding('application/xml', true);
 			JResponse::setHeader('Content-disposition', 'attachment; filename="j2xml'.$xmlVersionNumber.date('YmdHis').'.xml"', true);
@@ -501,22 +500,21 @@ class J2XMLExporter
 		return true;
 	}
 
-
 	/*
 	 * Export content articles, images, section and categories
 	 * @return 		xml string
 	 * @since		1.5.2.14
 	 */
 	function content($ids, &$xml, $options)
-	{		
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('ids: '.print_r($ids, true),JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
-		
+	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('ids: '.print_r($ids, true), JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
 		if (!$xml)
 		{
 			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-//			$data .= J2XMLVersion::$DOCTYPE;
+			//			$data .= J2XMLVersion::$DOCTYPE;
 			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
 			$xml = new SimpleXMLElement($data);
 		}
@@ -527,12 +525,12 @@ class J2XMLExporter
 			$ids = array();
 			$ids[] = $id;
 		}
-		
+
 		foreach($ids as $id)
 		{
 			self::_content($id, $xml, $options);
 		}
-		
+
 		$params = new JRegistry($options);
 		JPluginHelper::importPlugin('j2xml');
 		$dispatcher = JDispatcher::getInstance();
@@ -541,88 +539,88 @@ class J2XMLExporter
 
 		return $xml;
 	}
-	
+
 	/*
 	 * Export categories
 	 * @return 		xml string
 	 * @since		1.5.3beta5.43
 	 */
 	function categories($ids, &$xml, $options)
-	{		
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('ids: '.print_r($ids, true),JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
+	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('ids: '.print_r($ids, true), JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
 
 		if (!$xml)
 		{
 			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-//			$data .= J2XMLVersion::$DOCTYPE;
+			//			$data .= J2XMLVersion::$DOCTYPE;
 			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
 			$xml = new SimpleXMLElement($data);
 		}
-		
+
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-		
+
 		$options['content'] = 1;
 		foreach($ids as $id)
 		{
 			self::_category($id, $xml, $options);
 		}
-		
+
 		$params = new JRegistry($options);
 		JPluginHelper::importPlugin('j2xml');
 		$dispatcher = JDispatcher::getInstance();
 		// Trigger the onAfterExport event.
 		$dispatcher->trigger('onAfterExport', array($this->option.'.'.__FUNCTION__, &$xml, $params));
-				
-		return $xml;		
+
+		return $xml;
 	}
-	
+
 	/*
 	 * Export users
 	 * @return 		xml string
 	 * @since		1.5.3beta4.39
 	 */
 	function users($ids, &$xml, $options)
-	{		
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('ids: '.print_r($ids, true),JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
+	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('ids: '.print_r($ids, true), JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
 
 		if (!$xml)
 		{
 			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-//			$data .= J2XMLVersion::$DOCTYPE;
+			//			$data .= J2XMLVersion::$DOCTYPE;
 			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
 			$xml = new SimpleXMLElement($data);
 		}
-		
+
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-		
+
 		foreach($ids as $id)
 		{
 			self::_user($id, $xml, $options);
 		}
-		
+
 		$params = new JRegistry($options);
 		JPluginHelper::importPlugin('j2xml');
 		$dispatcher = JDispatcher::getInstance();
 		// Trigger the onAfterExport event.
 		$dispatcher->trigger('onAfterExport', array($this->option.'.'.__FUNCTION__, &$xml, $params));
-				
-		return $xml;		
+
+		return $xml;
 	}
-	
+
 	/*
 	 * Export weblinks
 	 * @return 		xml string
@@ -630,36 +628,36 @@ class J2XMLExporter
 	 */
 	function weblinks($ids, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('ids: '.print_r($ids, true),JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
-	
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('ids: '.print_r($ids, true), JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
 		if (!$xml)
 		{
 			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-//			$data .= J2XMLVersion::$DOCTYPE;
+			//			$data .= J2XMLVersion::$DOCTYPE;
 			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
 			$xml = new SimpleXMLElement($data);
 		}
-	
+
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-	
+
 		foreach($ids as $id)
 		{
 			self::_weblink($id, $xml, $options);
 		}
-		
+
 		$params = new JRegistry($options);
 		JPluginHelper::importPlugin('j2xml');
 		$dispatcher = JDispatcher::getInstance();
 		// Trigger the onAfterExport event.
 		$dispatcher->trigger('onAfterExport', array($this->option.'.'.__FUNCTION__, &$xml, $params));
-	
+
 		return $xml;
 	}
 
@@ -675,27 +673,27 @@ class J2XMLExporter
 	 */
 	private function _weblink($id, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
-	
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
 		jimport('eshiol.j2xml.table.weblink');
 		$item = JTable::getInstance('weblink', 'eshTable');
 		if (!$item->load($id))
 		{
 			return;
 		}
-		
+
 		if ($xml->xpath("//j2xml/weblink/id[text() = '".$id."']"))
 		{
 			return;
 		}
-		
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
-	
+
 		if ($options['users'])
 		{
 			if ($item->created_by)
@@ -707,7 +705,7 @@ class J2XMLExporter
 				self::_user($item->modified_by, $xml, $options);
 			}
 		}
-	
+
 		if ($options['images'])
 		{
 			$img = null;
@@ -723,7 +721,7 @@ class J2XMLExporter
 					}
 				}
 			}
-	
+
 			if ($imgs = json_decode($item->images))
 			{
 				if (isset($imgs->image_first))
@@ -736,21 +734,21 @@ class J2XMLExporter
 				}
 			}
 		}
-	
+
 		if ($options['categories'] && ($item->catid > 0))
 			self::_category($item->catid, $xml, $options);
-	
-		if (class_exists('JHelperTags'))
-		{
-			$htags = new JHelperTags;
-			$itemtags = $htags->getItemTags('com_weblinks.weblink', $id);
-			foreach ($itemtags as $itemtag)
-			{
-				self::_tag($itemtag->tag_id, $xml, $options);
-			}
-		}
 
-		return $xml;
+			if (class_exists('JHelperTags'))
+			{
+				$htags = new JHelperTags;
+				$itemtags = $htags->getItemTags('com_weblinks.weblink', $id);
+				foreach ($itemtags as $itemtag)
+				{
+					self::_tag($itemtag->tag_id, $xml, $options);
+				}
+			}
+
+			return $xml;
 	}
 
 	/*
@@ -760,10 +758,10 @@ class J2XMLExporter
 	 */
 	private function _contact($id, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
-	
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
 		jimport('eshiol.j2xml.table.contact');
 		$item = JTable::getInstance('contact','eshTable');
 		if (!$item->load($id))
@@ -775,7 +773,7 @@ class J2XMLExporter
 		{
 			return;
 		}
-	
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 		$fragment->appendXML($item->toXML());
@@ -799,12 +797,12 @@ class J2XMLExporter
 				self::_image($item->image, $xml, $options);
 			}
 		}
-		
+
 		if ($options['categories'] && ($item->catid > 0))
 		{
 			self::_category($item->catid, $xml, $options);
 		}
-		
+
 		if (class_exists('JHelperTags'))
 		{
 			$htags = new JHelperTags;
@@ -823,9 +821,9 @@ class J2XMLExporter
 	 */
 	private function _viewlevel($id, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
 
 		if ($xml->xpath("//j2xml/viewlevel/id[text() = '".$id."']"))
 		{
@@ -838,12 +836,12 @@ class J2XMLExporter
 		{
 			return;
 		}
-		
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
-	
+
 		$fragment->appendXML($item->toXML());
-		$doc->documentElement->appendChild($fragment);		
+		$doc->documentElement->appendChild($fragment);
 	}
 
 	/**
@@ -858,10 +856,10 @@ class J2XMLExporter
 	 */
 	private function _buttons($id, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
-	
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
 		jimport('eshiol.j2xml.table.button');
 		$item = JTable::getInstance('button', 'eshTable');
 		if (!$item->load($id))
@@ -873,12 +871,12 @@ class J2XMLExporter
 		{
 			return;
 		}
-		
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
-	
+
 		if ($options['users'])
 		{
 			if ($item->created_by)
@@ -890,7 +888,7 @@ class J2XMLExporter
 				self::_user($item->modified_by, $xml, $options);
 			}
 		}
-	
+
 		if ($options['images'])
 		{
 			$img = null;
@@ -906,7 +904,7 @@ class J2XMLExporter
 					}
 				}
 			}
-	
+
 			if ($imgs = json_decode($item->images))
 			{
 				if (isset($imgs->image))
@@ -915,21 +913,21 @@ class J2XMLExporter
 				}
 			}
 		}
-	
+
 		if ($options['categories'] && ($item->catid > 0))
 			self::_category($item->catid, $xml, $options);
-	
-		if (class_exists('JHelperTags'))
-		{
-			$htags = new JHelperTags;
-			$itemtags = $htags->getItemTags('com_buttons.button', $id);
-			foreach ($itemtags as $itemtag)
-			{
-				self::_tag($itemtag->tag_id, $xml, $options);
-			}
-		}
 
-		return $xml;
+			if (class_exists('JHelperTags'))
+			{
+				$htags = new JHelperTags;
+				$itemtags = $htags->getItemTags('com_buttons.button', $id);
+				foreach ($itemtags as $itemtag)
+				{
+					self::_tag($itemtag->tag_id, $xml, $options);
+				}
+			}
+
+			return $xml;
 	}
 
 	/*
@@ -939,10 +937,10 @@ class J2XMLExporter
 	 */
 	private function _usernote($id, &$xml, $options)
 	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('id: '.$id,JLOG::DEBUG,'lib_j2xml'));
-		JLog::add(new JLogEntry('options: '.print_r($options, true),JLOG::DEBUG,'lib_j2xml'));
-	
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
 		jimport('eshiol.j2xml.table.usernote');
 		$item = JTable::getInstance('usernote','eshTable');
 		if (!$item->load($id))
@@ -954,7 +952,7 @@ class J2XMLExporter
 		{
 			return;
 		}
-	
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 		$fragment->appendXML($item->toXML());
@@ -988,7 +986,7 @@ class J2XMLExporter
 				}
 			}
 		}
-		
+
 		if ($options['categories'] && ($item->catid > 0))
 		{
 			self::_category($item->catid, $xml, $options);
@@ -1005,7 +1003,7 @@ class J2XMLExporter
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		JLog::add(new JLogEntry('ids: '.print_r($ids, true), JLOG::DEBUG, 'lib_j2xml'));
 		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
-	
+
 		if (!$xml)
 		{
 			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
@@ -1013,19 +1011,160 @@ class J2XMLExporter
 			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
 			$xml = new SimpleXMLElement($data);
 		}
-	
+
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-	
+
 		foreach($ids as $id)
 		{
 			self::_contact($id, $xml, $options);
 		}
-		
+
+		$params = new JRegistry($options);
+		JPluginHelper::importPlugin('j2xml');
+		$dispatcher = JDispatcher::getInstance();
+		// Trigger the onAfterExport event.
+		$dispatcher->trigger('onAfterExport', array($this->option.'.'.__FUNCTION__, &$xml, $params));
+
+		return $xml;
+	}
+
+	/**
+	 * Export menu
+	 *
+	 * @param int $id
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
+	 * @since 17.1.294
+	 */
+	private function _menu($id, &$xml, $options)
+	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
+		jimport('eshiol.j2xml.table.menu');
+		$item = JTable::getInstance('menu','eshTable');
+		if (!$item->load($id))
+		{
+			return;
+		}
+
+		if ($xml->xpath("//j2xml/menu/id[text() = '".$item->id."']"))
+		{
+			return;
+		}
+
+		$args = array();
+		parse_str(parse_url($item->link, PHP_URL_QUERY), $args);
+
+		if (isset($args['option']) && ($args['option'] == 'com_content'))
+		{
+			if (isset($args['view']) && ($args['view'] == 'article'))
+			{
+				$this->_content($args['id'], $xml, $options);
+			}
+		}
+
+		$doc = dom_import_simplexml($xml)->ownerDocument;
+		$fragment = $doc->createDocumentFragment();
+		$fragment->appendXML($item->toXML());
+		$doc->documentElement->appendChild($fragment);
+	}
+
+	/**
+	 * Export menutype
+	 *
+	 * @param int $id
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
+	 * @since 17.1.294
+	 */
+	private function _menutype($id, &$xml, $options)
+	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
+		jimport('eshiol.j2xml.table.menutype');
+		$item = JTable::getInstance('menutype','eshTable');
+		if (!$item->load($id))
+		{
+			return;
+		}
+
+		if ($xml->xpath("//j2xml/menutype/id[text() = '".$item->id."']"))
+		{
+			return;
+		}
+
+		$doc = dom_import_simplexml($xml)->ownerDocument;
+		$fragment = $doc->createDocumentFragment();
+		$fragment->appendXML($item->toXML());
+		$doc->documentElement->appendChild($fragment);
+
+		$db = JFactory::getDbo();
+		$ids_menu =
+		$db->setQuery(
+				$db->getQuery(true)
+				->select($db->qn('id'))
+				->from($db->qn('#__menu'))
+				->where($db->qn('menutype').' = '.$db->q($item->menutype))
+				)->loadColumn();
+
+				foreach ($ids_menu as $id_menu)
+				{
+					self::_menu($id_menu, $xml, $options);
+				}
+	}
+
+	/**
+	 * Export menutypes
+	 *
+	 * @param array $ids
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
+	 * @since 17.1.294
+	 */
+	function menus($ids, &$xml, $options)
+	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('ids: '.print_r($ids, true), JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
+
+		if (!$xml)
+		{
+			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
+			//			$data .= J2XMLVersion::$DOCTYPE;
+			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
+			$xml = new SimpleXMLElement($data);
+		}
+
+		if (is_scalar($ids))
+		{
+			$id = $ids;
+			$ids = array();
+			$ids[] = $id;
+		}
+
+		foreach($ids as $id)
+		{
+			self::_menutype($id, $xml, $options);
+		}
+
 		$params = new JRegistry($options);
 		JPluginHelper::importPlugin('j2xml');
 		$dispatcher = JDispatcher::getInstance();

@@ -1,4 +1,13 @@
---------------------- 17.1.292 Release [13-January-2017] ----------------------
+--------------------- 17.1.295 Release [27-January-2017] ----------------------
+
+27-January-2016
+  + import menus (build 295)
+  + export menus (build 294)
+
+25-January-2016
+  + link source file (build 293)
+  + backlink (build 293)
+  + filename (build 293)
 
 13-January-2016
   + client side xsl transformation (build 292) 

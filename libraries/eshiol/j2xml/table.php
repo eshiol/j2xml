@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -47,11 +47,11 @@ class eshTable extends JTable
 	 * @since	1.0
 	 */
 	public $_db;
-	
+
 	protected $_excluded;
 	protected $_aliases;
 	protected $_jsons;
-	
+
 	/**
 	 * Object constructor to set table and key fields.  In most cases this will
 	 * be overridden by child classes to explicitly set the table and key fields
@@ -65,13 +65,13 @@ class eshTable extends JTable
 	function __construct($table, $key, &$db)
 	{
 		parent::__construct($table, $key, $db);
-		
+
 		$this->_excluded = array('asset_id','parent_id','lft','rgt','level','checked_out','checked_out_time'); 
 		$this->_aliases = array();
 		$this->_jsons = array(); //array('params', 'metadata', 'attribs', 'images', 'urls');
-		
+
 	}
-	
+
 	/**
 	 * Method to load a row from the database by primary key and bind the fields
 	 * to the JTable instance properties.
@@ -93,9 +93,9 @@ class eshTable extends JTable
 		if ($ret = parent::load($keys, $reset))
 		{
 			if (isset($this->created_by))
-				$this->_aliases['created_by']='SELECT username FROM #__users WHERE id = '.(int)$this->created_by;		
+				$this->_aliases['created_by']='SELECT username FROM #__users WHERE id = '.(int)$this->created_by;
 			if (isset($this->created_user_id))
-				$this->_aliases['created_user_id']='SELECT username FROM #__users WHERE id = '.(int)$this->created_user_id;		
+				$this->_aliases['created_user_id']='SELECT username FROM #__users WHERE id = '.(int)$this->created_user_id;
 			if (isset($this->modified_by))
 				$this->_aliases['modified_by']='SELECT username FROM #__users WHERE id = '.(int)$this->modified_by;
 			if (isset($this->modified_user_id))
@@ -106,19 +106,18 @@ class eshTable extends JTable
 				$this->_aliases['access']='SELECT IF(f.id<=6,f.id,f.title) FROM #__viewlevels f RIGHT JOIN '.$this->_tbl.' a ON f.id = a.access WHERE a.id = '. (int)$this->id;
 		}
 		return $ret;
-	}	
-	
+	}
+
 	/**
 	 * Export item list to xml
-	 *
-	 * @access public
-	 * @param boolean Map foreign keys to text values
+	 * 
+	 * @return string
 	 */
 	protected function _serialize()
 	{
 		// Initialise variables.
 		$xml = array();
-		
+
 		$xml[] = '<'.strtolower(str_replace('eshTable', '', get_class($this))).'>';
 
 		foreach (get_object_vars($this) as $k => $v)
@@ -133,7 +132,7 @@ class eshTable extends JTable
 			else if ($this->_jsons && in_array($k, $this->_jsons))
 				$v = json_encode($v, JSON_NUMERIC_CHECK);
 			// collapse json variable
-				
+
 			if ($v)
 			{
 				$x = json_decode($v);
@@ -159,14 +158,14 @@ class eshTable extends JTable
 					$xml[] = $this->_setValue($k, $val);
 				$xml[] = '</'.$k.'list>';
 			}
-		}		
+		}
 
 		$xml[] = '</'.strtolower(str_replace('eshTable', '', get_class($this))).'>';
-		
+
 		// Return the XML array imploded over new lines.
 		return implode("\n", $xml);
 	}
-	
+
 	private function _setValue($k, $v)
 	{
 		// Open root node.
@@ -177,9 +176,9 @@ class eshTable extends JTable
 			$xml .= $v;
 		else if ($v != '')
 		{
-			$xml .= '<![CDATA[';		
+			$xml .= '<![CDATA[';
 			$v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
-				
+
 			$length = strlen($v);
 			for ($i=0; $i < $length; $i++)
 			{
@@ -205,11 +204,13 @@ class eshTable extends JTable
 		// Return the XML value.
 		return $xml;
 	}
-	
+
 	/**
 	 * Export item list to xml
-	 *
-	 * @access public
+	 * 
+	 * @param boolean $mapKeysToText	Map foreign keys to text values
+	 * 
+	 * @return string
 	 */
 	function toXML($mapKeysToText = false)
 	{

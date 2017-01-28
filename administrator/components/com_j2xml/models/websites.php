@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -143,7 +143,7 @@ class J2XMLModelWebsites extends JModelList
 		{
 			$query->where('a.type = 0');
 		}
-		
+
 		// Filter by search in title
 		$search = $this->getState('filter.search');
 		if (!empty($search)) {
@@ -158,9 +158,9 @@ class J2XMLModelWebsites extends JModelList
 		// Add the list ordering clause.
 		$orderCol = $this->state->get('list.ordering');
 		$orderDirn = $this->state->get('list.direction');
-		
+
 		$query->order($db->escape($orderCol . ' ' . $orderDirn));
-		
+
 		return $query;
 	}
 }

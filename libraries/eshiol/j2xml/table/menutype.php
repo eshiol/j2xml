@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		15.9.269 libraries/eshiol/j2xml/table/viewlevel.php
+ * @version		17.1.294 libraries/eshiol/j2xml/table/menutype.php
  * @package		J2XML
  * @subpackage	lib_j2xml
- * @since		15.3.248
+ * @since		17.1.294
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
@@ -19,30 +19,19 @@
 defined('_JEXEC') or die('Restricted access');
 
 /**
-* Viewlevel Table class
+* Menutype Table class
+* 
+* @since 17.1.294
 */
-class eshTableViewlevel extends eshTable
+class eshTableMenutype extends eshTable
 {
 	/**
 	 * Constructor
 	 *
 	 * @param object Database connector object
+	 * @since 17.1.294
 	 */
 	function __construct(& $db) {
-		parent::__construct('#__viewlevels', 'id', $db);
-	}
-
-	/**
-	 * Export item list to xml
-	 *
-	 * @access public
-	 */
-	function toXML($mapKeysToText = false)
-	{
-		JLog::add(new JLogEntry(__METHOD__,JLOG::DEBUG,'lib_j2xml'));
-		$this->_excluded = array_merge($this->_excluded, array('rules'));
-		$this->_aliases['rule']='SELECT g.title FROM #__j2xml_usergroups g WHERE g.id IN '.str_replace(array("[","]"),array("(",")"),$this->rules);
-
-		return parent::_serialize();
+		parent::__construct('#__menu_types', 'id', $db);
 	}
 }

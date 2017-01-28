@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -29,10 +29,10 @@ class JToolbarButtonSendbydate extends JToolbarButton
 	 * @var    string
 	 */
 	protected $_name = 'SendByDate';
-	
+
 	private $_d1;
 	private $_d2;
-	
+
 	/**
 	 * Fetch the HTML for the button
 	 *
@@ -82,7 +82,7 @@ jQuery(window).on('resize', function(){
 
 		$d1_field = JHtmlJ2XML::calendar2($d1, $name.'_begin', $name.'_begin', '%Y/%m/%d', array('style' => 'display:none', 'class' => 'btn-small'));
 		$d2_field = JHtmlJ2XML::calendar2($d2, $name.'_end', $name.'_end', '%Y/%m/%d', array('style' => 'display:none', 'class' => 'btn-small'));
-		
+
 		$html  = "<div class=\"btn-group\">\n";
 		if (is_array($urls))
 		{
@@ -97,7 +97,7 @@ jQuery(window).on('resize', function(){
 				$html .= "		<li><a href=\"#\" onclick=\"{$doTask}\">{$urls[$i]->title}</a></li>\n";
 			}
 			$html .= "	</ul>\n";
-		}			
+		}
 		else
 		{
 			$doTask = $this->_getCommand($name, $i18n_text, $urls->url, $list);
@@ -110,7 +110,7 @@ jQuery(window).on('resize', function(){
 			$html .= $d2_field."\n";
 		}
 		$html .= "</div>\n";
-		
+
 		return $html;
 	}
 
@@ -152,7 +152,7 @@ jQuery(window).on('resize', function(){
 		$app = JFactory::getApplication();
 		$d1 = $this->_d1; //->format('Y/m/d');
 		$d2 = $this->_d2; //->format('Y/m/d');
-		
+
 		$token = JSession::getFormToken();
 		$url = base64_encode("{$url}&format=json&{$token}=1");
 		if ($list)

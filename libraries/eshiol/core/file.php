@@ -7,7 +7,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -53,7 +53,7 @@ class JToolbarButtonFile extends JToolbarButton
 		$default_editor = JFactory::getConfig()->get('editor');
 		$editor = $user->getParam('editor', $default_editor);
 		$jce = ($editor == 'jce');
-		
+
 		$doc = JFactory::getDocument();
 /*
 		$doc->addStyleDeclaration("#{$name}_local1 {margin-bottom:0;height:14px;}");
@@ -85,33 +85,33 @@ jQuery(window).on('resize', function(){
 	jQuery('#{$name}_server').width(width + 32);
 });
 ");
-		
+
 		// Store all data to the options array for use with JLayout
 		$class = $this->fetchIconClass($name);
 		$title = JText::_($name);
 		$open = JText::_($open);
 		$upload = JText::_($upload);
-		
+
 		$component = substr($task, 0, ($i = strpos($task, '.')));
-		$task = substr($task, $i + 1);		
+		$task = substr($task, $i + 1);
 		$doAction = "index.php?option=com_$component&amp;task=$task";
 
 		$html = array();
 		$html[] = "<form id=\"".$name."Form\" name=\"".$name."Form\" method=\"post\" enctype=\"multipart/form-data\" action=\"$doAction\" style=\"margin:0\">\n";
-		
+
 		$html[] = "<div class=\"btn-group input-append\" style=\"margin:0;\">";
-			
+
 		$html[] = "<input type=\"hidden\" id=\"".$name."_filetype\"  name=\"".$name."_filetype\" value=\"1\" />";
 		$html[] = "<input type=\"file\" id=\"".$name."_local\"  name=\"".$name."_local\" />";
 		$html[] = "<input type=\"text\" id=\"".$name."_local1\"                           class=\"file-button\" placeholder=\"No selected file...\" />";
 		$html[] = "<input type=\"text\" id=\"".$name."_url\"    name=\"".$name."_url\"    class=\"file-button\" placeholder=\"URL\" />";
 		$html[] = "<input type=\"text\" id=\"".$name."_server\" name=\"".$name."_server\" class=\"file-button\" placeholder=\"Server\" value=\"\" />";
-		
+
 		$html[] = "<button title=\"\" class=\"btn btn-small hasTooltip\" data-toggle=\"dropdown\" id=\"".$name."_type\">";
 		$html[] = "<i class=\"caret\" style=\"margin-bottom:0\"></i>";
 		$html[] = "</button>";
 		$html[] = "<ul class=\"dropdown-menu\">";
-		
+
 		$html[] = "<li><a href=\"#\" onclick=\"$('".$name."_local1').style.display='';
 			$('".$name."_local_open').style.display='';
 			$('".$name."_url').style.display='none';
@@ -131,15 +131,15 @@ jQuery(window).on('resize', function(){
 			$('".$name."_url').style.display='none';
 			$('".$name."_server').style.display='';
 			".($jce?"$('".$name."_server_open').style.display='';":"")."
-			$('".$name."_filetype').value=3;						
+			$('".$name."_filetype').value=3;
 			\">Server</a></li>";
 		$html[] = "</ul>";
-		
+
 		$html[] = "<button id=\"".$name."_local_open\" onclick=\"javascript:".$name."_local.click();return false;\" class=\"btn btn-small\" >";
 		$html[] = "<i class=\"icon-folder\"></i>";
 		$html[] = "<span> $open</span>";
 		$html[] = "</button>";
-				
+
 		if ($jce)
 		{
 			require_once(JPATH_ADMINISTRATOR.'/components/com_jce/helpers/browser.php');
@@ -148,9 +148,9 @@ jQuery(window).on('resize', function(){
 			$html[] = "<i class=\"icon-folder\"></i>";
 			$html[] = "<span> $open</span>";
 			$html[] = "</button>";
-		
+
 			// Place modal div and scripts in a new div
-			$html[] = '<div class="btn-group" style="width: 0; margin: 0">';		
+			$html[] = '<div class="btn-group" style="width: 0; margin: 0">';
 			// Build the options array for the modal
 			$params = array();
 			$params['title']  = $title;
@@ -160,7 +160,7 @@ jQuery(window).on('resize', function(){
 			$html[] = JHtml::_('bootstrap.renderModal', $name.'_server_modal', $params);
 			$html[] = '</div>';
 		}
-		
+
 		if (is_array($plugins) && (count($plugins) > 0))
 		{
 			if (count($plugins) > 1)
@@ -218,7 +218,7 @@ jQuery(window).on('resize', function(){
 			});
 		})(jQuery);
 		</script>';
-		
+
 		$html[] = '<script>
 		var jQuery;
 		(function ($) {
@@ -234,21 +234,21 @@ jQuery(window).on('resize', function(){
 			});
 		})(jQuery);
 		</script>';
-				
+
 		$html[] = "<button title=\"{$title}\" class=\"btn btn-small hasTooltip\" type=\"submit\" id=\"{$name}_upload\"".
 			($ajax ? " onclick=\"return !{$ajax}('{$name}', '{$doAction}');\"" : "")
 			." data-original-title=\"{$title}\">";
 		$html[] = "<i class=\"icon-upload\"></i>";
 		$html[] = "<span> {$upload}</span>";
 		$html[] = "</button>";
-			
+
 		$html[] = '</div>';
 		$html[] = JHTML::_('form.token');
 		$html[] = '</form>';
-		
+
 		return implode("\n", $html);
 	}
-				
+
 	/**
 	 * Get the button id
 	 *
@@ -263,7 +263,7 @@ jQuery(window).on('resize', function(){
 	{
 		return $this->_parent->getName() . '-file-' . $name;
 	}
-				
+
 	/**
 	 * Get the JavaScript command for the button
 	 *
@@ -279,7 +279,7 @@ jQuery(window).on('resize', function(){
 		{
 			$url = JUri::base() . $url;
 		}
-	
+
 		return $url;
 	}
 }

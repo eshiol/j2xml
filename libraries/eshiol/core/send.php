@@ -8,7 +8,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2016 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -72,7 +72,7 @@ class JToolbarButtonSend extends JToolbarButton
 			}
 			$html .= "	</ul>\n";
 			$html .= "</div>\n";
-		}			
+		}
 		else
 		{
 			$doTask = $this->_getCommand($name, $i18n_text, $urls->url, $list);
@@ -82,7 +82,7 @@ class JToolbarButtonSend extends JToolbarButton
 			$html .= "<span>{$i18n_text}</span>\n";
 			$html .= "</button>\n";
 		}
-				
+
 		return $html;
 	}
 
