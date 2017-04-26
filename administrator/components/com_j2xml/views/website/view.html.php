@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.161 administrator/components/com_j2xml/views/website/view.html.php
+ * @version		3.7.170 administrator/components/com_j2xml/views/website/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -42,7 +42,7 @@ class J2XMLViewWebsite extends JViewLegacy
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors'))) {
-			JError::raiseError(500, implode("\n", $errors));
+			throw new Exception(implode("\n", $errors), 500);
 			return false;
 		}
 

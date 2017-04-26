@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.169 /components/com_j2xml/j2xml.php
+ * @version		3.7.170 /components/com_j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -70,13 +70,13 @@ else
 if (file_exists($controllerPath)) {
 	require_once($controllerPath);
 } else {
-	JError::raiseError(500, 'Invalid Controller '.$controllerName);
+	throw new Exception('Invalid Controller '.$controllerName, 500);
 }
 
 if (class_exists($controllerClass)) {
 	$controller = new $controllerClass();
 } else {
-	JError::raiseError(500, 'Invalid Controller Class - '.$controllerClass );
+	throw new Exception('Invalid Controller Class - '.$controllerName, 500);
 }
 
 //$config	= JFactory::getConfig();
