@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.168 administrator/components/com_j2xml/controllers/cpanel.php
+ * @version		3.7.169 administrator/components/com_j2xml/controllers/cpanel.php
  *
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -35,8 +35,8 @@ class J2xmlControllerCpanel extends JControllerLegacy
 
 	public function display($cachable = false, $urlparams = false)
 	{
-		JRequest::setVar('view', 'cpanel');
-		JRequest::setVar('layout', 'default');
+		$this->input->set('view', 'cpanel');
+		$this->input->set('layout', 'default');
 		parent::display($cachable, $urlparams);
 	}
 
@@ -56,7 +56,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		}
 
 		// Check for request forgeries
-		JRequest::checkToken() or jexit('Invalid Token');
+		JSession::checkToken() or jexit('Invalid Token');
 
 		$msg='';
 		$db = JFactory::getDBO();
@@ -65,12 +65,11 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		$params = JComponentHelper::getParams('com_j2xml');
 		$this->setRedirect('index.php?option=com_j2xml');
 		libxml_use_internal_errors(true);
-
-		$filetype = JRequest::getVar('j2xml_filetype', 1);
-		switch (JRequest::getVar('j2xml_filetype', 1)) {
+		$filetype = $this->input->get('j2xml_filetype', 1);
+		switch ($filetype) {
 			case 1:
 				//Retrieve file details from uploaded file, sent from upload form:
-				$file = JRequest::getVar('j2xml_local', null, 'files', 'array');
+				$file = $this->input->files->get('j2xml_local', null, 'array');
 				if(!isset($file))
 				{
 					$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
@@ -86,7 +85,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$extn = end($x);
 				break;
 			case 2:
-				if (!($filename = JRequest::getVar('j2xml_url')))
+				if (!($filename = $this->input->get('j2xml_url')))
 				{
 					$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
 					return false;
@@ -95,7 +94,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$extn = end($x);
 				break;
 			case 3:
-				if ($filename = JRequest::getVar('j2xml_server', null))
+				if ($filename = $this->input->get('j2xml_server', null))
 				{
 					$filename = JPATH_ROOT.'/'.$filename;
 				}
@@ -255,12 +254,14 @@ class J2xmlControllerCpanel extends JControllerLegacy
 	{
 		// Check for request forgeries
 		JSession::checkToken('get') or die(JText::_('JINVALID_TOKEN'));
+	
+		$jinput   = JFactory::getApplication()->input;
 //		$params = JComponentHelper::getParams('com_j2xml');
 //		$hostname = JFactory::getURI()->getHost();
 		if (
 //				($params->get('deveopment') &&
 //				($hostname == 'localhost') &&
-				(JRequest::getCmd('d3v3l0p', '0') === '1') 
+				($jimput->getCmd('d3v3l0p', '0') === '1') 
 		)
 		{
 			jimport('eshiol.j2xml.importer');

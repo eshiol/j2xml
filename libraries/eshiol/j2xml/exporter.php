@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.1.296 libraries/eshiol/j2xml/exporter.php
+ * @version		17.4.298 libraries/eshiol/j2xml/exporter.php
 *
 * @package		J2XML
 * @subpackage	lib_j2xml
@@ -88,7 +88,7 @@ class J2XMLExporter
 					")->loadResult();
 		} while ($n > 0);
 
-		$this->option = (PHP_SAPI != 'cli') ? JRequest::getCmd('option') : 'cli_'.strtolower(get_class(JApplicationCli::getInstance()));
+		$this->option = (PHP_SAPI != 'cli') ? JFactory::getApplication()->input->getCmd('option') : 'cli_'.strtolower(get_class(JApplicationCli::getInstance()));
 	}
 
 	/*

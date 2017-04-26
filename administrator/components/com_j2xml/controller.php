@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.161 administrator/components/com_j2xml/controller.php
+ * @version		3.7.169 administrator/components/com_j2xml/controller.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -40,9 +40,10 @@ class J2XMLController extends JControllerLegacy
 		require_once JPATH_COMPONENT.'/helpers/j2xml.php';
 		J2XMLHelper::updateReset();
 
-		$view	= JRequest::getCmd('view', '');
-		$layout = JRequest::getCmd('layout', 'default');
-		$id		= JRequest::getInt('id');
+		$jinput = JFactory::getApplication()->input;
+		$view	= $jinput->getCmd('view', '');
+		$layout = $jinput->getCmd('layout', 'default');
+		$id		= $jinput->getInt('id');
 
 		// Check for edit form.
 		if ($view == 'website' && $layout == 'edit' && !$this->checkEditId('com_j2xml.edit.website', $id)) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.161 administrator/components/com_j2xml/views/raw.php
+ * @version		3.7.169 administrator/components/com_j2xml/views/raw.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -29,7 +29,8 @@ class J2XMLView extends JViewLegacy
 	function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
-		$cid = JRequest::getVar('cid');
+		$jinput = $app->input;
+		$cid = $jinput->get('cid');
 		$ids = explode(",", $cid);
 
 		$params = JComponentHelper::getParams('com_j2xml');

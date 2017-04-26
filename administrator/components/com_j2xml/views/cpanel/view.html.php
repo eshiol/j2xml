@@ -97,12 +97,15 @@ class J2XMLViewCpanel extends JViewLegacy
 			$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null, 'xml,gz', null, $this->params->get('ajax', 1) ? 'eshiol.j2xml.import' : null);
 //			$params = JComponentHelper::getParams('com_j2xml');
 //			$hostname = JFactory::getURI()->getHost();
+			$jinput   = JFactory::getApplication()->input;
 			if (
 //					($params->get('deveopment') &&
 //					($hostname == 'localhost') &&
-					(JRequest::getCmd('d3v3l0p', '0') === '1') 
+					($jinput->getCmd('d3v3l0p', '0') === '1') 
 			)
+			{
 				$toolbar->appendButton('Link', 'purge', 'COM_J2XML_CONTENT_DELETE', 'index.php?option=com_j2xml&task=cpanel.clean&develop=1&'.JSession::getFormToken().'=1');
+			}
 			JToolBarHelper::divider();
 		}
 		if ($canDo->get('core.admin')) {

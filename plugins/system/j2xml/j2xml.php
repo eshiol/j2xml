@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.39 plugins/system/j2xml/j2xml.php
+ * @version		3.7.40 plugins/system/j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	plg_system_j2xml
@@ -78,11 +78,14 @@ class plgSystemJ2XML extends JPlugin
 
 		$enabled = JComponentHelper::getComponent('com_j2xml', true);
 		if (!$enabled->enabled) 
+		{
 			return true; 
-
-		$option = JRequest::getVar('option');
-		$view = JRequest::getVar('view');
-		$extension = JRequest::getVar('extension');
+		}
+		
+		$jinput   = JFactory::getApplication()->input;
+		$option = $jinput->get('option');
+		$view = $jinput->get('view');
+		$extension = $jinput->get('extension');
 
 		if (($option == 'com_content') && (!$view || $view == 'articles' || $view == 'featured')
 			|| ($option == 'com_users') && (!$view || $view == 'users')

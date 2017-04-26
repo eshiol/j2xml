@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.1.295 libraries/eshiol/j2xml/importer.php
+ * @version		17.4.298 libraries/eshiol/j2xml/importer.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -56,7 +56,7 @@ class J2XMLImporter
 		$this->_nullDate = $this->_db->getNullDate();
 		$this->_user_id = $this->_user->get('id');
 		$this->_now = JFactory::getDate()->format("%Y-%m-%d-%H-%M-%S");
-		$this->_option = (PHP_SAPI != 'cli') ? JRequest::getCmd('option') : 'cli_'.strtolower(get_class(JApplicationCli::getInstance()));
+		$this->_option = (PHP_SAPI != 'cli') ? JFactory::getApplication()->input->getCmd('option') : 'cli_'.strtolower(get_class(JApplicationCli::getInstance()));
 
 		$this->_db->setQuery("
 			CREATE TABLE IF NOT EXISTS `#__j2xml_usergroups` (

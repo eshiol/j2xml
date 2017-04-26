@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.161 administrator/components/com_j2xml/j2xml.php
+ * @version		3.7.169 administrator/components/com_j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -58,13 +58,13 @@ $lang->load('lib_j2xml', JPATH_SITE, null, false, false)
 	|| $lang->load('lib_j2xml', JPATH_SITE, null, true)
 	|| $lang->load('lib_j2xml', JPATH_ADMINISTRATOR, null, true);
 
-
+$jinput = JFactory::getApplication()->input;
 $controllerClass = 'J2XMLController';
 if (class_exists('JPlatform'))
 {
-	$task = JRequest::getCmd('task', 'cpanel');
+	$task = $jinput->getCmd('task', 'cpanel');
 }
-elseif ($view = JRequest::getCmd('view') == 'websites')
+elseif ($view = $jinput->getCmd('view') == 'websites')
 {
 	JFactory::getApplication()->redirect(JRoute::_('index.php?option=com_j2xml', false));
 }
@@ -82,7 +82,7 @@ else
 	$controllerName	= strtolower($controllerName);
 
 	$controllerPath	= JPATH_COMPONENT_ADMINISTRATOR.DS.'controllers'.DS.$controllerName;
-	$format = JRequest::getCmd('format');
+	$format = $jinput->getCmd('format');
 	if ($format == 'json')
 	{
 		$controllerPath .= '.'.strtolower($format);

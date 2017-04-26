@@ -21,8 +21,9 @@ defined('_JEXEC') or die;
 
 JHtml::_('behavior.tooltip');
 
-$field		= JRequest::getCmd('field');
-$url		= JRequest::getCmd('url');
+$jinput     = JFactory::getApplication()->input;
+$field		= $jinput->getCmd('field');
+$url		= $jinput->getCmd('url');
 $listOrder	= $this->escape($this->state->get('list.ordering'));
 $listDirn	= $this->escape($this->state->get('list.direction'));
 ?>

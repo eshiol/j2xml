@@ -2,13 +2,13 @@
 <extension version="3" type="library" method="upgrade">
   <name>j2xml</name>
   <libraryname>eshiol/j2xml</libraryname>
-  <creationDate>February 2017</creationDate>
+  <creationDate>April 2017</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright>(C) 2010, 2017 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>17.2.297.655</version>
+  <version>17.4.298.657</version>
   <description>LIB_J2XML_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
   <files>

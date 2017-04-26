@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.158 /components/com_j2xml/j2xml.php
+ * @version		3.6.169 /components/com_j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -27,8 +27,9 @@ if ($params->get('debug') || defined('JDEBUG') && JDEBUG)
 	JLog::addLogger(array('text_file' => $params->get('log', 'eshiol.log.php'), 'extension' => 'com_j2xml_file'), JLog::DEBUG, array('lib_j2xml','com_j2xml'));
 }
 
+$jinput = JFactory::getApplication()->input;
 $controllerClass = 'J2XMLController';
-$task = JRequest::getCmd('task', 'services');
+$task = $jinput->getCmd('task', 'services');
 
 if (strpos($task, '.') === false) 
 	$controllerPath	= JPATH_COMPONENT.'/controller.php';
@@ -42,7 +43,7 @@ else
 
 	$controllerPath	= JPATH_COMPONENT.'/controllers/'.$controllerName;
 
-	$format = JRequest::getCmd('format');
+	$format = $jinput->getCmd('format');
 	if ($format == 'xmlrpc')
 	{
 		JLog::addLogger(array('logger' => 'xmlrpc', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
