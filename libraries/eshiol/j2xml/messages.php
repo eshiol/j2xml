@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		16.10.286 libraries/eshiol/j2xml/messages.php
+ * @version		17.1.296 libraries/eshiol/j2xml/messages.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -55,5 +55,12 @@ class J2XMLMessages
 		//'LIB_J2XML_MSG_UNKNOWN_NOTICE',
 		//'LIB_J2XML_MSG_UNKNOWN_MESSAGE',
 		32 => 'LIB_J2XML_XMLRPC_DISABLED',
+		'LIB_J2XML_MSG_MENUTYPE_IMPORTED',
+		'LIB_J2XML_MSG_MENUTYPE_NOT_IMPORTED',
+		'LIB_J2XML_MSG_MENU_IMPORTED',
+		'LIB_J2XML_MSG_MENU_NOT_IMPORTED',
+		'LIB_J2XML_ERROR_COMPONENT_NOT_FOUND',
+		'LIB_J2XML_MSG_MODULE_IMPORTED',
+		'LIB_J2XML_MSG_MODULE_NOT_IMPORTED',
 	);
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.158 administrator/components/com_j2xml/views/vebsites/tmpl/default.php
+ * @version		3.6.166 administrator/components/com_j2xml/views/vebsites/tmpl/default.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -185,8 +185,9 @@ $now = JFactory::getDate();
 						<?php else : ?>
 								<?php echo $this->escape($item->title); ?>
 						<?php endif; ?>
-						<br/><?php  echo 'now: '.$now->toSql(); ?>
-						<br/><?php  echo 'expire_time: '.$item->expire_time; ?>
+						<?php if (isset($item->expire_time)): ?>
+						<p class="smallsub">(<span>expire time</span>: <?php echo $item->expire_time; ?>)</p>
+						<?php endif; ?>
 					</td>
 					<td>
 						<?php echo $item->remote_url;?>

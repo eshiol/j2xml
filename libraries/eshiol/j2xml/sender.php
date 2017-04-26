@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.1.291 libraries/eshiol/j2xml/sender.php
+ * @version		17.2.297 libraries/eshiol/j2xml/sender.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3beta3.38
@@ -58,6 +58,13 @@ class J2XMLSender
 		'notice',		// LIB_J2XML_MSG_UNKNOWN_NOTICE 30
 		'message',		// LIB_J2XML_MSG_UNKNOWN_MESSAGE 31
 		32 => 'notice',		// LIB_J2XML_MSG_XMLRPC_DISABLED 32
+		'message',		// LIB_J2XML_MSG_MENUTYPE_IMPORTED 33
+		'notice',		// LIB_J2XML_MSG_MENUTYPE_NOT_IMPORTED 34
+		'message',		// LIB_J2XML_MSG_MENU_IMPORTED 35
+		'notice',		// LIB_J2XML_MSG_MENU_NOT_IMPORTED 36
+		'notice',		// LIB_J2XML_ERROR_COMPONENT_NOT_FOUND 37
+		'message',		// LIB_J2XML_MSG_MODULE_IMPORTED 38
+		'notice',		// LIB_J2XML_MSG_MODULE_NOT_IMPORTED 39
 	);
 
 	/*
@@ -102,6 +109,12 @@ class J2XMLSender
 			$server['remote_url'] .= '/';
 		$server['remote_url'] .= 'index.php?option=com_j2xml&task=services.import&format=xmlrpc';
 
+		if (!function_exists('xmlrpc_set_type'))
+		{
+			$app->enqueueMessage(JText::_('LIB_J2XML_XMLRPC_ERROR'), 'error');
+			return;
+		}
+
 		xmlrpc_set_type($data, 'base64');
 		JLog::add(new JLogEntry(print_r(array('http' => array(
 			'method' => "POST",
@@ -119,9 +132,9 @@ class J2XMLSender
 		)));
 
 		$headers = get_headers($server['remote_url']);
-		if (substr($headers[0], 9, 3) != "200")
+		JLog::add(new JLogEntry("GET ".$server['remote_url']."\n".print_r($headers, true), JLOG::DEBUG, 'lib_j2xml'));
+		if (substr($headers[0], 9, 3) != '200')
 		{
-			JLog::add(new JLogEntry("GET ".$server['remote_url']."\n".print_r($headers, true), JLOG::DEBUG, 'lib_j2xml'));
 			$app->enqueueMessage($server['title'].': '.$headers[0], 'error');
 		}
 		else

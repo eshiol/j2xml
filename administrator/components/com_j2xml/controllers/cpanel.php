@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.163 administrator/components/com_j2xml/controllers/cpanel.php
+ * @version		3.6.168 administrator/components/com_j2xml/controllers/cpanel.php
  *
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -44,10 +44,20 @@ class J2xmlControllerCpanel extends JControllerLegacy
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
+		$app = JFactory::getApplication('administrator');
+		if (isset($_SERVER["CONTENT_LENGTH"]))
+		{
+			if($_SERVER["CONTENT_LENGTH"] > ((int)ini_get('post_max_size')*1024*1024))
+			{
+				$app->enqueueMessage(JText::_('COM_J2XML_ERROR_WARNUPLOADTOOLARGE'),'error');
+				$this->setRedirect('index.php?option=com_j2xml');
+				return false;
+			}
+		}
+
 		// Check for request forgeries
 		JRequest::checkToken() or jexit('Invalid Token');
 
-		$app = JFactory::getApplication('administrator');
 		$msg='';
 		$db = JFactory::getDBO();
 		$date = JFactory::getDate();

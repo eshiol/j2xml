@@ -823,11 +823,19 @@ class J2XMLImporter
 								$urls->urlatext = $backlink['text'];
 								$urls->targeta = $backlink['target'];
 							}
+							elseif ($urls->urlatext == $backlink['text'])
+							{
+								// do nothing
+							}
 							elseif (!isset($urls->urlb) || ($urls->urlb == ''))
 							{
 								$urls->urlb = $backlink['link'];
 								$urls->urlbtext = $backlink['text'];
 								$urls->targetb = $backlink['target'];
+							}
+							elseif ($urls->urlbtext == $backlink['text'])
+							{
+								// do nothing
 							}
 							elseif (!isset($urls->urlc) || ($urls->urlc == ''))
 							{
@@ -1318,6 +1326,12 @@ class J2XMLImporter
 		{
 			$this->_menus($xml, $params);
 		}
+
+		if ($xml->xpath("//j2xml/module[not(title = '')]"))
+		{
+			$this->_modules($xml, $params);
+		}
+
 		//gc_disable(); // Disable Garbage Collector
 
 		JPluginHelper::importPlugin('j2xml');
@@ -1437,6 +1451,65 @@ class J2XMLImporter
 				else
 				{
 					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_ERROR_COMPONENT_NOT_FOUND', $data['component_id']), JLOG::ERROR, 'lib_j2xml'));
+				}
+				$table = null;
+			}
+		}
+	}
+
+	/**
+	 * importing modules
+	 *
+	 * @param SimpleXMLElement $xml
+	 * @param Registry $params
+	 */
+	private function _modules($xml, $params)
+	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+
+		$import_menus = $params->get('import_modules', '1');
+		foreach($xml->xpath("//j2xml/module[not(title = '')]") as $record)
+		{
+			$this->prepareData($record, $data, $params);
+
+			$db = JFactory::getDbo();
+
+			/* import module */
+			$module =
+				$db->setQuery(
+					$db->getQuery(true)
+					->select($db->qn('id'))
+					->select($db->qn('title'))
+					->from($db->qn('#__modules'))
+					->where($db->qn('module').' = '.$db->q($data['module']))
+					->where($db->qn('title').' = '.$db->q($data['title']))
+					)->loadObject();
+
+			if (!$module || ($import_module == 2))
+			{
+				$table = JTable::getInstance('Module');
+
+				if (!$module)
+				{ // new menutype
+					$data['id'] = null;
+				}
+				else // module already exists
+				{
+					$data['id'] = $module->id;
+					$table->load($data['id']);
+				}
+
+				// Trigger the onContentBeforeSave event.
+				$table->bind($data);
+				if ($table->store())
+				{
+					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_MODULE_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
+					// Trigger the onContentAfterSave event.
+				}
+				else
+				{
+					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_MODULE_NOT_IMPORTED', $data['title']), JLOG::ERROR, 'lib_j2xml'));
+					JLog::add(new JLogEntry($table->getError(), JLOG::ERROR, 'lib_j2xml'));
 				}
 				$table = null;
 			}

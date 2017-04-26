@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.38 plugins/system/j2xml/j2xml.php
+ * @version		3.6.39 plugins/system/j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	plg_system_j2xml
@@ -60,7 +60,7 @@ class plgSystemJ2XML extends JPlugin
 				JLog::addLogger(['logger' => 'phpconsole', 'extension' => 'plg_system_j2xml_phpconsole'],  JLOG::DEBUG, array('plg_system_j2xml'));
 			}
 		}
-		JLog::add(__METHOD__, JLOG::DEBUG, 'plg_system_j2xml');
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
 	}
 
 	/**
@@ -70,6 +70,7 @@ class plgSystemJ2XML extends JPlugin
 	 */
 	public function onAfterDispatch()
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
 		$app = JFactory::getApplication();
 		if($app->getName() != 'administrator') {
 			return true;
@@ -90,6 +91,7 @@ class plgSystemJ2XML extends JPlugin
 			|| ($option == 'com_categories') && ($extension == 'com_buttons') && (!$view || $view == 'categories')
 			|| ($option == 'com_contact') && (!$view || $view == 'contacts')
 			|| ($option == 'com_menus') && (!$view || $view == 'menus')
+			|| ($option == 'com_modules') && (!$view || $view == 'modules')
 		) {
 			$toolbar = JToolBar::getInstance('toolbar');
 			$control = substr($option, 4);
@@ -121,6 +123,7 @@ class plgSystemJ2XML extends JPlugin
 	 */
 	private static function getWebsites()
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
 			->select('id, title')

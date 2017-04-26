@@ -306,7 +306,7 @@ class XMLRPCJ2XMLServices
 	public static function enqueueMessage($message, $priority)
 	{
 		$codes=array('error'=>28, 'warning'=>29, 'notice'=>30, 'message'=>31);
-		JLog::add(__METHOD__, JLOG::DEBUG, 'com_j2xml');
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 		JLog::add($priority.' - '.(isset($codes[$priority]) ? $codes[$priority] : 29).' - '.$message, JLOG::DEBUG, 'com_j2xml');
 
 		$found = false;

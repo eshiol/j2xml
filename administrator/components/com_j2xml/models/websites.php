@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.158 administrator/components/com_j2xml/models/website.php
+ * @version		3.6.166 administrator/components/com_j2xml/models/website.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -119,7 +119,7 @@ class J2XMLModelWebsites extends JModelList
 				'a.state AS state,'.
 				'a.checked_out AS checked_out,'.
 				'a.checked_out_time AS checked_out_time,'.
-				//'a.access_token, a.refresh_token, a.expire_time,'.'
+				//'a.access_token, a.refresh_token, a.expire_time,'.
 				'a.type'
 			)
 		);

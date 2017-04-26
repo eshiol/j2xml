@@ -1,6 +1,16 @@
----------------------- 3.6.164 Release [27-January-2017] ----------------------
+----------------------- 3.6.168 Release [25-April-2017] -----------------------
 
-27-January-2017
+25-April-2017
+  # upload file (build 168)
+
+3-March-2017
+  # cpanel.json (build 167)
+
+2-February-2017
+  # websites view (build 166)
+
+28-January-2017
+  + export modules (build 165)
   + export menus (build 164)
 
 25-January-2017

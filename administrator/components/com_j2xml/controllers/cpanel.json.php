@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.163 administrator/components/com_j2xml/controllers/cpanel.json.php
+ * @version		3.6.167 administrator/components/com_j2xml/controllers/cpanel.json.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -52,7 +52,8 @@ class J2XMLControllerCpanel extends JControllerLegacy
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		$data = utf8_encode(urldecode($this->app->input->post->get('j2xml_data', '', 'RAW')));
-
+		$filename = utf8_encode(urldecode($this->app->input->post->get('j2xml_filename', '', 'RAW')));
+		
 		// Send json mime type.
 		$this->app->mimeType = 'application/json';
 		$this->app->setHeader('Content-Type', $this->app->mimeType . '; charset=' . $this->app->charSet);
