@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.158 administrator/tables/website.php
+ * @version		3.7.171 administrator/tables/website.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -52,19 +52,21 @@ class J2XMLTableWebsite extends JTable
 		$k = $this->_tbl_key;
 
 		// Sanitize input.
-		JArrayHelper::toInteger($pks);
+		Joomla\Utilities\ArrayHelper::toInteger($pks);
 		$userId = (int) $userId;
 		$state  = (int) $state;
 
 		// If there are no primary keys set check to see if the instance key is set.
 		if (empty($pks))
 		{
-			if ($this->$k) {
+			if ($this->$k) 
+			{
 				$pks = array($this->$k);
 			}
 			// Nothing to set publishing state on, return false.
-			else {
-				$this->setError(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+			else 
+			{
+				throw new Exception(JText::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 				return false;
 			}
 		}
@@ -91,7 +93,7 @@ class J2XMLTableWebsite extends JTable
 
 		// Check for a database error.
 		if ($this->_db->getErrorNum()) {
-			$this->setError($this->_db->getErrorMsg());
+			throw new Exception($this->_db->getErrorMsg());
 			return false;
 		}
 

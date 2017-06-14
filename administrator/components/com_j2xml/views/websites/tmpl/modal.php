@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		2.5.91 views/vebsites/tmpl/modal.php
+ * @version		3.7.171 administrator/components/com_j2xml/views/websites/tmpl/modal.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml

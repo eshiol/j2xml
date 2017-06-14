@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.7.170 administrator/components/com_j2xml/views/vebsites/view.html.php
+ * @version		3.7.171 administrator/components/com_j2xml/views/websites/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml

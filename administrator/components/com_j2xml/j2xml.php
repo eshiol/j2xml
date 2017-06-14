@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.7.169 administrator/components/com_j2xml/j2xml.php
+ * @version		3.7.171 administrator/components/com_j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -99,7 +99,7 @@ if (file_exists($controllerPath))
 } 
 else
 {
-	throw new JException('Invalid Controller '.$controllerName);
+	throw new Exception('Invalid Controller '.$controllerName);
 }
 
 JLog::add(new JLogEntry($controllerClass, JLog::DEBUG, 'com_j2xml'));
@@ -110,7 +110,7 @@ if (class_exists($controllerClass))
 } 
 else 
 {
-	throw new JException('Invalid Controller Class '.$controllerClass);
+	throw new Exception('Invalid Controller Class '.$controllerClass);
 }
 
 //$config	= JFactory::getConfig();

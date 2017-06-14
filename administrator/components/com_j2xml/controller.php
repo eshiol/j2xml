@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.7.169 administrator/components/com_j2xml/controller.php
+ * @version		3.7.171 administrator/components/com_j2xml/controller.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -46,16 +46,16 @@ class J2XMLController extends JControllerLegacy
 		$id		= $jinput->getInt('id');
 
 		// Check for edit form.
-		if ($view == 'website' && $layout == 'edit' && !$this->checkEditId('com_j2xml.edit.website', $id)) {
-
+		if ($view == 'website' && $layout == 'edit' && !$this->checkEditId('com_j2xml.edit.website', $id)) 
+		{
 			// Somehow the person just went to the form - we don't allow that.
-			$this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
-			$this->setMessage($this->getError(), 'error');
+			throw new Exception(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
 			$this->setRedirect(JRoute::_('index.php?option=com_j2xml&view=websites', false));
 
 			return false;
 		}
-		elseif ($view == '') {
+		elseif ($view == '') 
+		{
 			$this->setRedirect(JRoute::_('index.php?option=com_j2xml&view=cpanel', false));
 			return false;
 		}
