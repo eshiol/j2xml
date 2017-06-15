@@ -56,6 +56,8 @@ class eshTableContent extends eshTable
 		if (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge'))
 			$this->_aliases['tag']='SELECT t.path FROM #__tags t, #__contentitem_tag_map m WHERE type_alias = "com_content.article" AND t.id = m.tag_id AND m.content_item_id = '. (int)$this->id;
 
+		$this->_aliases['field'] = 'SELECT f.name, v.value FROM #__fields_values v, #__fields f WHERE f.id = v.field_id AND v.item_id = '. (int)$this->id;
+			
 		return parent::_serialize();
 	}
 }

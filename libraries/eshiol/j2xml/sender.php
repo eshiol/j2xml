@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.2.297 libraries/eshiol/j2xml/sender.php
+ * @version		17.6.299 libraries/eshiol/j2xml/sender.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3beta3.38
@@ -65,6 +65,8 @@ class J2XMLSender
 		'notice',		// LIB_J2XML_ERROR_COMPONENT_NOT_FOUND 37
 		'message',		// LIB_J2XML_MSG_MODULE_IMPORTED 38
 		'notice',		// LIB_J2XML_MSG_MODULE_NOT_IMPORTED 39
+		'message',		// LIB_J2XML_MSG_FIELD_IMPORTED 40
+		'notice',		// LIB_J2XML_MSG_FIELD_NOT_IMPORTED 41
 	);
 
 	/*

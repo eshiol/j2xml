@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.7.40 plugins/system/j2xml/j2xml.php
+ * @version		3.7.41 plugins/system/j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	plg_system_j2xml
@@ -95,6 +95,7 @@ class plgSystemJ2XML extends JPlugin
 			|| ($option == 'com_contact') && (!$view || $view == 'contacts')
 			|| ($option == 'com_menus') && (!$view || $view == 'menus')
 			|| ($option == 'com_modules') && (!$view || $view == 'modules')
+			|| ($option == 'com_fields') && (!$view || $view == 'fields')
 		) {
 			$toolbar = JToolBar::getInstance('toolbar');
 			$control = substr($option, 4);

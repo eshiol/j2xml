@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		15.9.271 libraries/eshiol/j2xml/table.php
+ * @version		17.6.299 libraries/eshiol/j2xml/table.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -142,20 +142,30 @@ class eshTable extends JTable
 			$xml[] = $this->_setValue($k, $v);
 		}
 
-		$loadColumn = (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge')) ? 'loadColumn' : 'loadResultArray';
 		foreach($this->_aliases as $k => $query)
 		{
 			$this->_db->setQuery($query);
-			$v = $this->_db->$loadColumn();
-			if (count($v) == 1)
-			{
-				$xml[] = $this->_setValue($k, $v[0]);
-			}
-			elseif ($v)
+		
+			$v = $this->_db->loadRowList();
+			if (count($v) > 1)
 			{
 				$xml[] = '<'.$k.'list>';
-				foreach ($v as $val)
-					$xml[] = $this->_setValue($k, $val);
+			}
+			foreach ($v as $val)
+			{
+				if (count($val) == 2)
+				{
+					$xml[] = '<'.$k.'>';
+					$xml[] = $this->_setValue($val[0], $val[1]);
+					$xml[] = '</'.$k.'>';
+				}
+				else 
+				{
+					$xml[] = $this->_setValue($k, $val[0]);
+				}
+			}
+			if (count($v) > 1)
+			{
 				$xml[] = '</'.$k.'list>';
 			}
 		}

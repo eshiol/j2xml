@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.4.298 libraries/eshiol/j2xml/importer.php
+ * @version		17.6.299 libraries/eshiol/j2xml/importer.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -531,6 +531,11 @@ class J2XMLImporter
 			}
 		}
 
+		if ($xml->xpath("//j2xml/field[not(name = '')]"))
+		{
+			$this->_fields($xml, $params);
+		}
+		
 		$import_content = $params->get('import_content', '2');
 		$import_images = $params->get('import_images', '1');
 
@@ -903,7 +908,7 @@ class J2XMLImporter
 					}
 
 					// Trigger the onContentBeforeSave event.
-					$result = $dispatcher->trigger('onContentBeforeSave', array($this->_option.'.article', &$table, $isNew));
+					$result = $dispatcher->trigger('onContentBeforeSave', array('com_content.article', &$table, $isNew));
 
 					if (!in_array(false, $result, true))
 					{
@@ -989,7 +994,7 @@ class J2XMLImporter
 							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
 
 							// Trigger the onContentAfterSave event.
-							$dispatcher->trigger('onContentAfterSave', array($this->_option.'.article', &$table, $isNew));
+							$dispatcher->trigger('onContentAfterSave', array('com_content.article', &$table, $isNew, $data));
 						}
 						else
 						{
@@ -1337,7 +1342,7 @@ class J2XMLImporter
 		JPluginHelper::importPlugin('j2xml');
 		$dispatcher = JDispatcher::getInstance();
 		// Trigger the onAfterImport event.
-		$dispatcher->trigger('onAfterImport', array($this->_option.'.'.__FUNCTION__, &$xml, $params));
+		$dispatcher->trigger('onAfterImport', array('com_j2xml.import', &$xml, $params));
 	}
 
 	/**
@@ -1563,7 +1568,7 @@ class J2XMLImporter
 		JPluginHelper::importPlugin('j2xml');
 		$dispatcher = JDispatcher::getInstance();
 		// Trigger the onAfterImport event.
-		$dispatcher->trigger('onClean', array($this->_option.'.'.__FUNCTION__, &$xml, $params));
+		$dispatcher->trigger('onClean', array('com_j2xml.clean', &$xml, $params));
 		*/
 	}
 
@@ -1597,7 +1602,7 @@ class J2XMLImporter
 			$this->_db->getQuery(true)
 			->select($this->_db->qn('id'))
 			->from($this->_db->qn('#__users'))
-			->where($this->_db->qn('username').'='.$this->_db->q($this->_username))
+			->where($this->_db->qn('username').'='.$this->_db->q($username))
 			;
 		JLog::add(new JLogEntry($query, JLOG::DEBUG, 'lib_j2xml'));
 		$this->_db->setQuery($query);
@@ -1605,7 +1610,7 @@ class J2XMLImporter
 		{
 			$this->_user_id = $default_user_id;
 		}
-		JLog::add(new JLogEntry($this->_username.' -> '.$this->_user_id, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry($username.' -> '.$this->_user_id, JLOG::DEBUG, 'lib_j2xml'));
 
 		return $this->_user_id;
 	}
@@ -1724,22 +1729,24 @@ class J2XMLImporter
 		return $category_id;
 	}
 
-	public function prepareData($record, &$data, $params)
+	public function prepareData(&$record, &$data, $params)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
-
+		
 		$data = array();
 		foreach($record->children() as $key => $value)
 		{
+			JLog::add(new JLogEntry($key.' '.print_r($value, true), JLOG::DEBUG, 'lib_j2xml'));
+				
 			if (count($value->children()) === 0)
 			{
 				$data[trim($key)] = html_entity_decode(trim($value), ENT_QUOTES, 'UTF-8'); 
 			}
 			else
 			{
-				foreach ($value->children() as $v)
+				foreach ($value->children() as $k => $v)
 				{
-					$data[trim($key)][] = html_entity_decode(trim($v), ENT_QUOTES, 'UTF-8');
+					$data[trim($key)][$k] = html_entity_decode(trim($v), ENT_QUOTES, 'UTF-8');
 				}
 			}
 		}
@@ -1776,6 +1783,11 @@ class J2XMLImporter
 		{
 			$date = new JDate($data['modified']);
 			$data['modified'] = $date->toISO8601(false);
+		}
+		if (isset($data['field']))
+		{
+			$data['com_fields'] = $data['field'];
+			unset($data['field']);
 		}
 		JLog::add(new JLogEntry(print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
 	}
@@ -1818,5 +1830,63 @@ class J2XMLImporter
 		}
 		return $ret;
 	}
+
+	/**
+	 * importing fields
+	 *
+	 * @param SimpleXMLElement $xml
+	 * @param Registry $params
+	 */
+	private function _fields($xml, $params)
+	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+	
+		foreach($xml->xpath("//j2xml/field[not(name = '')]") as $record)
+		{
+			$this->prepareData($record, $data, $params);
+	
+			$db = JFactory::getDbo();
+	
+			/* import field */
+			$field = 
+				$db->setQuery(
+					$db->getQuery(true)
+						->select($db->qn('id'))
+						->select($db->qn('name'))
+						->from($db->qn('#__fields'))
+						->where($db->qn('context').' = '.$db->q($data['context']))
+						->where($db->qn('name').' = '.$db->q($data['name']))
+				)->loadObject();
+	
+			if (!$field || ($import_field == 2))
+			{
+				require_once JPATH_ADMINISTRATOR.'/components/com_fields/tables/field.php';
+				$table = JTable::getInstance('Field', 'FieldsTable');
+	
+				if (!$field)
+				{ // new field
+					$data['id'] = null;
+				}
+				else // field already exists
+				{
+					$data['id'] = $field->id;
+					$table->load($data['id']);
+				}
+	
+				// Trigger the onContentBeforeSave event.
+				$table->bind($data);
+				if ($table->store())
+				{
+					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FIELD_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
+					// Trigger the onContentAfterSave event.
+				}
+				else
+				{
+					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FIELD_NOT_IMPORTED', $data['title']), JLOG::ERROR, 'lib_j2xml'));
+					JLog::add(new JLogEntry($table->getError(), JLOG::ERROR, 'lib_j2xml'));
+				}
+				$table = null;
+			}
+		}
+	}
 }
-?>
