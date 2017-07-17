@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.7.170 administrator/components/com_j2xml/views/website/view.html.php
+ * @version		3.7.173 administrator/components/com_j2xml/views/website/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -69,7 +69,7 @@ class J2XMLViewWebsite extends JViewLegacy
 	 */
 	protected function addToolbar()
 	{
-		$this->input->set('hidemainmenu', true);
+		JFactory::getApplication()->input->set('hidemainmenu', 1);
 
 		$user		= JFactory::getUser();
 		$isNew		= ($this->item->id == 0);
