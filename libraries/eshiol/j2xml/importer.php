@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.6.299 libraries/eshiol/j2xml/importer.php
+ * @version		17.7.300 libraries/eshiol/j2xml/importer.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -578,7 +578,7 @@ class J2XMLImporter
 
 		$query = 'SELECT id, path'
 			. ' FROM #__categories'
-			. ' WHERE id = '.$params->get('category')
+			. ' WHERE id = '.$params->get('category', 9)
 			. ' AND extension = '. $this->_db->q('com_content')
 			;
 		$this->_db->setQuery($query);
@@ -1000,9 +1000,13 @@ class J2XMLImporter
 						{
 							JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'].' (id='.$id.')'), JLOG::ERROR, 'lib_j2xml'));
 							if ($data['catid'])
+							{
 								JLog::add(new JLogEntry($table->getError(), JLOG::ERROR, 'lib_j2xml'));
+							}
 							else
+							{
 								JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_CATEGORY_NOT_FOUND', $catid), JLOG::ERROR, 'lib_j2xml'));
+							}
 						}
 						// Undefined currentAssetId fix
 						if (!class_exists('JPlatform') || version_compare(JPlatform::RELEASE, '12', 'lt'))
@@ -1010,6 +1014,10 @@ class J2XMLImporter
 					}
 				}
 			}
+		}
+		else 
+		{
+			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_DEFAULT_CATEGORY_NOT_FOUND'), JLOG::DEBUG, 'lib_j2xml'));
 		}
 
 		/*
