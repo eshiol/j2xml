@@ -1,3 +1,38 @@
+----------------------- 3.7.173 Release  [17-July-2017] -----------------------
+
+cli_j2xml-3.3.13 (build 13)
+  + added
+  
+lib_eshiol-17.2.27
+  # Joomla Update System (build 27)
+
+lib_j2xml-17.7.300
+  # default category (build 300)
+  + fields (build 299)
+  # JRequest deprecated (build 298)
+  # sender (build 297)
+  + export modules (build 296)
+  + import menus (build 295)
+  + export menus (build 294)
+
+com_j2xml-3.7.172
+  + fields (build 172)
+  # minor bugs (build 171)
+  # JError deprecated (build 170)
+  # JRequest deprecated (build 169)
+  # upload file (build 168)
+  # cpanel.json (build 167)
+  # websites view (build 166)
+  + export modules (build 165)
+  + export menus (build 164)
+  
+plg_system-3.7.41
+  + fields (build 41)
+  # JRequest deprecated (build 40)
+  + modules (build 39)
+  + menus (build 38)
+  + client side xsl transformation (build 37)
+
 -------------------------- 3.6.163 [25-January-2017] --------------------------
 
 pkg_j2xml-3.6.163
