@@ -8,11 +8,11 @@
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright>(C) 2012, 2017 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>17.2.27.159</version>
+  <version>17.7.28.159</version>
   <description>LIB_ESHIOL_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
   <updateservers>
-    <server type="extension" priority="2" name="eshiol Library">https://www.eshiol.it/downloads/core/lib_eshiol.xml</server>
+    <server type="extension" priority="1" name="eshiol Library">https://www.eshiol.it/files/core/lib_eshiol.xml</server>
   </updateservers>
   <files>
     <filename>file.php</filename>

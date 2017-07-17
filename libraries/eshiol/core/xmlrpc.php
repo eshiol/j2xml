@@ -208,7 +208,7 @@
 	$GLOBALS['xmlrpc_internalencoding']='ISO-8859-1';
 
 	$GLOBALS['xmlrpcName']='XML-RPC for PHP';
-	$GLOBALS['xmlrpcVersion']='3.0.1';
+	$GLOBALS['xmlrpcVersion']='3.1.0';
 
 	// let user errors start at 800
 	$GLOBALS['xmlrpcerruser']=800;
@@ -821,6 +821,7 @@
 		var $keypass='';
 		var $verifypeer=true;
 		var $verifyhost=1;
+		var $sslversion=0; // corresponds to CURL_SSLVERSION_DEFAULT
 		var $no_multicall=false;
 		var $proxy='';
 		var $proxyport=0;
@@ -872,7 +873,7 @@
 		* @param integer $port the port the server is listening on, defaults to 80 or 443 depending on protocol used
 		* @param string $method the http protocol variant: defaults to 'http', 'https' and 'http11' can be used if CURL is installed
 		*/
-		function xmlrpc_client($path, $server='', $port='', $method='')
+		function __construct($path, $server='', $port='', $method='')
 		{
 			// allow user to specify all params in $path
 			if($server == '' and $port == '' and $method == '')
@@ -940,6 +941,14 @@
 
 			// initialize user_agent string
 			$this->user_agent = $GLOBALS['xmlrpcName'] . ' ' . $GLOBALS['xmlrpcVersion'];
+		}
+
+		/**
+		* @deprecated
+		*/
+		function xmlrpc_client($path, $server='', $port='', $method='')
+		{
+			self::__construct($path, $server, $port, $method);
 		}
 
 		/**
@@ -1029,6 +1038,16 @@
 		function setSSLVerifyHost($i)
 		{
 			$this->verifyhost = $i;
+		}
+
+		/**
+		* Set attributes for SSL communication: SSL version to use. Best left at 0 (default value ): let cURL decide
+		*
+		* @param int $i
+		*/
+		public function setSSLVersion($i)
+		{
+			$this->sslversion = $i;
 		}
 
 		/**
@@ -1182,7 +1201,8 @@
 					$this->proxy_authtype,
 					$this->keepalive,
 					$this->key,
-					$this->keypass
+					$this->keypass,
+					$this->sslversion
 				);
 			}
 			elseif($method == 'http11')
@@ -1423,11 +1443,11 @@
 		function &sendPayloadHTTPS($msg, $server, $port, $timeout=0, $username='',
 			$password='', $authtype=1, $cert='',$certpass='', $cacert='', $cacertdir='',
 			$proxyhost='', $proxyport=0, $proxyusername='', $proxypassword='', $proxyauthtype=1,
-			$keepalive=false, $key='', $keypass='')
+			$keepalive=false, $key='', $keypass='', $sslVersion = 0)
 		{
 			$r =& $this->sendPayloadCURL($msg, $server, $port, $timeout, $username,
 				$password, $authtype, $cert, $certpass, $cacert, $cacertdir, $proxyhost, $proxyport,
-				$proxyusername, $proxypassword, $proxyauthtype, 'https', $keepalive, $key, $keypass);
+				$proxyusername, $proxypassword, $proxyauthtype, 'https', $keepalive, $key, $keypass, $sslVersion);
 			return $r;
 		}
 
@@ -1440,7 +1460,7 @@
 		function &sendPayloadCURL($msg, $server, $port, $timeout=0, $username='',
 			$password='', $authtype=1, $cert='', $certpass='', $cacert='', $cacertdir='',
 			$proxyhost='', $proxyport=0, $proxyusername='', $proxypassword='', $proxyauthtype=1, $method='https',
-			$keepalive=false, $key='', $keypass='')
+			$keepalive=false, $key='', $keypass='', $sslVersion = 0)
 		{
 			if(!function_exists('curl_init'))
 			{
@@ -1630,6 +1650,8 @@
 				}
 				// whether to verify cert's common name (CN); 0 for no, 1 to verify that it exists, and 2 to verify that it matches the hostname used
 				curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, $this->verifyhost);
+				// allow usage of different SSL versions
+				curl_setopt($curl, CURLOPT_SSLVERSION, $sslVersion);
 			}
 
 			// proxy info
@@ -1968,7 +1990,7 @@
 		* NB: as of now we do not do it, since it might be either an xmlrpcval or a plain
 		* php val, or a complete xml chunk, depending on usage of xmlrpc_client::send() inside which creator is called...
 		*/
-		function xmlrpcresp($val, $fcode = 0, $fstr = '', $valtyp='')
+		function __construct($val, $fcode = 0, $fstr = '', $valtyp='')
 		{
 			if($fcode != 0)
 			{
@@ -2004,6 +2026,14 @@
 					$this->valtyp = $valtyp;
 				}
 			}
+		}
+
+		/**
+		* @deprecated
+		*/
+		function xmlrpcresp($val, $fcode = 0, $fstr = '', $valtyp='')
+		{
+			self::__construct($val, $fcode, $fstr, $valtyp);
 		}
 
 		/**
@@ -2123,7 +2153,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 		* @param string $meth the name of the method to invoke
 		* @param array $pars array of parameters to be passed to the method (xmlrpcval objects)
 		*/
-		function xmlrpcmsg($meth, $pars=0)
+		function __construct($meth, $pars=0)
 		{
 			$this->methodname=$meth;
 			if(is_array($pars) && count($pars)>0)
@@ -2133,6 +2163,14 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 					$this->addParam($pars[$i]);
 				}
 			}
+		}
+
+				/**
+		* @deprecated
+		*/
+		function xmlrpcmsg($meth, $pars=0)
+		{
+			self::__construct($meth, $pars);
 		}
 
 		/**
@@ -2415,7 +2453,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 									{
 										if ($tag != 'value')
 										{
-										  $GLOBALS['_xh']['cookies'][$cookiename][$tag] = $val;
+											$GLOBALS['_xh']['cookies'][$cookiename][$tag] = $val;
 										}
 									}
 								}
@@ -2755,7 +2793,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 		* @param mixed $val
 		* @param string $type any valid xmlrpc type name (lowercase). If null, 'string' is assumed
 		*/
-		function xmlrpcval($val=-1, $type='')
+		function __construct($val=-1, $type='')
 		{
 			/// @todo: optimization creep - do not call addXX, do it all inline.
 			/// downside: booleans will not be coerced anymore
@@ -2807,6 +2845,14 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 					$this->addStruct($val);
 				}*/
 			}
+		}
+
+		/**
+		* @deprecated
+		*/
+		function xmlrpcval($val=-1, $type='')
+		{
+			self::__construct($val, $type);
 		}
 
 		/**
@@ -3594,7 +3640,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 			}
 		}
 
-        $parser = xml_parser_create();
+		$parser = xml_parser_create();
 		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, true);
 		// What if internal encoding is not in one of the 3 allowed?
 		// we use the broadest one, ie. utf8!
@@ -3831,7 +3877,7 @@ xmlrpc_encode_entitites($this->errstr, $GLOBALS['xmlrpc_internalencoding'], $cha
 
 		// test if encoding is specified in the xml declaration
 		// Details:
-		// SPACE:		 (#x20 | #x9 | #xD | #xA)+ === [ \x9\xD\xA]+
+		// SPACE:		(#x20 | #x9 | #xD | #xA)+ === [ \x9\xD\xA]+
 		// EQ:			SPACE?=SPACE? === [ \x9\xD\xA]*=[ \x9\xD\xA]*
 		if (preg_match('/^<\?xml\s+version\s*=\s*' . "((?:\"[a-zA-Z0-9_.:-]+\")|(?:'[a-zA-Z0-9_.:-]+'))" .
 			'\s+encoding\s*=\s*' . "((?:\"[A-Za-z][A-Za-z0-9._-]*\")|(?:'[A-Za-z][A-Za-z0-9._-]*'))/",
