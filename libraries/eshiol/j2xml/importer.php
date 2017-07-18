@@ -824,6 +824,7 @@ class J2XMLImporter
 							$urls = json_decode($data['urls']);
 							if (!isset($urls->urla) || ($urls->urla == ''))
 							{
+								$urls = new stdClass();
 								$urls->urla = $backlink['link'];
 								$urls->urlatext = $backlink['text'];
 								$urls->targeta = $backlink['target'];
@@ -1849,6 +1850,7 @@ class J2XMLImporter
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 	
+		$import_field = $params->get('import_field', '1');
 		foreach($xml->xpath("//j2xml/field[not(name = '')]") as $record)
 		{
 			$this->prepareData($record, $data, $params);

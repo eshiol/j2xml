@@ -1,5 +1,5 @@
 /**
- * @version		16.11.25 media/lib_eshiol_core/js/core.js
+ * @version		17.7.28 media/lib_eshiol_core/js/core.js
  * 
  * @package		eshiol Library
  * @subpackage	lib_eshiol
@@ -15,7 +15,7 @@
  * other free or open source software licenses.
  */
 
-if (console) console.log('eshiol Library v16.11.25');
+if (console) console.log('eshiol Library v17.7.28');
 
 if (typeof(eshiol) === 'undefined') {
 	var eshiol = {};
