@@ -15,7 +15,7 @@
   <files>
     <folder type="library" id="eshiol">lib_eshiol-17.7.28.160.zip</folder>
     <folder type="library" id="j2xml">lib_j2xml-17.7.300.681.zip</folder>
-    <folder type="component" id="j2xml">com_j2xml-3.7.172.393.zip</folder>
+    <folder type="component" id="j2xml">com_j2xml-3.7.172.394.zip</folder>
     <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.7.41.78.zip</folder>
     <folder type="file" id="j2xml">cli_j2xml-3.3.13.50.zip</folder>
   </files>

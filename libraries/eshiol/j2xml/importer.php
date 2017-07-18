@@ -1481,7 +1481,7 @@ class J2XMLImporter
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 
-		$import_menus = $params->get('import_modules', '1');
+		$import_modules = $params->get('import_modules', '1');
 		foreach($xml->xpath("//j2xml/module[not(title = '')]") as $record)
 		{
 			$this->prepareData($record, $data, $params);
@@ -1499,7 +1499,7 @@ class J2XMLImporter
 					->where($db->qn('title').' = '.$db->q($data['title']))
 					)->loadObject();
 
-			if (!$module || ($import_module == 2))
+			if (!$module || ($import_modules == 2))
 			{
 				$table = JTable::getInstance('Module');
 
@@ -1850,7 +1850,7 @@ class J2XMLImporter
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 	
-		$import_field = $params->get('import_field', '1');
+		$import_fields = $params->get('import_fields', '1');
 		foreach($xml->xpath("//j2xml/field[not(name = '')]") as $record)
 		{
 			$this->prepareData($record, $data, $params);
@@ -1868,7 +1868,7 @@ class J2XMLImporter
 						->where($db->qn('name').' = '.$db->q($data['name']))
 				)->loadObject();
 	
-			if (!$field || ($import_field == 2))
+			if (!$field || ($import_fields == 2))
 			{
 				require_once JPATH_ADMINISTRATOR.'/components/com_fields/tables/field.php';
 				$table = JTable::getInstance('Field', 'FieldsTable');
