@@ -1,9 +1,25 @@
------------------------ 3.7.173 Release  [17-July-2017] -----------------------
+----------------------- 3.7.173 Release  [19-July-2017] -----------------------
 
 cli_j2xml-3.3.13 (build 13)
-  + added
   
-lib_eshiol-17.2.27
+lib_eshiol-17.2.29
+  + version_compare.js (build 29)
+
+lib_j2xml-17.7.301
+  ^ version (build 301)
+
+com_j2xml-3.7.173
+  + version compare (build 173)
+  
+plg_system-3.7.41
+
+----------------------- 3.7.173 Release  [19-July-2017] -----------------------
+
+cli_j2xml-3.3.13
+  + added (build 13)
+  
+lib_eshiol-17.2.28
+  ^ phpxmlrpc 3.1.0 (build 28)
   # Joomla Update System (build 27)
 
 lib_j2xml-17.7.300
@@ -15,7 +31,8 @@ lib_j2xml-17.7.300
   + import menus (build 295)
   + export menus (build 294)
 
-com_j2xml-3.7.172
+com_j2xml-3.7.173
+  + version compare (build 173)
   + fields (build 172)
   # minor bugs (build 171)
   # JError deprecated (build 170)

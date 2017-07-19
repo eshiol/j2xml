@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.6.160 administrator/components/com_j2xml/models/cpanel/view.html.php
+ * @version		3.7.173 administrator/components/com_j2xml/models/cpanel/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -91,6 +91,7 @@ class J2XMLViewCpanel extends JViewLegacy
 			jimport('eshiol.core.file');
 			$doc->addScript("../media/lib_eshiol_core/js/encryption.js");
 			$doc->addScript("../media/lib_eshiol_core/js/core.js");
+			$doc->addScript("../media/lib_eshiol_core/js/version_compare.js");
 			$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml.js");
 
 			$toolbar = JToolBar::getInstance('toolbar');

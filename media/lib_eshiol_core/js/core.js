@@ -1,5 +1,5 @@
 /**
- * @version		17.7.28 media/lib_eshiol_core/js/core.js
+ * @version		17.7.29 media/lib_eshiol_core/js/core.js
  * 
  * @package		eshiol Library
  * @subpackage	lib_eshiol
@@ -15,11 +15,13 @@
  * other free or open source software licenses.
  */
 
-if (console) console.log('eshiol Library v17.7.28');
-
 if (typeof(eshiol) === 'undefined') {
 	var eshiol = {};
 }
+
+eshiol.version = '17.7.29';
+
+if (console) console.log('eshiol Library v'+eshiol.version);
 
 Joomla.JText.strings['SUCCESS'] = 'Message';
 

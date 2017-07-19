@@ -1,5 +1,5 @@
 /**
- * @version		17.7.300 media/lib_eshiol_j2xml/js/j2xml.js
+ * @version		17.7.301 media/lib_eshiol_j2xml/js/j2xml.js
  * 
  * @package		eshiol Library
  * @subpackage	lib_eshiol
@@ -31,8 +31,6 @@
 	});
 }());
   
-console.log('j2xml Library v17.7.300');
-
 if (typeof(eshiol) === 'undefined') {
 	eshiol = {};
 }
@@ -44,6 +42,10 @@ if (typeof(eshiol.j2xml) === 'undefined') {
 if (typeof(eshiol.j2xml.convert) === 'undefined') {
 	eshiol.j2xml.convert = [];
 }
+
+eshiol.j2xml.version = '17.7.301';
+
+console.log('j2xml Library v'+eshiol.j2xml.version);
 
 /**
  * process item
