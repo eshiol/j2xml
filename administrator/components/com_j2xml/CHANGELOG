@@ -1,3 +1,8 @@
+----------------------- 3.7.174 Release  [20-June-2017] -----------------------
+
+20-June-2017
+  # minor bugs fix (build 174)
+
 ----------------------- 3.7.173 Release  [19-June-2017] -----------------------
 
 19-July-2017
@@ -10,7 +15,6 @@
   # minor bugs (build 171)
   # JError deprecated (build 170)
   # JRequest deprecated (build 169)
-
 
 ----------------------- 3.6.168 Release [25-April-2017] -----------------------
 

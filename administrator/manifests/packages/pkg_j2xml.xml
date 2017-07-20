@@ -4,7 +4,7 @@
   <author>Helios Ciancio</author>
   <creationDate>July 2017</creationDate>
   <packagename>j2xml</packagename>
-  <version>3.7.173.537</version>
+  <version>3.7.174.538</version>
   <url>http://www.eshiol.it</url>
   <packager>Helios Ciancio</packager>
   <packagerurl>http://www.eshiol.it/</packagerurl>
@@ -15,7 +15,7 @@
   <files>
     <folder type="library" id="eshiol">lib_eshiol-17.7.29.162.zip</folder>
     <folder type="library" id="j2xml">lib_j2xml-17.7.301.683.zip</folder>
-    <folder type="component" id="j2xml">com_j2xml-3.7.173.396.zip</folder>
+    <folder type="component" id="j2xml">com_j2xml-3.7.174.398.zip</folder>
     <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.7.41.78.zip</folder>
     <folder type="file" id="j2xml">cli_j2xml-3.3.13.50.zip</folder>
   </files>

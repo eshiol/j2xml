@@ -1,6 +1,19 @@
+----------------------- 3.7.174 Release  [20-June-2017] -----------------------
+
+cli_j2xml-3.3.13
+  
+lib_eshiol-17.2.29
+
+lib_j2xml-17.7.301
+
+com_j2xml-3.7.174
+  # minor bugs fix (build 174)
+  
+plg_system-3.7.41
+
 ----------------------- 3.7.173 Release  [19-July-2017] -----------------------
 
-cli_j2xml-3.3.13 (build 13)
+cli_j2xml-3.3.13
   
 lib_eshiol-17.2.29
   + version_compare.js (build 29)

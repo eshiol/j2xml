@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.7.173 administrator/components/com_j2xml/models/cpanel/view.html.php
+ * @version		3.7.174 administrator/components/com_j2xml/models/cpanel/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -27,7 +27,7 @@ class J2XMLViewCpanel extends JViewLegacy
 	{
 		// Trigger the onAfterDispatch event.
 		JPluginHelper::importPlugin('j2xml');
-		JFactory::getApplication()->triggerEvent('onAfterDispatch');
+//		JFactory::getApplication()->triggerEvent('onAfterDispatch');
 
 		$info = $this->get('Info');
 		$this->assignRef('info', $info);
