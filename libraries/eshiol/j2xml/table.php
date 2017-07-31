@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.6.299 libraries/eshiol/j2xml/table.php
+ * @version		17.7.302 libraries/eshiol/j2xml/table.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -187,7 +187,7 @@ class eshTable extends JTable
 		else if ($v != '')
 		{
 			$xml .= '<![CDATA[';
-			$v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
+//			$v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
 
 			$length = strlen($v);
 			for ($i=0; $i < $length; $i++)

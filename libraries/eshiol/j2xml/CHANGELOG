@@ -1,4 +1,8 @@
------------------------ 17.7.301 Release [19-July-2017] -----------------------
+----------------------- 17.7.302 Release [26-July-2017] -----------------------
+
+26-July-2017
+  ^ changed j2xml file format 17.7.0 (build 302)
+  + content.canonical (build 302)
 
 19-July-2017
   ^ version (build 301)

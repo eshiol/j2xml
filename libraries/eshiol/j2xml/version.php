@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.7.301 libraries/eshiol/j2xml/version.php
+ * @version		17.7.302 libraries/eshiol/j2xml/version.php
  * @package		J2XML
  * @subpackage	lib_j2xml
  * @since		1.5.3
@@ -29,7 +29,7 @@ class J2XMLVersion
 	/** @public static string Development Status */
 	public static $DEV_STATUS	= ''; //dev < alpha = a < beta = b < RC = rc < # < pl = p
 	/** @public static int build Number */
-	public static $BUILD		= '301';
+	public static $BUILD		= '302';
 	/** @public static string Codename */
 	public static $CODENAME	= ' ';
 	/** @public static string Copyright Text */
@@ -39,7 +39,7 @@ class J2XMLVersion
 	/** @public static string URL */
 	public static $URL		= '<a href="http://www.eshiol.it/j2xml.html">J2XML</a> is Free Software released under the GNU General Public License.';
 	/** @public static string xml file version */
-	public static $DOCVERSION	= '15.9.0';
+	public static $DOCVERSION	= '17.7.0';
 	/** @public static string dtd */
 	public static $DOCTYPE	= '<!DOCTYPE j2xml PUBLIC "-//eshiol.it//DTD J2XML data file 12.5.0//EN" "http://www.eshiol.it/j2xml/12500/j2xml-12.5.0.dtd">';
 
@@ -78,5 +78,32 @@ class J2XMLVersion
 	 */
 	public static function getShortVersion() {
 		return self::$RELEASE .'.'. self::$DEV_LEVEL;
+	}
+
+	function docversion_compare($version)
+	{
+		$a = explode(".", rtrim($DOCVERSION, ".0")); //Split version into pieces and remove trailing .0
+		$b = explode(".", rtrim($version, ".0")); //Split version into pieces and remove trailing .0
+		$max_depth = 2;
+		foreach ($a as $depth => $aVal)
+		{ //Iterate over each piece of A
+			if ($depth > $max_depth)
+			{
+				return 0;
+			}
+			elseif (isset($b[$depth]))
+			{ //If B matches A to this depth, compare the values
+				if ($aVal > $b[$depth]) return 1; //Return A > B
+				else if ($aVal < $b[$depth]) return -1; //Return B > A
+				//An equal result is inconclusive at this point
+			}
+			else
+			{ //If B does not match A to this depth, then A comes after B in sort order
+				return 1; //so return A > B
+			}
+		}
+		//At this point, we know that to the depth that A and B extend to, they are equivalent.
+		//Either the loop ended because A is shorter than B, or both are equal.
+		return (count($a) < count($b)) ? -1 : 0;
 	}
 }

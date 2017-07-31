@@ -1,5 +1,5 @@
 /**
- * @version		17.7.301 media/lib_eshiol_j2xml/js/j2xml.js
+ * @version		17.7.302 media/lib_eshiol_j2xml/js/j2xml.js
  * 
  * @package		eshiol Library
  * @subpackage	lib_eshiol
@@ -43,7 +43,7 @@ if (typeof(eshiol.j2xml.convert) === 'undefined') {
 	eshiol.j2xml.convert = [];
 }
 
-eshiol.j2xml.version = '17.7.301';
+eshiol.j2xml.version = '17.7.302';
 
 console.log('j2xml Library v'+eshiol.j2xml.version);
 
@@ -68,7 +68,7 @@ eshiol.j2xml.send = function($nodes, n, tot)
 		jQuery.post(
 			'index.php?option=com_j2xml&task=cpanel.import&format=json',
 			{
-			'j2xml_data': escape(item)
+				'j2xml_data': escape(item)
 		    },
 		    function(response, textStatus, jqXHR){
 			    // Callback handler that will be called on success

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.7.300 libraries/eshiol/j2xml/importer.php
+ * @version		17.7.302 libraries/eshiol/j2xml/importer.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -113,7 +113,92 @@ class J2XMLImporter
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 
+		$app = JFactory::getApplication('administrator');
 		//gc_enable(); // Enable Garbage Collector
+
+		if (strtoupper($xml->getName()) == 'J2XML')
+		{
+			if(!isset($xml['version']))
+			{
+				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+				return false;
+			}
+			else
+			{
+				jimport('eshiol.j2xml.version');
+
+				$xmlVersion = $xml['version'];
+				if ($xmlVersion == '1.5.6')
+				{
+					$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_J2XML15', $xmlVersion), 'error');
+					return false;
+				}
+				elseif (J2XMLVersion::docversion_compare($xmlVersion) == 1)
+				{
+					$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion),'error');
+					return false;
+				}
+			}
+		}
+		elseif (strtoupper($xml->getName()) == 'RSS')
+		{
+			$namespaces = $xml->getNamespaces(true);
+			if (isset($namespaces['wp']))
+			{
+				if ($generator = $xml->xpath('/rss/channel/generator'))
+				{
+					if (preg_match("/http:\/\/wordpress.(org|com)\//", (string)$generator[0]) != false)
+					{
+						$xml->registerXPathNamespace('wp', $namespaces['wp']);
+						if (!($wp_version = $xml->xpath('/rss/channel/wp:wxr_version')))
+						{
+							$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+							return false;
+						}
+						elseif ($wp_version[0] == '1.2')
+						{
+							$app->enqueueMessage(JText::_('LIB_J2XML_MSG_FILE_FORMAT_J2XMLWP'),'error');
+							return false;
+						}
+						elseif ($wp_version[0] == '1.1')
+						{
+							$app->enqueueMessage(JText::_('LIB_J2XML_MSG_FILE_FORMAT_J2XMLWP'),'error');
+							return false;
+						}
+						else
+						{
+							$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+							return false;
+						}
+					}
+					else
+					{
+						$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+						return false;
+					}
+				}
+				else
+				{
+					$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+					return false;
+				}
+			}
+			else
+			{
+				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+				return false;
+			}
+		}
+		elseif (strtoupper($xml->getName()) == 'HTML')
+		{
+			$app->enqueueMessage(JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLHTML'),'error');
+			return false;
+		}
+		else
+		{
+			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+			return false;
+		}
 
 		$import_users = $params->get('import_users', '1');
 		$keep_user_id = $params->get('keep_user_id', '0');
@@ -1038,9 +1123,11 @@ class J2XMLImporter
 				foreach($record->children() as $key => $value)
 					$data[trim($key)] = trim($value);
 				$alias = $data['alias'];
-				$data['title'] = html_entity_decode($data['title'], ENT_QUOTES, 'UTF-8');
-				$data['description'] = html_entity_decode($data['description'], ENT_QUOTES, 'UTF-8');
-
+				if (J2XMLVersion::docversion_compare($version) == -1)
+				{
+					$data['title'] = html_entity_decode($data['title'], ENT_QUOTES, 'UTF-8');
+					$data['description'] = html_entity_decode($data['description'], ENT_QUOTES, 'UTF-8');
+				}
 				$query = 'SELECT id, title'
 					. ' FROM #__weblinks'
 					. ' WHERE alias = '. $this->_db->q($alias)
@@ -1128,9 +1215,11 @@ class J2XMLImporter
 				foreach($record->children() as $key => $value)
 					$data[trim($key)] = trim($value);
 					$alias = $data['alias'];
-					$data['title'] = html_entity_decode($data['title'], ENT_QUOTES, 'UTF-8');
-					$data['description'] = html_entity_decode($data['description'], ENT_QUOTES, 'UTF-8');
-
+					if (J2XMLVersion::docversion_compare($version) == -1)
+					{
+						$data['title'] = html_entity_decode($data['title'], ENT_QUOTES, 'UTF-8');
+						$data['description'] = html_entity_decode($data['description'], ENT_QUOTES, 'UTF-8');
+					}
 					$query = 'SELECT id, title'
 						. ' FROM #__buttons'
 						. ' WHERE alias = '. $this->_db->q($alias)
@@ -1243,7 +1332,10 @@ class J2XMLImporter
 				}
 				$id = $data['id'];
 				$alias = $data['alias'];
-				$data['name'] = html_entity_decode($data['name'], ENT_QUOTES, 'UTF-8');
+				if (version_compare($version, '17.7.0') == -1)
+				{
+					$data['name'] = html_entity_decode($data['name'], ENT_QUOTES, 'UTF-8');
+				}
 				$query = 'SELECT id, alias'
 					. ' FROM #__contact_details'
 					. ' WHERE'. (($keep_user_id == 1)
@@ -1746,16 +1838,33 @@ class J2XMLImporter
 		foreach($record->children() as $key => $value)
 		{
 			JLog::add(new JLogEntry($key.' '.print_r($value, true), JLOG::DEBUG, 'lib_j2xml'));
-				
-			if (count($value->children()) === 0)
+
+			if (version_compare($version, '17.7.0') == -1)
 			{
-				$data[trim($key)] = html_entity_decode(trim($value), ENT_QUOTES, 'UTF-8'); 
+				if (count($value->children()) === 0)
+				{
+					$data[trim($key)] = html_entity_decode(trim($value), ENT_QUOTES, 'UTF-8');
+				}
+				else
+				{
+					foreach ($value->children() as $k => $v)
+					{
+						$data[trim($key)][$k] = html_entity_decode(trim($v), ENT_QUOTES, 'UTF-8');
+					}
+				}
 			}
 			else
 			{
-				foreach ($value->children() as $k => $v)
+				if (count($value->children()) === 0)
 				{
-					$data[trim($key)][$k] = html_entity_decode(trim($v), ENT_QUOTES, 'UTF-8');
+					$data[trim($key)] = trim($value);
+				}
+				else
+				{
+					foreach ($value->children() as $k => $v)
+					{
+						$data[trim($key)][$k] = trim($v);
+					}
 				}
 			}
 		}
