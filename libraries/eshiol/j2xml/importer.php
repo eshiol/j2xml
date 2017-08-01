@@ -120,7 +120,7 @@ class J2XMLImporter
 		{
 			if(!isset($xml['version']))
 			{
-				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+				JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLOG::ERROR, 'lib_j2xml'));
 				return false;
 			}
 			else
@@ -130,12 +130,12 @@ class J2XMLImporter
 				$xmlVersion = $xml['version'];
 				if ($xmlVersion == '1.5.6')
 				{
-					$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_J2XML15', $xmlVersion), 'error');
+					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_J2XML15', $xmlVersion), JLOG::ERROR, 'lib_j2xml'));
 					return false;
 				}
 				elseif (J2XMLVersion::docversion_compare($xmlVersion) == 1)
 				{
-					$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion),'error');
+					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion), JLOG::ERROR, 'lib_j2xml'));
 					return false;
 				}
 			}
@@ -152,51 +152,51 @@ class J2XMLImporter
 						$xml->registerXPathNamespace('wp', $namespaces['wp']);
 						if (!($wp_version = $xml->xpath('/rss/channel/wp:wxr_version')))
 						{
-							$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+							JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLOG::ERROR, 'lib_j2xml'));
 							return false;
 						}
 						elseif ($wp_version[0] == '1.2')
 						{
-							$app->enqueueMessage(JText::_('LIB_J2XML_MSG_FILE_FORMAT_J2XMLWP'),'error');
+							JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_WP'), JLOG::ERROR, 'lib_j2xml'));
 							return false;
 						}
 						elseif ($wp_version[0] == '1.1')
 						{
-							$app->enqueueMessage(JText::_('LIB_J2XML_MSG_FILE_FORMAT_J2XMLWP'),'error');
+							JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_J2XMLWP'), JLOG::ERROR, 'lib_j2xml'));
 							return false;
 						}
 						else
 						{
-							$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+							JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLOG::ERROR, 'lib_j2xml'));
 							return false;
 						}
 					}
 					else
 					{
-						$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+						JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLOG::ERROR, 'lib_j2xml'));
 						return false;
 					}
 				}
 				else
 				{
-					$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+					JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLOG::ERROR, 'lib_j2xml'));
 					return false;
 				}
 			}
 			else
 			{
-				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+				JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLOG::ERROR, 'lib_j2xml'));
 				return false;
 			}
 		}
 		elseif (strtoupper($xml->getName()) == 'HTML')
 		{
-			$app->enqueueMessage(JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLHTML'),'error');
+			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_J2XMLHTML'), JLOG::ERROR, 'lib_j2xml'));
 			return false;
 		}
 		else
 		{
-			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLOG::ERROR, 'lib_j2xml'));
 			return false;
 		}
 
@@ -620,7 +620,7 @@ class J2XMLImporter
 		{
 			$this->_fields($xml, $params);
 		}
-		
+
 		$import_content = $params->get('import_content', '2');
 		$import_images = $params->get('import_images', '1');
 
@@ -1529,7 +1529,7 @@ class J2XMLImporter
 				if ($component)
 				{
 					$data['component_id'] = $component;
-				
+
 					$args = array();
 					parse_str(parse_url($data['link'], PHP_URL_QUERY), $args);
 					if (isset($args['option']) && ($args['option'] == 'com_content'))
@@ -1833,7 +1833,7 @@ class J2XMLImporter
 	public function prepareData(&$record, &$data, $params)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
-		
+
 		$data = array();
 		foreach($record->children() as $key => $value)
 		{
@@ -1958,14 +1958,14 @@ class J2XMLImporter
 	private function _fields($xml, $params)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
-	
+
 		$import_fields = $params->get('import_fields', '1');
 		foreach($xml->xpath("//j2xml/field[not(name = '')]") as $record)
 		{
 			$this->prepareData($record, $data, $params);
-	
+
 			$db = JFactory::getDbo();
-	
+
 			/* import field */
 			$field = 
 				$db->setQuery(
@@ -1976,12 +1976,12 @@ class J2XMLImporter
 						->where($db->qn('context').' = '.$db->q($data['context']))
 						->where($db->qn('name').' = '.$db->q($data['name']))
 				)->loadObject();
-	
+
 			if (!$field || ($import_fields == 2))
 			{
 				require_once JPATH_ADMINISTRATOR.'/components/com_fields/tables/field.php';
 				$table = JTable::getInstance('Field', 'FieldsTable');
-	
+
 				if (!$field)
 				{ // new field
 					$data['id'] = null;
@@ -1991,7 +1991,7 @@ class J2XMLImporter
 					$data['id'] = $field->id;
 					$table->load($data['id']);
 				}
-	
+
 				// Trigger the onContentBeforeSave event.
 				$table->bind($data);
 				if ($table->store())
