@@ -276,7 +276,7 @@ class J2XMLExporter
 			->from('#__fields_values')
 			->where('item_id = '.$id);
 		$db->setQuery($query);
-		
+
 		$ids_field = $db->loadColumn();
 		foreach ($ids_field as $id_field)
 		{
@@ -1306,25 +1306,25 @@ class J2XMLExporter
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		JLog::add(new JLogEntry('id: '.$id, JLOG::DEBUG, 'lib_j2xml'));
 		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
-	
+
 		jimport('eshiol.j2xml.table.field');
 		$item = JTable::getInstance('field','eshTable');
 		if (!$item->load($id))
 		{
 			return;
 		}
-	
+
 		if ($xml->xpath("//j2xml/field/id[text() = '".$item->id."']"))
 		{
 			return;
 		}
-	
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
 	}
-	
+
 	/**
 	 * Export fields
 	 *
@@ -1341,7 +1341,7 @@ class J2XMLExporter
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 		JLog::add(new JLogEntry('ids: '.print_r($ids, true), JLOG::DEBUG, 'lib_j2xml'));
 		JLog::add(new JLogEntry('options: '.print_r($options, true), JLOG::DEBUG, 'lib_j2xml'));
-	
+
 		if (!$xml)
 		{
 			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
@@ -1349,25 +1349,25 @@ class J2XMLExporter
 			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
 			$xml = new SimpleXMLElement($data);
 		}
-	
+
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-	
+
 		foreach($ids as $id)
 		{
 			self::_field($id, $xml, $options);
 		}
-	
+
 		$params = new JRegistry($options);
 		JPluginHelper::importPlugin('j2xml');
 		$dispatcher = JDispatcher::getInstance();
 		// Trigger the onAfterExport event.
 		$dispatcher->trigger('onAfterExport', array($this->option.'.'.__FUNCTION__, &$xml, $params));
-	
+
 		return $xml;
 	}
 }

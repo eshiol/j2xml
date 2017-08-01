@@ -101,9 +101,9 @@ class J2XMLCli extends JApplicationCli
 			// Fallback to the lib_j2xml file in the default language
 			|| $lang->load('lib_j2xml', JPATH_SITE, null, true)
 			|| $lang->load('lib_j2xml', JPATH_ADMINISTRATOR, null, true);
-		
+
 		$filename = $this->input->get('f',null,'');
-		
+
 		if (!$filename)
 		{
 			echo "Usage /usr/bin/php /path/to/site/cli/j2xml.php -f j2xml_file.xml";
@@ -115,13 +115,13 @@ class J2XMLCli extends JApplicationCli
 			echo "File {$filename} not found";
 			exit(1);
 		}
-		
+
 		JLog::addLogger(array('text_file' => 'j2xml.php', 'extension' => 'com_j2xml'), JLog::ALL, array('lib_j2xml','cli_j2xml'));
 		JLog::addLogger(array('logger' => 'echo', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','cli_j2xml'));
-		
+
 		if (!($data = implode(gzfile($filename))))
 			$data = file_get_contents($filename);
-		
+
 		libxml_use_internal_errors(true);
 		$xml = simplexml_load_string($data);
 		if (!$xml)
@@ -154,7 +154,7 @@ class J2XMLCli extends JApplicationCli
 			libxml_clear_errors();
 			exit(0);
 		}
-		
+
 		if (!$xml)
 		{
 			$this->out(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
@@ -179,7 +179,7 @@ class J2XMLCli extends JApplicationCli
 		else
 		{
 			jimport('eshiol.j2xml.importer');
-				
+
 			$xmlVersion = $xml['version'];
 			$version = explode(".", $xmlVersion);
 			$xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1);
@@ -196,7 +196,7 @@ class J2XMLCli extends JApplicationCli
 			}
 		}
 	}
-	
+
 	/**
 	 * Enqueue a system message.
 	 *

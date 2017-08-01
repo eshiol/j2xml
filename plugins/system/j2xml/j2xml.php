@@ -81,7 +81,7 @@ class plgSystemJ2XML extends JPlugin
 		{
 			return true; 
 		}
-		
+
 		$jinput   = JFactory::getApplication()->input;
 		$option = $jinput->get('option');
 		$view = $jinput->get('view');

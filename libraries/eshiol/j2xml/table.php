@@ -145,7 +145,7 @@ class eshTable extends JTable
 		foreach($this->_aliases as $k => $query)
 		{
 			$this->_db->setQuery($query);
-		
+
 			$v = $this->_db->loadRowList();
 			if (count($v) > 1)
 			{

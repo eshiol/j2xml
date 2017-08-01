@@ -53,7 +53,7 @@ class J2XMLControllerCpanel extends JControllerLegacy
 
 		$data = utf8_encode(urldecode($this->app->input->post->get('j2xml_data', '', 'RAW')));
 		$filename = utf8_encode(urldecode($this->app->input->post->get('j2xml_filename', '', 'RAW')));
-		
+
 		// Send json mime type.
 		$this->app->mimeType = 'application/json';
 		$this->app->setHeader('Content-Type', $this->app->mimeType . '; charset=' . $this->app->charSet);
@@ -107,118 +107,47 @@ class J2XMLControllerCpanel extends JControllerLegacy
 
 		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
 
+		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
+
 		if (!$xml)
 		{
 			echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
 			$this->app->close();
 			return false;
 		}
-
-		if (strtoupper($xml->getName()) == 'J2XML')
+		elseif (strtoupper($xml->getName()) == 'J2XML')
 		{
 			if(!isset($xml['version']))
 			{
-				echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
-				$this->app->close();
-				return false;
+				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
 			}
-
-			$xmlVersion = $xml['version'];
-			$version = explode(".", $xmlVersion);
-			$xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1);
-
-			$j2xmlVersion = J2XMLVersion::$DOCVERSION;
-			$version = explode(".", $j2xmlVersion);
-			$j2xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1);
-
-			if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "120500"))
+			else
 			{
+				jimport('eshiol.j2xml.importer');
+
 				$params->set('filename', $filename);
 
 				//set_time_limit(120);
 				$j2xml = new J2XMLImporter();
 				$j2xml->import($xml, $params);
 			}
-			elseif ($xmlVersionNumber == 10506)
-			{
-				echo new JResponseJson($response = null, $message = JText::sprintf('COM_J2XML_MSG_FILE_FORMAT_J2XML15', $xmlVersion), $error = true, $ignoreMessages = false);
-				$this->app->close();
-				return false;
-			}
-			else
-			{
-				echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion), $error = true, $ignoreMessages = false);
-				$this->app->close();
-				return false;
-			}
 		}
-		elseif (strtoupper($xml->getName()) == 'RSS')
+
+		if (!$xml)
 		{
-			$namespaces = $xml->getNamespaces(true);
-			if (isset($namespaces['wp']))
-			{
-				if ($generator = $xml->xpath('/rss/channel/generator'))
-				{
-					if (preg_match("/http:\/\/wordpress.(org|com)\//", (string)$generator[0]) != false)
-					{
-						$xml->registerXPathNamespace('wp', $namespaces['wp']);
-						if (!($wp_version = $xml->xpath('/rss/channel/wp:wxr_version')))
-						{
-							echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
-							$this->app->close();
-							return false;
-						}
-						else if ($wp_version[0] == '1.2')
-						{
-							echo new JResponseJson($response = null, $message = JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLWP'), $error = true, $ignoreMessages = false);
-							$this->app->close();
-							return false;
-						}
-						else if ($wp_version[0] == '1.1')
-						{
-							echo new JResponseJson($response = null, $message = JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLWP'), $error = true, $ignoreMessages = false);
-							$this->app->close();
-							return false;
-						}
-						else
-						{
-							echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
-							$this->app->close();
-							return false;
-						}
-					}
-					else
-					{
-						echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
-						$this->app->close();
-						return false;
-					}
-				}
-				else
-				{
-					echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
-					$this->app->close();
-					return false;
-				}
-			}
-			else
-			{
-				echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
-				$this->app->close();
-				return false;
-			}
-		}
-		elseif (strtoupper($xml->getName()) == 'HTML')
-		{
-			echo new JResponseJson($response = null, $message = JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLHTML'), $error = true, $ignoreMessages = false);
+			echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
 			$this->app->close();
 			return false;
 		}
 		else
 		{
-			echo new JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
-			$this->app->close();
-			return false;
+			jimport('eshiol.j2xml.importer');
+
+			$params->set('filename', $filename);
+
+			//set_time_limit(120);
+			$j2xml = new J2XMLImporter();
+			$j2xml->import($xml, $params);
 		}
 
 		JLog::add(new JLogEntry(print_r($this->app->getMessageQueue(), true), JLog::DEBUG, 'com_j2xml'));
