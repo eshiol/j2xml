@@ -82,8 +82,9 @@ class J2XMLVersion
 
 	function docversion_compare($version)
 	{
-		$a = explode(".", rtrim($DOCVERSION, ".0")); //Split version into pieces and remove trailing .0
-		$b = explode(".", rtrim($version, ".0")); //Split version into pieces and remove trailing .0
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		$a = explode(".", rtrim($version, ".0")); //Split version into pieces and remove trailing .0
+		$b = explode(".", rtrim(self::$DOCVERSION, ".0")); //Split version into pieces and remove trailing .0
 		$max_depth = 2;
 		foreach ($a as $depth => $aVal)
 		{ //Iterate over each piece of A
