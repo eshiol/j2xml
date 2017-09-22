@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.7.169 administrator/components/com_j2xml/controllers/cpanel.php
+ * @version		3.7.177 administrator/components/com_j2xml/controllers/cpanel.php
  *
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -15,7 +15,7 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
- 
+
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
@@ -85,7 +85,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$extn = end($x);
 				break;
 			case 2:
-				if (!($filename = $this->input->get('j2xml_url')))
+				if (!($filename = $this->input->get('j2xml_url', null, 'URL')))
 				{
 					$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'),'error');
 					return false;
@@ -168,84 +168,15 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		{
 			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
 		}
-		elseif (strtoupper($xml->getName()) == 'J2XML')
-		{
-			if(!isset($xml['version']))
-			{
-   				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
-			}
-			else 
-			{
-				jimport('eshiol.j2xml.importer');
-				jimport('eshiol.j2xml.version');
-
-				$xmlVersion = $xml['version'];
-				$version = explode(".", $xmlVersion);
-				$xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1); 
-
-				$j2xmlVersion = J2XMLVersion::$DOCVERSION;
-				$version = explode(".", $j2xmlVersion);
-				$j2xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1); 
-
-				if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "120500")) 
-				{
-					$params->set('filename', $filename);
-
-					//set_time_limit(120);
-					$j2xml = new J2XMLImporter();
-					$j2xml->import($xml, $params);
-				}
-				elseif ($xmlVersionNumber == 10506)
-				{
-					$app->enqueueMessage(JText::sprintf('COM_J2XML_MSG_FILE_FORMAT_J2XML15', $xmlVersion),'error');
-				}
-				else
-				{
-					$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion),'error');
-				}
-			}
-		}
-		elseif (strtoupper($xml->getName()) == 'RSS')
-		{
-			$namespaces = $xml->getNamespaces(true);
-			if (isset($namespaces['wp']))
-			{
-				if ($generator = $xml->xpath('/rss/channel/generator'))
-				{
-					if (preg_match("/http:\/\/wordpress.(org|com)\//", (string)$generator[0]) != false)
-					{
-						$xml->registerXPathNamespace('wp', $namespaces['wp']);
-						if (!($wp_version = $xml->xpath('/rss/channel/wp:wxr_version')))
-							$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
-						else if ($wp_version[0] == '1.2')
-							$app->enqueueMessage(JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLWP'),'error');
-						else if ($wp_version[0] == '1.1')
-							$app->enqueueMessage(JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLWP'),'error');
-						else
-							$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
-					}
-					else
-					{
-						$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
-					}
-				}
-				else
-				{
-					$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
-				}
-			}
-			else
-			{
-				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
-			}
-		}
-		elseif (strtoupper($xml->getName()) == 'HTML')
-		{
-			$app->enqueueMessage(JText::_('COM_J2XML_MSG_FILE_FORMAT_J2XMLHTML'),'error');
-		}
 		else
 		{
-			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+			jimport('eshiol.j2xml.importer');
+
+			$params->set('filename', $filename);
+
+			//set_time_limit(120);
+			$j2xml = new J2XMLImporter();
+			$j2xml->import($xml, $params);
 		}
 		$this->setRedirect('index.php?option=com_j2xml');
 	}
@@ -254,7 +185,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 	{
 		// Check for request forgeries
 		JSession::checkToken('get') or die(JText::_('JINVALID_TOKEN'));
-	
+
 		$jinput   = JFactory::getApplication()->input;
 //		$params = JComponentHelper::getParams('com_j2xml');
 //		$hostname = JFactory::getURI()->getHost();

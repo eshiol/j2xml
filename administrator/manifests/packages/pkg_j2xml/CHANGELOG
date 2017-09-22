@@ -1,12 +1,19 @@
------------------------ 3.7.174 Release  [20-June-2017] -----------------------
+--------------------- 3.7.178 Release [22-September-2017] ---------------------
 
 cli_j2xml-3.3.13
   
-lib_eshiol-17.2.29
+lib_eshiol-17.7.29
 
-lib_j2xml-17.7.301
+lib_j2xml-17.8.303
+  # "%uXXXX" (build 303)
+  ^ changed j2xml file format 17.7.0 (build 302)
+  + content.canonical (build 302)
 
-com_j2xml-3.7.174
+com_j2xml-3.7.178
+  # backward compatibility (build 178)
+  # upload file via URL (build 177)
+  ^ ajax disable by default (build 176)
+  ^ importer (build 175)
   # minor bugs fix (build 174)
   
 plg_system-3.7.41
@@ -15,7 +22,7 @@ plg_system-3.7.41
 
 cli_j2xml-3.3.13
   
-lib_eshiol-17.2.29
+lib_eshiol-17.7.29
   + version_compare.js (build 29)
 
 lib_j2xml-17.7.301

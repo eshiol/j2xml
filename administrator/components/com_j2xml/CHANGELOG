@@ -1,4 +1,16 @@
------------------------ 3.7.174 Release  [20-June-2017] -----------------------
+--------------------- 3.7.178 Release [22-September-2017] ---------------------
+
+22-September-2017
+  # backward compatibility (build 178)
+
+15-September-2017
+  # upload file via URL (build 177)
+
+17-August-2017
+  ^ ajax disable by default (build 176)
+
+31-July-2017
+  ^ importer (build 175)
 
 20-June-2017
   # minor bugs fix (build 174)

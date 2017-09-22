@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.7.174 administrator/components/com_j2xml/models/cpanel/view.html.php
+ * @version		3.7.176 administrator/components/com_j2xml/models/cpanel/view.html.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -95,7 +95,7 @@ class J2XMLViewCpanel extends JViewLegacy
 			$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml.js");
 
 			$toolbar = JToolBar::getInstance('toolbar');
-			$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null, 'xml,gz', null, $this->params->get('ajax', 1) ? 'eshiol.j2xml.import' : null);
+			$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null, 'xml,gz', null, $this->params->get('ajax', 0) ? 'eshiol.j2xml.import' : null);
 //			$params = JComponentHelper::getParams('com_j2xml');
 //			$hostname = JFactory::getURI()->getHost();
 			$jinput   = JFactory::getApplication()->input;
