@@ -30,7 +30,7 @@ class J2XMLView extends JViewLegacy
 	{
 		$app = JFactory::getApplication();
 		$jinput = $app->input;
-		$cid = $jinput->get('cid');
+		$cid = $jinput->get('cid', null, 'RAW');
 		$ids = explode(",", $cid);
 
 		$params = JComponentHelper::getParams('com_j2xml');

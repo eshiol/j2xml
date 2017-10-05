@@ -906,7 +906,7 @@ if (class_exists('JHelperTags'))
 							$data['attribs'] = json_encode($attribs, JSON_NUMERIC_CHECK);
 						}
 						*/
-						if ($params->get('backlink', '1'))
+						if ($params->get('backlink', '0'))
 						{
 							$backlink = array(
 								'link' => JText::_('LIB_J2XML_BACKLINK_LINK'),
