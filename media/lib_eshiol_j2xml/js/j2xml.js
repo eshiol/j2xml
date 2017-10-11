@@ -1,5 +1,5 @@
 /**
- * @version		17.9.304 media/lib_eshiol_j2xml/js/j2xml.js
+ * @version		17.10.305 media/lib_eshiol_j2xml/js/j2xml.js
  * 
  * @package		eshiol Library
  * @subpackage	lib_eshiol
@@ -43,7 +43,7 @@ if (typeof(eshiol.j2xml.convert) === 'undefined') {
 	eshiol.j2xml.convert = [];
 }
 
-eshiol.j2xml.version = '17.9.304';
+eshiol.j2xml.version = '17.10.305';
 
 console.log('j2xml Library v'+eshiol.j2xml.version);
 
