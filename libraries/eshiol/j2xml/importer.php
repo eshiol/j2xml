@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		17.10.305 libraries/eshiol/j2xml/importer.php
+ * @version		17.9.304 libraries/eshiol/j2xml/importer.php
  * 
  * @package		J2XML
  * @subpackage	lib_j2xml
@@ -1865,13 +1865,15 @@ if (class_exists('JHelperTags'))
 				{
 					if (count($value->children()) === 0)
 					{
+						//$data[trim($key)] = html_entity_decode(trim($value), ENT_QUOTES, 'UTF-8');
 						$data[trim($key)] = html_entity_decode(preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($value)), ENT_QUOTES, 'UTF-8');
 					}
 					else
 					{
 						foreach ($value->children() as $k => $v)
 						{
-							$data[trim($key)][] = html_entity_decode(preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($v)), ENT_QUOTES, 'UTF-8');
+							//$data[trim($key)][$k] = html_entity_decode(trim($v), ENT_QUOTES, 'UTF-8');
+							$data[trim($key)][$k] = html_entity_decode(preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($v)), ENT_QUOTES, 'UTF-8');
 						}
 					}
 				}
@@ -1879,13 +1881,15 @@ if (class_exists('JHelperTags'))
 				{
 					if (count($value->children()) === 0)
 					{
+						// $data[trim($key)] = trim($value);
 						$data[trim($key)] = preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($value));
 					}
 					else
 					{
 						foreach ($value->children() as $k => $v)
 						{
-							$data[trim($key)][] = preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($v));
+							// $data[trim($key)][$k] = trim($v);
+							$data[trim($key)][$k] = preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($v));
 						}
 					}
 				}
