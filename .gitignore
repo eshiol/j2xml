@@ -8,9 +8,8 @@
 .project
 
 # Joomla
-.repository
-.images
-files
+files/
+images/
 
 # Windows image file caches
 Thumbs.db

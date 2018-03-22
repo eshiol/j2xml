@@ -1,3 +1,18 @@
+----------------------- 3.7.180 Release [22-March-2018] -----------------------
+
+cli_j2xml-3.3.13
+  
+lib_eshiol-17.7.29
+
+lib_j2xml-17.10.305
+  # importer: tags (build 305)
+  # keep id (build 304)
+  
+com_j2xml-3.7.180
+  
+plg_system-3.7.41
+  # php compatibility
+
 --------------------- 3.7.178 Release [22-September-2017] ---------------------
 
 cli_j2xml-3.3.13
