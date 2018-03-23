@@ -2,9 +2,9 @@
 <extension type="package" version="3.0" method="upgrade">
   <name>pkg_j2xml</name>
   <author>Helios Ciancio</author>
-  <creationDate>October 2017</creationDate>
+  <creationDate>March 2017</creationDate>
   <packagename>j2xml</packagename>
-  <version>3.7.177.548</version>
+  <version>3.7.180.549</version>
   <url>http://www.eshiol.it</url>
   <packager>Helios Ciancio</packager>
   <packagerurl>http://www.eshiol.it/</packagerurl>
