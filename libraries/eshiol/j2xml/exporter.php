@@ -1,20 +1,19 @@
 <?php
 /**
- * @version		17.6.299 libraries/eshiol/j2xml/exporter.php
-*
-* @package		J2XML
-* @subpackage	lib_j2xml
-* @since		1.5.2.14
-*
-* @author		Helios Ciancio <info@eshiol.it>
-* @link		http://www.eshiol.it
-* @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
-* @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
-* J2XML is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-*/
+ * @package		J2XML
+ * @subpackage	lib_j2xml
+ * @version		18.4.306
+ * @since		1.5.2.14
+ *
+ * @author		Helios Ciancio <info@eshiol.it>
+ * @link		http://www.eshiol.it
+ * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * J2XML is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ */
 
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
@@ -1319,10 +1318,26 @@ class J2XMLExporter
 			return;
 		}
 
+		if ($options['categories'])
+		{
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true)
+				->select('category_id')
+				->from('#__fields_categories')
+				->where('field_id = '.$id);
+			$db->setQuery($query);
+
+			$ids_category = $db->loadColumn();
+			foreach ($ids_category as $id_category)
+			{
+				self::_category($id_category, $xml, $options);
+			}
+		}
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 		$fragment->appendXML($item->toXML());
-		$doc->documentElement->appendChild($fragment);
+		$doc->documentElement->appendChild($fragment);		
 	}
 
 	/**

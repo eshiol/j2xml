@@ -1,13 +1,12 @@
 /**
- * @version		17.10.305 media/lib_eshiol_j2xml/js/j2xml.js
- * 
- * @package		eshiol Library
- * @subpackage	lib_eshiol
+ * @package		J2XML Library
+ * @subpackage	lib_eshiol_j2xml
+ * @version		18.4.306
  * @since		16.11.288
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * eshiol Library is free software. This version may have been modified 
  * pursuant to the GNU General Public License, and as distributed it includes 
@@ -43,7 +42,7 @@ if (typeof(eshiol.j2xml.convert) === 'undefined') {
 	eshiol.j2xml.convert = [];
 }
 
-eshiol.j2xml.version = '17.10.305';
+eshiol.j2xml.version = '18.4.306';
 
 console.log('j2xml Library v'+eshiol.j2xml.version);
 

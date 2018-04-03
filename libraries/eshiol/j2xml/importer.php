@@ -1,14 +1,13 @@
 <?php
 /**
- * @version		17.10.305 libraries/eshiol/j2xml/importer.php
- * 
  * @package		J2XML
  * @subpackage	lib_j2xml
+ * @version		18.4.306
  * @since		1.6.0
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -560,19 +559,7 @@ class J2XMLImporter
 
 						$table->bind($data);
 
-						$tags = array();
-						if (isset($data['tag']))
-						{
-							$tags[] = $data['tag'];
-						}
-						elseif (isset($data['taglist']))
-						{
-							foreach ($data['taglist'] as $v)
-							{
-								$tags[] = $v;
-							}
-						}
-						$table->newTags = eshHelperTags::convertPathsToIds($tags);
+						$table->newTags = eshHelperTags::convertPathsToIds( $data['tags'] );
 
 						// Trigger the onContentBeforeSave event.
 						// $result = $dispatcher->trigger('onContentBeforeSave', array($this->_option.'.category', &$table, $isNew));
@@ -685,6 +672,8 @@ class J2XMLImporter
 		{
 			foreach($xml->xpath("//j2xml/content[not(name = '')]") as $record)
 			{
+				JLog::add(new JLogEntry('xml2array: ' . print_r(self::xml2array($record), true), JLOG::DEBUG, 'lib_j2xml'));
+
 				$this->prepareData($record, $data, $params);
 
 				$id = $data['id'];
@@ -1840,21 +1829,30 @@ class J2XMLImporter
 			;
 			JLog::add(new JLogEntry($query, JLOG::DEBUG, 'lib_j2xml'));
 			$this->_db->setQuery($query);
+
 			$category_id = $this->_db->loadResult();
-			if (!$category_id)
-			{
-				$category_id = false;
-			}
 		}
 		JLog::add(new JLogEntry($extension.'/'.$category.' -> '.$category_id, JLOG::DEBUG, 'lib_j2xml'));
 
-		return $category_id;
+		if ($category_id)
+		{
+			return $category_id;
+		}
+		else 
+		{
+			return false;
+		}
 	}
 
 	public function prepareData(&$record, &$data, $params)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry('record: ' . print_r($record, true), JLOG::DEBUG, 'lib_j2xml'));
+		
+		$data = self::xml2array ( $record );
 
+		JLog::add(new JLogEntry('data: ' . print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
+/**		
 		$data = array();
 		foreach($record->children() as $key => $value)
 		{
@@ -1884,11 +1882,23 @@ class J2XMLImporter
 				{
 					foreach ($value->children() as $k => $v)
 					{
-						$data[trim($key)][] = preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($v));
+						if ($v->children())
+						{
+							foreach ($v->children() as $k1 => $v1)
+							{
+								$data[trim($key)][$k1] = preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($v1));
+							}
+						}
+						else 
+						{
+							$data[trim($key)][] = preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($v));
+						}
+					
 					}
 				}
 			}
 		}
+*/
 		$data['checked_out'] = 0;
 		$data['checked_out_time'] = $this->_nullDate;
 		if (isset($data['created_user_id']))
@@ -1923,12 +1933,28 @@ class J2XMLImporter
 			$date = new JDate($data['modified']);
 			$data['modified'] = $date->toISO8601(false);
 		}
-		if (isset($data['field']))
+		$data['tags'] = array();
+		if (isset($data['taglist']))
+		{
+			$data['tags'] = $data['taglist']['tag'];
+			unset ( $data['taglist'] );
+		}
+		elseif (isset($data['tag']))
+		{
+			$data['tags'][] = $data['tag'];
+			unset ( $data['tag'] );
+		}
+		if (isset($data['fieldlist']))
+		{
+			$data['com_fields'] = $data['fieldlist']['field'];
+			unset($data['fieldlist']);
+		}
+		elseif (isset($data['field']))
 		{
 			$data['com_fields'] = $data['field'];
 			unset($data['field']);
 		}
-		JLog::add(new JLogEntry(print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
+		JLog::add(new JLogEntry(' - ' . print_r($data, true), JLOG::DEBUG, 'lib_j2xml'));
 	}
 
 	/**
@@ -2017,6 +2043,41 @@ class J2XMLImporter
 				$table->bind($data);
 				if ($table->store())
 				{
+					$this->_db->setQuery(
+						"DELETE FROM #__fields_categories WHERE field_id = " . $table->id
+					)->execute();
+
+					$parts = FieldsHelper::extract($data['context']);
+					$component = $parts ? $parts[0] : null;
+
+					$categories = array();
+					if (isset($data['category']))
+					{
+						$categories[] = self::getCategoryId($data['category'], $component);
+					}
+					elseif (isset($data['categorylist']))
+					{
+						foreach ($data['categorylist']['category'] as $v)
+						{
+							$categories[] = self::getCategoryId($v, $component);
+						}
+					}
+
+					foreach($categories as $catid)
+					{
+						if ($catid)
+						{
+							$tmp = (object) array(
+								'field_id' => $table->id,
+								'category_id' => $catid
+							);
+							try {
+								$this->_db->insertObject('#__fields_categories', $tmp);
+							} catch (Exception $e) {
+							}
+						}
+					}
+
 					JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FIELD_IMPORTED', $table->title), JLOG::INFO, 'lib_j2xml'));
 					// Trigger the onContentAfterSave event.
 				}
@@ -2028,5 +2089,51 @@ class J2XMLImporter
 				$table = null;
 			}
 		}
+	}
+	
+	/**
+	 * function xml2array
+	 *
+	 * @params	mixed	$xmlObject
+	 * @params	array	$out
+	 */
+	static function xml2array ( $xmlObject, $out = array () )
+	{
+		if ( is_object ( $xmlObject ) )
+		{
+			if (count($xmlObject->children()) === 0)
+			{
+				return preg_replace( '/%u([0-9A-F]+)/', '&#x$1;', trim( $xmlObject ) );
+			}
+			foreach ( (array) $xmlObject as $index => $node )
+			{
+				$out[$index] = self::xml2array ( $node );
+			}
+		}
+		elseif ( is_array ( $xmlObject ) )
+		{
+			foreach ( $xmlObject as $index => $node )
+			{
+				$node = self::xml2array ( $node );
+				if ( is_array ( $node ) )
+				{
+					$out = array_merge ( $out , $node );
+				}
+				else
+				{
+					$out[$index] = $node;
+				}
+			}
+		}
+		elseif ( is_string ($xmlObject) )
+		{
+			return preg_replace( '/%u([0-9A-F]+)/', '&#x$1;', trim( $xmlObject ) );
+		}
+		else 
+		{
+			return $xmlObject;
+		}
+
+		return $out;
 	}
 }
