@@ -1,13 +1,12 @@
 /**
- * @version		17.7.29 media/lib_eshiol_core/js/core.js
- * 
  * @package		eshiol Library
- * @subpackage	lib_eshiol
+ * @subpackage	lib_eshiol_core
+ * @version		18.4.30
  * @since		12.0.1
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * eshiol Library is free software. This version may have been modified 
  * pursuant to the GNU General Public License, and as distributed it includes 
@@ -19,7 +18,7 @@ if (typeof(eshiol) === 'undefined') {
 	var eshiol = {};
 }
 
-eshiol.version = '17.7.29';
+eshiol.version = '18.4.30';
 
 if (console) console.log('eshiol Library v'+eshiol.version);
 
@@ -93,7 +92,7 @@ eshiol.dump = function (arr,level) {
 
 			if(typeof(value) == 'object') { //If it is an array,
 				dumped_text += level_padding + "'" + item + "' ...\n";
-				dumped_text += dump(value,level+1);
+				dumped_text += eshiol.dump(value,level+1);
 			} else {
 				dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
 			}
