@@ -1,13 +1,13 @@
 <?php
 /**
- * @version		3.3.11 cli/j2xml.php
  * @package		J2XML.CLI
  * @subpackage	cli
+ * @version		3.7.14
  * @since		2.5
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -120,7 +120,14 @@ class J2XMLCli extends JApplicationCli
 		JLog::addLogger(array('logger' => 'echo', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','cli_j2xml'));
 
 		if (!($data = implode(gzfile($filename))))
+		{
 			$data = file_get_contents($filename);
+		}
+		
+		if (!mb_detect_encoding($data, 'UTF-8'))
+		{
+			$data = mb_convert_encoding($data, 'UTF-8');
+		}
 
 		libxml_use_internal_errors(true);
 		$xml = simplexml_load_string($data);

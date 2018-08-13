@@ -1,14 +1,13 @@
 <?php
 /**
- * @version		3.6.167 administrator/components/com_j2xml/controllers/cpanel.json.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
+ * @version		3.7.181
  * @since		3.6.160
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -51,7 +50,13 @@ class J2XMLControllerCpanel extends JControllerLegacy
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
-		$data = utf8_encode(urldecode($this->app->input->post->get('j2xml_data', '', 'RAW')));
+		$data = urldecode($this->app->input->post->get('j2xml_data', '', 'RAW'));
+
+		if (!mb_detect_encoding($data, 'UTF-8'))
+		{
+			$data = mb_convert_encoding($data, 'UTF-8');
+		}
+		
 		$filename = utf8_encode(urldecode($this->app->input->post->get('j2xml_filename', '', 'RAW')));
 
 		// Send json mime type.
@@ -104,8 +109,6 @@ class J2XMLControllerCpanel extends JControllerLegacy
 			$this->app->close();
 			return false;
 		}
-
-		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
 
 		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
 

@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="file" method="upgrade">
   <name>cli_j2xml</name>
-  <creationDate>May 2016</creationDate>
+  <creationDate>April 2018</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <copyright>(C) 2010, 2016 Helios Ciancio. All rights reserved.</copyright>
+  <copyright>(C) 2010, 2018 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>3.3.13.52</version>
+  <version>3.7.14.60</version>
   <description>CLI_J2XML_XML_DESCRIPTION</description>
   <fileset>
     <files>
       <filename>cli/j2xml.php</filename>
-      <folder>language</folder>
+      <filename>language/en-GB/en-GB.files_cli_j2xml.sys.ini</filename>
+      <filename>language/it-IT/it-IT.files_cli_j2xml.sys.ini</filename>
     </files>
   </fileset>
 </extension>

@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	lib_j2xml
- * @version		18.4.306
+ * @version		18.8.309
  * @since		1.5.2.14
  *
  * @author		Helios Ciancio <info@eshiol.it>
@@ -91,6 +91,21 @@ class J2XMLExporter
 	}
 
 	/*
+	 * Init xml
+	 * @return
+	 * @since		18.8.309
+	 */
+	private function _root()
+	{
+		$data = '<?xml version="1.0" encoding="UTF-8" ?>';
+		//			$data .= J2XMLVersion::$DOCTYPE;
+		$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
+		$xml = new SimpleXMLElement($data);
+		$xml->addChild('base', JUri::root());
+		return $xml;
+	}
+		
+	/*
 	 * Export user
 	 * @return
 	 * @since		15.8.253
@@ -122,9 +137,9 @@ class J2XMLExporter
 		{
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true)
-			->select('id')
-			->from('#__contact_details')
-			->where('user_id = '.$id);
+				->select('id')
+				->from('#__contact_details')
+				->where('user_id = '.$id);
 			$db->setQuery($query);
 
 			$ids_contact = $db->loadColumn();
@@ -136,15 +151,29 @@ class J2XMLExporter
 
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
-		->select('id')
-		->from('#__user_notes')
-		->where('user_id = '.$id);
+			->select('id')
+			->from('#__user_notes')
+			->where('user_id = '.$id);
 		$db->setQuery($query);
 
 		$ids_usernote = $db->loadColumn();
 		foreach ($ids_usernote as $id_usernote)
 		{
 			self::_usernote($id_usernote, $xml, $options);
+		}
+
+		// export fields
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true)
+			->select('DISTINCT field_id')
+			->from('#__fields_values')
+			->where('item_id = '.$id);
+		$db->setQuery($query);
+
+		$ids_field = $db->loadColumn();
+		foreach ($ids_field as $id_field)
+		{
+			self::_field($id_field, $xml, $options);
 		}
 	}
 
@@ -526,10 +555,7 @@ class J2XMLExporter
 
 		if (!$xml)
 		{
-			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-			//			$data .= J2XMLVersion::$DOCTYPE;
-			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
-			$xml = new SimpleXMLElement($data);
+			$xml = self::_root();
 		}
 
 		if (is_scalar($ids))
@@ -566,10 +592,7 @@ class J2XMLExporter
 
 		if (!$xml)
 		{
-			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-			//			$data .= J2XMLVersion::$DOCTYPE;
-			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
-			$xml = new SimpleXMLElement($data);
+			$xml = self::_root();
 		}
 
 		if (is_scalar($ids))
@@ -607,10 +630,7 @@ class J2XMLExporter
 
 		if (!$xml)
 		{
-			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-			//			$data .= J2XMLVersion::$DOCTYPE;
-			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
-			$xml = new SimpleXMLElement($data);
+			$xml = self::_root();
 		}
 
 		if (is_scalar($ids))
@@ -647,10 +667,7 @@ class J2XMLExporter
 
 		if (!$xml)
 		{
-			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-			//			$data .= J2XMLVersion::$DOCTYPE;
-			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
-			$xml = new SimpleXMLElement($data);
+			$xml = self::_root();
 		}
 
 		if (is_scalar($ids))
@@ -1019,10 +1036,7 @@ class J2XMLExporter
 
 		if (!$xml)
 		{
-			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-			//			$data .= J2XMLVersion::$DOCTYPE;
-			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
-			$xml = new SimpleXMLElement($data);
+			$xml = self::_root();
 		}
 
 		if (is_scalar($ids))
@@ -1181,10 +1195,7 @@ class J2XMLExporter
 
 		if (!$xml)
 		{
-			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-			//			$data .= J2XMLVersion::$DOCTYPE;
-			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
-			$xml = new SimpleXMLElement($data);
+			$xml = self::_root();
 		}
 
 		if (is_scalar($ids))
@@ -1262,10 +1273,7 @@ class J2XMLExporter
 
 		if (!$xml)
 		{
-			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-			//			$data .= J2XMLVersion::$DOCTYPE;
-			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
-			$xml = new SimpleXMLElement($data);
+			$xml = self::_root();
 		}
 
 		if (is_scalar($ids))
@@ -1359,10 +1367,7 @@ class J2XMLExporter
 
 		if (!$xml)
 		{
-			$data = '<?xml version="1.0" encoding="UTF-8" ?>';
-			//			$data .= J2XMLVersion::$DOCTYPE;
-			$data .= '<j2xml version="'.J2XMLVersion::$DOCVERSION.'"/>';
-			$xml = new SimpleXMLElement($data);
+			$xml = self::_root();
 		}
 
 		if (is_scalar($ids))

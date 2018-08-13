@@ -1,7 +1,7 @@
 /**
  * @package		J2XML Library
  * @subpackage	lib_eshiol_j2xml
- * @version		18.4.306
+ * @version		18.8.308
  * @since		16.11.288
  *
  * @author		Helios Ciancio <info@eshiol.it>
@@ -42,7 +42,7 @@ if (typeof(eshiol.j2xml.convert) === 'undefined') {
 	eshiol.j2xml.convert = [];
 }
 
-eshiol.j2xml.version = '18.4.306';
+eshiol.j2xml.version = '18.8.308';
 
 console.log('j2xml Library v'+eshiol.j2xml.version);
 

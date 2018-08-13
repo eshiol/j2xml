@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3" type="component" method="upgrade">
   <name>com_j2xml</name>
-  <creationDate>March 2018</creationDate>
+  <creationDate>August 2018</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright>(C) 2010, 2018 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>3.7.180.415</version>
+  <version>3.7.181.423</version>
   <description>COM_J2XML_XML_DESCRIPTION</description>
   <scriptfile>script.php</scriptfile>
   <install>

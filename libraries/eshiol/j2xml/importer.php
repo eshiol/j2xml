@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	lib_j2xml
- * @version		18.4.306
+ * @version		18.8.307
  * @since		1.6.0
  *
  * @author		Helios Ciancio <info@eshiol.it>
@@ -207,7 +207,7 @@ class J2XMLImporter
 		if ($import_users)
 		{
 			require_once JPATH_ADMINISTRATOR.'/components/com_users/models/user.php';
-			JFactory::getLanguage()->load('com_users', JPATH_SITE);
+			JFactory::getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
 
 			$autoincrement = 0;
 			$query = "SELECT max(`id`) from #__users";
@@ -229,9 +229,11 @@ class J2XMLImporter
 				elseif (isset($data['grouplist']))
 				{
 					$data['groups'] = array();
-					foreach ($data['grouplist'] as $v)
+					foreach ($data['grouplist']['group'] as $v)
+					{
 						$data['groups'][] = $this->getUsergroupId($v);
-						unset($data['grouplist']);
+					}
+					unset($data['grouplist']);
 				}
 
 				if (isset($data['password']))
@@ -309,6 +311,10 @@ class J2XMLImporter
 					else
 					{
 						JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_USER_NOT_IMPORTED', $data['name']),JLOG::ERROR,'lib_j2xml'));
+						if ($error = $this->_user->getError())
+						{
+							JLog::add(new JLogEntry($error,JLOG::WARNING,'lib_j2xml'));
+						}
 					}
 				}
 			}
@@ -677,11 +683,6 @@ class J2XMLImporter
 				$this->prepareData($record, $data, $params);
 
 				$id = $data['id'];
-				if (empty($data['alias']))
-				{
-					$data['alias'] = $data['title'];
-					$data['alias'] = str_replace(' ', '-', $data['alias']);
-				}
 				$alias = $data['alias'];
 				$catid = $data['catid'];
 
@@ -1127,7 +1128,7 @@ class J2XMLImporter
 				foreach($record->children() as $key => $value)
 					$data[trim($key)] = trim($value);
 				$alias = $data['alias'];
-				if (J2XMLVersion::docversion_compare($version) == -1)
+				if (J2XMLVersion::docversion_compare($xmlVersion) == -1)
 				{
 					$data['title'] = html_entity_decode($data['title'], ENT_QUOTES, 'UTF-8');
 					$data['description'] = html_entity_decode($data['description'], ENT_QUOTES, 'UTF-8');
@@ -1219,7 +1220,7 @@ class J2XMLImporter
 			foreach($record->children() as $key => $value)
 				$data[trim($key)] = trim($value);
 			$alias = $data['alias'];
-			if (J2XMLVersion::docversion_compare($version) == -1)
+			if (J2XMLVersion::docversion_compare($xmlVersion) == -1)
 			{
 				$data['title'] = html_entity_decode($data['title'], ENT_QUOTES, 'UTF-8');
 				$data['description'] = html_entity_decode($data['description'], ENT_QUOTES, 'UTF-8');
@@ -1343,7 +1344,7 @@ class J2XMLImporter
 			}
 			$id = $data['id'];
 			$alias = $data['alias'];
-			if (version_compare($version, '17.7.0') == -1)
+			if (version_compare($xmlVersion, '17.7.0') == -1)
 			{
 				$data['name'] = html_entity_decode($data['name'], ENT_QUOTES, 'UTF-8');
 			}
@@ -1429,14 +1430,14 @@ class J2XMLImporter
 						JLog::add(new JLogEntry($table->getError(), JLOG::ERROR, 'lib_j2xml'));
 					}
 					$table = null;
-			}
-			elseif ($contact)
-			{
-				$contacts_id[$alias] = $this->_user->id;
-				$contacts_title[$alias] = $this->_user->name;
+				}
+				elseif ($contact)
+				{
+					$contacts_id[$alias] = $this->_user->id;
+					$contacts_title[$alias] = $this->_user->name;
+				}
 			}
 		}
-	}
 
 		if ($xml->xpath("//j2xml/menutype[not(title = '')]"))
 		{
@@ -1810,7 +1811,7 @@ class J2XMLImporter
 		return $access_id;
 	}
 
-	function getCategoryId($category, $extension)
+	function getCategoryId($category, $extension = 'com_content')
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
 
@@ -1899,6 +1900,11 @@ class J2XMLImporter
 			}
 		}
 */
+		if (empty($data['alias']))
+		{
+			$data['alias'] = $data['title'];
+			$data['alias'] = str_replace(' ', '-', $data['alias']);
+		}
 		$data['checked_out'] = 0;
 		$data['checked_out_time'] = $this->_nullDate;
 		if (isset($data['created_user_id']))

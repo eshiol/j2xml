@@ -1,14 +1,13 @@
 <?php
 /**
- * @version		3.7.177 administrator/components/com_j2xml/controllers/cpanel.php
- *
  * @package		J2XML
  * @subpackage	com_j2xml
+ * @version		3.7.181
  * @since		1.5.3
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -115,11 +114,10 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			$data = file_get_contents($filename);
 		}
 
-		if (!($data = implode(gzfile($filename))))
+		if (!mb_detect_encoding($data, 'UTF-8'))
 		{
-			$data = file_get_contents($filename);
+			$data = mb_convert_encoding($data, 'UTF-8');
 		}
-		$data = utf8_encode($data);
 
 		$dispatcher = JDispatcher::getInstance();
 		JPluginHelper::importPlugin('j2xml');

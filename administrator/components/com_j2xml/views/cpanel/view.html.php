@@ -8,7 +8,7 @@
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2017 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -89,10 +89,16 @@ class J2XMLViewCpanel extends JViewLegacy
 		$doc = JFactory::getDocument();
 		if ($canDo->get('core.create') || ($canDo->get('core.edit'))) {
 			jimport('eshiol.core.file');
-			$doc->addScript("../media/lib_eshiol_core/js/encryption.js");
-			$doc->addScript("../media/lib_eshiol_core/js/core.js");
-			$doc->addScript("../media/lib_eshiol_core/js/version_compare.js");
-			$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml.js");
+
+			$min = ($this->params->get('debug', 0) ? '' : '.min');
+			JLog::add(new JLogEntry("loading encryption{$min}.js...", JLOG::DEBUG, 'com_j2xml'));			
+			$doc->addScript("../media/lib_eshiol_core/js/encryption{$min}.js");
+			JLog::add(new JLogEntry("loading core{$min}.js...", JLOG::DEBUG, 'com_j2xml'));
+			$doc->addScript("../media/lib_eshiol_core/js/core{$min}.js");
+			JLog::add(new JLogEntry("loading version_compare{$min}.js...", JLOG::DEBUG, 'com_j2xml'));
+			$doc->addScript("../media/lib_eshiol_core/js/version_compare{$min}.js");
+			JLog::add(new JLogEntry("loading j2xml{$min}.js...", JLOG::DEBUG, 'com_j2xml'));
+			$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml{$min}.js");
 
 			$toolbar = JToolBar::getInstance('toolbar');
 			$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null, 'xml,gz', null, $this->params->get('ajax', 0) ? 'eshiol.j2xml.import' : null);
