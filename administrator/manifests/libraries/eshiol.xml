@@ -8,7 +8,7 @@
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright>(C) 2010, 2018 Helios Ciancio. All rights reserved.</copyright>
   <license>GNU/GPL v3</license>
-  <version>18.8.31.170</version>
+  <version>18.8.32.172</version>
   <description>LIB_ESHIOL_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
   <updateservers>
@@ -22,6 +22,7 @@
     <filename>standard2.php</filename>
     <filename>xmlrpc.php</filename>
     <filename>xmlrpcs.php</filename>
+    <folder>Log</folder>
   </files>
   <languages folder="language">
     <language tag="en-GB">en-GB/en-GB.lib_eshiol.ini</language>

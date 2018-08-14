@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.7.170 /components/com_j2xml/j2xml.php
+ * @version		3.7.182 /components/com_j2xml/j2xml.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -46,7 +46,8 @@ else
 	$format = $jinput->getCmd('format');
 	if ($format == 'xmlrpc')
 	{
-		JLog::addLogger(array('logger' => 'xmlrpc', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
+		require_once JPATH_LIBRARIES . '/eshiol/core/Log/Logger/XmlrpcLogger.php';
+		JLog::addLogger(array('logger' => 'xmlrpc', 'extension' => 'com_j2xml', 'service' => 'XMLRPCJ2XMLServices'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
 		$controllerPath .= '.'.strtolower($format);
 	}
 	else 

@@ -1,6 +1,6 @@
 <?php
 /**
- * @version		3.7.178 components/com_j2xml/helpers/xmlrpc.php
+ * @version		3.7.182 components/com_j2xml/helpers/xmlrpc.php
  * 
  * @package		J2XML
  * @subpackage	com_j2xml
@@ -29,7 +29,6 @@ JLoader::register('JTableCategory', JPATH_PLATFORM . '/joomla/database/table/cat
 JLoader::register('JTableContent', JPATH_PLATFORM . '/joomla/database/table/content.php');
 
 require_once JPATH_ADMINISTRATOR.'/components/com_j2xml/helpers/j2xml.php';
-require_once JPATH_SITE.'/components/com_j2xml/helpers/log.php';
 
 /**
  * Joomla! J2XML XML-RPC Plugin
@@ -70,7 +69,6 @@ class XMLRPCJ2XMLServices
 		if ((int)$params->get('xmlrpc', 0) == 0)
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_XMLRPC_DISABLED'), JLOG::ERROR, 'com_j2xml'));
-			self::enqueueMessage(JText::_('LIB_J2XML_XMLRPC_DISABLED'), 0);
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
 
@@ -82,7 +80,6 @@ class XMLRPCJ2XMLServices
 		if (true !== $response)
 		{
 			JLog::add(new JLogEntry(JText::_('JGLOBAL_AUTH_NO_USER'), JLOG::ERROR, 'com_j2xml'));
-			self::enqueueMessage(JText::_('JGLOBAL_AUTH_NO_USER'), 0);
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
 
@@ -91,7 +88,6 @@ class XMLRPCJ2XMLServices
 				!$canDo->get('core.edit') &&
 				!$canDo->get('core.edit.own')) {
 			JLog::add(new JLogEntry(JText::_('JLIB_LOGIN_DENIED'), JLOG::ERROR, 'com_j2xml'));
-			self::enqueueMessage(JText::_('JLIB_LOGIN_DENIED'), 0);
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
 
@@ -128,17 +124,14 @@ class XMLRPCJ2XMLServices
 		    	default:
 		        case LIBXML_ERR_WARNING:
 					JLog::add(new JLogEntry(JText::_($msg), JLog::WARNING, 'com_j2xml'));
-					self::enqueueMessage(JText::_($msg), 0);
 					return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		            break;
 		         case LIBXML_ERR_ERROR:
 					JLog::add(new JLogEntry(JText::_($msg), JLOG::ERROR, 'com_j2xml'));
-					self::enqueueMessage(JText::_($msg), 0);
 					return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		         	break;
 		        case LIBXML_ERR_FATAL:
 					JLog::add(new JLogEntry(JText::_($msg), JLOG::CRITICAL, 'com_j2xml'));
-					self::enqueueMessage(JText::_($msg), 0);
 					return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		        	break;
 			    }
@@ -151,7 +144,6 @@ class XMLRPCJ2XMLServices
 		if(!isset($xml['version']))
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLOG::ERROR, 'com_j2xml'));
-			self::enqueueMessage(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), 0);
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
 
@@ -175,7 +167,9 @@ class XMLRPCJ2XMLServices
 			$importer->import($xml,$params);
 		}
 		else
+		{
 			JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion), JLOG::ERROR, 'com_j2xml'));
+		}
 
 		$app->logout();
 		return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
@@ -306,7 +300,7 @@ class XMLRPCJ2XMLServices
 	 */
 	public static function enqueueMessage($message, $priority)
 	{
-		$codes=array('error'=>28, 'warning'=>29, 'notice'=>30, 'message'=>31);
+		$codes = array('error' => 28, 'warning' => 29, 'notice' => 30, 'message' => 31);
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 		JLog::add(new JLogEntry($priority.' - '.(isset($codes[$priority]) ? $codes[$priority] : 29).' - '.$message, JLOG::DEBUG, 'com_j2xml'));
 
