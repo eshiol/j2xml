@@ -2,12 +2,13 @@
 <extension version="3.0" type="plugin" group="system" method="upgrade">
   <name>plg_system_j2xml</name>
   <author>Helios Ciancio</author>
-  <creationDate>March 2018</creationDate>
-  <copyright>(C) 2010, 2018 Helios Ciancio. All rights reserved.</copyright>
+  <creationDate>February 2019</creationDate>
+  <copyright>(C) 2010 - 2019 Helios Ciancio. All rights reserved.
+	</copyright>
   <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <version>3.7.42.81</version>
+  <version>3.7.43.84</version>
   <description>PLG_SYSTEM_J2XML_XML_DESCRIPTION</description>
   <scriptfile>enable.php</scriptfile>
   <files>
@@ -21,7 +22,7 @@
   </languages>
   <config>
     <fields name="params">
-      <fieldset name="basic">
+      <fieldset name="debug" label="PLG_SYSTEM_J2XML_DEBUG">
         <field name="debug" type="radio" default="0" class="btn-group btn-group-yesno" description="PLG_SYSTEM_J2XML_DEBUG_SYSTEM_DESC" label="PLG_SYSTEM_J2XML_DEBUG_SYSTEM_LABEL">
           <option value="1">JYES</option>
           <option value="0">JNO</option>
