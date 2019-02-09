@@ -1,4 +1,36 @@
----------------------- 18.8.309  Release [3-August-2018] ----------------------
+--------------------- 19.2.318 Release  [9-February-2019] ---------------------
+
+9-February-2019
+  ^ UTF-8 (build 318)
+  - Menu (build 318)
+  - Menutype (build 318)
+  - Module (build 318)
+
+5-February-2019
+  ^ sender (build 317)
+
+28-January-2019
+  ^ sender (build 316)
+  ^ undefined content.created_by (build 316)
+  ^ undefined content.language (build 316)
+
+22-January-2019
+  ^ case sensitive class names (build 315)
+
+--------------------- 18.11.314 Release [5-November-2018] ---------------------
+
+5-November-2018
+  ^ PostgreSQL (build 314)
+  ^ export user groups (build 313)
+  - install.sql (build 312)
+  ^ Table::getUsergroupId (build 311)
+
+1-November-2018
+  ^ usergroups_getpath (build 311)
+
+16-August-2018
+  + PostgresSQL compatibility (build 310) 
+  - eshHelperTags (build 310)
 
 3-August-2018
   ^ canonical (build 309)
@@ -361,10 +393,10 @@
 14-February-2013
   # category doesn't exists
   
-8-February-2013
+9-February-2013
   # fix Class 'JFolder' not found in importer.php on line 648 (build 97)
 
-7-February-2013
+9-February-2013
   # fix php 5.2.17 issues (build 96)
 
 5-February-2013

@@ -2,25 +2,25 @@
 <extension version="3" type="library" method="upgrade">
   <name>j2xml</name>
   <libraryname>eshiol/j2xml</libraryname>
-  <creationDate>August 2018</creationDate>
+  <creationDate>February 2019</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <copyright>(C) 2010, 2018 Helios Ciancio. All rights reserved.</copyright>
+  <copyright>(C) 2010, 2019 Helios Ciancio. All rights reserved.
+	</copyright>
   <license>GNU/GPL v3</license>
-  <version>18.8.309.726</version>
+  <version>19.2.318.923</version>
   <description>LIB_J2XML_XML_DESCRIPTION</description>
-  <packagerurl>http://www.eshiol.it</packagerurl>
+  <scriptfile>script.php</scriptfile>
+  <packagerurl>https://www.eshiol.it</packagerurl>
   <files>
-    <filename>exporter.php</filename>
-    <filename>importer.php</filename>
+    <filename>Exporter.php</filename>
+    <filename>Importer.php</filename>
     <filename>messages.php</filename>
-    <filename>sender.php</filename>
-    <filename>table.php</filename>
-    <filename>version.php</filename>
-    <folder>helper</folder>
-    <folder>table</folder>
+    <filename>Sender.php</filename>
+    <filename>Version.php</filename>
     <folder>form</folder>
+    <folder>Table</folder>
   </files>
   <languages folder="language">
     <language tag="en-GB">en-GB/en-GB.lib_j2xml.ini</language>

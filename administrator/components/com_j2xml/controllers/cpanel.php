@@ -2,12 +2,10 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * @version		3.7.181
- * @since		1.5.3
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -18,8 +16,18 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
+use Joomla\Registry\Registry;
+
+JLoader::import('eshiol.j2xml.Importer');
+JLoader::import('eshiol.j2xmlpro.Importer');
+
 require_once JPATH_ADMINISTRATOR.'/components/com_j2xml/helpers/j2xml.php';
 
+/**
+ * 
+ * @version		3.7.188
+ * @since		1.5.3
+ */
 class J2xmlControllerCpanel extends JControllerLegacy
 {
 	/**
@@ -113,13 +121,9 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		{
 			$data = file_get_contents($filename);
 		}
+		$data = mb_convert_encoding($data, 'UTF-8');
 
-		if (!mb_detect_encoding($data, 'UTF-8'))
-		{
-			$data = mb_convert_encoding($data, 'UTF-8');
-		}
-
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = \JEventDispatcher::getInstance();
 		JPluginHelper::importPlugin('j2xml');
 
 		$results = $dispatcher->trigger('onContentPrepareData', array('com_j2xml.cpanel', &$data));
@@ -168,13 +172,35 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		}
 		else
 		{
-			jimport('eshiol.j2xml.importer');
-
 			$params->set('filename', $filename);
 
+			$iparams = new Registry();
+			$iparams->set('categories', $params->get('import_categories', 1));
+			$iparams->set('fields', $params->get('import_fields', 1));
+			$iparams->set('images', $params->get('import_images', 1));
+			$iparams->set('keep_id', $params->get('keep_id', 0));
+			$iparams->set('tags', $params->get('import_tags', 1));
+			$iparams->set('users', $params->get('import_users', 1));
+			$iparams->set('usernotes', $params->get('import_usernotes', 1));
+			$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
+			$iparams->set('content', $params->get('import_content'));
+			$iparams->set('logger', 'xmlrpc');
+
+			if ($params->get('keep_category', 1) == 2)
+			{
+				$iparams->set('content_category_forceto', $params->get('category'));
+			}
+
+			if (class_exists('eshiol\J2XMLPro\Importer'))
+			{
+				$importer = new eshiol\J2XMLPro\Importer();
+			}
+			else
+			{
+				$importer = new eshiol\J2XML\Importer();
+			}
 			//set_time_limit(120);
-			$j2xml = new J2XMLImporter();
-			$j2xml->import($xml, $params);
+			$importer->import($xml, $iparams);
 		}
 		$this->setRedirect('index.php?option=com_j2xml');
 	}
@@ -193,9 +219,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				($jimput->getCmd('d3v3l0p', '0') === '1') 
 		)
 		{
-			jimport('eshiol.j2xml.importer');
-
-			J2XMLImporter::clean();
+			Importer::clean();
 			$app = JFactory::getApplication('administrator');
 			$app->enqueueMessage(JText::_('COM_J2XML_MSG_CLEANED','info'));
 		}

@@ -1,3 +1,63 @@
+---------------------- 3.7.188 Release [9-February-2019] ----------------------
+
+cli_j2xml-3.7.16
+  ! minor bug fixes (build 16)
+
+lib_eshiol-3.7.33
+  - Xmlrpc (build 33)
+
+lib_j2xml-19.2.318
+  ^ UTF-8 (build 318)
+  - Menu (build 318)
+  - Menutype (build 318)
+  - Module (build 318)
+  ^ sender (build 317)
+  ^ sender (build 316)
+  ^ undefined content.created_by (build 316)
+  ^ undefined content.language (build 316)
+
+lib_phpxmlrpc-4.3.1.1
+  + first release
+
+com_j2xml-3.7.188
+  ^ sender (build 188)
+  ^ log (build 187)
+  ^ sender (build 187)
+  ^ case sensitive class names (build 186)
+  $ user notes (build 185)
+  ^ j2xml library 18.8.310 (build 183)
+  + PostgresSQL compatibility (build 183) 
+  - XmlrpcLogger (build 182)
+
+plg_system_j2xml-3.7.43
+  + J2XML Pro (build 43)
+
+---------------------- 3.7.186 Release [22-January-2019] ----------------------
+
+cli_j2xml-3.7.15
+  ^ case sensitive class names (build 15)
+
+lib_j2xml-19.1.315
+  ^ case sensitive class names (build 315)
+  ^ PostgreSQL (build 314)
+  ^ export user groups (build 313)
+  - install.sql (build 312)
+  ^ Table::getUsergroupId (build 311)
+  ^ usergroups_getpath (build 311)
+  + PostgresSQL compatibility (build 310) 
+  - eshHelperTags (build 310)
+
+lib_eshiol-18.8.32
+  + XmlrpcLogger (build 32)
+  + minify.js (build 31)
+
+com_j2xml-3.7.186
+  ^ case sensitive class names (build 186)
+  $ user notes (build 185)
+  ^ j2xml library 18.8.310 (build 183)
+  + PostgresSQL compatibility (build 183) 
+  - XmlrpcLogger (build 182)
+
 ---------------------- 3.7.181  Release [10-August-2018] ----------------------
 
 cli_j2xml-3.7.14

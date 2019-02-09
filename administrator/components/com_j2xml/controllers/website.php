@@ -1,14 +1,11 @@
 <?php
 /**
- * @version		3.7.171 administrator/components/com_j2xml/controllers/website.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
- * @since		1.5.3
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -23,6 +20,9 @@ jimport('joomla.application.component.controllerform');
 
 /**
  * Website controller class.
+ * 
+ * @version		3.7.186
+ * @since		1.5.3
  */
 class J2XMLControllerWebsite extends JControllerForm
 {

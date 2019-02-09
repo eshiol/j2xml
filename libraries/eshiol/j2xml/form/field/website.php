@@ -7,7 +7,7 @@
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -58,7 +58,7 @@ class JFormFieldWebsite extends JFormFieldList
 		// Initialize variables.
 		$options = array();
 
-		$db      = JFactory::getDbo();
+		$db      = \JFactory::getDbo();
 		$query   = $db->getQuery(true);
 
 		$query->select('id as value, title as text');

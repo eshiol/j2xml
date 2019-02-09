@@ -115,8 +115,15 @@ class plgSystemJ2XML extends JPlugin
 		$query = $db->getQuery(true)
 			->select($db->quoteName('extension_id'))
 			->from($db->quoteName('#__extensions'))
-			->where($db->quoteName('type') . ' = ' . $db->quote('library'))
-			->where($db->quoteName('element') . ' = ' . $db->quote('eshiol/j2xmlpro'));
+			->where($db->quoteName('type') . ' = ' . $db->quote('library'));
+		if ((new \JVersion())->isCompatible('3.9'))
+		{
+			$query->where($db->quoteName('element') . ' = ' . $db->quote('eshiol/j2xmlpro'));
+		}
+		else
+		{
+			$query->where($db->quoteName('element') . ' = ' . $db->quote('j2xmlpro'));
+		}
 		$j2xmlpro = $db->setQuery($query)->loadResult();
 		
 		if (($option == 'com_content') && (! $view || $view == 'articles' || $view == 'featured') ||

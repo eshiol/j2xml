@@ -6,23 +6,18 @@
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <copyright>(C) 2010, 2018 Helios Ciancio. All rights reserved.</copyright>
+  <copyright>(C) 2010 - 2019 Helios Ciancio. All rights reserved.
+	</copyright>
   <license>GNU/GPL v3</license>
-  <version>18.8.32.172</version>
+  <version>19.2.33.179</version>
   <description>LIB_ESHIOL_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
-  <updateservers>
-    <server type="extension" priority="1" name="eshiol Library">https://www.eshiol.it/files/core/lib_eshiol.xml</server>
-  </updateservers>
   <files>
     <filename>file.php</filename>
     <filename>link2.php</filename>
     <filename>send.php</filename>
     <filename>sendbydate.php</filename>
     <filename>standard2.php</filename>
-    <filename>xmlrpc.php</filename>
-    <filename>xmlrpcs.php</filename>
-    <folder>Log</folder>
   </files>
   <languages folder="language">
     <language tag="en-GB">en-GB/en-GB.lib_eshiol.ini</language>

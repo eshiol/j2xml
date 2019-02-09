@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3" type="component" method="upgrade">
   <name>com_j2xml</name>
-  <creationDate>August 2018</creationDate>
+  <creationDate>February 2019</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <copyright>(C) 2010, 2018 Helios Ciancio. All rights reserved.</copyright>
+  <copyright>(C) 2010, 2019 Helios Ciancio. All rights reserved.
+	</copyright>
   <license>GNU/GPL v3</license>
-  <version>3.7.182.430</version>
+  <version>3.7.188.509</version>
   <description>COM_J2XML_XML_DESCRIPTION</description>
   <scriptfile>script.php</scriptfile>
   <install>
     <sql>
       <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+      <file driver="postgresql" charset="utf8">sql/install.postgresql.utf8.sql
+			</file>
     </sql>
   </install>
   <uninstall>
     <sql>
       <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+      <file driver="postgresql" charset="utf8">sql/install.postgresql.utf8.sql
+			</file>
     </sql>
   </uninstall>
   <update>
@@ -38,9 +43,9 @@
       <menu link="option=com_j2xml&amp;view=websites" view="websites" img="class:websites" alt="J2XML/Web sites">com_j2xml_menu_websites</menu>
     </submenu>
     <!-- Administration Main File Copy Section -->
-    <!-- Note the folder attribute: This attribute describes the folder
-			to copy FROM in the package to install therefore files copied
-			in this section are copied from /admin/ in the package -->
+    <!-- Note the folder attribute: This attribute describes the folder to 
+			copy FROM in the package to install therefore files copied in this section 
+			are copied from /admin/ in the package -->
     <files folder="admin">
       <filename>j2xml.php</filename>
       <filename>config.xml</filename>

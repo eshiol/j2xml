@@ -1,14 +1,13 @@
 <?php
 /**
- * @version		3.7.171 administrator/components/com_j2xml/views/website/tmpl/edit.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
+ * @version		3.7.188
  * @since		2.5.85
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -21,7 +20,14 @@ defined('_JEXEC') or die;
 
 JHtml::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_j2xml/helpers/html');
 
-JHtml::_('behavior.formvalidator');
+if ((new \JVersion())->isCompatible('3.4'))
+{
+	JHtml::_('behavior.formvalidator');
+}
+else
+{
+	JHtml::_('behavior.formvalidation');
+}
 JHtml::_('formbehavior.chosen', 'select');
 ?>
 <script type="text/javascript">

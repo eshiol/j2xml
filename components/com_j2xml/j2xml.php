@@ -1,14 +1,13 @@
 <?php
 /**
- * @version		3.7.182 /components/com_j2xml/j2xml.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
+ * @version		3.7.188
  * @since		1.7.0.64
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -46,19 +45,20 @@ else
 	$format = $jinput->getCmd('format');
 	if ($format == 'xmlrpc')
 	{
-		require_once JPATH_LIBRARIES . '/eshiol/core/Log/Logger/XmlrpcLogger.php';
-		JLog::addLogger(array('logger' => 'xmlrpc', 'extension' => 'com_j2xml', 'service' => 'XMLRPCJ2XMLServices'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
+		require_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/Log/Logger/XmlrpcLogger.php';
+
+		include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpc.inc';
+		include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpcs.inc';
+
+		JLog::addLogger(array('logger' => 'xmlrpc', 'extension' => 'com_j2xml', 'service' => 'XMLRPCJ2XMLServices'), JLog::ALL & ~JLog::DEBUG, array('lib_j2xml','com_j2xml'));
 		$controllerPath .= '.'.strtolower($format);
 	}
 	else 
 	{
-		JLog::addLogger(array('logger' => 'messagequeue', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
-		if ($params->get('phpconsole'))
+		JLog::addLogger(array('logger' => 'messagequeue', 'extension' => 'com_j2xml'), JLog::ALL & ~JLog::DEBUG, array('lib_j2xml','com_j2xml'));
+		if ($this->params->get('phpconsole') && class_exists('JLogLoggerPhpconsole'))
 		{
-			if (jimport('eshiol.core.logger.phpconsole'))
-			{
-				JLog::addLogger(array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'),  JLOG::DEBUG, array('lib_j2xml','com_j2xml'));
-			}
+			JLog::addLogger(array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'),  JLog::DEBUG, array('lib_j2xml','com_j2xml'));
 		}
 	}
 	JLog::add(new JLogEntry('J2XML', JLog::DEBUG, 'com_j2xml'));

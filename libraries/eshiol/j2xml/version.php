@@ -2,12 +2,10 @@
 /**
  * @package		J2XML
  * @subpackage	lib_j2xml
- * @version		18.8.309
- * @since		1.5.3
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -15,25 +13,34 @@
  * other free or open source software licenses.
  */
  
+namespace eshiol\J2XML;
+
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-class J2XMLVersion
+
+
+
+/**
+ * @version		19.2.318
+ * @since		1.5.3
+ */
+class Version
 {
 	/** @public static string Product */
 	public static $PRODUCT	= 'J2XML';
 	/** @public static int Main Release Level */
-	public static $RELEASE	= '18';
+	public static $RELEASE	= '19';
 	/** @public static int Sub Release Level */
-	public static $DEV_LEVEL	= '8';
+	public static $DEV_LEVEL	= '2';
 	/** @public static string Development Status */
 	public static $DEV_STATUS	= ''; //dev < alpha = a < beta = b < RC = rc < # < pl = p
 	/** @public static int build Number */
-	public static $BUILD		= '309';
+	public static $BUILD		= '318';
 	/** @public static string Codename */
 	public static $CODENAME	= ' ';
 	/** @public static string Copyright Text */
-	public static $COPYRIGHT	= 'Copyright &copy; 2010, 2018 Helios Ciancio <a href="http://www.eshiol.it" title="eshiol.it"><img src="../media/com_j2xml/images/eshiol.png" alt="eshiol.it" /></a>. All rights reserved.';
+	public static $COPYRIGHT	= 'Copyright &copy; 2010 - 2019 Helios Ciancio <a href="http://www.eshiol.it" title="eshiol.it"><img src="../media/com_j2xml/images/eshiol.png" alt="eshiol.it" /></a>. All rights reserved.';
 	/** @public static string License */
 	public static $LICENSE	= '<a href="http://www.gnu.org/licenses/gpl-3.0.html">GNU GPL v3</a>';
 	/** @public static string URL */
@@ -82,7 +89,7 @@ class J2XMLVersion
 
 	public static function docversion_compare($version)
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		$a = explode(".", rtrim($version, ".0")); //Split version into pieces and remove trailing .0
 		$b = explode(".", rtrim(self::$DOCVERSION, ".0")); //Split version into pieces and remove trailing .0
 		$max_depth = 2;

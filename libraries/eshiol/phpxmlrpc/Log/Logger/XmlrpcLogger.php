@@ -1,13 +1,11 @@
 <?php
 /**
  * @package		J2XML
- * @subpackage	lib_j2xml
- * @version		18.8.32
- * @since		18.8.32
+ * @subpackage	lib_phpxmlrpc
  *
- * @author		Helios Ciancio <info@eshiol.it>
- * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
+ * @link		https://www.eshiol.it
+ * @copyright	(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -17,27 +15,23 @@
 
 namespace Joomla\CMS\Log\Logger;
 
-defined('JPATH_PLATFORM') or die;
+// no direct access
+defined('_JEXEC') or die('Restricted access.');
 
-use Joomla\CMS\Log\LogEntry;
-use Joomla\CMS\Log\Logger;
-use Joomla\CMS\Log\Log;
+jimport('joomla.log.logger');
+
+\JLoader::registerAlias('JLogLoggerXmlrpc', '\\Joomla\\CMS\\Log\\Logger\\XmlrpcLogger');
 
 /**
  * Joomla XMLRPC logger class.
  *
  * This class is designed to output logs as xmlrpc message
+ *
+ * @version 4.3.1
+ * @since 4.3.1
  */
-class XmlrpcLogger extends Logger
+class XmlrpcLogger extends \JLogLogger
 {
-	/**
-	 * The service
-	 *
-	 * @var    string
-	 * @since  18.8.32
-	 */
-	protected $service;
-
 	/**
 	 * Constructor.
 	 *
@@ -55,37 +49,38 @@ class XmlrpcLogger extends Logger
 		{
 			throw new \RuntimeException(sprintf('%s created without valid service.', get_class($this)));
 		}
-
-		$this->service = $this->options['service'];
 	}
 	
 	/**
 	 * Method to add an entry to the log.
 	 *
-	 * @param   LogEntry  $entry  The log entry object to add to the log.
+	 * @param JLogEntry $entry
+	 *        	The log entry object to add to the log.
 	 *
-	 * @return  void
+	 * @return void
 	 *
-	 * @since   18.8.
+	 * @since 13.8
 	 */
-	public function addEntry(LogEntry $entry)
+	public function addEntry (\JLogEntry $entry)
 	{
+		$service = $this->options['service'];
+
 		switch ($entry->priority)
 		{
-			case Log::EMERGENCY:
-			case Log::ALERT:
-			case Log::CRITICAL:
-			case Log::ERROR:
-				$this->service::enqueueMessage($entry->message, 'error');
+			case \JLog::EMERGENCY:
+			case \JLog::ALERT:
+			case \JLog::CRITICAL:
+			case \JLog::ERROR:
+				$service::enqueueMessage($entry->message, 'error');
 				break;
-			case Log::WARNING:
-				$this->service::enqueueMessage($entry->message, 'warning');
+			case \JLog::WARNING:
+				$service::enqueueMessage($entry->message, 'warning');
 				break;
-			case Log::NOTICE:
-				$this->service::enqueueMessage($entry->message, 'notice');
+			case \JLog::NOTICE:
+				$service::enqueueMessage($entry->message, 'notice');
 				break;
-			case Log::INFO:
-				$this->service::enqueueMessage($entry->message, 'message');
+			case \JLog::INFO:
+				$service::enqueueMessage($entry->message, 'message');
 				break;
 			default:
 				// Ignore other priorities.

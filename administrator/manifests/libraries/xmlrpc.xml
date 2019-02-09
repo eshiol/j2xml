@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.0" type="library" method="upgrade">
+  <name>XML-RPC for PHP</name>
+  <libraryname>eshiol/xmlrpc</libraryname>
+  <creationDate>January 2019</creationDate>
+  <author>Helios Ciancio</author>
+  <authorEmail>info (at) eshiol (dot) it</authorEmail>
+  <authorUrl>www.eshiol.it</authorUrl>
+  <copyright><![CDATA[(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.
+	]]></copyright>
+  <license>GNU/GPL v3</license>
+  <version>3.1.4</version>
+  <description>A php library for building xml-rpc clients and servers.
+	</description>
+  <files>
+    <filename>xmlrpc.php</filename>
+    <filename>xmlrpcs.php</filename>
+    <folder>Log</folder>
+  </files>
+  <media destination="lib_eshiol_xmlrpc" folder="media">
+    <folder>js</folder>
+  </media>
+</extension>

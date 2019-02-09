@@ -1,4 +1,24 @@
----------------------- 3.7.182 Release  [14-August-2018] ----------------------
+---------------------- 3.7.189 Release [9-February-2019] ----------------------
+
+9-February-2019
+  ^ Joomla! 3.4 compatibility (build 189)
+  ^ sender (build 188)
+
+28-January-2019
+  ^ log (build 187)
+  ^ sender (build 187)
+
+22-January-2019
+  ^ case sensitive class names (build 186)
+
+---------------------- 3.7.185 Release [5-November-2018] ----------------------
+
+5-November-2018
+  $ user notes (build 185)
+
+16-August-2018
+  ^ j2xml library 18.8.310 (build 183)
+  + PostgresSQL compatibility (build 183) 
 
 14-August-2018
   - XmlrpcLogger (build 182)

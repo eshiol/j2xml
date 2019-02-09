@@ -1,12 +1,12 @@
 /**
  * @package		eshiol Library
  * @subpackage	lib_eshiol_core
- * @version		18.4.30
+ * @version		19.2.33
  * @since		12.0.1
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * eshiol Library is free software. This version may have been modified 
  * pursuant to the GNU General Public License, and as distributed it includes 
@@ -18,7 +18,7 @@ if (typeof(eshiol) === 'undefined') {
 	var eshiol = {};
 }
 
-eshiol.version = '18.4.30';
+eshiol.version = '19.2.33';
 
 if (console) console.log('eshiol Library v'+eshiol.version);
 
@@ -41,10 +41,10 @@ eshiol.renderMessages = function(messages) {
 		if (!div[0])
 		{
 			close = new Element('button', {
-				class: 'close',
+				'class': 'close',
 				'data-dismiss': 'alert',
-				type: 'button',
-				html: '&times;'
+				'type': 'button',
+				'html': '&times;'
 			});
 			close.inject(container);
 

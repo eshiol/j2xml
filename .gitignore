@@ -11,6 +11,14 @@
 files/
 images/
 
+# J2XML Pro
+administrator/manifests/libraries/j2xmlpro.xml
+language/en-GB/en-GB.lib_j2xmlpro.ini
+language/en-GB/en-GB.lib_j2xmlpro.sys.ini
+language/it-IT/it-IT.lib_j2xmlpro.ini
+language/it-IT/it-IT.lib_j2xmlpro.sys.ini
+libraries/eshiol/j2xmlpro
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

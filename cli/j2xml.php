@@ -2,12 +2,12 @@
 /**
  * @package		J2XML.CLI
  * @subpackage	cli
- * @version		3.7.14
+ * @version		3.7.16
  * @since		2.5
  *
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -77,6 +77,14 @@ $lang->load('com_j2xml', JPATH_ADMINISTRATOR, null, false, false)
 	// Fallback to the j2xmlimporter file in the default language
 	|| $lang->load('com_j2xml', JPATH_ADMINISTRATOR, null, true);
 
+use eshiol\J2XML\Importer;
+use eshiol\J2XML\Version;
+use Joomla\Registry\Registry;
+
+jimport('eshiol.j2xml.Importer');
+jimport('eshiol.j2xml.Version');
+jimport('eshiol.j2xml.messages');
+
 /**
  * @package  Joomla.CLI
  * @since    2.5
@@ -117,13 +125,13 @@ class J2XMLCli extends JApplicationCli
 		}
 
 		JLog::addLogger(array('text_file' => 'j2xml.php', 'extension' => 'com_j2xml'), JLog::ALL, array('lib_j2xml','cli_j2xml'));
-		JLog::addLogger(array('logger' => 'echo', 'extension' => 'com_j2xml'), JLOG::ALL & ~JLOG::DEBUG, array('lib_j2xml','cli_j2xml'));
+		JLog::addLogger(array('logger' => 'echo', 'extension' => 'com_j2xml'), JLog::ALL & ~JLog::DEBUG, array('lib_j2xml','cli_j2xml'));
 
 		if (!($data = implode(gzfile($filename))))
 		{
 			$data = file_get_contents($filename);
 		}
-		
+
 		if (!mb_detect_encoding($data, 'UTF-8'))
 		{
 			$data = mb_convert_encoding($data, 'UTF-8');
@@ -168,7 +176,7 @@ class J2XMLCli extends JApplicationCli
 			exit(0);
 		}
 
-		$dispatcher = JDispatcher::getInstance();
+		$dispatcher = \JEventDispatcher::getInstance();
 		JPluginHelper::importPlugin('j2xml');
 		$results = $dispatcher->trigger('onBeforeImport', array('cli_j2xml.import', &$xml));
 		if (!$xml)
@@ -185,17 +193,39 @@ class J2XMLCli extends JApplicationCli
 		}
 		else
 		{
-			jimport('eshiol.j2xml.importer');
-
 			$xmlVersion = $xml['version'];
 			$version = explode(".", $xmlVersion);
-			$xmlVersionNumber = $version[0].substr('0'.$version[1], strlen($version[1])-1).substr('0'.$version[2], strlen($version[2])-1);
-			if ($xmlVersionNumber == 150900)
+			$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
+
+			$j2xmlVersion = Version::$DOCVERSION;
+			$version = explode(".", $j2xmlVersion);
+			$j2xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
+
+			if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500"))
 			{
 				set_time_limit(120);
+				// set_time_limit(120);
 				$params = JComponentHelper::getParams('com_j2xml');
-				$j2xml = new J2XMLImporter();
-				$j2xml->import($xml,$params);
+
+				$iparams = new Registry();
+				$iparams->set('categories', $params->get('import_categories', 1));
+				$iparams->set('fields', $params->get('import_fields', 1));
+				$iparams->set('images', $params->get('import_images', 1));
+				$iparams->set('keep_id', $params->get('keep_id', 0));
+				$iparams->set('tags', $params->get('import_tags', 1));
+				$iparams->set('users', $params->get('import_users', 1));
+				$iparams->set('usernotes', $params->get('import_usernotes', 1));
+				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
+				$iparams->set('content', $params->get('import_content'));
+				$iparams->set('logger', 'xmlrpc');
+
+				if ($params->get('keep_category', 1) == 2)
+				{
+					$iparams->set('content_category_forceto', $params->get('category'));
+				}
+
+				$importer = new Importer();
+				$importer->import($xml, $iparams);
 			}
 			else
 			{

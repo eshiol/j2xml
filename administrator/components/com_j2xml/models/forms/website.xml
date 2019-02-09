@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 <!-- 
-@version: 3.6.166 administrator/components/com_j2xml/models/forms/website.xml
+@version: 3.7.188
 @since: 1.5
 -->
 	<fieldset name="details" addfieldpath="/administrator/components/com_j2xml/models/fields">
@@ -23,11 +23,17 @@
 			class="inputbox" default="0"
 			onchange="jQuery('#jform_username').val('');jQuery('#jform_username').attr('readonly', this.value == 1);"
 			/>
-
+<!--
 		<field name="username" type="text" class="inputbox"
 			size="40" label="COM_J2XML_FIELD_USERNAME_LABEL"
 			description="COM_J2XML_FIELD_USERNAME_DESC"
 			showon="type:0[OR]id:>1"
+			/>
+-->
+		<field name="username" type="text" class="inputbox"
+			size="40" label="COM_J2XML_FIELD_USERNAME_LABEL"
+			description="COM_J2XML_FIELD_USERNAME_DESC"
+			showon="type:0"
 			/>
 
 		<field name="password" type="password" class="inputbox"

@@ -1,14 +1,11 @@
 <?php
 /**
- * @version		3.7.176 administrator/components/com_j2xml/models/cpanel/view.html.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
- * @since		1.5.3
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -21,6 +18,11 @@ defined('_JEXEC') or die('Restricted access.');
 
 jimport('joomla.html.html.tabs');
 
+/**
+ * 
+ * @version		3.7.188
+ * @since		1.5.3
+ */
 class J2XMLViewCpanel extends JViewLegacy
 {
 	function display($tpl = null)
@@ -91,17 +93,17 @@ class J2XMLViewCpanel extends JViewLegacy
 			jimport('eshiol.core.file');
 
 			$min = ($this->params->get('debug', 0) ? '' : '.min');
-			JLog::add(new JLogEntry("loading encryption{$min}.js...", JLOG::DEBUG, 'com_j2xml'));			
+			JLog::add(new JLogEntry("loading encryption{$min}.js...", JLog::DEBUG, 'com_j2xml'));
 			$doc->addScript("../media/lib_eshiol_core/js/encryption{$min}.js");
-			JLog::add(new JLogEntry("loading core{$min}.js...", JLOG::DEBUG, 'com_j2xml'));
+			JLog::add(new JLogEntry("loading core{$min}.js...", JLog::DEBUG, 'com_j2xml'));
 			$doc->addScript("../media/lib_eshiol_core/js/core{$min}.js");
-			JLog::add(new JLogEntry("loading version_compare{$min}.js...", JLOG::DEBUG, 'com_j2xml'));
+			JLog::add(new JLogEntry("loading version_compare{$min}.js...", JLog::DEBUG, 'com_j2xml'));
 			$doc->addScript("../media/lib_eshiol_core/js/version_compare{$min}.js");
-			JLog::add(new JLogEntry("loading j2xml{$min}.js...", JLOG::DEBUG, 'com_j2xml'));
+			JLog::add(new JLogEntry("loading j2xml{$min}.js...", JLog::DEBUG, 'com_j2xml'));
 			$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml{$min}.js");
 
 			$toolbar = JToolBar::getInstance('toolbar');
-			$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null, 'xml,gz', null, $this->params->get('ajax', 0) ? 'eshiol.j2xml.import' : null);
+			$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null, 'xml,gz', null, $this->params->get('ajax', 0) ? 'eshiol.j2xml.importer' : null);
 //			$params = JComponentHelper::getParams('com_j2xml');
 //			$hostname = JFactory::getURI()->getHost();
 			$jinput   = JFactory::getApplication()->input;

@@ -1,14 +1,11 @@
 <?php
 /**
- * @version		3.6.158 administrator/com_j2xml/models/website.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
- * @since		1.5.3
  * 
  * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010, 2018 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -23,6 +20,9 @@ jimport('joomla.application.component.modeladmin');
 
 /**
  * Website model
+ * 
+ * @version		3.7.187
+ * @since		1.5.3
  */
 class J2XMLModelWebsite extends JModelAdmin
 {
@@ -35,7 +35,7 @@ class J2XMLModelWebsite extends JModelAdmin
 	 */
 	protected function canDelete($record)
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		if (!empty($record->id)) {
 			if ($record->state != -2) {
@@ -56,7 +56,7 @@ class J2XMLModelWebsite extends JModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		$user = JFactory::getUser();
 
@@ -74,7 +74,7 @@ class J2XMLModelWebsite extends JModelAdmin
 	 */
 	public function getTable($type = 'Website', $prefix = 'J2XMLTable', $config = array())
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		return JTable::getInstance($type, $prefix, $config);
 	}
@@ -89,7 +89,7 @@ class J2XMLModelWebsite extends JModelAdmin
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		// Get the form.
 		$form = $this->loadForm('com_j2xml.website', 'website', array('control' => 'jform', 'load_data' => $loadData));
@@ -108,7 +108,7 @@ class J2XMLModelWebsite extends JModelAdmin
 	 */
 	protected function loadFormData()
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		// Check the session for previously entered form data.
 		$data = JFactory::getApplication()->getUserState('com_j2xml.edit.website.data', array());
@@ -128,7 +128,7 @@ class J2XMLModelWebsite extends JModelAdmin
 	 */
 	protected function prepareTable($table)
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		$table->title = htmlspecialchars_decode($table->title, ENT_QUOTES);
 	}
@@ -144,7 +144,7 @@ class J2XMLModelWebsite extends JModelAdmin
 	 */
 	public function save($data)
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		if ($data['type'] == 1)
 		{
@@ -167,7 +167,7 @@ class J2XMLModelWebsite extends JModelAdmin
 	 */
 	public function getItem($pk = null)
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		if ($item = parent::getItem($pk))
 		{
