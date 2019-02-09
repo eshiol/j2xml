@@ -21,7 +21,6 @@ use Joomla\Registry\Registry;
 jimport('joomla.application.component.controller');
 
 JLoader::import('eshiol.j2xml.Importer');
-JLoader::import('eshiol.j2xmlpro.Importer');
 
 jimport('cms.response.json');
 
@@ -141,14 +140,7 @@ class J2XMLControllerCpanel extends JControllerLegacy
 					$iparams->set('content_category_forceto', $params->get('category'));
 				}
 
-				if (class_exists('eshiol\J2XMLPro\Importer'))
-				{
-					$importer = new eshiol\J2XMLPro\Importer();
-				}
-				else
-				{
-					$importer = new eshiol\J2XML\Importer();
-				}
+				$importer = new eshiol\J2XML\Importer();
 				//set_time_limit(120);
 				$importer->import($xml, $iparams);
 			}

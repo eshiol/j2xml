@@ -19,7 +19,6 @@ defined('_JEXEC') or die('Restricted access.');
 use Joomla\Registry\Registry;
 
 JLoader::import('eshiol.j2xml.Importer');
-JLoader::import('eshiol.j2xmlpro.Importer');
 
 require_once JPATH_ADMINISTRATOR.'/components/com_j2xml/helpers/j2xml.php';
 
@@ -191,14 +190,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$iparams->set('content_category_forceto', $params->get('category'));
 			}
 
-			if (class_exists('eshiol\J2XMLPro\Importer'))
-			{
-				$importer = new eshiol\J2XMLPro\Importer();
-			}
-			else
-			{
-				$importer = new eshiol\J2XML\Importer();
-			}
+			$importer = new eshiol\J2XML\Importer();
 			//set_time_limit(120);
 			$importer->import($xml, $iparams);
 		}

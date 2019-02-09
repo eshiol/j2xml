@@ -686,38 +686,4 @@ class Table extends \JTable
 		return (($date == '0000-00-00 00:00:00') || ($date == '1970-01-01 00:00:00')) ? \JFactory::getDbo()->getNullDate() : (new \JDate($date))->toSQL(
 				false);
 	}
-
-	/**
-	 * Get the menu id from the path
-	 *
-	 * @param null|string $menu
-	 *        	the path of the menu
-	 * @return int since 19.2.318
-	 */
-	public static function getMenuId ($menu)
-	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
-		if ($menu != null)
-		{
-			$db = \JFactory::getDBO();
-			$query = $db->getQuery(true)
-				->select($db->qn('id'))
-				->from($db->qn('#__menu'))
-				->where($db->qn('path') . ' = ' . $db->q($menu));
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
-			$menu_id = $db->setQuery($query)->loadResult();
-			if (! $menu_id)
-			{
-				$menu_id = 1;
-			}
-		}
-		else
-		{
-			$menu_id = 1;
-		}
-
-		\JLog::add(new \JLogEntry($menu . ' -> ' . $menu_id, \JLog::DEBUG, 'lib_j2xml'));
-		return $menu_id;
-	}
 }
