@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	lib_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -24,7 +24,7 @@ use Joomla\CMS\Log\LogEntry;
 /**
  * Installation class to perform additional changes during install/uninstall/update
  * 
- * @version		19.2.318
+ * @version		19.2.319
  * @since		18.11.311
  */
 class eshiolj2xmlInstallerScript
@@ -52,12 +52,14 @@ class eshiolj2xmlInstallerScript
 		$db = Factory::getDbo();
 		
 		$queries = array();
-		if ($db->getServerType() === 'mysql')
+		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+		
+		if ($serverType === 'mysql')
 		{
 			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
 			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath;";
 		}
-		elseif ($db->getServerType() === 'postgresql')
+		elseif ($serverType === 'postgresql')
 		{
 			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath(INT);";
 		}
@@ -125,7 +127,9 @@ class eshiolj2xmlInstallerScript
 		$db = Factory::getDbo();
 
 		$queries = array();
-		if ($db->getServerType() === 'mysql')
+		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+
+		if ($serverType === 'mysql')
 		{
 			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
 			$queries[] = preg_replace('!\s+!', ' ',<<<EOL
@@ -159,7 +163,7 @@ END;
 EOL
 					);
 		}
-		elseif ($db->getServerType() === 'postgresql')
+		elseif ($serverType === 'postgresql')
 		{
 			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath(INT);";
 			$queries[] = <<<EOL

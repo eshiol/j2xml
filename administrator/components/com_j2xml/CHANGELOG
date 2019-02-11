@@ -1,7 +1,9 @@
----------------------- 3.7.189 Release [9-February-2019] ----------------------
+--------------------- 3.7.189 Release  [10-February-2019] ---------------------
 
-9-February-2019
-  ^ Joomla! 3.4 compatibility (build 189)
+10-February-2019 
+  ^ Joomla! 3+ compatibility (build 189)
+  - menus (build 189)
+  - modules (build 189)
   ^ sender (build 188)
 
 28-January-2019

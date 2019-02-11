@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	com_j2xml
  * 
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -12,43 +12,43 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
- 
+
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-use Joomla\Registry\Registry;
-
 jimport('joomla.application.component.controller');
 
-JLoader::import('eshiol.j2xml.Importer');
+use eshiol\J2xml\Importer;
 
+jimport('eshiol.j2xml.Importer');
 jimport('cms.response.json');
 
-require_once JPATH_ADMINISTRATOR.'/components/com_j2xml/helpers/j2xml.php';
+require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 
 /**
- * Content controller class.
- * 
- * @version		3.7.188
- * @since		3.6.160
+ * Controller class.
+ *
+ * @version 3.7.189
+ * @since 3.6.160
  */
 class J2XMLControllerCpanel extends JControllerLegacy
 {
+
 	/**
 	 * The application object.
 	 *
-	 * @var    JApplicationBase
-	 * @since  3.6.160
+	 * @var JApplicationBase
+	 * @since 3.6.160
 	 */
 	protected $app;
 
-	function __construct($default = array())
+	function __construct ($default = array())
 	{
 		parent::__construct();
 		$this->app = JFactory::getApplication();
 	}
 
-	function import()
+	function import ()
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
@@ -65,64 +65,74 @@ class J2XMLControllerCpanel extends JControllerLegacy
 
 		$params = JComponentHelper::getParams('com_j2xml');
 
-		$results = $dispatcher->trigger('onContentPrepareData', array('com_j2xml.cpanel', &$data));
+		$results = $dispatcher->trigger('onContentPrepareData', array(
+				'com_j2xml.cpanel',
+				&$data
+		));
 		$data = strstr($data, '<?xml version="1.0" ');
 
 		$data = J2XMLHelper::stripInvalidXml($data);
-		if (!defined('LIBXML_PARSEHUGE'))
+		if (! defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 
-		JLog::add(new JLogEntry('data: '.$data, JLog::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry('data: ' . $data, JLog::DEBUG, 'com_j2xml'));
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 
-		if (!$xml)
+		if (! $xml)
 		{
 			$errors = libxml_get_errors();
-			foreach ($errors as $error) {
-				$msg = $error->code.' - '.$error->message.' at line '.$error->line;
-				switch ($error->level) {
+			foreach ($errors as $error)
+			{
+				$msg = $error->code . ' - ' . $error->message . ' at line ' . $error->line;
+				switch ($error->level)
+				{
 					default:
 					case LIBXML_ERR_WARNING:
-						$this->app->enqueueMessage($msg,'message');
+						$this->app->enqueueMessage($msg, 'message');
 						break;
 					case LIBXML_ERR_ERROR:
-						$this->app->enqueueMessage($msg,'notice');
+						$this->app->enqueueMessage($msg, 'notice');
 						break;
 					case LIBXML_ERR_FATAL:
-						$this->app->enqueueMessage($msg,'error');
+						$this->app->enqueueMessage($msg, 'error');
 						break;
 				}
 			}
 			libxml_clear_errors();
 		}
 
-		if (!$xml)
+		if (! $xml)
 		{
-			echo new \JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
+			echo new \JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true,
+					$ignoreMessages = false);
 			$this->app->close();
 			return false;
 		}
 
-		$results = $dispatcher->trigger('onBeforeImport', array('com_j2xml.cpanel', &$xml));
+		$results = $dispatcher->trigger('onBeforeImport', array(
+				'com_j2xml.cpanel',
+				&$xml
+		));
 
-		if (!$xml)
+		if (! $xml)
 		{
-			echo new \JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
+			echo new \JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true,
+					$ignoreMessages = false);
 			$this->app->close();
 			return false;
 		}
 		elseif (strtoupper($xml->getName()) == 'J2XML')
 		{
-			if(!isset($xml['version']))
+			if (! isset($xml['version']))
 			{
-				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'),'error');
+				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), 'error');
 			}
 			else
 			{
-				$iparams = new Registry();
+				$iparams = new \JRegistry();
 
 				$iparams->set('filename', $filename);
 				$iparams->set('categories', $params->get('import_categories', 1));
@@ -140,25 +150,24 @@ class J2XMLControllerCpanel extends JControllerLegacy
 					$iparams->set('content_category_forceto', $params->get('category'));
 				}
 
-				$importer = new eshiol\J2XML\Importer();
-				//set_time_limit(120);
+				$importer = new Importer();
+				// set_time_limit(120);
 				$importer->import($xml, $iparams);
 			}
 		}
 
-		if (!$xml)
+		if (! $xml)
 		{
-			echo new \JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true, $ignoreMessages = false);
+			echo new \JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true,
+					$ignoreMessages = false);
 			$this->app->close();
 			return false;
 		}
 		else
 		{
-			jimport('eshiol.j2xml.Importer');
-
 			$params->set('filename', $filename);
 
-			//set_time_limit(120);
+			// set_time_limit(120);
 			$j2xml = new Importer();
 			$j2xml->import($xml, $params);
 		}

@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	lib_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -12,40 +12,30 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-
 namespace eshiol\J2XML\Table;
-
-defined('JPATH_PLATFORM') or die;
+defined('JPATH_PLATFORM') or die();
 
 use eshiol\J2XML\Table\Table;
-
-
-
-
-
-//use Joomla\Database\DatabaseDriver;
-use Joomla\Registry\Registry;
-
 \JLoader::import('eshiol.j2xml.Table.Table');
 
 /**
  * Viewlevel Table
  *
- * @author		Helios Ciancio
- *
- * @version		18.11.314
- * @since 		15.3.248
+ * @version 19.2.319
+ * @since 15.3.248
  */
 class Viewlevel extends Table
 {
+
 	/**
 	 * Constructor
 	 *
-	 * @param	\JDatabaseDriver  $db  A database connector object
-	 *
-	 * @since	15.3.248
+	 * @param \JDatabaseDriver $db
+	 *        	A database connector object
+	 *        
+	 * @since 15.3.248
 	 */
-	public function __construct(\JDatabaseDriver $db)
+	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
@@ -57,14 +47,18 @@ class Viewlevel extends Table
 	 *
 	 * @access public
 	 */
-	function toXML($mapKeysToText = false)
+	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry(print_r($this->rules, true), \JLog::DEBUG, 'lib_j2xml'));
 
-		$this->_excluded = array_merge($this->_excluded, array('rules'));
+		$this->_excluded = array_merge($this->_excluded, array(
+				'rules'
+		));
 
-		if ($this->_db->getServerType() == 'postgresql')
+		$serverType = (new \JVersion())->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
+
+		if ($serverType === 'postgresql')
 		{
 			$this->_aliases['rule'] = '
 				WITH RECURSIVE usergroups(id, title, parent_id, depth, path) AS (
@@ -77,16 +71,29 @@ class Viewlevel extends Table
 				  FROM usergroups AS p, #__usergroups AS c
 				  WHERE c.parent_id = p.id
 				)
-				SELECT (\'["\' || path || \'"]\') FROM usergroups WHERE id IN ' . str_replace(array('[', ']'), array('(', ')'), $this->rules);
+				SELECT (\'["\' || path || \'"]\') FROM usergroups WHERE id IN ' .
+					 str_replace(array(
+							'[',
+							']'
+					), array(
+							'(',
+							')'
+					), $this->rules);
 		}
 		else
 		{
 			$this->_aliases['rule'] = (string) $this->_db->getQuery(true)
-				->select('usergroups_getpath(' . $this->_db->qn('id') . ')')
-				->from($this->_db->qn('#__usergroups', 'g'))
-				->from($this->_db->qn('#__user_usergroup_map', 'm'))
-				->where($this->_db->qn('g.id') . ' = ' . $this->_db->qn('m.group_id'))
-				->where($this->_db->qn('m.user_id') . ' IN ' . str_replace(array('[', ']'), array('(', ')'), $this->rules));
+				->select('usergroups_getpath(' . $this->_db->quoteName('id') . ')')
+				->from($this->_db->quoteName('#__usergroups', 'g'))
+				->from($this->_db->quoteName('#__user_usergroup_map', 'm'))
+				->where($this->_db->quoteName('g.id') . ' = ' . $this->_db->quoteName('m.group_id'))
+				->where($this->_db->quoteName('m.user_id') . ' IN ' . str_replace(array(
+					'[',
+					']'
+			), array(
+					'(',
+					')'
+			), $this->rules));
 		}
 		\JLog::add(new \JLogEntry($this->_aliases['rule'], \JLog::DEBUG, 'lib_j2xml'));
 
@@ -96,42 +103,48 @@ class Viewlevel extends Table
 	/**
 	 * Import data
 	 *
-	 * @param	\SimpleXMLElement	$xml	xml
-	 * @param	Registry	$params
-	 *     @option	int	'viewlevels'	0: No | 1: Yes, if not exists | 2: Yes, overwrite if exists
-	 *     @option  string 'context'
-	 *
+	 * @param \SimpleXMLElement $xml
+	 *        	xml
+	 * @param \JRegistry $params
+	 *        	@option int 'viewlevels' 0: No | 1: Yes, if not exists | 2:
+	 *        	Yes, overwrite if exists
+	 *        	@option string 'context'
+	 *        
 	 * @throws
-	 * @return	void
-	 * @access	public
-	 *
-	 * @since	18.8.310
+	 * @return void
+	 * @access public
+	 *        
+	 * @since 18.8.310
 	 */
-	public static function import($xml, $params)
+	public static function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
-		$import_viewlevels = 2; //$params->get('viewlevels', 1);
-		if ($import_viewlevels == 0) return;
+		$import_viewlevels = 2; // $params->get('viewlevels', 1);
+		if ($import_viewlevels == 0)
+			return;
 
 		$db = \JFactory::getDbo();
-		foreach($xml->xpath("//j2xml/viewlevel[not(title = '')]") as $record)
+		foreach ($xml->xpath("//j2xml/viewlevel[not(title = '')]") as $record)
 		{
 			self::prepareData($record, $data, $params);
 
 			$id = $data['id'];
 
 			$query = $db->getQuery(true)
-				->select(array($db->qn('id'), $db->qn('title')))
-				->from($db->qn('#__viewlevels'))
-				->where($db->qn('title') . ' = ' . $db->q($data['title']));
+				->select(array(
+					$db->quoteName('id'),
+					$db->quoteName('title')
+			))
+				->from($db->quoteName('#__viewlevels'))
+				->where($db->quoteName('title') . ' = ' . $db->quote($data['title']));
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$item = $db->setQuery($query)->loadObject();
 
-			if (!$item || ($import_viewlevels == 2))
+			if (! $item || ($import_viewlevels == 2))
 			{
 				$table = new \eshiol\J2XML\Table\Viewlevel($db);
-				if (!$item)
+				if (! $item)
 				{
 					$data['id'] = null;
 				}
@@ -157,7 +170,7 @@ class Viewlevel extends Table
 					unset($data['rulelist']);
 				}
 
-				for($i = 0; $i < count($rules_id); $i++)
+				for ($i = 0; $i < count($rules_id); $i ++)
 				{
 					$usergroup = parent::getUsergroupId($rules_id[$i]);
 					if ($usergroup !== null)
@@ -171,7 +184,7 @@ class Viewlevel extends Table
 						$id = 0;
 						\JLog::add(new \JLogEntry(print_r($groups, true), \JLog::DEBUG, 'lib_j2xml'));
 
-						for ($j = 0; $j < count($groups); $j++)
+						for ($j = 0; $j < count($groups); $j ++)
 						{
 							$g[] = $groups[$j];
 							$group = json_encode($g, JSON_NUMERIC_CHECK);
@@ -182,8 +195,11 @@ class Viewlevel extends Table
 							}
 							else // import usergroup
 							{
-								$u = new \Joomla\CMS\Table\Usergroup($db); //\JTable::getInstance('Usergroup');
-								$u->save(array('title' => $groups[$j], 'parent_id' => $id));
+								$u = new \Joomla\CMS\Table\Usergroup($db); // \JTable::getInstance('Usergroup');
+								$u->save(array(
+										'title' => $groups[$j],
+										'parent_id' => $id
+								));
 								$id = $u->id;
 								\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USERGROUP_IMPORTED', $groups[$j]), \JLog::INFO, 'lib_j2xml'));
 							}
@@ -212,17 +228,19 @@ class Viewlevel extends Table
 	/**
 	 * Export data
 	 *
-	 * @param	int					$id		the id of the item to be exported
-	 * @param	\SimpleXMLElement	$xml	xml
-	 * @param	array	$options
+	 * @param int $id
+	 *        	the id of the item to be exported
+	 * @param \SimpleXMLElement $xml
+	 *        	xml
+	 * @param array $options
 	 *
 	 * @throws
-	 * @return	void
-	 * @access	public
-	 *
-	 * @since	18.8.310
+	 * @return void
+	 * @access public
+	 *        
+	 * @since 18.8.310
 	 */
-	public static function export($id, &$xml, $options)
+	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
@@ -233,15 +251,15 @@ class Viewlevel extends Table
 			return;
 		}
 
-		$db			= \JFactory::getDbo();
-		$item		= new Viewlevel($db);
-		if (!$item->load($id))
+		$db = \JFactory::getDbo();
+		$item = new Viewlevel($db);
+		if (! $item->load($id))
 		{
 			return;
 		}
 
-		$doc		= dom_import_simplexml($xml)->ownerDocument;
-		$fragment	= $doc->createDocumentFragment();
+		$doc = dom_import_simplexml($xml)->ownerDocument;
+		$fragment = $doc->createDocumentFragment();
 
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);

@@ -5,7 +5,7 @@
  * @version		3.7.16
  * @since		2.5
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -79,7 +79,6 @@ $lang->load('com_j2xml', JPATH_ADMINISTRATOR, null, false, false)
 
 use eshiol\J2XML\Importer;
 use eshiol\J2XML\Version;
-use Joomla\Registry\Registry;
 
 jimport('eshiol.j2xml.Importer');
 jimport('eshiol.j2xml.Version');
@@ -207,7 +206,7 @@ class J2XMLCli extends JApplicationCli
 				// set_time_limit(120);
 				$params = JComponentHelper::getParams('com_j2xml');
 
-				$iparams = new Registry();
+				$iparams = new \JRegistry();
 				$iparams->set('categories', $params->get('import_categories', 1));
 				$iparams->set('fields', $params->get('import_fields', 1));
 				$iparams->set('images', $params->get('import_images', 1));

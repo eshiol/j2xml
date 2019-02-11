@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	lib_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -18,11 +18,8 @@ namespace eshiol\J2XML;
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-
-
-
 /**
- * @version		19.2.318
+ * @version		19.2.320
  * @since		1.5.3
  */
 class Version
@@ -36,7 +33,7 @@ class Version
 	/** @public static string Development Status */
 	public static $DEV_STATUS	= ''; //dev < alpha = a < beta = b < RC = rc < # < pl = p
 	/** @public static int build Number */
-	public static $BUILD		= '318';
+	public static $BUILD		= '320';
 	/** @public static string Codename */
 	public static $CODENAME	= ' ';
 	/** @public static string Copyright Text */

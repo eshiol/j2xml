@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	lib_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -12,20 +12,14 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-
 namespace eshiol\J2XML\Table;
-
-defined('JPATH_PLATFORM') or die;
+defined('JPATH_PLATFORM') or die();
 
 use eshiol\J2XML\Table\Image;
 use eshiol\J2XML\Table\Table;
 use eshiol\J2XML\Table\Tag;
 use eshiol\J2XML\Table\User;
 use eshiol\J2XML\Table\Viewlevel;
-
-//use Joomla\Database\DatabaseDriver;
-use Joomla\Registry\Registry;
-
 \JLoader::import('eshiol.j2xml.Table.Image');
 \JLoader::import('eshiol.j2xml.Table.Table');
 \JLoader::import('eshiol.j2xml.Table.Tag');
@@ -33,24 +27,24 @@ use Joomla\Registry\Registry;
 \JLoader::import('eshiol.j2xml.Table.Viewlevel');
 
 /**
- * 
- * Category Table
- * 
- * @author		Helios Ciancio
  *
- * @version		19.1.316
- * @since		1.5.1
+ * Category Table
+ *
+ * @version 19.2.319
+ * @since 1.5.1
  */
 class Category extends Table
 {
+
 	/**
 	 * Constructor
 	 *
-	 * @param	\JDatabaseDriver  $db  A database connector object
-	 *
-	 * @since   1.5.1
+	 * @param \JDatabaseDriver $db
+	 *        	A database connector object
+	 *        
+	 * @since 1.5.1
 	 */
-	public function __construct(\JDatabaseDriver $db)
+	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
@@ -62,19 +56,25 @@ class Category extends Table
 	 *
 	 * @access public
 	 */
-	function toXML($mapKeysToText = false)
+	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		// $this->_aliases['tag'] = 'SELECT t.path FROM #__tags t, #__contentitem_tag_map m WHERE type_alias = "' . $this->extension . '.category' . '" AND t.id = m.tag_id AND m.content_item_id = '. $this->id;
-		$this->_aliases['tag'] = (string) $this->_db->getQuery(true)
-			->select($this->_db->qn('t.path'))
-			->from($this->_db->qn('#__tags', 't'))
-			->from($this->_db->qn('#__contentitem_tag_map', 'm'))
-			->where($this->_db->qn('type_alias') . ' = ' . $this->_db->q($this->extension . '.category'))
-			->where($this->_db->qn('t.id') . ' = ' . $this->_db->qn('m.tag_id'))
-			->where($this->_db->qn('m.content_item_id') . ' = ' . $this->_db->q((string) $this->id));
-		\JLog::add(new \JLogEntry($this->_aliases['tag'], \JLog::DEBUG, 'lib_j2xml'));
+		if ((new \JVersion())->isCompatible('3.1'))
+		{
+			// $this->_aliases['tag'] = 'SELECT t.path FROM #__tags t,
+			// #__contentitem_tag_map m WHERE type_alias = "' . $this->extension
+			// . '.category' . '" AND t.id = m.tag_id AND m.content_item_id = '.
+			// $this->id;
+			$this->_aliases['tag'] = (string) $this->_db->getQuery(true)
+				->select($this->_db->quoteName('t.path'))
+				->from($this->_db->quoteName('#__tags', 't'))
+				->from($this->_db->quoteName('#__contentitem_tag_map', 'm'))
+				->where($this->_db->quoteName('type_alias') . ' = ' . $this->_db->quote($this->extension . '.category'))
+				->where($this->_db->quoteName('t.id') . ' = ' . $this->_db->quoteName('m.tag_id'))
+				->where($this->_db->quoteName('m.content_item_id') . ' = ' . $this->_db->quote((string) $this->id));
+			\JLog::add(new \JLogEntry($this->_aliases['tag'], \JLog::DEBUG, 'lib_j2xml'));
+		}
 
 		return $this->_serialize();
 	}
@@ -82,26 +82,30 @@ class Category extends Table
 	/**
 	 * Import data
 	 *
-	 * @param	\SimpleXMLElement	$xml	xml
-	 * @param	Registry	$params
-	 *     @option	int	'fields'	0: No | 1: Yes, if not exists | 2: Yes, overwrite if exists
-	 *     @option  string 'context'
-	 *
+	 * @param \SimpleXMLElement $xml
+	 *        	xml
+	 * @param \JRegistry $params
+	 *        	@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
+	 *        	overwrite if exists
+	 *        	@option string 'context'
+	 *        
 	 * @throws
-	 * @return	void
-	 * @access	public
-	 *
-	 * @since	18.8.310
+	 * @return void
+	 * @access public
+	 *        
+	 * @since 18.8.310
 	 */
-	public static function import($xml, $params)
+	public static function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		$import_categories = $params->get('categories', 0);
-		if ($import_categories == 0) return;
+		if ($import_categories == 0)
+			return;
 
 		$extension = $params->get('extension');
-		if (!$extension) return;
+		if (! $extension)
+			return;
 
 		\JFactory::getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
 		$db = \JFactory::getDbo();
@@ -111,16 +115,17 @@ class Category extends Table
 		{
 			$autoincrement = 0;
 			$maxid = $db->setQuery($db->getQuery(true)
-				->select('MAX(' . $db->qn('id') . ')')
-				->from($db->qn('#__categories')))
+				->select('MAX(' . $db->quoteName('id') . ')')
+				->from($db->quoteName('#__categories')))
 				->loadResult();
 		}
 
-		foreach($xml->xpath("//j2xml/category[not(title = '') and (extension = '{$extension}')]") as $record)
+		foreach ($xml->xpath("//j2xml/category[not(title = '') and (extension = '{$extension}')]") as $record)
 		{
 			self::prepareData($record, $data, $params);
 
-			$alias = $data['alias']; // = JApplication::stringURLSafe($data['alias']);
+			$alias = $data['alias']; // =
+			                         // JApplication::stringURLSafe($data['alias']);
 			$id = $data['id'];
 			$path = $data['path'];
 
@@ -142,40 +147,49 @@ class Category extends Table
 			else
 			{
 				$query = $db->getQuery(true)
-					->select(array($db->qn('id'), $db->qn('title')))
-					->from($db->qn('#__categories'))
-					->where($db->qn('extension') . ' = ' . $db->q($extension))
-					->where((($keep_id == 1) && ($id > 1)) ? $db->qn('id') . ' = ' . $id : $db->qn('path') . ' = ' . $db->q($path));
+					->select(array(
+						$db->quoteName('id'),
+						$db->quoteName('title')
+				))
+					->from($db->quoteName('#__categories'))
+					->where($db->quoteName('extension') . ' = ' . $db->quote($extension))
+					->where((($keep_id == 1) && ($id > 1)) ? $db->quoteName('id') . ' = ' . $id : $db->quoteName('path') . ' = ' . $db->quote($path));
 				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 				$db->setQuery($query);
 				$category = $db->loadObject();
 
 				$table = new \JTableCategory($db);
-				if (!$category || ($import_categories == 2))
+				if (! $category || ($import_categories == 2))
 				{
-//					$table = JTable::getInstance('category');
-//					\JLog::add(new \JLogEntry('import new category '.$path, \JLog::DEBUG, 'lib_j2xml'));
+					// $table = JTable::getInstance('category');
+					// \JLog::add(new \JLogEntry('import new category '.$path,
+					// \JLog::DEBUG, 'lib_j2xml'));
 
-					if (!$category && ($keep_id == 1))
+					if (! $category && ($keep_id == 1))
 					{
 						$query = $db->getQuery(true)
-							->select(array($db->qn('id'), $db->qn('title')))
-							->from($db->qn('#__categories'))
-							->where($db->qn('extension') . ' = ' . $db->q($extension))
-							->where($db->qn('path') . ' = ' . $db->q($path));
+							->select(array(
+								$db->quoteName('id'),
+								$db->quoteName('title')
+						))
+							->from($db->quoteName('#__categories'))
+							->where($db->quoteName('extension') . ' = ' . $db->quote($extension))
+							->where($db->quoteName('path') . ' = ' . $db->quote($path));
 						\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 						$db->setQuery($query);
 						$category = $db->loadObject();
 					}
 
-					if (!$category) // new category
+					if (! $category) // new category
 					{
 						$data['id'] = null;
 						/*
-							if ($keep_access > 0) $data['access'] = $keep_access;
-							if ($keep_state < 2) $data['published'] = $keep_state;
-							if (!$keep_attribs) $data['params'] = '{"category_layout":"","image":""}';
-						*/
+						 * if ($keep_access > 0) $data['access'] = $keep_access;
+						 * if ($keep_state < 2) $data['published'] =
+						 * $keep_state;
+						 * if (!$keep_attribs) $data['params'] =
+						 * '{"category_layout":"","image":""}';
+						 */
 						$table->setLocation($data['parent_id'], 'last-child');
 					}
 					else // category already exists
@@ -183,59 +197,61 @@ class Category extends Table
 						$data['id'] = $category->id;
 						$table->load($data['id']);
 						/*
-							if ($keep_access > 0) $data['access'] = null;
-							if ($keep_state != 0) $data['published'] = null;
-						 	if (!$keep_attribs) $data['params'] = null;
-						 	if (!$keep_author)
-							{
-								$data['created'] = null;
-								$data['created_user_id'] = null;
-								$data['created_by_alias'] = null;
-								$data['modified'] = $now;
-								$data['modified_user_id'] = $this->_user_id;
-								$data['version'] = $table->version + 1;
-							}
-							else // save default values
-							{
-								$data['created'] = $now;
-								$data['created_user_id'] = $this->_user_id;
-								$data['created_by_alias'] = null;
-								$data['modified'] = $this->_nullDate;
-								$data['modified_user_id'] = null;
-								$data['version'] = 1;
-							}
-						*/
+						 * if ($keep_access > 0) $data['access'] = null;
+						 * if ($keep_state != 0) $data['published'] = null;
+						 * if (!$keep_attribs) $data['params'] = null;
+						 * if (!$keep_author)
+						 * {
+						 * $data['created'] = null;
+						 * $data['created_user_id'] = null;
+						 * $data['created_by_alias'] = null;
+						 * $data['modified'] = $now;
+						 * $data['modified_user_id'] = $this->_user_id;
+						 * $data['version'] = $table->version + 1;
+						 * }
+						 * else // save default values
+						 * {
+						 * $data['created'] = $now;
+						 * $data['created_user_id'] = $this->_user_id;
+						 * $data['created_by_alias'] = null;
+						 * $data['modified'] = $this->_nullDate;
+						 * $data['modified_user_id'] = null;
+						 * $data['version'] = 1;
+						 * }
+						 */
 					}
 
 					\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 					$table->bind($data);
 
-					if (isset($data['tags'])) {
-						$table->newTags = Tag::convertPathsToIds( $data['tags'] );
+					if ((new \JVersion())->isCompatible('3.1') && isset($data['tags']))
+					{
+						$table->newTags = Tag::convertPathsToIds($data['tags']);
 					}
 
 					// Trigger the onContentBeforeSave event.
-					// $result = $dispatcher->trigger('onContentBeforeSave', array($this->_option.'.category', &$table, $isNew));
+					// $result = $dispatcher->trigger('onContentBeforeSave',
+					// array($this->_option.'.category', &$table, $isNew));
 					// if (!in_array(false, $result, true))
 
 					if ($table->store())
 					{
-						if (!$category && ($keep_id == 1) && ($id > 1))
+						if (! $category && ($keep_id == 1) && ($id > 1))
 						{
 							try
 							{
 								$query = $db->getQuery(true)
-									->update($db->qn('#__categories'))
-									->set($db->qn('id') . ' = ' . $id)
-									->where($db->qn('id') . ' = ' . $table->id);
+									->update($db->quoteName('#__categories'))
+									->set($db->quoteName('id') . ' = ' . $id)
+									->where($db->quoteName('id') . ' = ' . $table->id);
 								\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 								$db->setQuery($query)->execute();
 								$table->id = $id;
 
 								$query = $db->getQuery(true)
-									->update($db->qn('#__assets'))
-									->set($db->qn('name') . ' = ' . $db->q($data['extension'] . '.category.' . $id))
-									->where($db->qn('id') . ' = ' . $table->asset_id);
+									->update($db->quoteName('#__assets'))
+									->set($db->quoteName('name') . ' = ' . $db->quote($data['extension'] . '.category.' . $id))
+									->where($db->quoteName('id') . ' = ' . $table->asset_id);
 								\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 								$db->setQuery($query)->execute();
 
@@ -244,9 +260,10 @@ class Category extends Table
 									$autoincrement = $id + 1;
 								}
 							}
-							catch(Exception $ex)
+							catch (Exception $ex)
 							{
-								\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_ID_PRESENT', $table->title), \JLog::WARNING, 'lib_j2xml'));
+								\JLog::add(
+										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_ID_PRESENT', $table->title), \JLog::WARNING, 'lib_j2xml'));
 							}
 						}
 						// Rebuild the tree path.
@@ -254,7 +271,9 @@ class Category extends Table
 
 						if ($keep_id && ($id > 0) && ($id != $table->id))
 						{
-							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_ID_PRESENT', $table->title, $id, $table->id), \JLog::WARNING, 'lib_j2xml'));
+							\JLog::add(
+									new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_ID_PRESENT', $table->title, $id, $table->id), \JLog::WARNING,
+											'lib_j2xml'));
 						}
 						else
 						{
@@ -271,13 +290,15 @@ class Category extends Table
 			}
 			if ($keep_id && ($autoincrement > $maxid))
 			{
-				if ($db->getServerType() == 'postgresql')
+				$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+				
+				if ($serverType === 'postgresql')
 				{
-					$query = 'ALTER SEQUENCE ' . $db->qn('#__categories_id_seq') . ' RESTART WITH ' . $autoincrement;
+					$query = 'ALTER SEQUENCE ' . $db->quoteName('#__categories_id_seq') . ' RESTART WITH ' . $autoincrement;
 				}
 				else
 				{
-					$query = 'ALTER TABLE ' . $db->qn('#__categories') . ' AUTO_INCREMENT = ' . $autoincrement;
+					$query = 'ALTER TABLE ' . $db->quoteName('#__categories') . ' AUTO_INCREMENT = ' . $autoincrement;
 				}
 				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 				$db->setQuery($query)->execute();
@@ -289,17 +310,19 @@ class Category extends Table
 	/**
 	 * Export data
 	 *
-	 * @param	int					$id		the id of the item to be exported
-	 * @param	\SimpleXMLElement	$xml	xml
-	 * @param	array	$options
+	 * @param int $id
+	 *        	the id of the item to be exported
+	 * @param \SimpleXMLElement $xml
+	 *        	xml
+	 * @param array $options
 	 *
 	 * @throws
-	 * @return	void
-	 * @access	public
-	 *
-	 * @since	18.8.310
+	 * @return void
+	 * @access public
+	 *        
+	 * @since 18.8.310
 	 */
-	public static function export($id, &$xml, $options)
+	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
@@ -310,19 +333,22 @@ class Category extends Table
 			return;
 		}
 
-		$db			= \JFactory::getDbo();
-		$item		= new Category($db);
-		if (!$item->load($id))
+		$db = \JFactory::getDbo();
+		$item = new Category($db);
+		if (! $item->load($id))
 		{
 			return;
 		}
 
-		$allowed_extensions = array('com_content','com_buttons');
+		$allowed_extensions = array(
+				'com_content',
+				'com_buttons'
+		);
 		if (in_array($item->extension, $allowed_extensions))
 		{
 			if (isset($options['content']) && $options['content'])
 			{
-				$table = '#__'.substr($item->extension, 4);
+				$table = '#__' . substr($item->extension, 4);
 				$extension = '\\eshiol\\J2XML\\Table\\' . ucfirst(substr($item->extension, 4));
 				$query = $db->getQuery(true)
 					->select('id')
@@ -344,8 +370,8 @@ class Category extends Table
 			Category::export($item->parent_id, $xml, $options);
 		}
 
-		$doc		= dom_import_simplexml($xml)->ownerDocument;
-		$fragment	= $doc->createDocumentFragment();
+		$doc = dom_import_simplexml($xml)->ownerDocument;
+		$fragment = $doc->createDocumentFragment();
 
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
@@ -369,10 +395,10 @@ class Category extends Table
 		{
 			$img = null;
 			$text = html_entity_decode($item->description);
-			$_image = preg_match_all(self::IMAGE_MATCH_STRING,$text,$matches,PREG_PATTERN_ORDER);
+			$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text, $matches, PREG_PATTERN_ORDER);
 			if (count($matches[1]) > 0)
 			{
-				for ($i = 0; $i < count($matches[1]); $i++)
+				for ($i = 0; $i < count($matches[1]); $i ++)
 				{
 					if ($_image = $matches[1][$i])
 					{
@@ -390,11 +416,14 @@ class Category extends Table
 			}
 		}
 
-		$htags = new \JHelperTags();
-		$itemtags = $htags->getItemTags($item->extension.'.category', $id);
-		foreach ($itemtags as $itemtag)
+		if ((new \JVersion())->isCompatible('3.1'))
 		{
-			Tag::export($itemtag->tag_id, $xml, $options);
+			$htags = new \JHelperTags();
+			$itemtags = $htags->getItemTags($item->extension . '.category', $id);
+			foreach ($itemtags as $itemtag)
+			{
+				Tag::export($itemtag->tag_id, $xml, $options);
+			}
 		}
 	}
 }

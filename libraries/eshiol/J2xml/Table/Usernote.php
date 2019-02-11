@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	lib_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -12,23 +12,13 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-
 namespace eshiol\J2XML\Table;
-
-defined('JPATH_PLATFORM') or die;
+defined('JPATH_PLATFORM') or die();
 
 use eshiol\J2XML\Table\Category;
 use eshiol\J2XML\Table\Image;
 use eshiol\J2XML\Table\Table;
 use eshiol\J2XML\Table\User;
-
-
-
-
-
-//use Joomla\Database\DatabaseDriver;
-use Joomla\Registry\Registry;
-
 \JLoader::import('eshiol.j2xml.Table.Category');
 \JLoader::import('eshiol.j2xml.Table.Image');
 \JLoader::import('eshiol.j2xml.Table.Table');
@@ -37,21 +27,21 @@ use Joomla\Registry\Registry;
 /**
  * Usernote Table
  *
- * @author		Helios Ciancio
- *
- * @version		18.8.310
- * @since		14.8.240
+ * @version 19.2.319
+ * @since 14.8.240
  */
 class Usernote extends \eshiol\J2XML\Table\Table
 {
+
 	/**
 	 * Constructor
 	 *
-	 * @param	\JDatabaseDriver  $db  A database connector object
-	 *
-	 * @since	15.3.248
+	 * @param \JDatabaseDriver $db
+	 *        	A database connector object
+	 *        
+	 * @since 15.3.248
 	 */
-	public function __construct(\JDatabaseDriver $db)
+	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
@@ -61,17 +51,19 @@ class Usernote extends \eshiol\J2XML\Table\Table
 	/**
 	 * Export data
 	 *
-	 * @param	int					$id		the id of the item to be exported
-	 * @param	\SimpleXMLElement	$xml	xml
-	 * @param	array	$options
+	 * @param int $id
+	 *        	the id of the item to be exported
+	 * @param \SimpleXMLElement $xml
+	 *        	xml
+	 * @param array $options
 	 *
 	 * @throws
-	 * @return	void
-	 * @access	public
-	 *
-	 * @since	18.8.310
+	 * @return void
+	 * @access public
+	 *        
+	 * @since 18.8.310
 	 */
-	public static function export($id, &$xml, $options)
+	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
@@ -82,15 +74,15 @@ class Usernote extends \eshiol\J2XML\Table\Table
 			return;
 		}
 
-		$db			= \JFactory::getDbo();
-		$item		= new Usernote($db);
-		if (!$item->load($id))
+		$db = \JFactory::getDbo();
+		$item = new Usernote($db);
+		if (! $item->load($id))
 		{
 			return;
 		}
 
-		$doc		= dom_import_simplexml($xml)->ownerDocument;
-		$fragment	= $doc->createDocumentFragment();
+		$doc = dom_import_simplexml($xml)->ownerDocument;
+		$fragment = $doc->createDocumentFragment();
 
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
@@ -111,10 +103,10 @@ class Usernote extends \eshiol\J2XML\Table\Table
 		{
 			$img = null;
 			$text = html_entity_decode($item->body);
-			$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text,$matches, PREG_PATTERN_ORDER);
+			$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text, $matches, PREG_PATTERN_ORDER);
 			if (count($matches[1]) > 0)
 			{
-				for ($i = 0; $i < count($matches[1]); $i++)
+				for ($i = 0; $i < count($matches[1]); $i ++)
 				{
 					if ($_image = $matches[1][$i])
 					{
@@ -133,18 +125,20 @@ class Usernote extends \eshiol\J2XML\Table\Table
 	/**
 	 * Import data
 	 *
-	 * @param	\SimpleXMLElement	$xml	xml
-	 * @param	Registry	$params
-	 *     @option	int	'usernote'	0: No | 1: Yes, if not exists | 2: Yes, overwrite if exists
-	 *     @option  string 'context'
-	 *
+	 * @param \SimpleXMLElement $xml
+	 *        	xml
+	 * @param \JRegistry $params
+	 *        	@option int 'usernote' 0: No | 1: Yes, if not exists | 2: Yes,
+	 *        	overwrite if exists
+	 *        	@option string 'context'
+	 *        
 	 * @throws
-	 * @return	void
-	 * @access	public
-	 *
-	 * @since	18.8.310
+	 * @return void
+	 * @access public
+	 *        
+	 * @since 18.8.310
 	 */
-	public static function import($xml, $params)
+	public static function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 	}

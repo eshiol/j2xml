@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	lib_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -13,15 +13,13 @@
  * other free or open source software licenses.
  */
 namespace eshiol\J2XML\Table;
+
 defined('JPATH_PLATFORM') or die();
 
 use eshiol\J2XML\Table\Contact;
 use eshiol\J2XML\Table\Field;
 use eshiol\J2XML\Table\Table;
 use eshiol\J2XML\Table\Usernote;
-
-// use Joomla\Database\DatabaseDriver;
-use Joomla\Registry\Registry;
 \JLoader::import('eshiol.j2xml.Table.Contact');
 \JLoader::import('eshiol.j2xml.Table.Field');
 \JLoader::import('eshiol.j2xml.Table.Table');
@@ -31,9 +29,7 @@ use Joomla\Registry\Registry;
 /**
  * User Table
  *
- * @author Helios Ciancio
- *        
- * @version 18.11.314
+ * @version 19.2.320
  * @since 1.5.3beta4.39
  */
 class User extends Table
@@ -47,7 +43,7 @@ class User extends Table
 	 *        	
 	 * @since 1.5.3beta4.39
 	 */
-	public function __construct (\JDatabaseDriver $db)
+	public function __construct(\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 		
@@ -59,12 +55,13 @@ class User extends Table
 	 *
 	 * @access public
 	 */
-	function toXML ($mapKeysToText = false)
+	function toXML($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		
-		if ($this->_db->getServerType() == 'postgresql')
-		{
+		$serverType = (new \JVersion())->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
+		
+		if ($serverType === 'postgresql') {
 			$this->_aliases['group'] = '
 				WITH RECURSIVE usergroups(id, title, parent_id, depth, path) AS (
 				  SELECT tn.id, tn.title, tn.parent_id, 1::INT AS depth, tn.title::TEXT AS path 
@@ -79,32 +76,38 @@ class User extends Table
 				SELECT (\'["\' || path || \'"]\')
 				FROM usergroups g INNER JOIN #__user_usergroup_map m ON g.id = m.group_id
 				WHERE m.user_id = ' . (int) $this->id;
-		}
-		else
-		{
+		} else {
 			$this->_aliases['group'] = (string) $this->_db->getQuery(true)
-				->select('usergroups_getpath(' . $this->_db->qn('id') . ')')
-				->from($this->_db->qn('#__usergroups', 'g'))
-				->from($this->_db->qn('#__user_usergroup_map', 'm'))
-				->where($this->_db->qn('g.id') . ' = ' . $this->_db->qn('m.group_id'))
-				->where($this->_db->qn('m.user_id') . ' = ' . (int) $this->id);
+				->select('usergroups_getpath(' . $this->_db->quoteName('id') . ')')
+				->from($this->_db->quoteName('#__usergroups', 'g'))
+				->from($this->_db->quoteName('#__user_usergroup_map', 'm'))
+				->where($this->_db->quoteName('g.id') . ' = ' . $this->_db->quoteName('m.group_id'))
+				->where($this->_db->quoteName('m.user_id') . ' = ' . (int) $this->id);
 		}
 		\JLog::add(new \JLogEntry($this->_aliases['group'], \JLog::DEBUG, 'lib_j2xml'));
 		
-		if ((new \JVersion())->isCompatible('3.7'))
-		{
+		if ((new \JVersion())->isCompatible('3.7')) {
 			// $this->_aliases['field'] = 'SELECT f.name, v.value FROM
 			// #__fields_values v, #__fields f WHERE f.id = v.field_id AND
 			// v.item_id = '. (int)$this->id;
 			$this->_aliases['field'] = (string) $this->_db->getQuery(true)
-				->select($this->_db->qn('f.name'))
-				->select($this->_db->qn('v.value'))
-				->from($this->_db->qn('#__fields_values', 'v'))
-				->from($this->_db->qn('#__fields', 'f'))
-				->where($this->_db->qn('f.id') . ' = ' . $this->_db->qn('v.field_id'))
-				->where($this->_db->qn('v.item_id') . ' = ' . $this->_db->q((string) $this->id));
+				->select($this->_db->quoteName('f.name'))
+				->select($this->_db->quoteName('v.value'))
+				->from($this->_db->quoteName('#__fields_values', 'v'))
+				->from($this->_db->quoteName('#__fields', 'f'))
+				->where($this->_db->quoteName('f.id') . ' = ' . $this->_db->quoteName('v.field_id'))
+				->where($this->_db->quoteName('v.item_id') . ' = ' . $this->_db->quote((string) $this->id));
 			\JLog::add(new \JLogEntry($this->_aliases['field'], \JLog::DEBUG, 'lib_j2xml'));
 		}
+		
+		// $this->_aliases['profile'] = 'SELECT profile_key name, profile_value
+		// value FROM #__user_profiles WHERE user_id = '. (int)$this->id;
+		$this->_aliases['profile'] = (string) $this->_db->getQuery(true)
+			->select($this->_db->quoteName('profile_key', 'name'))
+			->select($this->_db->quoteName('profile_value', 'value'))
+			->from($this->_db->quoteName('#__user_profiles'))
+			->where($this->_db->quoteName('user_id') . ' = ' . $this->_db->quote($this->id));
+		\JLog::add(new \JLogEntry($this->_aliases['profile'], \JLog::DEBUG, 'lib_j2xml'));
 		
 		return parent::_serialize();
 	}
@@ -114,7 +117,7 @@ class User extends Table
 	 *
 	 * @param \SimpleXMLElement $xml
 	 *        	xml
-	 * @param Registry $params
+	 * @param \JRegistry $params
 	 *        	@option int 'tags' 1: Yes, if not exists; 2: Yes, overwrite if
 	 *        	exists
 	 *        	@option string 'context'
@@ -125,7 +128,7 @@ class User extends Table
 	 *        
 	 * @since 18.8.310
 	 */
-	public static function import ($xml, $params)
+	public static function import($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		
@@ -133,139 +136,145 @@ class User extends Table
 		if (! $import_users)
 			return;
 		
-		$keep_user_id = $params->get('keep_user_id', '0');
+		$keepId = $params->get('keep_user_id', '0');
 		$keep_user_attribs = $params->get('keep_user_attribs', '1');
 		
 		\JFactory::getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
 		
 		$db = \JFactory::getDbo();
-		$autoincrement = 0;
 		
+		$autoincrement = 0;
 		$maxid = $db->setQuery($db->getQuery(true)
-			->select('MAX(' . $db->qn('id') . ')')
-			->from($db->qn('#__users')))
+			->select('MAX(' . $db->quoteName('id') . ')')
+			->from($db->quoteName('#__users')))
 			->loadResult();
 		
-		foreach ($xml->xpath("//j2xml/user[not(username = '')]") as $record)
-		{
+		foreach ($xml->xpath("//j2xml/user[not(username = '')]") as $record) {
 			self::prepareData($record, $data, $params);
 			
-			if (isset($data['group']))
-			{
+			if (isset($data['group'])) {
 				$data['groups'][] = parent::getUsergroupId($data['group']);
 				unset($data['group']);
-			}
-			elseif (isset($data['grouplist']))
-			{
+			} elseif (isset($data['grouplist'])) {
 				$data['groups'] = array();
-				foreach ($data['grouplist'] as $v)
-				{
+				foreach ($data['grouplist']['group'] as $v) {
 					$data['groups'][] = parent::getUsergroupId($v);
 				}
 				unset($data['grouplist']);
 			}
 			
-			if (isset($data['password']))
-			{
+			if (isset($data['password'])) {
 				$data['password_crypted'] = $data['password'];
 				$data['password2'] = $data['password'] = \JText::_('LIB_J2XML_PASSWORD_NOT_AVAILABLE');
-			}
-			elseif (isset($data['password_clear']))
-			{
+			} elseif (isset($data['password_clear'])) {
 				$data['password'] = $data['password2'] = $data['password_clear'];
-			}
-			else
-			{
+			} else {
 				$data['password'] = $data['password2'] = JUserHelper::genRandomPassword();
 			}
 			
-			$user_id = $data['id'];
+			$userId = $data['id'];
 			unset($data['id']);
 			
-			$data['id'] = $db->setQuery(
-					$db->getQuery(true)
-						->select($db->qn('id'))
-						->from($db->qn('#__users'))
-						->where($db->qn('username') . ' = ' . $db->q($data['username'])))
+			$data['id'] = $db->setQuery($db->getQuery(true)
+				->select($db->quoteName('id'))
+				->from($db->quoteName('#__users'))
+				->where($db->quoteName('username') . ' = ' . $db->quote($data['username'])))
 				->loadResult();
 			
-			if (! $data['id'] || ($import_users == 2))
-			{
+			if (! $data['id'] || ($import_users == 2)) {
 				\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 				
 				$user = new \UsersModelUser();
 				$result = $user->save($data);
 				
-				$id = $db->setQuery(
-						$db->getQuery(true)
-							->select($db->qn('id'))
-							->from($db->qn('#__users'))
-							->where($db->qn('username') . ' = ' . $db->q($data['username'])))
+				$id = $db->setQuery($db->getQuery(true)
+					->select($db->quoteName('id'))
+					->from($db->quoteName('#__users'))
+					->where($db->quoteName('username') . ' = ' . $db->quote($data['username'])))
 					->loadResult();
-				if ($id)
-				{
-					if ($error = $user->getError())
-					{
-						\JLog::add(
-								new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_IMPORTED_WITH_ERRORS', $data['name']), \JLog::WARNING, 'lib_j2xml'));
+				
+				if ($id) {
+					if ($error = $user->getError()) {
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_IMPORTED_WITH_ERRORS', $data['name']), \JLog::WARNING, 'lib_j2xml'));
 						\JLog::add(new \JLogEntry($error, \JLog::WARNING, 'lib_j2xml'));
-					}
-					else
-					{
+					} else {
 						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_IMPORTED', $data['name']), \JLog::INFO, 'lib_j2xml'));
 					}
-					if (isset($data['password_crypted']))
-					{
+					
+					if (isset($data['password_crypted'])) {
 						// set password
-						$db->setQuery(
-								$db->getQuery(true)
-									->update('#__users')
-									->set($db->qn('password') . ' = ' . $db->q($data['password_crypted']))
-									->where($db->qn('id') . ' = ' . $id))
-							->execute();
-						
-						if (($user_id != $data['id']) && ($keep_user_id == 1))
-						{
-							$id = $user->getState('user.id');
-							$db->setQuery(
-									$db->getQuery(true)
-										->update('#__users')
-										->set($db->qn('id') . ' = ' . $user_id)
-										->where($db->qn('id') . ' = ' . $data['id']))
-								->execute();
-							$db->setQuery(
-									$db->getQuery(true)
-										->update('#__user_usergroup_map')
-										->set($db->qn('user_id') . ' = ' . $user_id)
-										->where($db->qn('user_id') . ' = ' . $data['id']))
-								->execute();
-							if ($user_id >= $autoincrement)
-							{
-								$autoincrement = $user_id + 1;
-							}
-						}
+						$query = $db->getQuery(true)
+							->update('#__users')
+							->set($db->quoteName('password') . ' = ' . $db->quote($data['password_crypted']))
+							->where($db->quoteName('id') . ' = ' . $id);
+						\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+						$db->setQuery($query)->execute();
 					}
-				}
-				else
-				{
+					
+					if (($userId != $id) && ($keepId == 1)) {
+						$id = $user->getState('user.id');
+						$query = $db->getQuery(true)
+							->update('#__users')
+							->set($db->quoteName('id') . ' = ' . $userId)
+							->where($db->quoteName('id') . ' = ' . $id);
+						\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+						$db->setQuery($query)->execute();
+						
+						$query = $db->getQuery(true)
+							->update('#__user_usergroup_map')
+							->set($db->quoteName('user_id') . ' = ' . $userId)
+							->where($db->quoteName('user_id') . ' = ' . $id);
+						\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+						$db->setQuery($query)->execute();
+						
+						if ($userId >= $autoincrement) {
+							$autoincrement = $userId + 1;
+						}
+						
+						$id = $userId;
+					}
+					
+					try {
+						$query = $db->getQuery(true)
+							->delete($db->quoteName('#__user_profiles'))
+							->where($db->quoteName('user_id') . ' = ' . $id);
+						\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+						$db->setQuery($query)->execute();
+						
+						if (isset($data['profile'])) {
+							$query = $db->getQuery(true)->insert($db->quoteName('#__user_profiles'));
+							$query->values($id . ', ' . $db->quote($data['profile']['name']) . ', ' . $db->quote($data['profile']['value']) . ', 1');
+							\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+							$db->setQuery($query)->execute();
+						} elseif (isset($data['profilelist'])) {
+							\JLog::add(new \JLogEntry(print_r($data['profilelist'], true), \JLog::DEBUG, 'lib_j2xml'));
+							$query = $db->getQuery(true)->insert($db->quoteName('#__user_profiles'));
+							$order = 1;
+							$query->columns($db->quoteName(array('user_id', 'profile_key', 'profile_value', 'ordering')));
+							foreach ($data['profilelist']['profile'] as $v) {
+								$query->values($id . ', ' . $db->quote($v['name']) . ', ' . $db->quote($v['value']) . ', ' . $order ++);
+							}
+							\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+							$db->setQuery($query)->execute();
+						}
+					} catch (\JException $e) {
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_NO_PROFILE', $data['name']), \JLog::WARNING, 'lib_j2xml'));
+					}
+				} else {
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_NOT_IMPORTED', $data['name']), \JLog::ERROR, 'lib_j2xml'));
-					if ($error = $user->getError())
-					{
+					if ($error = $user->getError()) {
 						\JLog::add(new \JLogEntry($error, \JLog::WARNING, 'lib_j2xml'));
 					}
 				}
 			}
 		}
 		
-		if ($autoincrement > $maxid)
-		{
-			if ($db->getServerType() == 'postgresql')
-			{
-				$query = 'ALTER SEQUENCE ' . $db->qn('#__users_id_seq') . ' RESTART WITH ' . $autoincrement;
-			}
-			else
-			{
-				$query = 'ALTER TABLE ' . $db->qn('#__users') . ' AUTO_INCREMENT = ' . $autoincrement;
+		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+		if ($autoincrement > $maxid) {
+			if ($serverType === 'postgresql') {
+				$query = 'ALTER SEQUENCE ' . $db->quoteName('#__users_id_seq') . ' RESTART WITH ' . $autoincrement;
+			} else {
+				$query = 'ALTER TABLE ' . $db->quoteName('#__users') . ' AUTO_INCREMENT = ' . $autoincrement;
 			}
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$db->setQuery($query)->execute();
@@ -280,7 +289,7 @@ class User extends Table
 	 *
 	 * @since 18.8.301
 	 */
-	public static function prepareData ($record, &$data, $params)
+	public static function prepareData($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		
@@ -289,14 +298,12 @@ class User extends Table
 		$db = \JFactory::getDbo();
 		
 		// fix null date
-		if (($data['lastResetTime'] == '0000-00-00 00:00:00') || ($data['lastResetTime'] == '1970-01-01 00:00:00'))
-		{
+		if (($data['lastResetTime'] == '0000-00-00 00:00:00') || ($data['lastResetTime'] == '1970-01-01 00:00:00')) {
 			$data['lastResetTime'] = $db->getNullDate();
 		}
 		
 		// fix null date
-		if (($data['lastvisitDate'] == '0000-00-00 00:00:00') || ($data['lastvisitDate'] == '1970-01-01 00:00:00'))
-		{
+		if (($data['lastvisitDate'] == '0000-00-00 00:00:00') || ($data['lastvisitDate'] == '1970-01-01 00:00:00')) {
 			$data['lastvisitDate'] = $db->getNullDate();
 		}
 	}
@@ -316,21 +323,20 @@ class User extends Table
 	 *        
 	 * @since 18.8.310
 	 */
-	public static function export ($id, &$xml, $options)
+	public static function export($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
 		
-		if ($xml->xpath("//j2xml/user/id[text() = '" . $id . "']"))
-		{
+		if ($xml->xpath("//j2xml/user/id[text() = '" . $id . "']")) {
 			return;
 		}
 		
 		$db = \JFactory::getDbo();
+		
 		$item = new User($db);
-		if (! $item->load($id))
-		{
+		if (! $item->load($id)) {
 			return;
 		}
 		
@@ -342,8 +348,7 @@ class User extends Table
 		
 		$db = \JFactory::getDbo();
 		
-		if ($options['contacts'])
-		{
+		if ($options['contacts']) {
 			$query = $db->getQuery(true)
 				->select('id')
 				->from('#__contact_details')
@@ -351,8 +356,7 @@ class User extends Table
 			$db->setQuery($query);
 			
 			$ids_contact = $db->loadColumn();
-			foreach ($ids_contact as $id_contact)
-			{
+			foreach ($ids_contact as $id_contact) {
 				Contact::export($id_contact, $xml, $options);
 			}
 		}
@@ -364,22 +368,19 @@ class User extends Table
 		$db->setQuery($query);
 		
 		$ids_usernote = $db->loadColumn();
-		foreach ($ids_usernote as $id_usernote)
-		{
+		foreach ($ids_usernote as $id_usernote) {
 			Usernote::export($id_usernote, $xml, $options);
 		}
 		
-		if ((new \JVersion())->isCompatible('3.7'))
-		{
+		if ((new \JVersion())->isCompatible('3.7')) {
 			$query = $db->getQuery(true)
 				->select('DISTINCT field_id')
 				->from('#__fields_values')
-				->where('item_id = ' . $db->q($id));
+				->where('item_id = ' . $db->quote($id));
 			$db->setQuery($query);
 			
 			$ids_field = $db->loadColumn();
-			foreach ($ids_field as $id_field)
-			{
+			foreach ($ids_field as $id_field) {
 				Field::export($id_field, $xml, $options);
 			}
 		}

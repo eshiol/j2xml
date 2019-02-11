@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	com_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -47,14 +47,7 @@ class Com_J2xmlInstallerScript
 		if ((new \JVersion())->isCompatible('3.9')) return;
 
 		$db = \JFactory::getDbo();
-		if ((new \JVersion())->isCompatible('3.5'))
-		{
-			$serverType = $db->getServerType();
-		}
-		else
-		{
-			$serverType = 'mysql';
-		}
+		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
 		$queries = array();
 		if ($serverType === 'mysql')
@@ -91,7 +84,7 @@ class Com_J2xmlInstallerScript
 			}
 		}
 	}
-	
+
 	/**
 	 * This method is called after a component is updated.
 	 *
@@ -102,7 +95,7 @@ class Com_J2xmlInstallerScript
 	public function update($parent)
 	{
 	}
-	
+
 	/**
 	 * Runs just before any installation action is preformed on the component.
 	 * Verifications and pre-requisites should run in this function.
@@ -118,7 +111,7 @@ class Com_J2xmlInstallerScript
 	public function preflight($type, $parent)
 	{
 	}
-	
+
 	/**
 	 * Runs right after any installation action is preformed on the component.
 	 *
@@ -137,14 +130,7 @@ class Com_J2xmlInstallerScript
 		if ((new \JVersion())->isCompatible('3.9')) return;
 
 		$db = \JFactory::getDbo();
-		if ((new \JVersion())->isCompatible('3.5')) 
-		{
-			$serverType = $db->getServerType();
-		}
-		else
-		{
-			$serverType = 'mysql';
-		}
+		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
 		$queries = array();
 		if ($serverType === 'mysql')
@@ -157,9 +143,9 @@ BEGIN
     DECLARE temp_path TEXT;
     DECLARE temp_parent INT;
 	SET max_sp_recursion_depth = 255;
-					
+
 	SELECT a.title, a.parent_id FROM #__usergroups a WHERE a.id=id INTO temp_title, temp_parent;
-					
+
 	IF temp_parent = 0
     THEN
        SET path = temp_title;
@@ -192,7 +178,7 @@ DECLARE temp_title VARCHAR(100);
 	temp_parent INT;
 BEGIN
 	SELECT a.title, a.parent_id FROM #__usergroups a WHERE a.id = $1 INTO temp_title, temp_parent;
-	
+
 	IF temp_parent = 0
 	THEN
 		temp_path := temp_title;

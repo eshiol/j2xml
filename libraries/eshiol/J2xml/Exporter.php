@@ -1,9 +1,9 @@
 <?php
 /**
- * @package		J2XML Pro
+ * @package		J2XML
  * @subpackage	lib_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -34,10 +34,6 @@ use eshiol\J2XML\Table\Viewlevel;
 use eshiol\J2XML\Table\Weblink;
 use eshiol\J2XML\Version;
 
-
-
-
-use Joomla\Registry\Registry;
 \JLoader::import('eshiol.j2xml.Table.Category');
 \JLoader::import('eshiol.j2xml.Table.Contact');
 \JLoader::import('eshiol.j2xml.Table.Content');
@@ -52,9 +48,7 @@ use Joomla\Registry\Registry;
 /**
  * Exporter
  * 
- * @author Helios Ciancio
- *        
- * @version 19.2.318
+ * @version 19.2.319
  * @since 1.5.2.14
  */
 class Exporter
@@ -168,7 +162,7 @@ class Exporter
 			Content::export($id, $xml, $options);
 		}
 
-		$params = new Registry($options);
+		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
 		// Trigger the onAfterExport event.
@@ -210,7 +204,7 @@ class Exporter
 			Category::export($id, $xml, $options);
 		}
 
-		$params = new Registry($options);
+		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
 		// Trigger the onAfterExport event.
@@ -251,7 +245,7 @@ class Exporter
 			User::export($id, $xml, $options);
 		}
 
-		$params = new Registry($options);
+		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
 		// Trigger the onAfterExport event.
@@ -292,7 +286,7 @@ class Exporter
 			Weblink::export($id, $xml, $options);
 		}
 
-		$params = new Registry($options);
+		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
 		// Trigger the onAfterExport event.
@@ -301,190 +295,6 @@ class Exporter
 				&$xml,
 				$params
 		));
-
-		return $xml;
-	}
-
-	/**
-	 * Export weblink
-	 *
-	 * @param string $_image
-	 *        	Image name
-	 * @param SimpleXMLElement $xml
-	 *        	xml
-	 * @param array $options
-	 *        	options
-	 * @throws
-	 * @return void
-	 * @since 15.8.257
-	 */
-	private function _weblink ($id, &$xml, $options)
-	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
-		jimport('eshiol.j2xml.Table.Weblink');
-		$item = JTable::getInstance('weblink', 'eshTable');
-		if (! $item->load($id))
-		{
-			return;
-		}
-
-		if ($xml->xpath("//j2xml/weblink/id[text() = '" . $id . "']"))
-		{
-			return;
-		}
-
-		$doc = dom_import_simplexml($xml)->ownerDocument;
-		$fragment = $doc->createDocumentFragment();
-		$fragment->appendXML($item->toXML());
-		$doc->documentElement->appendChild($fragment);
-
-		if ($options['users'])
-		{
-			if ($item->created_by)
-			{
-				\eshiol\J2XML\Table\User::export($item->created_by, $xml, $options);
-			}
-			if ($item->modified_by)
-			{
-				\eshiol\J2XML\Table\User::export($item->modified_by, $xml, $options);
-			}
-		}
-
-		if ($options['images'])
-		{
-			$img = null;
-			$text = $item->description;
-			$_image = preg_match_all($this->_image_match_string, $text, $matches, PREG_PATTERN_ORDER);
-			if (count($matches[1]) > 0)
-			{
-				for ($i = 0; $i < count($matches[1]); $i ++)
-				{
-					if ($_image = $matches[1][$i])
-					{
-						\eshiol\J2XML\Table\Image::export($_image, $xml, $options);
-					}
-				}
-			}
-
-			if ($imgs = json_decode($item->images))
-			{
-				if (isset($imgs->image_first))
-				{
-					\eshiol\J2XML\Table\Image::export($imgs->image_first, $xml, $options);
-				}
-				if (isset($imgs->image_second))
-				{
-					\eshiol\J2XML\Table\Image::export($imgs->image_second, $xml, $options);
-				}
-			}
-		}
-
-		if ($options['categories'] && ($item->catid > 0))
-			self::_category($item->catid, $xml, $options);
-
-		// if (class_exists('JHelperTags'))
-		// {
-		$htags = new JHelperTags();
-		$itemtags = $htags->getItemTags('com_weblinks.weblink', $id);
-		foreach ($itemtags as $itemtag)
-		{
-			self::_tag($itemtag->tag_id, $xml, $options);
-		}
-		// }
-
-		return $xml;
-	}
-
-	/**
-	 * Export button
-	 *
-	 * @param int $id
-	 *        	the id
-	 * @param SimpleXMLElement $xml
-	 *        	xml
-	 * @param array $options
-	 *        	options
-	 * @throws
-	 * @return void
-	 * @since 16.1.275
-	 */
-	private function _buttons ($id, &$xml, $options)
-	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
-		jimport('eshiol.j2xml.Table.button');
-		$item = JTable::getInstance('button', 'eshTable');
-		if (! $item->load($id))
-		{
-			return;
-		}
-
-		if ($xml->xpath("//j2xml/button/id[text() = '" . $id . "']"))
-		{
-			return;
-		}
-
-		$doc = dom_import_simplexml($xml)->ownerDocument;
-		$fragment = $doc->createDocumentFragment();
-		$fragment->appendXML($item->toXML());
-		$doc->documentElement->appendChild($fragment);
-
-		if ($options['users'])
-		{
-			if ($item->created_by)
-			{
-				\eshiol\J2XML\Table\User::export($item->created_by, $xml, $options);
-			}
-			if ($item->modified_by)
-			{
-				\eshiol\J2XML\Table\User::export($item->modified_by, $xml, $options);
-			}
-		}
-
-		if ($options['images'])
-		{
-			$img = null;
-			$text = $item->description;
-			$_image = preg_match_all($this->_image_match_string, $text, $matches, PREG_PATTERN_ORDER);
-			if (count($matches[1]) > 0)
-			{
-				for ($i = 0; $i < count($matches[1]); $i ++)
-				{
-					if ($_image = $matches[1][$i])
-					{
-						\eshiol\J2XML\Table\Image::export($_image, $xml, $options);
-					}
-				}
-			}
-
-			if ($imgs = json_decode($item->images))
-			{
-				if (isset($imgs->image))
-				{
-					\eshiol\J2XML\Table\Image::export($imgs->image, $xml, $options);
-				}
-			}
-		}
-
-		if ($options['categories'] && ($item->catid > 0))
-		{
-			self::_category($item->catid, $xml, $options);
-		}
-
-		// if (class_exists('JHelperTags'))
-		// {
-		$htags = new JHelperTags();
-		$itemtags = $htags->getItemTags('com_buttons.button', $id);
-		foreach ($itemtags as $itemtag)
-		{
-			self::_tag($itemtag->tag_id, $xml, $options);
-		}
-		// }
 
 		return $xml;
 	}
@@ -517,7 +327,7 @@ class Exporter
 			Contact::export($id, $xml, $options);
 		}
 
-		$params = new Registry($options);
+		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
 		// Trigger the onAfterExport event.
@@ -565,7 +375,7 @@ class Exporter
 			Field::export($id, $xml, $options);
 		}
 
-		$params = new Registry($options);
+		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
 		// Trigger the onAfterExport event.

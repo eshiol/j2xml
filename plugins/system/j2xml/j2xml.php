@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	plg_system_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -45,7 +45,7 @@ class plgSystemJ2XML extends JPlugin
 	function __construct (&$subject, $config)
 	{
 		parent::__construct($subject, $config);
-		
+
 		if ($this->params->get('debug') || defined('JDEBUG') && JDEBUG)
 		{
 			JLog::addLogger(array(
@@ -99,28 +99,27 @@ class plgSystemJ2XML extends JPlugin
 		{
 			return true;
 		}
-		
+
 		$enabled = JComponentHelper::getComponent('com_j2xml', true);
 		if (! $enabled->enabled)
 		{
 			return true;
 		}
-		
+
 		$jinput = JFactory::getApplication()->input;
 		$option = $jinput->get('option');
 		$view = $jinput->get('view');
 		$extension = $jinput->get('extension');
-		
+
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('extension_id'))
 			->from($db->quoteName('#__extensions'))
 			->where($db->quoteName('type') . ' = ' . $db->quote('library'));
-		
+
 		if (($option == 'com_content') && (! $view || $view == 'articles' || $view == 'featured') ||
 				 ($option == 'com_users') && (! $view || $view == 'users') || ($option == 'com_weblinks') && (! $view || $view == 'weblinks') ||
 				 ($option == 'com_categories') && ($extension == 'com_content') && (! $view || $view == 'categories') ||
-				 ($option == 'com_categories') && ($extension == 'com_buttons') && (! $view || $view == 'categories') ||
 				 ($option == 'com_contact') && (! $view || $view == 'contacts') ||
 				 ($option == 'com_fields') && (! $view || $view == 'fields'))
 		{
@@ -138,11 +137,11 @@ class plgSystemJ2XML extends JPlugin
 				$toolbar->appendButton('Send', 'out', 'PLG_SYSTEM_J2XML_BUTTON_SEND', $websites, true);
 			}
 		}
-		
+
 		// Trigger the onAfterDispatch event.
 		// JPluginHelper::importPlugin('j2xml');
 		// JFactory::getApplication()->triggerEvent('onLoadJS');
-		
+
 		return true;
 	}
 

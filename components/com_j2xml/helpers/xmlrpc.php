@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	com_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -18,7 +18,6 @@ defined('_JEXEC') or die('Restricted access.');
 
 use eshiol\J2XML\Importer;
 use eshiol\J2XML\Version;
-use Joomla\Registry\Registry;
 
 jimport('eshiol.j2xml.Importer');
 jimport('eshiol.j2xml.Version');
@@ -34,7 +33,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Joomla! J2XML XML-RPC Plugin
  *
- * @version 3.7.188
+ * @version 3.7.189
  * @since 1.5.3
  */
 class XMLRPCJ2XMLServices
@@ -109,7 +108,7 @@ class XMLRPCJ2XMLServices
 			libxml_clear_errors();
 		}
 
-		if (!mb_detect_encoding($data, 'UTF-8'))
+		if (! mb_detect_encoding($data, 'UTF-8'))
 		{
 			$data = mb_convert_encoding($data, 'UTF-8');
 		}
@@ -179,7 +178,7 @@ class XMLRPCJ2XMLServices
 			// set_time_limit(120);
 			$params = JComponentHelper::getParams('com_j2xml');
 
-			$iparams = new Registry();
+			$iparams = new \JRegistry();
 			$iparams->set('categories', $params->get('import_categories', 1));
 			$iparams->set('fields', $params->get('import_fields', 1));
 			$iparams->set('images', $params->get('import_images', 1));

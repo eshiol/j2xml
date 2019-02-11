@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	lib_j2xml
  *
- * @author		Helios Ciancio <info@eshiol.it>
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -12,13 +12,8 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-
 namespace eshiol\J2XML\Table;
-
-defined('JPATH_PLATFORM') or die;
-
-
-use Joomla\Registry\Registry;
+defined('JPATH_PLATFORM') or die();
 
 \JLoader::import('joomla.filesystem.file');
 \JLoader::import('joomla.filesystem.folder');
@@ -26,45 +21,50 @@ use Joomla\Registry\Registry;
 /**
  * Image table
  *
- * @version	19.1.316
- * @since	18.8.310
+ * @version 19.2.319
+ * @since 18.8.310
  */
 class Image
 {
+
 	/**
 	 * Import data
 	 *
-	 * @param	\SimpleXMLElement	$xml	xml
-	 * @param	Registry	$params
-	 *     @option	int	'images'	1: Yes, if not exists; 2: Yes, overwrite if exists
-	 *     @option  string 'context'
-	 *
+	 * @param \SimpleXMLElement $xml
+	 *        	xml
+	 * @param \JRegistry $params
+	 *        	@option int 'images' 1: Yes, if not exists; 2: Yes, overwrite
+	 *        	if exists
+	 *        	@option string 'context'
+	 *        
 	 * @throws
-	 * @return	void
-	 * @access	public
-	 *
-	 * @since	18.8.310
+	 * @return void
+	 * @access public
+	 *        
+	 * @since 18.8.310
 	 */
-	public static function import($xml, $params)
+	public static function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
-		$import_images		= $params->get('images', 0);
-		if ($import_images == 0) return;
+		$import_images = $params->get('images', 0);
+		if ($import_images == 0)
+			return;
 
-		foreach($xml->img as $image)
+		foreach ($xml->img as $image)
 		{
 			$src = JPATH_SITE . '/' . urldecode(html_entity_decode($image['src'], ENT_QUOTES, 'UTF-8'));
 			$data = $image;
-			if (!\JFile::exists($src) || ($import_images == 2))
+			if (! \JFile::exists($src) || ($import_images == 2))
 			{
 				// many thx to Stefanos Tzigiannis
 				$folder = dirname($src);
-				if (!\JFolder::exists($folder))
+				if (! \JFolder::exists($folder))
 				{
 					if (\JFolder::create($folder))
 					{
-						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_FOLDER_WAS_SUCCESSFULLY_CREATED', $folder), \JLog::INFO, 'lib_j2xml'));
+						\JLog::add(
+								new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_FOLDER_WAS_SUCCESSFULLY_CREATED', $folder), \JLog::INFO, 'lib_j2xml'));
 					}
 					else
 					{
@@ -74,8 +74,8 @@ class Image
 				}
 				if (\JFile::write($src, base64_decode($data)))
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_IMAGE_IMPORTED', $image['src']), \JLog::INFO, 'lib_j2xml'));
-					else
-						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_IMAGE_NOT_IMPORTED', $image['src']), \JLog::ERROR, 'lib_j2xml'));
+				else
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_IMAGE_NOT_IMPORTED', $image['src']), \JLog::ERROR, 'lib_j2xml'));
 			}
 		}
 	}
@@ -83,23 +83,25 @@ class Image
 	/**
 	 * Export data
 	 *
-	 * @param	string				$_image		the image to be exported
-	 * @param	\SimpleXMLElement	$xml	xml
-	 * @param	array	$options
+	 * @param string $_image
+	 *        	the image to be exported
+	 * @param \SimpleXMLElement $xml
+	 *        	xml
+	 * @param array $options
 	 *
 	 * @throws
-	 * @return	void
-	 * @access	public
-	 *
-	 * @since	18.8.310
+	 * @return void
+	 * @access public
+	 *        
+	 * @since 18.8.310
 	 */
-	public static function export($image, &$xml, $options)
+	public static function export ($image, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('image: ' . $image, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: '.print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
 
-		if($xml->xpath("//j2xml/img[@src = '" . htmlentities($image, ENT_QUOTES, "UTF-8") . "']"))
+		if ($xml->xpath("//j2xml/img[@src = '" . htmlentities($image, ENT_QUOTES, "UTF-8") . "']"))
 		{
 			return;
 		}

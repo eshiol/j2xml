@@ -43,14 +43,14 @@ class XmlrpcLogger extends \JLogLogger
 	{
 		// Call the parent constructor.
 		parent::__construct($options);
-		
+
 		// Throw an exception if there is not a valid callback
 		if (!isset($this->options['service']))
 		{
 			throw new \RuntimeException(sprintf('%s created without valid service.', get_class($this)));
 		}
 	}
-	
+
 	/**
 	 * Method to add an entry to the log.
 	 *

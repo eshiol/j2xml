@@ -1,7 +1,10 @@
---------------------- 19.2.318 Release  [9-February-2019] ---------------------
+--------------------- 19.2.320 Release [10-February-2019] ---------------------
 
-9-February-2019
-  ^ UTF-8 (build 318)
+10-February-2019
+  + user profiles (build 320)
+  # keep id (build 319)
+  # Joomla! 3+ compatibility (build 319)
+  # UTF-8 (build 318)
   - Menu (build 318)
   - Menutype (build 318)
   - Module (build 318)
