@@ -1,10 +1,7 @@
 <?php
 /**
- * @version		3.2.142 views/content/view.raw.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
- * @since		1.5.3.17
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
@@ -15,16 +12,19 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
- 
+
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-jimport('eshiol.j2xml.Exporter');
-
-require_once dirname(__FILE__).'/../raw.php';
+require_once dirname(__FILE__) . '/../raw.php';
 
 /**
  * J2XML Component Content View
+ *
+ * @version 3.7.190
+ * @since 1.5.3.17
  */
-class J2XMLViewContent extends J2XMLView {}
+class J2XMLViewContent extends J2XMLView
+{
+}
 ?>

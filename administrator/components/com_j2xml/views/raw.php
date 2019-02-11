@@ -16,13 +16,14 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
+jimport('eshiol.j2xmlpro.Exporter');
 jimport('eshiol.j2xml.Exporter');
 
 /**
  * J2XML Component View
- * 
- * @version		3.7.188
- * @since		3.2.137
+ *
+ * @version 3.7.190
+ * @since 3.2.137
  */
 class J2XMLView extends JViewLegacy
 {
@@ -42,7 +43,14 @@ class J2XMLView extends JViewLegacy
 		$options['categories'] = 1;
 		$options['contacts'] = $params->get('export_contacts', '1');
 
-		$exporter = new eshiol\J2XML\Exporter();
+		if (class_exists('eshiol\J2XMLPRO\Exporter'))
+		{
+			$exporter = new eshiol\J2XMLPRO\Exporter();
+		}
+		else
+		{
+			$exporter = new eshiol\J2XML\Exporter();
+		}
 
 		$get_xml = strtolower(str_replace('J2XMLView', '', get_class($this)));
 		$exporter->$get_xml($ids, $xml, $options);

@@ -1,10 +1,7 @@
 <?php
 /**
- * @version		3.7.172 administrator/components/com_j2xml/views/fields/view.raw.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
- * @since		3.7.172
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
@@ -15,16 +12,19 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
- 
+
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-jimport('eshiol.j2xml.Exporter');
-
-require_once dirname(__FILE__).'/../raw.php';
+require_once dirname(__FILE__) . '/../raw.php';
 
 /**
  * J2XML Component Fields View
+ *
+ * @version 3.7.190
+ * @since 3.7.172
  */
-class J2XMLViewFields extends J2XMLView {}
+class J2XMLViewFields extends J2XMLView
+{
+}
 ?>

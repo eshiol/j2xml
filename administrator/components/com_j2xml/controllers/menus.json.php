@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- *
+ * 
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
@@ -16,15 +16,14 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-require_once dirname(__FILE__) . '/../raw.php';
+require_once dirname(__FILE__) . '/json.php';
 
 /**
- * J2XML Component Contact View
+ * Menus controller class.
  *
  * @version 3.7.190
- * @since 3.6.161
+ * @since 3.6.164
  */
-class J2XMLViewContact extends J2XMLView
+class J2XMLControllerMenus extends J2XMLControllerJson
 {
 }
-?>

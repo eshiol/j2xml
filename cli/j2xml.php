@@ -2,7 +2,7 @@
 /**
  * @package		J2XML.CLI
  * @subpackage	cli
- * @version		3.7.16
+ * @version		3.7.18
  * @since		2.5
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
@@ -208,11 +208,13 @@ class J2XMLCli extends JApplicationCli
 
 				$iparams = new \JRegistry();
 				$iparams->set('categories', $params->get('import_categories', 1));
+				$iparams->set('contacts', $params->get('import_contacts', 1));
 				$iparams->set('fields', $params->get('import_fields', 1));
 				$iparams->set('images', $params->get('import_images', 1));
 				$iparams->set('keep_id', $params->get('keep_id', 0));
 				$iparams->set('tags', $params->get('import_tags', 1));
 				$iparams->set('users', $params->get('import_users', 1));
+				$iparams->set('superusers', $params->get('import_superusers', 0));
 				$iparams->set('usernotes', $params->get('import_usernotes', 1));
 				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
 				$iparams->set('content', $params->get('import_content'));

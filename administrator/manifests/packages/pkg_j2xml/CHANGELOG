@@ -1,4 +1,30 @@
---------------------- 3.7.188 Release  [10-February-2019] ---------------------
+--------------------- 3.7.190 Release  [11-February-2019] ---------------------
+
+cli_j2xml-3.7.17
+
+lib_eshiol-3.7.33
+
+lib_j2xml-19.2.322
+  ^ import super users (build 322)
+  + import user notes (build 322)
+  + import contacts (build 322)
+  + Menu (build 321)
+  + Menutype (build 321)
+  + Module (build 321)
+  
+lib_phpxmlrpc-3.1.1
+
+com_j2xml-3.7.191
+  ^ import super users (build 191)
+  + import user notes (build 191)
+  + menus (build 190)
+  + modules (build 190)
+
+plg_system_j2xml-3.7.44
+  + menus (build 44)
+  + modules (build 44)
+
+--------------------- 3.7.189 Release  [10-February-2019] ---------------------
 
 cli_j2xml-3.7.17
   # Joomla! 3+ compatibility (build 17)
@@ -8,6 +34,8 @@ lib_eshiol-3.7.33
   - Xmlrpc (build 33)
 
 lib_j2xml-19.2.319
+  + user profiles (build 320)
+  # keep id (build 319)
   # Joomla! 3+ compatibility (build 319)
   ^ UTF-8 (build 318)
   - Menu (build 318)
@@ -18,7 +46,7 @@ lib_j2xml-19.2.319
   ^ undefined content.created_by (build 316)
   ^ undefined content.language (build 316)
 
-lib_phpxmlrpc-4.3.1.1
+lib_phpxmlrpc-3.1.1
   + first release
 
 com_j2xml-3.7.189

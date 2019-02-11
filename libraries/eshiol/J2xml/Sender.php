@@ -17,13 +17,15 @@ namespace eshiol\J2XML;
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
+use eshiol\J2XML\Messages;
+use eshiol\J2XML\Version;
 jimport('joomla.log.log');
-jimport('eshiol.j2xml.messages');
+jimport('eshiol.j2xml.Messages');
 jimport('eshiol.j2xml.Version');
 
 /**
  *
- * @version 19.2.318
+ * @version 19.2.322
  * @since 1.5.3beta3.38
  */
 class Sender
@@ -64,9 +66,17 @@ class Sender
 			'notice', // LIB_J2XML_MSG_UNKNOWN_NOTICE 30
 			'message', // LIB_J2XML_MSG_UNKNOWN_MESSAGE 31
 			32 => 'notice', // LIB_J2XML_MSG_XMLRPC_DISABLED 32
-			37 => 'notice', // LIB_J2XML_ERROR_COMPONENT_NOT_FOUND 37
-			40 => 'message', // LIB_J2XML_MSG_FIELD_IMPORTED 40
-			'notice' // LIB_J2XML_MSG_FIELD_NOT_IMPORTED 41
+			'message', // LIB_J2XML_MSG_MENUTYPE_IMPORTED 33
+			'notice', // LIB_J2XML_MSG_MENUTYPE_NOT_IMPORTED 34
+			'message', // LIB_J2XML_MSG_MENU_IMPORTED 35
+			'notice', // LIB_J2XML_MSG_MENU_NOT_IMPORTED 36
+			'notice', // LIB_J2XML_ERROR_COMPONENT_NOT_FOUND 37
+			'message', // LIB_J2XML_MSG_MODULE_IMPORTED 38
+			'notice', // LIB_J2XML_MSG_MODULE_NOT_IMPORTED 39
+			'message', // LIB_J2XML_MSG_FIELD_IMPORTED 40
+			'notice', // LIB_J2XML_MSG_FIELD_NOT_IMPORTED 41
+			'message', // LIB_J2XML_MSG_USERNOTE_IMPORTED 42
+			'notice' // LIB_J2XML_MSG_USERNOTE_NOT_IMPORTED 43
 	);
 
 	/*
@@ -80,43 +90,43 @@ class Sender
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('xml: ' . $xml->asXML(), \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		$app = \JFactory::getApplication();
 		$version = explode(".", Version::$DOCVERSION);
 		$xmlVersionNumber = $version[0] . $version[1] . substr('0' . $version[2], strlen($version[2]) - 1);
-
+		
 		$dom = new \DOMDocument('1.0');
 		$dom->preserveWhiteSpace = false;
 		$dom->formatOutput = true;
 		$dom->loadXML($xml->asXML());
 		$data = $dom->saveXML();
-
+		
 		if ($options['gzip'])
 		{
 			$data = gzencode($data, 9);
 		}
-
+		
 		$db = \JFactory::getDBO();
 		$query = 'SELECT `title`, `remote_url`, `username`, `password` ' . 'FROM `#__j2xml_websites` WHERE `state`= 1 AND `id` = ' . $sid;
 		$db->setQuery($query);
 		if (! ($server = $db->loadAssoc()))
 			return;
-
+		
 		$str = $server['remote_url'];
-
+		
 		if (strpos($str, "://") === false)
 			$server['remote_url'] = "http://" . $server['remote_url'];
-
+		
 		if ($str[strlen($str) - 1] != '/')
 			$server['remote_url'] .= '/';
 		$server['remote_url'] .= 'index.php?option=com_j2xml&task=services.import&format=xmlrpc';
-
+		
 		if (! function_exists('xmlrpc_set_type'))
 		{
 			$app->enqueueMessage(\JText::_('LIB_J2XML_XMLRPC_ERROR'), 'error');
 			return;
 		}
-
+		
 		xmlrpc_set_type($data, 'base64');
 		\JLog::add(
 				new \JLogEntry(
@@ -140,14 +150,19 @@ class Sender
 				$server['username'],
 				$server['password']
 		));
-		$context = stream_context_create(array('http' => array(
-			'method' => "POST",
-			'header' => "Content-Type: text/xml",
-			'user_agent' => Version::$PRODUCT.' '.Version::getFullVersion(),
-			'content' => $request,
-			'http' => array('header' => 'Accept-Charset: UTF-8, *;q=0')
-		)));
-
+		$context = stream_context_create(
+				array(
+						'http' => array(
+								'method' => "POST",
+								'header' => "Content-Type: text/xml",
+								'user_agent' => Version::$PRODUCT . ' ' . Version::getFullVersion(),
+								'content' => $request,
+								'http' => array(
+										'header' => 'Accept-Charset: UTF-8, *;q=0'
+								)
+						)
+				));
+		
 		$headers = get_headers($server['remote_url']);
 		\JLog::add(new \JLogEntry("GET " . $server['remote_url'] . "\n" . print_r($headers, true), \JLog::DEBUG, 'lib_j2xml'));
 		if (substr($headers[0], 9, 3) != '200')
@@ -164,7 +179,7 @@ class Sender
 			else
 			{
 				$response = xmlrpc_decode($file);
-
+				
 				\JLog::add(new \JLogEntry(print_r($response, true), \JLog::DEBUG, 'lib_j2xml'));
 				if ($response && xmlrpc_is_fault($response))
 				{
@@ -174,8 +189,8 @@ class Sender
 				{
 					foreach ($response as $msg)
 					{
-						if (isset(\J2XMLMessages::$messages[$msg['code']]))
-							$app->enqueueMessage($server['title'] . ': ' . \JText::sprintf(\J2XMLMessages::$messages[$msg['code']], $msg['string']),
+						if (isset(Messages::$messages[$msg['code']]))
+							$app->enqueueMessage($server['title'] . ': ' . \JText::sprintf(Messages::$messages[$msg['code']], $msg['string']),
 									self::$codes[$msg['code']]);
 						elseif (isset(self::$codes[$msg['code']]))
 							$app->enqueueMessage($server['title'] . ': ' . $msg['message'], self::$codes[$msg['code']]);

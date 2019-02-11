@@ -16,12 +16,10 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-jimport('eshiol.j2xml.Exporter');
-
 /**
  * Content controller class.
  *
- * @version 3.7.186
+ * @version 3.7.190
  * @since 1.5.3
  */
 class J2XMLControllerCategories extends JControllerLegacy
@@ -45,7 +43,7 @@ class J2XMLControllerCategories extends JControllerLegacy
 	{
 		// Check for request forgeries
 		JSession::checkToken() or jexit('Invalid Token');
-		
+
 		$cid = $this->input->post->get('cid', array(
 				0
 		), 'array');

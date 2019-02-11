@@ -17,12 +17,12 @@
 defined('_JEXEC') or die('Restricted access.');
 
 /**
- * Contact controller class.
+ * Menus controller class.
  *
  * @version 3.7.190
- * @since 3.6.161
+ * @since 3.6.164
  */
-class J2XMLControllerContact extends JControllerLegacy
+class J2XMLControllerMenus extends JControllerLegacy
 {
 
 	function __construct ($default = array())
@@ -32,12 +32,12 @@ class J2XMLControllerContact extends JControllerLegacy
 
 	public function display ($cachable = false, $urlparams = false)
 	{
-		$this->input->set('view', 'contact');
+		$this->input->set('view', 'menus');
 		parent::display($cachable, $urlparams);
 	}
 
 	/**
-	 * Export contacts in XML format
+	 * Export menus in XML format
 	 */
 	function export ()
 	{
@@ -48,6 +48,6 @@ class J2XMLControllerContact extends JControllerLegacy
 				0
 		), 'array');
 		$ids = 'cid=' . implode(',', $cid);
-		$this->setRedirect('index.php?option=com_j2xml&task=contact.display&format=raw&' . $ids);
+		$this->setRedirect('index.php?option=com_j2xml&task=menus.display&format=raw&' . $ids);
 	}
 }

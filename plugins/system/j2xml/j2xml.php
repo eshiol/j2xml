@@ -21,7 +21,7 @@ jimport('eshiol.core.standard2');
 
 /**
  *
- * @version 3.7.43
+ * @version 3.7.44
  * @since 1.5.2
  */
 class plgSystemJ2XML extends JPlugin
@@ -112,16 +112,28 @@ class plgSystemJ2XML extends JPlugin
 		$extension = $jinput->get('extension');
 
 		$db = JFactory::getDbo();
+		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('extension_id'))
 			->from($db->quoteName('#__extensions'))
 			->where($db->quoteName('type') . ' = ' . $db->quote('library'));
+		if ((new \JVersion())->isCompatible('3.9'))
+		{
+			$query->where($db->quoteName('element') . ' = ' . $db->quote('eshiol/j2xmlpro'));
+		}
+		else
+		{
+			$query->where($db->quoteName('element') . ' = ' . $db->quote('j2xmlpro'));
+		}
+		$j2xmlpro = $db->setQuery($query)->loadResult();
 
 		if (($option == 'com_content') && (! $view || $view == 'articles' || $view == 'featured') ||
-				 ($option == 'com_users') && (! $view || $view == 'users') || ($option == 'com_weblinks') && (! $view || $view == 'weblinks') ||
-				 ($option == 'com_categories') && ($extension == 'com_content') && (! $view || $view == 'categories') ||
-				 ($option == 'com_contact') && (! $view || $view == 'contacts') ||
-				 ($option == 'com_fields') && (! $view || $view == 'fields'))
+				($option == 'com_users') && (! $view || $view == 'users') || ($option == 'com_weblinks') && (! $view || $view == 'weblinks') ||
+				($option == 'com_categories') && ($extension == 'com_content') && (! $view || $view == 'categories') ||
+				($option == 'com_contact') && (! $view || $view == 'contacts') ||
+				$j2xmlpro && ($option == 'com_menus') && (! $view || $view == 'menus') ||
+				$j2xmlpro && ($option == 'com_modules') && (! $view || $view == 'modules') ||
+				($option == 'com_fields') && (! $view || $view == 'fields'))
 		{
 			$toolbar = JToolBar::getInstance('toolbar');
 			$control = substr($option, 4);

@@ -17,11 +17,12 @@
 defined('_JEXEC') or die('Restricted access.');
 
 use eshiol\J2XML\Importer;
+use eshiol\J2XML\Messages;
 use eshiol\J2XML\Version;
 
 jimport('eshiol.j2xml.Importer');
+jimport('eshiol.j2xml.Messages');
 jimport('eshiol.j2xml.Version');
-jimport('eshiol.j2xml.messages');
 
 // Import JTableCategory
 JLoader::register('JTableCategory', JPATH_PLATFORM . '/joomla/database/table/category.php');
@@ -33,7 +34,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Joomla! J2XML XML-RPC Plugin
  *
- * @version 3.7.189
+ * @version 3.7.191
  * @since 1.5.3
  */
 class XMLRPCJ2XMLServices
@@ -180,11 +181,13 @@ class XMLRPCJ2XMLServices
 
 			$iparams = new \JRegistry();
 			$iparams->set('categories', $params->get('import_categories', 1));
+			$iparams->set('contacts', $params->get('import_contacts', 1));
 			$iparams->set('fields', $params->get('import_fields', 1));
 			$iparams->set('images', $params->get('import_images', 1));
 			$iparams->set('keep_id', $params->get('keep_id', 0));
 			$iparams->set('tags', $params->get('import_tags', 1));
 			$iparams->set('users', $params->get('import_users', 1));
+			$iparams->set('superusers', $params->get('import_superusers', 0));
 			$iparams->set('usernotes', $params->get('import_usernotes', 1));
 			$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
 			$iparams->set('content', $params->get('import_content'));
@@ -361,7 +364,7 @@ class XMLRPCJ2XMLServices
 		$found = false;
 		$msgs = array();
 
-		foreach (J2XMLMessages::$messages as $i => $m)
+		foreach (Messages::$messages as $i => $m)
 		{
 			if ($message == JText::_($m))
 			{

@@ -3,7 +3,7 @@
  * @package		J2XML
  * @subpackage	com_j2xml
  *
- * @author		Helios Ciancio <info (at) eshiol (dot) it>
+ * @author		Helios Ciancio <info@eshiol.it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
@@ -19,12 +19,12 @@ defined('_JEXEC') or die('Restricted access.');
 require_once dirname(__FILE__) . '/../raw.php';
 
 /**
- * J2XML Component Contact View
+ * J2XML Component Menus View
  *
  * @version 3.7.190
- * @since 3.6.161
+ * @since 3.6.164
  */
-class J2XMLViewContact extends J2XMLView
+class J2XMLViewMenus extends J2XMLView
 {
 }
 ?>
