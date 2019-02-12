@@ -21,7 +21,7 @@ jimport('eshiol.core.standard2');
 
 /**
  *
- * @version 3.7.44
+ * @version 3.7.45
  * @since 1.5.2
  */
 class plgSystemJ2XML extends JPlugin
@@ -128,7 +128,7 @@ class plgSystemJ2XML extends JPlugin
 		$j2xmlpro = $db->setQuery($query)->loadResult();
 
 		if (($option == 'com_content') && (! $view || $view == 'articles' || $view == 'featured') ||
-				($option == 'com_users') && (! $view || $view == 'users') || ($option == 'com_weblinks') && (! $view || $view == 'weblinks') ||
+				($option == 'com_users') && (! $view || $view == 'users' || $view == 'levels') || ($option == 'com_weblinks') && (! $view || $view == 'weblinks') ||
 				($option == 'com_categories') && ($extension == 'com_content') && (! $view || $view == 'categories') ||
 				($option == 'com_contact') && (! $view || $view == 'contacts') ||
 				$j2xmlpro && ($option == 'com_menus') && (! $view || $view == 'menus') ||
@@ -136,7 +136,15 @@ class plgSystemJ2XML extends JPlugin
 				($option == 'com_fields') && (! $view || $view == 'fields'))
 		{
 			$toolbar = JToolBar::getInstance('toolbar');
-			$control = substr($option, 4);
+
+			if (($option == 'com_users') && ($view == 'levels'))
+			{
+				$control = 'viewlevels';
+			}
+			else 
+			{
+				$control = substr($option, 4);
+			}
 			$toolbar->appendButton('Standard2', 'download', 'PLG_SYSTEM_J2XML_BUTTON_EXPORT', "j2xml.{$control}.export", true);
 			$doc = JFactory::getDocument();
 			$doc->addScript("../media/lib_eshiol_core/js/encryption.js");
