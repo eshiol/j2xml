@@ -30,7 +30,7 @@ use eshiol\J2XML\Table\Viewlevel;
  *
  * Category Table
  *
- * @version 19.2.322
+ * @version 19.2.323
  * @since 1.5.1
  */
 class Category extends Table

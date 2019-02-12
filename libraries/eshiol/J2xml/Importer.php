@@ -49,7 +49,7 @@ jimport('joomla.user.helper');
 /**
  * Importer
  *
- * @version 19.2.322
+ * @version 19.2.323
  * @since 1.6.0
  */
 class Importer

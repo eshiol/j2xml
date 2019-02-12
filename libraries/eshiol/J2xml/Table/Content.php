@@ -35,7 +35,7 @@ jimport('joomla.application.router');
 /**
  * Content table
  *
- * @version 19.2.319
+ * @version 19.2.323
  * @since 1.5.1
  */
 class Content extends Table
@@ -46,15 +46,15 @@ class Content extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        
+	 *        	
 	 * @since 1.5.1
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-
+		
 		parent::__construct('#__content', 'id', $db);
-
+		
 		/*
 		 * if ((new \JVersion())->isCompatible('3.4'))
 		 * {
@@ -72,43 +72,46 @@ class Content extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-
+		
 		$this->_excluded = array_merge($this->_excluded, array(
 				'sectionid',
 				'mask',
 				'title_alias'
 		));
-
+		
 		// $this->_aliases['featured'] = 'SELECT IFNULL(f.ordering,0) FROM
 		// #__content_frontpage f RIGHT JOIN #__content a ON f.content_id = a.id
 		// WHERE a.id = ' . (int)$this->id;
 		$this->_aliases['featured'] = (string) $this->_db->getQuery(true)
 			->select('COALESCE(' . $this->_db->quoteName('f.ordering') . ', 0)')
 			->from($this->_db->quoteName('#__content_frontpage', 'f'))
-			->join('RIGHT', $this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
+			->join('RIGHT',
+				$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
 			->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
 		\JLog::add(new \JLogEntry($this->_aliases['featured'], \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		// $this->_aliases['rating_sum'] = 'SELECT IFNULL(rating_sum,0) FROM
 		// #__content_rating f RIGHT JOIN #__content a ON f.content_id = a.id
 		// WHERE a.id = ' . (int)$this->id;
 		$this->_aliases['rating_sum'] = (string) $this->_db->getQuery(true)
 			->select('COALESCE(' . $this->_db->quoteName('rating_sum') . ', 0)')
 			->from($this->_db->quoteName('#__content_rating', 'f'))
-			->join('RIGHT', $this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
+			->join('RIGHT',
+				$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
 			->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
 		\JLog::add(new \JLogEntry($this->_aliases['rating_sum'], \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		// $this->_aliases['rating_count'] = 'SELECT IFNULL(rating_count,0) FROM
 		// #__content_rating f RIGHT JOIN #__content a ON f.content_id = a.id
 		// WHERE a.id = ' . (int)$this->id;
 		$this->_aliases['rating_count'] = (string) $this->_db->getQuery(true)
 			->select('COALESCE(' . $this->_db->quoteName('rating_count') . ', 0)')
 			->from($this->_db->quoteName('#__content_rating', 'f'))
-			->join('RIGHT', $this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
+			->join('RIGHT',
+				$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
 			->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
 		\JLog::add(new \JLogEntry($this->_aliases['rating_count'], \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		\JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
 		$config = \JFactory::getConfig();
 		$router = \JRouter::getInstance('site');
@@ -130,7 +133,7 @@ class Content extends Table
 			$this->_aliases['canonical'] = (string) $this->_db->getQuery(true)->select($this->_db->quote($canonical));
 		}
 		\JLog::add(new \JLogEntry($this->_aliases['canonical'], \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		if ((new \JVersion())->isCompatible('3.1'))
 		{
 			// $this->_aliases['tag']='SELECT t.path FROM #__tags t,
@@ -146,7 +149,7 @@ class Content extends Table
 				->where($this->_db->quoteName('m.content_item_id') . ' = ' . $this->_db->quote((string) $this->id));
 			\JLog::add(new \JLogEntry($this->_aliases['tag'], \JLog::DEBUG, 'lib_j2xml'));
 		}
-
+		
 		if ((new \JVersion())->isCompatible('3.7'))
 		{
 			// $this->_aliases['field'] = 'SELECT f.name, v.value FROM
@@ -161,7 +164,7 @@ class Content extends Table
 				->where($this->_db->quoteName('v.item_id') . ' = ' . $this->_db->quote((string) $this->id));
 			\JLog::add(new \JLogEntry($this->_aliases['field'], \JLog::DEBUG, 'lib_j2xml'));
 		}
-
+		
 		return parent::_serialize();
 	}
 
@@ -176,7 +179,7 @@ class Content extends Table
 	 *        	@option int 'content_category_default'
 	 *        	@option int 'content_category_forceto'
 	 *        	@option string 'context'
-	 *        
+	 *        	
 	 * @throws
 	 * @return void
 	 * @access public
@@ -186,20 +189,20 @@ class Content extends Table
 	public static function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		$import_content = $params->get('content', 0);
 		if ($import_content == 0)
 			return;
-
+		
 		$params->def('content_category_default', self::getCategoryId('uncategorised', 'com_content'));
 		$force_to = $params->get('content_category_forceto');
 		$context = $params->get('context', 'com_content.article');
 		$db = \JFactory::getDBO();
 		$nullDate = $db->getNullDate();
 		$userid = \JFactory::getUser()->id;
-
+		
 		\JPluginHelper::importPlugin('content');
-
+		
 		$keep_id = $params->get('keep_id', 0);
 		if ($keep_id)
 		{
@@ -209,17 +212,17 @@ class Content extends Table
 				->from($db->quoteName('#__content')))
 				->loadResult();
 		}
-
+		
 		foreach ($xml->xpath("//j2xml/content[not(name = '')]") as $record)
 		{
 			self::prepareData($record, $data, $params);
-
+			
 			$id = $data['id'];
 			if ($force_to)
 			{
 				$data['catid'] = $force_to;
 			}
-
+			
 			$content = $db->setQuery(
 					$db->getQuery(true)
 						->select(array(
@@ -230,7 +233,7 @@ class Content extends Table
 						->where($db->quoteName('catid') . ' = ' . $db->quote($data['catid']))
 						->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias'])))
 				->loadObject();
-
+			
 			$table = new \JTableContent($db);
 			if (! $content || ($import_content == 2))
 			{
@@ -244,10 +247,10 @@ class Content extends Table
 					$isNew = false;
 					$data['id'] = $content->id;
 				}
-
+				
 				\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 				$table->bind($data);
-
+				
 				if ((new \JVersion())->isCompatible('3.1'))
 				{
 					if (isset($data['tags']))
@@ -255,7 +258,7 @@ class Content extends Table
 						$table->newTags = $data['tags'];
 					}
 				}
-
+				
 				// Trigger the onContentBeforeSave event.
 				$result = \JFactory::getApplication()->triggerEvent('onContentBeforeSave',
 						array(
@@ -263,7 +266,7 @@ class Content extends Table
 								&$table,
 								$isNew
 						));
-
+				
 				if (! in_array(false, $result, true))
 				{
 					if ($table->store())
@@ -279,19 +282,19 @@ class Content extends Table
 								\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 								$db->setQuery($query)->execute();
 								$table->id = $id;
-
+								
 								$query = $db->getQuery(true)
 									->update($db->quoteName('#__assets'))
 									->set($db->quoteName('name') . ' = ' . $db->quote('com_content.article.' . $id))
 									->where($db->quoteName('id') . ' = ' . $table->asset_id);
 								\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 								$db->setQuery($query)->execute();
-
+								
 								if ($id >= $autoincrement)
 								{
 									$autoincrement = $id + 1;
 								}
-
+								
 								\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
 							}
 							catch (\Exception $ex)
@@ -300,14 +303,14 @@ class Content extends Table
 										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $table->title, $id, $table->id),
 												\JLog::WARNING, 'lib_j2xml'));
 							}
-
+							
 							// TODO: featuring, rating
 						}
 						else
 						{
 							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
 						}
-
+						
 						// Trigger the onContentAfterSave event.
 						$result = \JFactory::getApplication()->triggerEvent('onContentAfterSave',
 								array(
@@ -328,7 +331,7 @@ class Content extends Table
 			if ($keep_id && ($autoincrement > $maxid))
 			{
 				$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
-
+				
 				if ($serverType === 'postgresql')
 				{
 					$query = 'ALTER SEQUENCE ' . $db->quoteName('#__content_id_seq') . ' RESTART WITH ' . $autoincrement;
@@ -354,15 +357,15 @@ class Content extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		parent::prepareData($record, $data, $params);
-
+		
 		if (empty($data['alias']))
 		{
 			$data['alias'] = $data['title'];
 			$data['alias'] = str_replace(' ', '-', $data['alias']);
 		}
-
+		
 		if (! isset($data['fulltext']))
 		{
 			$data['fulltext'] = '';
@@ -383,7 +386,7 @@ class Content extends Table
 		{
 			$data['language'] = '*';
 		}
-
+		
 		// if (! (new \JVersion())->isCompatible('3.4') &&
 		// isset($data['published']))
 		if (isset($data['published']))
@@ -414,19 +417,19 @@ class Content extends Table
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		if ($xml->xpath("//j2xml/content/id[text() = '" . $id . "']"))
 		{
 			return;
 		}
-
+		
 		$db = \JFactory::getDbo();
 		$item = new Content($db);
 		if (! $item->load($id))
 		{
 			return;
 		}
-
+		
 		$params = new \JRegistry($options);
 		$dispatcher = \JEventDispatcher::getInstance();
 		\JPluginHelper::importPlugin('j2xml');
@@ -435,17 +438,17 @@ class Content extends Table
 				&$item,
 				$params
 		));
-
+		
 		if ($item->access > 6)
 		{
 			Viewlevel::export($item->access, $xml, $options);
 		}
-
+		
 		if ($options['categories'] && ($item->catid > 0))
 		{
 			Category::export($item->catid, $xml, $options);
 		}
-
+		
 		if ((new \JVersion())->isCompatible('3.1'))
 		{
 			$htags = new \JHelperTags();
@@ -455,29 +458,29 @@ class Content extends Table
 				Tag::export($itemtag->tag_id, $xml, $options);
 			}
 		}
-
+		
 		if ((new \JVersion())->isCompatible('3.7'))
 		{
-
+			
 			$query = $db->getQuery(true)
 				->select('DISTINCT field_id')
 				->from('#__fields_values')
 				->where('item_id = ' . $db->quote($id));
 			$db->setQuery($query);
-
+			
 			$ids_field = $db->loadColumn();
 			foreach ($ids_field as $id_field)
 			{
 				Field::export($id_field, $xml, $options);
 			}
 		}
-
+		
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
-
+		
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
-
+		
 		if ($options['users'])
 		{
 			if ($item->created_by)
@@ -489,7 +492,7 @@ class Content extends Table
 				User::export($item->modified_by, $xml, $options);
 			}
 		}
-
+		
 		if ($options['images'])
 		{
 			$img = null;
@@ -505,21 +508,21 @@ class Content extends Table
 					}
 				}
 			}
-
+			
 			if ($imgs = json_decode($item->images))
 			{
 				if (isset($imgs->image_fulltext))
 				{
 					Image::export($imgs->image_fulltext, $xml, $options);
 				}
-
+				
 				if (isset($imgs->image_intro))
 				{
 					Image::export($imgs->image_intro, $xml, $options);
 				}
 			}
 		}
-
+		
 		return $xml;
 	}
 }

@@ -20,7 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.2.322
+ * @version 19.2.323
  * @since 1.5.3.39
  */
 class Table extends \JTable

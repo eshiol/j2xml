@@ -33,7 +33,6 @@ use eshiol\J2XML\Table\Usernote;
 use eshiol\J2XML\Table\Viewlevel;
 use eshiol\J2XML\Table\Weblink;
 use eshiol\J2XML\Version;
-
 \JLoader::import('eshiol.j2xml.Table.Category');
 \JLoader::import('eshiol.j2xml.Table.Contact');
 \JLoader::import('eshiol.j2xml.Table.Content');
@@ -47,8 +46,8 @@ use eshiol\J2XML\Version;
 
 /**
  * Exporter
- * 
- * @version 19.2.319
+ *
+ * @version 19.2.323
  * @since 1.5.2.14
  */
 class Exporter
@@ -64,20 +63,21 @@ class Exporter
 
 	/**
 	 * CONSTRUCTOR
-	 * 
+	 *
 	 * @since 1.5
 	 */
 	function __construct ()
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		$this->option = (PHP_SAPI != 'cli') ? \JFactory::getApplication()->input->getCmd('option') : 'cli_' .
 				 strtolower(get_class(\JApplicationCli::getInstance()));
 		$this->_db = \JFactory::getDbo();
 	}
 
-	/*
+	/**
 	 * Init xml
+	 *
 	 * @return
 	 * @since 18.8.309
 	 */
@@ -94,7 +94,7 @@ class Exporter
 	function export ($xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		if ($options['debug'] > 0)
 		{
 			$app = \JFactory::getApplication();
@@ -107,16 +107,16 @@ class Exporter
 			}
 		}
 		ob_clean();
-
+		
 		$version = explode(".", Version::$DOCVERSION);
 		$xmlVersionNumber = $version[0] . $version[1] . substr('0' . $version[2], strlen($version[2]) - 1);
-
+		
 		$dom = new \DOMDocument('1.0');
 		$dom->preserveWhiteSpace = false;
 		$dom->formatOutput = true;
 		$dom->loadXML($xml->asXML());
 		$data = $dom->saveXML();
-
+		
 		// modify the MIME type
 		$document = \JFactory::getDocument();
 		if ($options['gzip'])
@@ -134,8 +134,9 @@ class Exporter
 		return true;
 	}
 
-	/*
+	/**
 	 * Export content articles, images, section and categories
+	 *
 	 * @return xml string
 	 * @since 1.5.2.14
 	 */
@@ -144,24 +145,24 @@ class Exporter
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		if (! $xml)
 		{
 			$xml = self::_root();
 		}
-
+		
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-
+		
 		foreach ($ids as $id)
 		{
 			Content::export($id, $xml, $options);
 		}
-
+		
 		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
@@ -171,12 +172,13 @@ class Exporter
 				&$xml,
 				$params
 		));
-
+		
 		return $xml;
 	}
 
-	/*
+	/**
 	 * Export categories
+	 *
 	 * @return xml string
 	 * @since 1.5.3beta5.43
 	 */
@@ -185,25 +187,25 @@ class Exporter
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		if (! $xml)
 		{
 			$xml = self::_root();
 		}
-
+		
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-
+		
 		$options['content'] = 1;
 		foreach ($ids as $id)
 		{
 			Category::export($id, $xml, $options);
 		}
-
+		
 		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
@@ -213,12 +215,13 @@ class Exporter
 				&$xml,
 				$params
 		));
-
+		
 		return $xml;
 	}
 
-	/*
+	/**
 	 * Export users
+	 *
 	 * @return xml string
 	 * @since 1.5.3beta4.39
 	 */
@@ -227,24 +230,24 @@ class Exporter
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		if (! $xml)
 		{
 			$xml = self::_root();
 		}
-
+		
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-
+		
 		foreach ($ids as $id)
 		{
 			User::export($id, $xml, $options);
 		}
-
+		
 		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
@@ -254,12 +257,13 @@ class Exporter
 				&$xml,
 				$params
 		));
-
+		
 		return $xml;
 	}
 
-	/*
+	/**
 	 * Export weblinks
+	 *
 	 * @return xml string
 	 * @since 1.5.3beta3.38
 	 */
@@ -268,24 +272,24 @@ class Exporter
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		if (! $xml)
 		{
 			$xml = self::_root();
 		}
-
+		
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-
+		
 		foreach ($ids as $id)
 		{
 			Weblink::export($id, $xml, $options);
 		}
-
+		
 		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
@@ -295,12 +299,13 @@ class Exporter
 				&$xml,
 				$params
 		));
-
+		
 		return $xml;
 	}
 
-	/*
+	/**
 	 * Export contacts
+	 *
 	 * @return xml string
 	 * @since 16.12.289
 	 */
@@ -309,24 +314,24 @@ class Exporter
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		if (! $xml)
 		{
 			$xml = self::_root();
 		}
-
+		
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-
+		
 		foreach ($ids as $id)
 		{
 			Contact::export($id, $xml, $options);
 		}
-
+		
 		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
@@ -336,10 +341,9 @@ class Exporter
 				&$xml,
 				$params
 		));
-
+		
 		return $xml;
 	}
-
 
 	/**
 	 * Export fields
@@ -357,24 +361,24 @@ class Exporter
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		if (! $xml)
 		{
 			$xml = self::_root();
 		}
-
+		
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-
+		
 		foreach ($ids as $id)
 		{
 			Field::export($id, $xml, $options);
 		}
-
+		
 		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		$dispatcher = \JEventDispatcher::getInstance();
@@ -384,7 +388,49 @@ class Exporter
 				&$xml,
 				$params
 		));
+		
+		return $xml;
+	}
 
+	/**
+	 * Export viewlevels
+	 *
+	 * @return xml string
+	 * @since 192.2.323
+	 */
+	function viewlevels ($ids, &$xml, $options)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
+		
+		if (! $xml)
+		{
+			$xml = self::_root();
+		}
+		
+		if (is_scalar($ids))
+		{
+			$id = $ids;
+			$ids = array();
+			$ids[] = $id;
+		}
+		
+		foreach ($ids as $id)
+		{
+			Viewlevel::export($id, $xml, $options);
+		}
+		
+		$params = new \JRegistry($options);
+		\JPluginHelper::importPlugin('j2xml');
+		$dispatcher = \JEventDispatcher::getInstance();
+		// Trigger the onAfterExport event.
+		$dispatcher->trigger('onAfterExport', array(
+				$this->option . '.' . __FUNCTION__,
+				&$xml,
+				$params
+		));
+		
 		return $xml;
 	}
 }

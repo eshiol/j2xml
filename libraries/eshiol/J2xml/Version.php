@@ -19,7 +19,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 /**
  *
- * @version 19.2.322
+ * @version 19.2.323
  * @since 1.5.3
  */
 class Version
@@ -44,17 +44,18 @@ class Version
 	 * @public static string Development Status
 	 */
 	public static $DEV_STATUS = '';
- // dev < alpha = a < beta = b < RC = rc < # <
-	                                // pl = p
+
+	// dev < alpha = a < beta = b < RC = rc < # <
+	// pl = p
 	/**
 	 * @public static int build Number
 	 */
-	public static $BUILD = '322';
+	public static $BUILD = '323';
 
 	/**
 	 * @public static string Codename
 	 */
-	public static $CODENAME = ' ';
+	public static $CODENAME = 'Shine On You Crazy Diamond';
 
 	/**
 	 * @public static string Copyright Text
@@ -74,7 +75,7 @@ class Version
 	/**
 	 * @public static string xml file version
 	 */
-	public static $DOCVERSION = '18.8.0';
+	public static $DOCVERSION = '19.2.0';
 
 	/**
 	 * @public static string dtd
@@ -133,8 +134,8 @@ class Version
 					return 1; // Return A > B
 				else if ($aVal < $b[$depth])
 					return - 1; // Return B > A
-						                                        // An equal result is
-					                                        // inconclusive at this point
+						            // An equal result is
+						            // inconclusive at this point
 			}
 			else
 			{ // If B does not match A to this depth, then A comes after B in sort

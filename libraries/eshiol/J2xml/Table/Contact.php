@@ -29,7 +29,7 @@ use eshiol\J2XML\Table\User;
 /**
  * Contact Table
  *
- * @version 19.2.322
+ * @version 19.2.323
  * @since 15.9.261
  */
 class Contact extends Table

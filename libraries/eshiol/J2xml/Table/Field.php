@@ -24,7 +24,7 @@ use Joomla\Component\Fields\Administrator\Table\FieldTable;
 /**
  * Field table
  *
- * @version 19.2.319
+ * @version 19.2.323
  * @since 17.6.299
  */
 class Field extends Table
@@ -35,13 +35,13 @@ class Field extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        
+	 *        	
 	 * @since 17.6.299
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		parent::__construct('#__fields', 'id', $db);
 	}
 
@@ -53,11 +53,22 @@ class Field extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		$this->_excluded = array_merge($this->_excluded, array(
 				'group_id'
 		));
-
+		
+		if ($this->group_id)
+		{
+			// $this->_aliases['group'] = 'SELECT title FROM #__fields_groups
+			// WHERE id = '. (int)$this->group_id;
+			$this->_aliases['group'] = (string) $this->_db->getQuery(true)
+				->select($this->_db->quoteName('title'))
+				->from($this->_db->quoteName('#__fields_groups'))
+				->where($this->_db->quoteName('id') . ' = ' . (int) $this->group_id);
+			\JLog::add(new \JLogEntry($this->_aliases['group'], \JLog::DEBUG, 'lib_j2xml'));
+		}
+		
 		// $this->_aliases['category'] = 'SELECT c.path FROM #__categories c,
 		// #__fields_categories fc WHERE c.id = fc.category_id AND fc.field_id
 		// ='.(int)$this->id;
@@ -68,7 +79,7 @@ class Field extends Table
 			->where($this->_db->quoteName('c.id') . ' = ' . $this->_db->quoteName('fc.category_id'))
 			->where($this->_db->quoteName('fc.field_id') . ' = ' . (int) $this->id);
 		\JLog::add(new \JLogEntry($this->_aliases['category'], \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		return parent::_serialize();
 	}
 
@@ -81,7 +92,7 @@ class Field extends Table
 	 *        	@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
 	 *        	overwrite if exists
 	 *        	@option string 'context'
-	 *        
+	 *        	
 	 * @throws
 	 * @return void
 	 * @access public
@@ -91,20 +102,20 @@ class Field extends Table
 	public static function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		$import_fields = $params->get('fields', 0);
 		if ($import_fields == 0)
 			return;
-
+		
 		$context = $params->get('context');
 		$db = \JFactory::getDBO();
 		$nullDate = $db->getNullDate();
 		$userid = \JFactory::getUser()->id;
-
+		
 		foreach ($xml->xpath("//j2xml/field") as $record)
 		{
 			self::prepareData($record, $data, $params);
-
+			
 			\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 			$field = $db->setQuery(
 					$db->getQuery(true)
@@ -114,7 +125,7 @@ class Field extends Table
 						->where($db->quoteName('context') . ' = ' . $db->quote($data['context']))
 						->where($db->quoteName('name') . ' = ' . $db->quote($data['name'])))
 				->loadObject();
-
+			
 			if (! $field || ($import_fields == 2))
 			{
 				/**
@@ -122,7 +133,10 @@ class Field extends Table
 				 */
 				\JLoader::register('FieldTable', JPATH_ADMINISTRATOR . '/components/com_fields/Table/FieldTable.php');
 				if (! class_exists('\Joomla\Component\Fields\Administrator\Table\FieldTable'))
-				{ // Joomla! 3.8 and beyond
+				{ // Joomla!
+				                                                                                 // 3.8
+				                                                                                 // and
+				                                                                                 // beyond
 					\JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fields/tables');
 					$table = \JTable::getInstance('Field', 'FieldsTable');
 				}
@@ -130,7 +144,7 @@ class Field extends Table
 				{ // Joomla! 4
 					$table = new FieldTable($db);
 				}
-
+				
 				if (! $field)
 				{ // new field
 					$data['id'] = null;
@@ -140,7 +154,7 @@ class Field extends Table
 					$data['id'] = $field->id;
 					$table->load($data['id']);
 				}
-
+				
 				// TODO: Trigger the onContentBeforeSave event.
 				$table->bind($data);
 				\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
@@ -168,14 +182,14 @@ class Field extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		parent::prepareData($record, $data, $params);
-
+		
 		if (! isset($data['description']))
 		{
 			$data['description'] = '';
 		}
-
+		
 		if (isset($data['modified_time']) && ($data['modified_time'] != \JFactory::getDbo()->getNullDate()))
 		{
 			$data['modified_time'] = self::fixdate($data['modified_time']);
@@ -202,25 +216,25 @@ class Field extends Table
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
+		
 		if ($xml->xpath("//j2xml/field/id[text() = '" . $id . "']"))
 		{
 			return;
 		}
-
+		
 		$db = \JFactory::getDbo();
 		$item = new Field($db);
 		if (! $item->load($id))
 		{
 			return;
 		}
-
+		
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
-
+		
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
-
+		
 		if ($options['categories'])
 		{
 			$query = $db->getQuery(true)
@@ -228,7 +242,7 @@ class Field extends Table
 				->from('#__fields_categories')
 				->where('field_id = ' . $id);
 			$db->setQuery($query);
-
+			
 			$ids_category = $db->loadColumn();
 			foreach ($ids_category as $id_category)
 			{

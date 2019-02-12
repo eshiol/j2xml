@@ -22,32 +22,36 @@ use Joomla\CMS\Log\Log;
 use Joomla\CMS\Log\LogEntry;
 
 /**
- * Installation class to perform additional changes during install/uninstall/update
- * 
- * @version		19.2.319
- * @since		18.11.311
+ * Installation class to perform additional changes during
+ * install/uninstall/update
+ *
+ * @version 19.2.323
+ * @since 18.11.311
  */
 class eshiolj2xmlInstallerScript
 {
+
 	/**
 	 * This method is called after a component is installed.
 	 *
-	 * @param  \stdClass $parent - Parent object calling this method.
-	 *
+	 * @param \stdClass $parent
+	 *        	- Parent object calling this method.
+	 *        	
 	 * @return void
 	 */
-	public function install($parent)
+	public function install ($parent)
 	{
 	}
-	
+
 	/**
 	 * This method is called after a component is uninstalled.
 	 *
-	 * @param  \stdClass $parent - Parent object calling this method.
-	 *
+	 * @param \stdClass $parent
+	 *        	- Parent object calling this method.
+	 *        	
 	 * @return void
 	 */
-	public function uninstall($parent)
+	public function uninstall ($parent)
 	{
 		$db = Factory::getDbo();
 		
@@ -83,56 +87,62 @@ class eshiolj2xmlInstallerScript
 			}
 		}
 	}
-	
+
 	/**
 	 * This method is called after a component is updated.
 	 *
-	 * @param  \stdClass $parent - Parent object calling object.
-	 *
+	 * @param \stdClass $parent
+	 *        	- Parent object calling object.
+	 *        	
 	 * @return void
 	 */
-	public function update($parent)
+	public function update ($parent)
 	{
 	}
-	
+
 	/**
 	 * Runs just before any installation action is preformed on the component.
 	 * Verifications and pre-requisites should run in this function.
 	 *
-	 * @param  string    $type   - Type of PreFlight action. Possible values are:
-	 *                           - * install
-	 *                           - * update
-	 *                           - * discover_install
-	 * @param  \stdClass $parent - Parent object calling object.
-	 *
+	 * @param string $type
+	 *        	- Type of PreFlight action. Possible values are:
+	 *        	- * install
+	 *        	- * update
+	 *        	- * discover_install
+	 * @param \stdClass $parent
+	 *        	- Parent object calling object.
+	 *        	
 	 * @return void
 	 */
-	public function preflight($type, $parent)
+	public function preflight ($type, $parent)
 	{
 	}
-	
+
 	/**
 	 * Runs right after any installation action is preformed on the component.
 	 *
-	 * @param  string    $type   - Type of PostFlight action. Possible values are:
-	 *                           - * install
-	 *                           - * update
-	 *                           - * discover_install
-	 * @param  \stdClass $parent - Parent object calling object.
-	 *
+	 * @param string $type
+	 *        	- Type of PostFlight action. Possible values are:
+	 *        	- * install
+	 *        	- * update
+	 *        	- * discover_install
+	 * @param \stdClass $parent
+	 *        	- Parent object calling object.
+	 *        	
 	 * @return void
 	 */
-	function postflight($type, $parent)
+	function postflight ($type, $parent)
 	{
 		$db = Factory::getDbo();
-
+		
 		$queries = array();
 		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
-
+		
 		if ($serverType === 'mysql')
 		{
 			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
-			$queries[] = preg_replace('!\s+!', ' ',<<<EOL
+			$queries[] = preg_replace('!\s+!', ' ',
+					<<<EOL
 CREATE PROCEDURE usergroups_getpath(IN id INT, OUT path TEXT)
 BEGIN
     DECLARE temp_title VARCHAR(100);
@@ -151,9 +161,10 @@ BEGIN
     END IF;
 END;
 EOL
-					);
+);
 			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath;";
-			$queries[] = preg_replace('!\s+!', ' ',<<<EOL
+			$queries[] = preg_replace('!\s+!', ' ',
+					<<<EOL
 CREATE FUNCTION usergroups_getpath(id INT) RETURNS TEXT DETERMINISTIC
 BEGIN
     DECLARE res TEXT;
@@ -161,7 +172,7 @@ BEGIN
     RETURN CONCAT('["', res, '"]');
 END;
 EOL
-					);
+);
 		}
 		elseif ($serverType === 'postgresql')
 		{

@@ -19,7 +19,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 /**
  *
- * @version 19.2.322
+ * @version 19.2.323
  * @since 14.10.245
  */
 class Messages

@@ -25,7 +25,7 @@ jimport('eshiol.j2xml.Version');
 
 /**
  *
- * @version 19.2.322
+ * @version 19.2.323
  * @since 1.5.3beta3.38
  */
 class Sender
