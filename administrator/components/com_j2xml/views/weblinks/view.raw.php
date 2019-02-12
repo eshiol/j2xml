@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/../raw.php';
 /**
  * J2XML Component Content View
  *
- * @version 3.7.190
+ * @version 3.7.192
  * @since 1.5.3beta3.38
  */
 class J2XMLViewWeblinks extends J2XMLView

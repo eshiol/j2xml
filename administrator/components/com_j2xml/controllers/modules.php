@@ -14,12 +14,12 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access.');
+defined('_JEXEC') or die();
 
 /**
  * Modules controller class.
  *
- * @version 3.7.190
+ * @version 3.7.192
  * @since 3.6.165
  */
 class J2XMLControllerModules extends JControllerLegacy

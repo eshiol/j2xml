@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		3.7.171 administrator/components/com_j2xml/controller.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
+ * 
+ * @version		3.7.192
  * @since		1.5.3
  * 
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
@@ -17,7 +17,7 @@
  */
 
 // No direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') or die();
 
 jimport('joomla.application.component.controller');
 
@@ -26,27 +26,31 @@ jimport('joomla.application.component.controller');
  */
 class J2XMLController extends JControllerLegacy
 {
+
 	/**
 	 * Method to display a view.
 	 *
-	 * @param	boolean			If true, the view output will be cached
-	 * @param	array			An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
-	 *
-	 * @return	JController		This object to support chaining.
-	 * @since	1.5
+	 * @param
+	 *        	boolean If true, the view output will be cached
+	 * @param
+	 *        	array An array of safe url parameters and their variable
+	 *        	types, for valid values see {@link JFilterInput::clean()}.
+	 *        
+	 * @return JController This object to support chaining.
+	 * @since 1.5
 	 */
-	public function display($cachable = false, $urlparams = false)
+	public function display ($cachable = false, $urlparams = false)
 	{
-		require_once JPATH_COMPONENT.'/helpers/j2xml.php';
+		require_once JPATH_COMPONENT . '/helpers/j2xml.php';
 		J2XMLHelper::updateReset();
 
 		$jinput = JFactory::getApplication()->input;
-		$view	= $jinput->getCmd('view', '');
+		$view = $jinput->getCmd('view', '');
 		$layout = $jinput->getCmd('layout', 'default');
-		$id		= $jinput->getInt('id');
+		$id = $jinput->getInt('id');
 
 		// Check for edit form.
-		if ($view == 'website' && $layout == 'edit' && !$this->checkEditId('com_j2xml.edit.website', $id)) 
+		if ($view == 'website' && $layout == 'edit' && ! $this->checkEditId('com_j2xml.edit.website', $id))
 		{
 			// Somehow the person just went to the form - we don't allow that.
 			throw new Exception(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
@@ -54,7 +58,7 @@ class J2XMLController extends JControllerLegacy
 
 			return false;
 		}
-		elseif ($view == '') 
+		elseif ($view == '')
 		{
 			$this->setRedirect(JRoute::_('index.php?option=com_j2xml&view=cpanel', false));
 			return false;

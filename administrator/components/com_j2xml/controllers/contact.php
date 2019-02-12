@@ -14,12 +14,12 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access.');
+defined('_JEXEC') or die();
 
 /**
  * Contact controller class.
  *
- * @version 3.7.190
+ * @version 3.7.192
  * @since 3.6.161
  */
 class J2XMLControllerContact extends JControllerLegacy

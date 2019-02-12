@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/../raw.php';
 /**
  * J2XML Component Contact View
  *
- * @version 3.7.190
+ * @version 3.7.192
  * @since 3.6.161
  */
 class J2XMLViewContact extends J2XMLView

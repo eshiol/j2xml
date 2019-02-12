@@ -14,12 +14,12 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access.');
+defined('_JEXEC') or die();
 
 /**
  * Content controller class.
  *
- * @version 3.7.190
+ * @version 3.7.192
  * @since 1.5.3beta4.39
  */
 class J2XMLControllerUsers extends JControllerLegacy

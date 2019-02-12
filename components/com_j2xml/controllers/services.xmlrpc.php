@@ -14,38 +14,44 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') or die();
 
-require_once JPATH_SITE.'/components/com_j2xml/helpers/xmlrpc.php';
+require_once JPATH_SITE . '/components/com_j2xml/helpers/xmlrpc.php';
 
 /**
- * 
- * @version		3.7.188
- * @since		2.5
+ *
+ * @version 3.7.192
+ * @since 2.5
  */
 class J2XMLControllerServices extends JControllerLegacy
 {
-	public function import()
+
+	public function import ()
 	{
 		global $xmlrpcString, $xmlrpcBase64, $xmlrpc_internalencoding;
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		// define UTF-8 as the internal encoding for the XML-RPC server
-		$GLOBALS['xmlrpc_internalencoding']='UTF-8';
+		$GLOBALS['xmlrpc_internalencoding'] = 'UTF-8';
 
 		$app = JFactory::getApplication();
 		$params = JComponentHelper::getParams('com_j2xml');
 
 		$xmlrpcServer = new xmlrpc_server(
-			array(
-				'j2xml.import' => array(
-					'function' => 'XMLRPCJ2XMLServices::import',
-					'docstring' => 'Import data from xml file',
-					'signature' => array(
-						array($xmlrpcString, $xmlrpcBase64, $xmlrpcString, $xmlrpcString)
-					)
-				)
-			) , false);
+				array(
+						'j2xml.import' => array(
+								'function' => 'XMLRPCJ2XMLServices::import',
+								'docstring' => 'Import data from xml file',
+								'signature' => array(
+										array(
+												$xmlrpcString,
+												$xmlrpcBase64,
+												$xmlrpcString,
+												$xmlrpcString
+										)
+								)
+						)
+				), false);
 		// allow casting to be defined by that actual values passed
 		$xmlrpcServer->functions_parameters_type = 'phpvals';
 		// define UTF-8 as the internal encoding for the XML-RPC server

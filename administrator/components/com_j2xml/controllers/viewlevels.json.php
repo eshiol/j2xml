@@ -19,10 +19,10 @@ defined('_JEXEC') or die();
 require_once dirname(__FILE__) . '/json.php';
 
 /**
- * Content controller class.
+ * Viewlevels controller class.
  *
  * @version 3.7.192
- * @since 3.1.112
+ * @since 3.7.192
  */
 class J2XMLControllerUsers extends J2XMLControllerJson
 {

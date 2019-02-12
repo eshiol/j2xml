@@ -14,36 +14,41 @@
  */
 
 // No direct access.
-defined('_JEXEC') or die;
+defined('_JEXEC') or die();
 
 jimport('joomla.application.component.controlleradmin');
 
 /**
  * Website list controller class.
- * 
- * @version		3.7.186
- * @since		1.5.3
+ *
+ * @version 3.7.192
+ * @since 1.5.3
  */
 class J2XMLControllerWebsites extends JControllerAdmin
 {
+
 	/**
-	 * @var		string	The prefix to use with controller messages.
-	 * @since	1.6
+	 *
+	 * @var string The prefix to use with controller messages.
+	 * @since 1.6
 	 */
 	protected $text_prefix = 'COM_J2XML_WEBSITES';
 
 	/**
 	 * Method to get a model object, loading it if required.
 	 *
-	 * @param   string  $name    The model name. Optional.
-	 * @param   string  $prefix  The class prefix. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  object  The model.
-	 *
-	 * @since   1.6
+	 * @param string $name
+	 *        	The model name. Optional.
+	 * @param string $prefix
+	 *        	The class prefix. Optional.
+	 * @param array $config
+	 *        	Configuration array for model. Optional.
+	 *        
+	 * @return object The model.
+	 *        
+	 * @since 1.6
 	 */
-	public function getModel($name = 'Website', $prefix = 'J2XMLModel', $config = array('ignore_request' => true))
+	public function getModel ($name = 'Website', $prefix = 'J2XMLModel', $config = array('ignore_request' => true))
 	{
 		$model = parent::getModel($name, $prefix, $config);
 		return $model;

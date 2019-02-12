@@ -34,7 +34,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Joomla! J2XML XML-RPC Plugin
  *
- * @version 3.7.191
+ * @version 3.7.192
  * @since 1.5.3
  */
 class XMLRPCJ2XMLServices

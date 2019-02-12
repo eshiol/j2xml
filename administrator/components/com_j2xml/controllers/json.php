@@ -14,7 +14,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access.');
+defined('_JEXEC') or die();
 
 jimport('joomla.application.component.controller');
 
@@ -27,7 +27,7 @@ jimport('cms.response.json');
 /**
  * Content controller class.
  *
- * @version 3.7.188
+ * @version 3.7.192
  * @since 3.2.135
  */
 class J2XMLControllerJson extends JControllerLegacy

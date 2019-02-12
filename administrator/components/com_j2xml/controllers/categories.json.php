@@ -14,14 +14,14 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access.');
+defined('_JEXEC') or die();
 
 require_once dirname(__FILE__) . '/json.php';
 
 /**
  * Content controller class.
  *
- * @version 3.7.187
+ * @version 3.7.192
  * @since 3.1.111
  */
 class J2XMLControllerCategories extends J2XMLControllerJson

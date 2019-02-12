@@ -14,14 +14,14 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access.');
+defined('_JEXEC') or die();
 
 require_once dirname(__FILE__) . '/json.php';
 
 /**
  * Modules controller class.
  *
- * @version 3.7.190
+ * @version 3.7.192
  * @since 3.6.165
  */
 class J2XMLControllerModules extends J2XMLControllerJson

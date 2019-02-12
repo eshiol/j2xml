@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/../raw.php';
 /**
  * J2XML Component Categories View
  *
- * @version 3.7.190
+ * @version 3.7.192
  * @since 1.5.3beta5.43
  */
 class J2XMLViewCategories extends J2XMLView

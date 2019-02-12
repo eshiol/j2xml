@@ -12,34 +12,39 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
- 
+
 // No direct access.
-defined('_JEXEC') or die;
+defined('_JEXEC') or die();
 
 jimport('joomla.application.component.modeladmin');
 
 /**
  * Website model
- * 
- * @version		3.7.187
- * @since		1.5.3
+ *
+ * @version 3.7.192
+ * @since 1.5.3
  */
 class J2XMLModelWebsite extends JModelAdmin
 {
+
 	/**
 	 * Method to test whether a record can be deleted.
 	 *
-	 * @param	object	A record object.
-	 * @return	boolean	True if allowed to delete the record. Defaults to the permission set in the component.
-	 * @since	1.6
+	 * @param
+	 *        	object A record object.
+	 * @return boolean True if allowed to delete the record. Defaults to the
+	 *         permission set in the component.
+	 * @since 1.6
 	 */
-	protected function canDelete($record)
+	protected function canDelete ($record)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
-		if (!empty($record->id)) {
-			if ($record->state != -2) {
-				return ;
+		if (! empty($record->id))
+		{
+			if ($record->state != - 2)
+			{
+				return;
 			}
 			$user = JFactory::getUser();
 
@@ -50,11 +55,13 @@ class J2XMLModelWebsite extends JModelAdmin
 	/**
 	 * Method to test whether a record can be deleted.
 	 *
-	 * @param	object	A record object.
-	 * @return	boolean	True if allowed to change the state of the record. Defaults to the permission set in the component.
-	 * @since	1.6
+	 * @param
+	 *        	object A record object.
+	 * @return boolean True if allowed to change the state of the record.
+	 *         Defaults to the permission set in the component.
+	 * @since 1.6
 	 */
-	protected function canEditState($record)
+	protected function canEditState ($record)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
@@ -66,13 +73,16 @@ class J2XMLModelWebsite extends JModelAdmin
 	/**
 	 * Returns a reference to the a Table object, always creating it.
 	 *
-	 * @param	type	The table type to instantiate
-	 * @param	string	A prefix for the table class name. Optional.
-	 * @param	array	Configuration array for model. Optional.
-	 * @return	JTable	A database object
-	 * @since	1.6
+	 * @param
+	 *        	type The table type to instantiate
+	 * @param
+	 *        	string A prefix for the table class name. Optional.
+	 * @param
+	 *        	array Configuration array for model. Optional.
+	 * @return JTable A database object
+	 * @since 1.6
 	 */
-	public function getTable($type = 'Website', $prefix = 'J2XMLTable', $config = array())
+	public function getTable ($type = 'Website', $prefix = 'J2XMLTable', $config = array())
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
@@ -82,18 +92,25 @@ class J2XMLModelWebsite extends JModelAdmin
 	/**
 	 * Method to get the record form.
 	 *
-	 * @param	array	$data		Data for the form.
-	 * @param	boolean	$loadData	True if the form is to load its own data (default case), false if not.
-	 * @return	mixed	A JForm object on success, false on failure
-	 * @since	1.6
+	 * @param array $data
+	 *        	Data for the form.
+	 * @param boolean $loadData
+	 *        	True if the form is to load its own data (default case), false
+	 *        	if not.
+	 * @return mixed A JForm object on success, false on failure
+	 * @since 1.6
 	 */
-	public function getForm($data = array(), $loadData = true)
+	public function getForm ($data = array(), $loadData = true)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		// Get the form.
-		$form = $this->loadForm('com_j2xml.website', 'website', array('control' => 'jform', 'load_data' => $loadData));
-		if (empty($form)) {
+		$form = $this->loadForm('com_j2xml.website', 'website', array(
+				'control' => 'jform',
+				'load_data' => $loadData
+		));
+		if (empty($form))
+		{
 			return false;
 		}
 
@@ -103,17 +120,18 @@ class J2XMLModelWebsite extends JModelAdmin
 	/**
 	 * Method to get the data that should be injected in the form.
 	 *
-	 * @return	mixed	The data for the form.
-	 * @since	1.6
+	 * @return mixed The data for the form.
+	 * @since 1.6
 	 */
-	protected function loadFormData()
+	protected function loadFormData ()
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		// Check the session for previously entered form data.
 		$data = JFactory::getApplication()->getUserState('com_j2xml.edit.website.data', array());
 
-		if (empty($data)) {
+		if (empty($data))
+		{
 			$data = $this->getItem();
 		}
 
@@ -123,10 +141,11 @@ class J2XMLModelWebsite extends JModelAdmin
 	/**
 	 * Prepare and sanitise the table data prior to saving.
 	 *
-	 * @param	JTable	A JTable object.
-	 * @since	1.6
+	 * @param
+	 *        	JTable A JTable object.
+	 * @since 1.6
 	 */
-	protected function prepareTable($table)
+	protected function prepareTable ($table)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
@@ -136,13 +155,14 @@ class J2XMLModelWebsite extends JModelAdmin
 	/**
 	 * Method to save the form data.
 	 *
-	 * @param   array  $data  The form data.
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @since	3.7
+	 * @param array $data
+	 *        	The form data.
+	 *        
+	 * @return boolean True on success.
+	 *        
+	 * @since 3.7
 	 */
-	public function save($data)
+	public function save ($data)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
@@ -155,17 +175,17 @@ class J2XMLModelWebsite extends JModelAdmin
 		return parent::save($data);
 	}
 
-
 	/**
 	 * Method to get a single record.
 	 *
-	 * @param   integer  $pk  The id of the primary key.
-	 *
-	 * @return  mixed  Object on success, false on failure.
-	 *
-	 * @since   3.7
+	 * @param integer $pk
+	 *        	The id of the primary key.
+	 *        
+	 * @return mixed Object on success, false on failure.
+	 *        
+	 * @since 3.7
 	 */
-	public function getItem($pk = null)
+	public function getItem ($pk = null)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 

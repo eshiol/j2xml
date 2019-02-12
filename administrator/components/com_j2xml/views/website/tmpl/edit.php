@@ -2,7 +2,8 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * @version		3.7.188
+ * 
+ * @version		3.7.192
  * @since		2.5.85
  * 
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
@@ -16,9 +17,9 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') or die();
 
-JHtml::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_j2xml/helpers/html');
+JHtml::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/html');
 
 if ((new \JVersion())->isCompatible('3.4'))
 {
@@ -39,7 +40,9 @@ JHtml::_('formbehavior.chosen', 'select');
 	}
 </script>
 
-<form action="<?php echo JRoute::_('index.php?option=com_j2xml&layout=edit&id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="website-form" class="form-validate">
+<form
+	action="<?php echo JRoute::_('index.php?option=com_j2xml&layout=edit&id='.(int) $this->item->id); ?>"
+	method="post" name="adminForm" id="website-form" class="form-validate">
 	<?php echo JLayoutHelper::render('joomla.edit.title_alias', $this); ?>
 	<div class="form-horizontal">
 		<?php echo JHtml::_('bootstrap.startTabSet', 'myTab', array('active' => 'details')); ?>

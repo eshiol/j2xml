@@ -22,7 +22,7 @@ jimport('eshiol.j2xml.Exporter');
 /**
  * J2XML Component View
  *
- * @version 3.7.190
+ * @version 3.7.192
  * @since 3.2.137
  */
 class J2XMLView extends JViewLegacy

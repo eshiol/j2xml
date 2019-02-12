@@ -1,10 +1,7 @@
 <?php
 /**
- * @version		3.6.158 administrator/com_j2xml/models/fields/authtype.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
- * @since		3.6.158
  * 
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
@@ -15,40 +12,50 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
- 
+
 // No direct access.
-defined('_JEXEC') or die;
+defined('_JEXEC') or die();
 
 JFormHelper::loadFieldClass('list');
 
 /**
  * Authentication type Field class for the Joomla Framework.
+ *
+ * @version 3.7.192
+ * @since 3.6.158
  */
 class JFormFieldAuthType extends JFormFieldList
 {
+
 	/**
 	 * The form field type.
 	 *
-	 * @var    string
-	 * @since  3.6.158
+	 * @var string
+	 * @since 3.6.158
 	 */
 	protected $type = 'AuthType';
 
 	/**
 	 * Method to get the field options.
 	 *
-	 * @return  array  The field option objects.
-	 *
-	 * @since   3.6.158
+	 * @return array The field option objects.
+	 *        
+	 * @since 3.6.158
 	 */
-	public function getOptions()
+	public function getOptions ()
 	{
 		$options = array();
-		$options[] = (object)['value' => 0, 'text' => JText::_('COM_J2XML_FIELD_AUTH_TYPE_USERNAMEPASSWORD')];
+		$options[] = (object) [
+				'value' => 0,
+				'text' => JText::_('COM_J2XML_FIELD_AUTH_TYPE_USERNAMEPASSWORD')
+		];
 		$params = JComponentHelper::getParams('com_j2xml');
 		if ($params->get('oauth2', 0) == 1)
 		{
-			$options[] = (object)['value' => 1, 'text' => JText::_('COM_J2XML_FIELD_AUTH_TYPE_OAUTH2')];
+			$options[] = (object) [
+					'value' => 1,
+					'text' => JText::_('COM_J2XML_FIELD_AUTH_TYPE_OAUTH2')
+			];
 		}
 		return $options;
 	}

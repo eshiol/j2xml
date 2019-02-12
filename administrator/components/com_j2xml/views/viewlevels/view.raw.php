@@ -14,16 +14,17 @@
  */
 
 // no direct access
-defined('_JEXEC') or die();
+defined('_JEXEC') or die('Restricted access.');
 
-require_once dirname(__FILE__) . '/json.php';
+require_once dirname(__FILE__) . '/../raw.php';
 
 /**
- * Content controller class.
+ * J2XML Component Viewlevels View
  *
  * @version 3.7.192
- * @since 3.1.112
+ * @since 3.7.192
  */
-class J2XMLControllerUsers extends J2XMLControllerJson
+class J2XMLViewViewlevels extends J2XMLView
 {
 }
+?>

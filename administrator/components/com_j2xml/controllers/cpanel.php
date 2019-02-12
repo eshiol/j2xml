@@ -14,7 +14,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access.');
+defined('_JEXEC') or die();
 
 use eshiol\J2xml\Importer;
 
@@ -25,7 +25,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Controller class.
  *
- * @version 3.7.191
+ * @version 3.7.192
  * @since 1.5.3
  */
 class J2xmlControllerCpanel extends JControllerLegacy

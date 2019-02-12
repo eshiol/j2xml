@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/../raw.php';
 /**
  * J2XML Component Fields View
  *
- * @version 3.7.190
+ * @version 3.7.192
  * @since 3.7.172
  */
 class J2XMLViewFields extends J2XMLView

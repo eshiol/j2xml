@@ -1,9 +1,9 @@
 <?php
 /**
- * @version		2.5.85 helpers/j2xml.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
+ * 
+ * @version		3.7.192
  * @since		2.5.85
  * 
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
@@ -17,6 +17,6 @@
  */
 
 // No direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') or die();
 
-require_once JPATH_ADMINISTRATOR.DS.'components'.DS.'com_content'.DS.'helpers'.DS.'content.php';
+require_once JPATH_ADMINISTRATOR . DS . 'components' . DS . 'com_content' . DS . 'helpers' . DS . 'content.php';

@@ -17,12 +17,12 @@
 defined('_JEXEC') or die();
 
 /**
- * Content controller class.
+ * Viewlevel controller class.
  *
  * @version 3.7.192
- * @since 1.5.3
+ * @since 3.7.192
  */
-class J2XMLControllerCategories extends JControllerLegacy
+class J2XMLControllerViewlevels extends JControllerLegacy
 {
 
 	function __construct ($default = array())
@@ -30,14 +30,14 @@ class J2XMLControllerCategories extends JControllerLegacy
 		parent::__construct();
 	}
 
-	public function display ($cachable = false, $urlparams = false)
+	function display ($cachable = false, $urlparams = false)
 	{
-		$this->input->set('view', 'categories');
-		parent::display($cachable, $urlparams);
+		$this->input->set('view', 'viewlevels');
+		parent::display();
 	}
 
 	/**
-	 * Export categories in XML format
+	 * Export viewlevels in XML format
 	 */
 	function export ()
 	{
@@ -47,7 +47,7 @@ class J2XMLControllerCategories extends JControllerLegacy
 		$cid = $this->input->post->get('cid', array(
 				0
 		), 'array');
-		$ids = 'cid=' . implode(',', $cid);
-		$this->setRedirect('index.php?option=com_j2xml&task=categories.display&format=raw&' . $ids);
+		$id = 'cid=' . implode(',', $cid);
+		$this->setRedirect('index.php?option=com_j2xml&task=viewlevels.display&format=raw&' . $id);
 	}
 }

@@ -14,21 +14,23 @@
  */
 
 // No direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') or die();
 
 jimport('joomla.application.component.controllerform');
 
 /**
  * Website controller class.
- * 
- * @version		3.7.186
- * @since		1.5.3
+ *
+ * @version 3.7.192
+ * @since 1.5.3
  */
 class J2XMLControllerWebsite extends JControllerForm
 {
+
 	/**
-	 * @var		string	The prefix to use with controller messages.
-	 * @since	1.6
+	 *
+	 * @var string The prefix to use with controller messages.
+	 * @since 1.6
 	 */
 	protected $text_prefix = 'COM_J2XML_WEBSITE';
 }

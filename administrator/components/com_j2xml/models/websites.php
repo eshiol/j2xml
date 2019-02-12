@@ -1,10 +1,7 @@
 <?php
 /**
- * @version		3.7.171 administrator/components/com_j2xml/models/website.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
- * @since		2.5.85
  * 
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
@@ -15,35 +12,48 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-
-defined('_JEXEC') or die;
+defined('_JEXEC') or die();
 
 jimport('joomla.application.component.modellist');
 
 /**
  * Methods supporting a list of website records.
+ *
+ * @version 3.7.192
+ * @since 2.5.85
  */
 class J2XMLModelWebsites extends JModelList
 {
+
 	/**
 	 * Constructor.
 	 *
-	 * @param	array	An optional associative array of configuration settings.
-	 * @see		JController
-	 * @since	1.6
+	 * @param
+	 *        	array An optional associative array of configuration settings.
+	 * @see JController
+	 * @since 1.6
 	 */
-	public function __construct($config = array())
+	public function __construct ($config = array())
 	{
-		if (empty($config['filter_fields'])) {
+		if (empty($config['filter_fields']))
+		{
 			$config['filter_fields'] = array(
-				'id', 'a.id',
-				'title', 'a.title',
-				'alias', 'a.alias',
-				'state', 'a.state',
-				'remote_url', 'a.remote_url',
-				'username', 'a.username',
-				'checked_out', 'a.checked_out',
-				'checked_out_time', 'a.checked_out_time'
+					'id',
+					'a.id',
+					'title',
+					'a.title',
+					'alias',
+					'a.alias',
+					'state',
+					'a.state',
+					'remote_url',
+					'a.remote_url',
+					'username',
+					'a.username',
+					'checked_out',
+					'a.checked_out',
+					'checked_out_time',
+					'a.checked_out_time'
 			);
 		}
 
@@ -55,16 +65,16 @@ class J2XMLModelWebsites extends JModelList
 	 *
 	 * Note. Calling getState in this method will result in recursion.
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState ($ordering = null, $direction = null)
 	{
 		// Initialise variables.
 		$app = JFactory::getApplication('administrator');
 
 		// Load the filter state.
-		$search = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
-		$state = $this->getUserStateFromRequest($this->context.'.filter.state', 'filter_state', '', 'string');
+		$state = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_state', '', 'string');
 		$this->setState('filter.state', $state);
 
 		// Load the parameters.
@@ -82,16 +92,17 @@ class J2XMLModelWebsites extends JModelList
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param	string		$id	A prefix for the store id.
-	 *
-	 * @return	string		A store id.
+	 * @param string $id
+	 *        	A prefix for the store id.
+	 *        
+	 * @return string A store id.
 	 */
-	protected function getStoreId($id = '')
+	protected function getStoreId ($id = '')
 	{
 		// Compile the store id.
-		$id	.= ':'.$this->getState('filter.search');
-		$id	.= ':'.$this->getState('filter.access');
-		$id	.= ':'.$this->getState('filter.state');
+		$id .= ':' . $this->getState('filter.search');
+		$id .= ':' . $this->getState('filter.access');
+		$id .= ':' . $this->getState('filter.state');
 
 		return parent::getStoreId($id);
 	}
@@ -99,9 +110,9 @@ class J2XMLModelWebsites extends JModelList
 	/**
 	 * Build an SQL query to load the list data.
 	 *
-	 * @return	JDatabaseQuery
+	 * @return JDatabaseQuery
 	 */
-	protected function getListQuery()
+	protected function getListQuery ()
 	{
 		// Create a new query object.
 		$db = $this->getDbo();
@@ -109,22 +120,14 @@ class J2XMLModelWebsites extends JModelList
 
 		// Select the required fields from the table.
 		$query->select(
-			$this->getState(
-				'list.select',
-				'a.id AS id,'.
-				'a.title AS title,'.
-				'a.alias AS alias,'.
-				'a.remote_url AS remote_url,'.
-				'a.username AS username,'.
-				'a.state AS state,'.
-				'a.checked_out AS checked_out,'.
-				'a.checked_out_time AS checked_out_time,'.
-				//'a.access_token, a.refresh_token, a.expire_time,'.
-				'a.type'
-			)
-		);
+				$this->getState('list.select',
+						'a.id AS id,' . 'a.title AS title,' . 'a.alias AS alias,' . 'a.remote_url AS remote_url,' . 'a.username AS username,' .
+								 'a.state AS state,' . 'a.checked_out AS checked_out,' . 'a.checked_out_time AS checked_out_time,' . 
+								// 'a.access_token, a.refresh_token,
+								// a.expire_time,'.
+								'a.type'));
 
-		$query->from($db->quoteName('#__j2xml_websites').' AS a');
+		$query->from($db->quoteName('#__j2xml_websites') . ' AS a');
 
 		// Join over the users for the checked out user.
 		$query->select('uc.name AS editor');
@@ -132,9 +135,12 @@ class J2XMLModelWebsites extends JModelList
 
 		// Filter by published state
 		$published = $this->getState('filter.state');
-		if (is_numeric($published)) {
-			$query->where('a.state = '.(int) $published);
-		} elseif ($published === '') {
+		if (is_numeric($published))
+		{
+			$query->where('a.state = ' . (int) $published);
+		}
+		elseif ($published === '')
+		{
 			$query->where('(a.state IN (0, 1))');
 		}
 
@@ -146,12 +152,16 @@ class J2XMLModelWebsites extends JModelList
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
-		if (!empty($search)) {
-			if (stripos($search, 'id:') === 0) {
-				$query->where('a.id = '.(int) substr($search, 3));
-			} else {
-				$search = $db->Quote('%'.$db->escape($search, true).'%');
-				$query->where('a.title LIKE '.$search.' OR a.alias LIKE '.$search);
+		if (! empty($search))
+		{
+			if (stripos($search, 'id:') === 0)
+			{
+				$query->where('a.id = ' . (int) substr($search, 3));
+			}
+			else
+			{
+				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$query->where('a.title LIKE ' . $search . ' OR a.alias LIKE ' . $search);
 			}
 		}
 

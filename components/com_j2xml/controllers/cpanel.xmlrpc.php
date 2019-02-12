@@ -1,10 +1,7 @@
 <?php
 /**
- * @version		3.7.178 components/com_j2xml/controllers/cpanel.xmlrpc.php
- * 
  * @package		J2XML
  * @subpackage	com_j2xml
- * @since		2.5
  * 
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
@@ -17,11 +14,16 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') or die();
 
-require_once JPATH_SITE.'/components/com_j2xml/controllers/services.xmlrpc.php';
+require_once JPATH_SITE . '/components/com_j2xml/controllers/services.xmlrpc.php';
 
-class J2XMLControllerCpanel extends J2XMLControllerServices 
+/**
+ *
+ * @version 3.7.192
+ * @since 2.5
+ */
+class J2XMLControllerCpanel extends J2XMLControllerServices
 {
 }
 ?>
