@@ -32,13 +32,13 @@ class Viewlevel extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        	
+	 *        
 	 * @since 15.3.248
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__viewlevels', 'id', $db);
 	}
 
@@ -51,13 +51,13 @@ class Viewlevel extends Table
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry(print_r($this->rules, true), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$this->_excluded = array_merge($this->_excluded, array(
 				'rules'
 		));
-		
+
 		$serverType = (new \JVersion())->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
-		
+
 		if ($serverType === 'postgresql')
 		{
 			$this->_aliases['rule'] = '
@@ -94,7 +94,7 @@ class Viewlevel extends Table
 					), $this->rules));
 		}
 		\JLog::add(new \JLogEntry($this->_aliases['rule'], \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		return parent::_serialize();
 	}
 
@@ -107,7 +107,7 @@ class Viewlevel extends Table
 	 *        	@option int 'viewlevels' 0: No | 1: Yes, if not exists | 2:
 	 *        	Yes, overwrite if exists
 	 *        	@option string 'context'
-	 *        	
+	 *        
 	 * @throws
 	 * @return void
 	 * @access public
@@ -117,18 +117,18 @@ class Viewlevel extends Table
 	public static function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$import_viewlevels = 2; // $params->get('viewlevels', 1);
 		if ($import_viewlevels == 0)
 			return;
-		
+
 		$db = \JFactory::getDbo();
 		foreach ($xml->xpath("//j2xml/viewlevel[not(title = '')]") as $record)
 		{
 			self::prepareData($record, $data, $params);
-			
+
 			$id = $data['id'];
-			
+
 			$query = $db->getQuery(true)
 				->select(array(
 					$db->quoteName('id'),
@@ -138,7 +138,7 @@ class Viewlevel extends Table
 				->where($db->quoteName('title') . ' = ' . $db->quote($data['title']));
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$item = $db->setQuery($query)->loadObject();
-			
+
 			if (! $item || ($import_viewlevels == 2))
 			{
 				$table = new \eshiol\J2XML\Table\Viewlevel($db);
@@ -151,7 +151,7 @@ class Viewlevel extends Table
 					$data['id'] = $item->id;
 					$table->load($data['id']);
 				}
-				
+
 				// Add rules to the viewlevel data.
 				$rules_id = array();
 				if (isset($data['rule']))
@@ -161,13 +161,13 @@ class Viewlevel extends Table
 				}
 				if (isset($data['rulelist']))
 				{
-					foreach ($data['rulelist'] as $v)
+					foreach ($data['rulelist']['rule'] as $v)
 					{
 						$rules_id[] = $v;
 					}
 					unset($data['rulelist']);
 				}
-				
+
 				for ($i = 0; $i < count($rules_id); $i ++)
 				{
 					$usergroup = parent::getUsergroupId($rules_id[$i]);
@@ -181,7 +181,7 @@ class Viewlevel extends Table
 						$g = array();
 						$id = 0;
 						\JLog::add(new \JLogEntry(print_r($groups, true), \JLog::DEBUG, 'lib_j2xml'));
-						
+
 						for ($j = 0; $j < count($groups); $j ++)
 						{
 							$g[] = $groups[$j];
@@ -206,7 +206,7 @@ class Viewlevel extends Table
 					}
 				}
 				$data['rules'] = json_encode($rules_id, JSON_NUMERIC_CHECK);
-				
+
 				\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 				if ($table->save($data))
 				{
@@ -217,7 +217,7 @@ class Viewlevel extends Table
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_VIEWLEVEL_NOT_IMPORTED', $data['title']), \JLog::ERROR, 'lib_j2xml'));
 					\JLog::add(new \JLogEntry($table->getError(), \JLog::ERROR, 'lib_j2xml'));
 				}
-				
+
 				$table = null;
 			}
 		}
@@ -243,22 +243,22 @@ class Viewlevel extends Table
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/viewlevel/id[text() = '" . $id . "']"))
 		{
 			return;
 		}
-		
+
 		$db = \JFactory::getDbo();
 		$item = new Viewlevel($db);
 		if (! $item->load($id))
 		{
 			return;
 		}
-		
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
-		
+
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
 	}

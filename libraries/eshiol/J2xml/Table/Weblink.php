@@ -32,13 +32,13 @@ class Weblink extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        	
+	 *        
 	 * @since 1.5.3beta3.38
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__weblinks', 'id', $db);
 	}
 
@@ -65,7 +65,7 @@ class Weblink extends Table
 				->where($this->_db->quoteName('m.content_item_id') . ' = ' . $this->_db->quote((string) $this->id));
 			\JLog::add(new \JLogEntry($this->_aliases['tag'], \JLog::DEBUG, 'lib_j2xml'));
 		}
-		
+
 		return parent::_serialize();
 	}
 
@@ -89,22 +89,22 @@ class Weblink extends Table
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/weblink/id[text() = '" . $id . "']"))
 		{
 			return;
 		}
-		
+
 		$db = \JFactory::getDbo();
 		$item = new Weblink($db);
 		if (! $item->load($id))
 		{
 			return;
 		}
-		
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
-		
+
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
 	}
@@ -118,7 +118,7 @@ class Weblink extends Table
 	 *        	@option int 'weblinks' 0: No | 1: Yes, if not exists | 2: Yes,
 	 *        	overwrite if exists
 	 *        	@option string 'context'
-	 *        	
+	 *        
 	 * @throws
 	 * @return void
 	 * @access public
@@ -128,18 +128,18 @@ class Weblink extends Table
 	public static function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$import_weblinks = 2; // $params->get('weblinks', 1);
 		if ($import_viewlevels == 0)
 			return;
-		
+
 		$db = \JFactory::getDbo();
-		
+
 		// Check if component is installed
 		$db->setQuery("SELECT enabled FROM #__extensions WHERE name = 'com_weblinks'");
 		if (! $db->loadResult())
 			return;
-		
+
 		$params->set('extension', 'com_weblinks');
 		$params->def('category_default', self::getCategoryId('uncategorised', 'com_weblinks'));
 	/**

@@ -39,13 +39,13 @@ class User extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        	
+	 *        
 	 * @since 1.5.3beta4.39
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__users', 'id', $db);
 	}
 
@@ -57,9 +57,9 @@ class User extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$serverType = (new \JVersion())->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
-		
+
 		if ($serverType === 'postgresql')
 		{
 			$this->_aliases['group'] = '
@@ -87,7 +87,7 @@ class User extends Table
 				->where($this->_db->quoteName('m.user_id') . ' = ' . (int) $this->id);
 		}
 		\JLog::add(new \JLogEntry($this->_aliases['group'], \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if ((new \JVersion())->isCompatible('3.7'))
 		{
 			// $this->_aliases['field'] = 'SELECT f.name, v.value FROM
@@ -102,7 +102,7 @@ class User extends Table
 				->where($this->_db->quoteName('v.item_id') . ' = ' . $this->_db->quote((string) $this->id));
 			\JLog::add(new \JLogEntry($this->_aliases['field'], \JLog::DEBUG, 'lib_j2xml'));
 		}
-		
+
 		// $this->_aliases['profile'] = 'SELECT profile_key name, profile_value
 		// value FROM #__user_profiles WHERE user_id = '. (int)$this->id;
 		$this->_aliases['profile'] = (string) $this->_db->getQuery(true)
@@ -111,7 +111,7 @@ class User extends Table
 			->from($this->_db->quoteName('#__user_profiles'))
 			->where($this->_db->quoteName('user_id') . ' = ' . $this->_db->quote($this->id));
 		\JLog::add(new \JLogEntry($this->_aliases['profile'], \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		return parent::_serialize();
 	}
 
@@ -124,7 +124,7 @@ class User extends Table
 	 *        	@option int 'tags' 1: Yes, if not exists; 2: Yes, overwrite if
 	 *        	exists
 	 *        	@option string 'context'
-	 *        	
+	 *        
 	 * @throws
 	 * @return void
 	 * @access public
@@ -134,30 +134,30 @@ class User extends Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$import_users = $params->get('users', 1);
 		$import_superusers = $params->get('superusers', 0);
 		if (! $import_users)
 			return;
-		
+
 		$keepId = $params->get('keep_user_id', '0');
 		$keep_user_attribs = $params->get('keep_user_attribs', '1');
-		
+
 		\JFactory::getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
-		
+
 		$db = \JFactory::getDbo();
-		
+
 		$autoincrement = 0;
 		$maxid = $db->setQuery($db->getQuery(true)
 			->select('MAX(' . $db->quoteName('id') . ')')
 			->from($db->quoteName('#__users')))
 			->loadResult();
-		
+
 		$users = array();
 		foreach ($xml->xpath("//j2xml/user[not(username = '')]") as $record)
 		{
 			self::prepareData($record, $data, $params);
-			
+
 			if (isset($data['group']))
 			{
 				$data['groups'][] = parent::getUsergroupId($data['group']);
@@ -172,13 +172,13 @@ class User extends Table
 				}
 				unset($data['grouplist']);
 			}
-			
+
 			if (! $import_superusers && isset($data['groups']) && in_array(8, $data['groups']))
 			{
 				\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_SKIPPED', $data['name']), \JLog::NOTICE, 'lib_j2xml'));
 				continue;
 			}
-			
+
 			if (isset($data['password']))
 			{
 				$data['password_crypted'] = $data['password'];
@@ -192,35 +192,35 @@ class User extends Table
 			{
 				$data['password'] = $data['password2'] = JUserHelper::genRandomPassword();
 			}
-			
+
 			$userId = $data['id'];
 			unset($data['id']);
-			
+
 			$data['id'] = $db->setQuery(
 					$db->getQuery(true)
 						->select($db->quoteName('id'))
 						->from($db->quoteName('#__users'))
 						->where($db->quoteName('username') . ' = ' . $db->quote($data['username'])))
 				->loadResult();
-			
+
 			if (! $data['id'] || ($import_users == 2))
 			{
 				\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
-				
+
 				$user = new \UsersModelUser();
 				$result = $user->save($data);
-				
+
 				$id = $db->setQuery(
 						$db->getQuery(true)
 							->select($db->quoteName('id'))
 							->from($db->quoteName('#__users'))
 							->where($db->quoteName('username') . ' = ' . $db->quote($data['username'])))
 					->loadResult();
-				
+
 				if ($id)
 				{
 					$users[$id] = ! (bool) $data['id'];
-					
+
 					if ($error = $user->getError())
 					{
 						\JLog::add(
@@ -231,7 +231,7 @@ class User extends Table
 					{
 						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_IMPORTED', $data['name']), \JLog::INFO, 'lib_j2xml'));
 					}
-					
+
 					if (isset($data['password_crypted']))
 					{
 						// set password
@@ -242,7 +242,7 @@ class User extends Table
 						\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 						$db->setQuery($query)->execute();
 					}
-					
+
 					if (($userId != $id) && ($keepId == 1))
 					{
 						$id = $user->getState('user.id');
@@ -252,22 +252,22 @@ class User extends Table
 							->where($db->quoteName('id') . ' = ' . $id);
 						\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 						$db->setQuery($query)->execute();
-						
+
 						$query = $db->getQuery(true)
 							->update('#__user_usergroup_map')
 							->set($db->quoteName('user_id') . ' = ' . $userId)
 							->where($db->quoteName('user_id') . ' = ' . $id);
 						\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 						$db->setQuery($query)->execute();
-						
+
 						if ($userId >= $autoincrement)
 						{
 							$autoincrement = $userId + 1;
 						}
-						
+
 						$id = $userId;
 					}
-					
+
 					try
 					{
 						$query = $db->getQuery(true)
@@ -275,7 +275,7 @@ class User extends Table
 							->where($db->quoteName('user_id') . ' = ' . $id);
 						\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 						$db->setQuery($query)->execute();
-						
+
 						if (isset($data['profile']))
 						{
 							$query = $db->getQuery(true)->insert($db->quoteName('#__user_profiles'));
@@ -319,7 +319,7 @@ class User extends Table
 				}
 			}
 		}
-		
+
 		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 		if ($autoincrement > $maxid)
 		{
@@ -335,7 +335,7 @@ class User extends Table
 			$db->setQuery($query)->execute();
 			$maxid = $autoincrement;
 		}
-		
+
 		$params->set('imported_users', json_encode($users));
 	}
 
@@ -349,17 +349,17 @@ class User extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		parent::prepareData($record, $data, $params);
-		
+
 		$db = \JFactory::getDbo();
-		
+
 		// fix null date
 		if (($data['lastResetTime'] == '0000-00-00 00:00:00') || ($data['lastResetTime'] == '1970-01-01 00:00:00'))
 		{
 			$data['lastResetTime'] = $db->getNullDate();
 		}
-		
+
 		// fix null date
 		if (($data['lastvisitDate'] == '0000-00-00 00:00:00') || ($data['lastvisitDate'] == '1970-01-01 00:00:00'))
 		{
@@ -387,28 +387,28 @@ class User extends Table
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/user/id[text() = '" . $id . "']"))
 		{
 			return;
 		}
-		
+
 		$db = \JFactory::getDbo();
-		
+
 		$item = new User($db);
 		if (! $item->load($id))
 		{
 			return;
 		}
-		
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
-		
+
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
-		
+
 		$db = \JFactory::getDbo();
-		
+
 		if ($options['contacts'])
 		{
 			$query = $db->getQuery(true)
@@ -416,26 +416,26 @@ class User extends Table
 				->from('#__contact_details')
 				->where('user_id = ' . $id);
 			$db->setQuery($query);
-			
+
 			$ids_contact = $db->loadColumn();
 			foreach ($ids_contact as $id_contact)
 			{
 				Contact::export($id_contact, $xml, $options);
 			}
 		}
-		
+
 		$query = $db->getQuery(true)
 			->select('id')
 			->from('#__user_notes')
 			->where('user_id = ' . $id);
 		$db->setQuery($query);
-		
+
 		$ids_usernote = $db->loadColumn();
 		foreach ($ids_usernote as $id_usernote)
 		{
 			Usernote::export($id_usernote, $xml, $options);
 		}
-		
+
 		if ((new \JVersion())->isCompatible('3.7'))
 		{
 			$query = $db->getQuery(true)
@@ -443,7 +443,7 @@ class User extends Table
 				->from('#__fields_values')
 				->where('item_id = ' . $db->quote($id));
 			$db->setQuery($query);
-			
+
 			$ids_field = $db->loadColumn();
 			foreach ($ids_field as $id_field)
 			{

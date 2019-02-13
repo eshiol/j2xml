@@ -190,6 +190,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			$iparams->set('contacts', $params->get('import_contacts', 1));
 			$iparams->set('fields', $params->get('import_fields', 1));
 			$iparams->set('images', $params->get('import_images', 1));
+
 			$iparams->set('keep_id', $params->get('keep_id', 0));
 			$iparams->set('tags', $params->get('import_tags', 1));
 			$iparams->set('users', $params->get('import_users', 1));
@@ -207,26 +208,6 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			$importer = new Importer();
 			// set_time_limit(120);
 			$importer->import($xml, $iparams);
-		}
-		$this->setRedirect('index.php?option=com_j2xml');
-	}
-
-	function clean ()
-	{
-		// Check for request forgeries
-		JSession::checkToken('get') or die(JText::_('JINVALID_TOKEN'));
-
-		$jinput = JFactory::getApplication()->input;
-		// $params = JComponentHelper::getParams('com_j2xml');
-		// $hostname = JFactory::getURI()->getHost();
-		if (
-		// ($params->get('deveopment') &&
-		// ($hostname == 'localhost') &&
-		($jimput->getCmd('d3v3l0p', '0') === '1'))
-		{
-			Importer::clean();
-			$app = JFactory::getApplication('administrator');
-			$app->enqueueMessage(JText::_('COM_J2XML_MSG_CLEANED', 'info'));
 		}
 		$this->setRedirect('index.php?option=com_j2xml');
 	}

@@ -1,4 +1,4 @@
---------------------- 3.7.192 Release  [12-February-2019] ---------------------
+--------------------- 3.7.192 Release  [13-February-2019] ---------------------
 
 cli_j2xml-3.7.17
 
@@ -11,6 +11,8 @@ lib_phpxmlrpc-3.1.1
 
 com_j2xml-3.7.192
   + view levels (build 192)
+  - backlink (build 192)
+  - clean (build 192)
 
 plg_system_j2xml-3.7.45
   + view levels (build 45)

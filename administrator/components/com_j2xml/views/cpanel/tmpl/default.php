@@ -21,29 +21,49 @@ defined('_JEXEC') or die('Restricted access.');
 JHTML::_('behavior.tooltip');
 jimport('joomla.language.language');
 
-// require_once(JPATH_COMPONENT_ADMINISTRATOR.DS.'helpers'.DS.'version.php');
-
-$data = file_get_contents(JPATH_COMPONENT_ADMINISTRATOR . DS . 'j2xml.xml');
+$data = file_get_contents(JPATH_COMPONENT_ADMINISTRATOR . '/j2xml.xml');
 $xml = simplexml_load_string($data);
 
 $title = JText::_('Welcome_to_j2xml');
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
 $exts = array();
-$files = array(
-		JPATH_MANIFESTS . DS . 'libraries' . DS . 'eshiol.xml',
-		JPATH_MANIFESTS . DS . 'libraries' . DS . 'j2xml.xml',
-		JPATH_SITE . DS . 'plugins' . DS . 'system' . DS . 'j2xml' . DS . 'j2xml.xml',
-		JPATH_SITE . DS . 'plugins' . DS . 'content' . DS . 'setimages' . DS . 'setimages.xml',
-		JPATH_SITE . DS . 'plugins' . DS . 'content' . DS . 'j2xml' . DS . 'j2xml.xml',
-		JPATH_SITE . DS . 'plugins' . DS . 'content' . DS . 'j2xmlgi' . DS . 'j2xmlgi.xml',
-		JPATH_SITE . DS . 'plugins' . DS . 'content' . DS . 'j2xmlredirect' . DS . 'j2xmlredirect.xml'
-);
-if (JFolder::exists(JPATH_SITE . DS . 'plugins' . DS . 'j2xml'))
+$libraries = '/libraries' . ((new \JVersion())->isCompatible('3.9') ? '/eshiol' : '');
+
+$files = array();
+
+if ((new \JVersion())->isCompatible('3.9'))
 {
-	$plugins = JFolder::folders(JPATH_SITE . DS . 'plugins' . DS . 'j2xml');
+	if (JFolder::exists(JPATH_MANIFESTS . '/libraries/eshiol'))
+	{
+		$libraries = JFolder::files(JPATH_MANIFESTS . '/libraries/eshiol');
+		foreach ($libraries as $library)
+		{
+			$files[] = JPATH_MANIFESTS . '/libraries/eshiol/' . $library;
+		}
+	}
+}
+else
+{
+	$files[] = JPATH_MANIFESTS . '/libraries/eshiol.xml';
+	$files[] = JPATH_MANIFESTS . '/libraries/j2xml.xml';
+	$files[] = JPATH_MANIFESTS . '/libraries/j2xmlpro.xml';
+	$files[] = JPATH_MANIFESTS . '/libraries/phpxmlrpc.xml';
+}
+
+$files[] = JPATH_SITE . '/plugins/system/j2xml/j2xml.xml';
+$files[] = JPATH_SITE . '/plugins/content/setimages/setimages.xml';
+$files[] = JPATH_SITE . '/plugins/content/j2xml/j2xml.xml';
+$files[] = JPATH_SITE . '/plugins/content/j2xmlgi/j2xmlgi.xml';
+$files[] = JPATH_SITE . '/plugins/content/j2xmlredirect/j2xmlredirect.xml';
+
+if (JFolder::exists(JPATH_SITE . '/plugins/j2xml'))
+{
+	$plugins = JFolder::folders(JPATH_SITE . '/plugins/j2xml');
 	foreach ($plugins as $plugin)
-		$files[] = JPATH_SITE . DS . 'plugins' . DS . 'j2xml' . DS . $plugin . DS . $plugin . '.xml';
+	{
+		$files[] = JPATH_SITE . '/plugins/j2xml/' . $plugin . '/' . $plugin . '.xml';
+	}
 }
 $lang = JFactory::getLanguage();
 foreach ($files as $file)
@@ -94,7 +114,7 @@ foreach ($files as $file)
 <?php
 		$link = 'index.php?option=com_content';
 		$this->_quickiconButton($link, 'icon-48-article.png', JText::_('COM_J2XML_TOOLBAR_ARTICLE_MANAGER'));
-
+		
 		$link = 'index.php?option=com_j2xml&amp;view=websites';
 		$this->_quickiconButton($link, 'icon-48-websites.png', JText::_('COM_J2XML_TOOLBAR_WEBSITE_MANAGER'), '../media/com_j2xml/images/');
 		?>
@@ -115,13 +135,13 @@ foreach ($files as $file)
 				</td>
 								<td width='100px'>
 					<?php
-	$xml = JFactory::getXML(JPATH_COMPONENT . DS . 'j2xml.xml');
+	$xml = JFactory::getXML(JPATH_COMPONENT . '/j2xml.xml');
 	echo $xml->version;
 	?>
 				</td>
 								<td rowspan='<?php echo 3 + count($exts); ?>'
 									style="text-align: center; width: 150px"><a
-									href='http://www.eshiol.it/joomla/j2xml/j2xml3.html'> <img
+									href='<?php echo JText::_('COM_J2XML_LINK'); ?>'> <img
 										src='../media/com_j2xml/images/j2xml.png' width='110'
 										height='110' alt='j2xml' title='j2xml' align='middle'
 										border='0'>
@@ -173,7 +193,7 @@ foreach ($files as $file)
 <?php
 		$link = 'index.php?option=com_content';
 		$this->_quickiconButton($link, 'icon-48-article.png', JText::_('COM_J2XML_TOOLBAR_ARTICLE_MANAGER'));
-
+		
 		if (class_exists('JPlatform'))
 		{
 			$link = 'index.php?option=com_j2xml&amp;view=websites';
@@ -197,13 +217,13 @@ foreach ($files as $file)
 				</td>
 									<td width='100px'>
 					<?php
-	$xml = JFactory::getXML(JPATH_COMPONENT . DS . 'j2xml.xml');
+	$xml = JFactory::getXML(JPATH_COMPONENT . '/j2xml.xml');
 	echo $xml->version;
 	?>
 				</td>
 									<td rowspan='<?php echo 3 + count($exts); ?>'
 										style="text-align: center; width: 150px"><a
-										href='http://www.eshiol.it/joomla/j2xml/j2xml3.html'> <img
+										href='<?php echo JText::_('COM_J2XML_LINK'); ?>'> <img
 											src='../media/com_j2xml/images/j2xml.png' width='110'
 											height='110' alt='j2xml' title='j2xml' align='middle'
 											border='0'>
@@ -267,6 +287,10 @@ foreach ($files as $file)
 				type="hidden" name="view" value="cpanel" /> <input type="hidden"
 				name="task" value="" />
 	<?php echo JHTML::_('form.token'); ?>
+
+
+
+
 
 
 </form>

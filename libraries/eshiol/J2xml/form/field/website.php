@@ -55,24 +55,24 @@ class JFormFieldWebsite extends JFormFieldList
 	{
 		// Initialize variables.
 		$options = array();
-		
+
 		$db = \JFactory::getDbo();
 		$query = $db->getQuery(true);
-		
+
 		$query->select('id as value, title as text');
 		$query->from('#__j2xml_websites');
-		
+
 		// Get the options.
 		$db->setQuery($query);
-		
+
 		$options = $db->loadObjectList();
-		
+
 		// Check for a database error.
 		if ($db->getErrorNum())
 		{
 			JError::raiseWarning(500, $db->getErrorMsg());
 		}
-		
+
 		$options = array_merge(parent::getOptions(), $options);
 		return $options;
 	}

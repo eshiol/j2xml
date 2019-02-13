@@ -37,7 +37,7 @@ class Tag extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        	
+	 *        
 	 * @since 14.8.240
 	 */
 	public function __construct (\JDatabaseDriver $db)
@@ -54,7 +54,7 @@ class Tag extends Table
 	 *        	@option int 'tags' 1: Yes, if not exists; 2: Yes, overwrite if
 	 *        	exists
 	 *        	@option string 'context'
-	 *        	
+	 *        
 	 * @throws
 	 * @return void
 	 * @access public
@@ -64,20 +64,20 @@ class Tag extends Table
 	public static function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$import_tags = $params->get('tags', 0);
 		if ($import_tags == 0)
 			return;
-		
+
 		$context = $params->get('context');
 		$db = \JFactory::getDBO();
 		$nullDate = $db->getNullDate();
 		$userid = \JFactory::getUser()->id;
-		
+
 		foreach ($xml->xpath("//j2xml/tag") as $record)
 		{
 			self::prepareData($record, $data, $params);
-			
+
 			$id = $data['id'];
 			$path = $data['path'];
 			$i = strrpos($path, '/');
@@ -90,7 +90,7 @@ class Tag extends Table
 				$parent_path = substr($path, 0, $i);
 				$data['parent_id'] = self::getTagId($parent_path);
 			}
-			
+
 			$tag = $db->setQuery(
 					$db->getQuery(true)
 						->select(array(
@@ -100,20 +100,17 @@ class Tag extends Table
 						->from($db->quoteName('#__tags'))
 						->where($db->quoteName('path') . ' = ' . $db->quote($data['path'])))
 				->loadObject();
-			
-			/**
-			 * Joomla! 3.8 compatibility
-			 */
+
 			if (class_exists('TagTable'))
 			{ // Joomla! 4
 				$table = new TagTable($db);
 			}
 			else
-			{ // Joomla! 3.8 and beyond
+			{ // Joomla! 3.x
 				\JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_tags/tables');
 				$table = \JTable::getInstance('Tag', 'TagsTable');
 			}
-			
+
 			if (! $tag || ($import_tags == 2))
 			{
 				if (! $tag)
@@ -126,11 +123,11 @@ class Tag extends Table
 					$isNew = false;
 					$data['id'] = $tag->id;
 				}
-				
+
 				\JLog::add(new \JLogEntry('saving tag...' . print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 				$table->bind($data);
 				$table->setLocation($data['parent_id'], 'last-child');
-				
+
 				if ($table->store())
 				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_TAG_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
@@ -151,7 +148,7 @@ class Tag extends Table
 	 *
 	 * @param array $tags
 	 *        	Array of tags paths
-	 *        	
+	 *        
 	 * @return array
 	 *
 	 * @since 18.8.310
@@ -159,14 +156,14 @@ class Tag extends Table
 	public static function convertPathsToIds ($tags)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if ($tags)
 		{
 			// Remove duplicates
 			$tags = array_unique((array) $tags);
-			
+
 			$db = \JFactory::getDbo();
-			
+
 			$query = $db->getQuery(true)
 				->select('id')
 				->from('#__tags')
@@ -175,7 +172,7 @@ class Tag extends Table
 					'quote'
 			), $tags)) . ')');
 			$db->setQuery($query);
-			
+
 			try
 			{
 				$ids = $db->loadColumn();
@@ -186,7 +183,7 @@ class Tag extends Table
 				return false;
 			}
 		}
-		
+
 		return $tags;
 	}
 
@@ -210,40 +207,40 @@ class Tag extends Table
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/tag/id[text() = '" . $id . "']"))
 		{
 			return;
 		}
-		
+
 		$db = \JFactory::getDbo();
 		$item = new Tag($db);
 		if (! $item->load($id))
 		{
 			return;
 		}
-		
+
 		if ($item->parent_id > 1)
 		{
 			Tag::export($item->parent_id, $xml, $options);
 		}
-		
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
-		
+
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
-		
+
 		if ($options['users'] && $item->created_user_id)
 		{
 			User::export($item->created_user_id, $xml, $options);
 		}
-		
+
 		if ($options['users'] && $item->modified_user_id)
 		{
 			User::export($item->modified_user_id, $xml, $options);
 		}
-		
+
 		if ($options['images'])
 		{
 			$text = html_entity_decode($item->description);
@@ -264,14 +261,14 @@ class Tag extends Table
 				{
 					Image::export($imgs->image_fulltext, $xml, $options);
 				}
-				
+
 				if (isset($imgs->image_intro))
 				{
 					Image::export($imgs->image_intro, $xml, $options);
 				}
 			}
 		}
-		
+
 		return $xml;
 	}
 
@@ -285,15 +282,15 @@ class Tag extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		parent::prepareData($record, $data, $params);
-		
+
 		if (empty($data['alias']))
 		{
 			$data['alias'] = $data['title'];
 			$data['alias'] = str_replace(' ', '-', $data['alias']);
 		}
-		
+
 		if (! isset($data['metakey']))
 			$data['metakey'] = '';
 		if (! isset($data['metadesc']))

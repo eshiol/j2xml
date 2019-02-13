@@ -36,7 +36,7 @@ class Image
 	 *        	@option int 'images' 1: Yes, if not exists; 2: Yes, overwrite
 	 *        	if exists
 	 *        	@option string 'context'
-	 *        	
+	 *        
 	 * @throws
 	 * @return void
 	 * @access public
@@ -46,11 +46,11 @@ class Image
 	public static function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$import_images = $params->get('images', 0);
 		if ($import_images == 0)
 			return;
-		
+
 		foreach ($xml->img as $image)
 		{
 			$src = JPATH_SITE . '/' . urldecode(html_entity_decode($image['src'], ENT_QUOTES, 'UTF-8'));
@@ -100,12 +100,12 @@ class Image
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('image: ' . $image, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/img[@src = '" . htmlentities($image, ENT_QUOTES, "UTF-8") . "']"))
 		{
 			return;
 		}
-		
+
 		$file_path = JPATH_SITE . '/' . urldecode($image);
 		\JLog::add(new \JLogEntry('image path: ' . $file_path, \JLog::DEBUG, 'lib_j2xml'));
 		if (\JFile::exists($file_path))

@@ -9,14 +9,14 @@
   <copyright>(C) 2010, 2019 Helios Ciancio. All rights reserved.
 	</copyright>
   <license>GNU/GPL v3</license>
-  <version>19.2.323.950</version>
+  <version>19.2.323.967</version>
   <description>LIB_J2XML_XML_DESCRIPTION</description>
   <scriptfile>script.php</scriptfile>
   <packagerurl>https://www.eshiol.it</packagerurl>
   <files>
     <filename>Exporter.php</filename>
     <filename>Importer.php</filename>
-    <filename>messages.php</filename>
+    <filename>Messages.php</filename>
     <filename>Sender.php</filename>
     <filename>Version.php</filename>
     <folder>form</folder>

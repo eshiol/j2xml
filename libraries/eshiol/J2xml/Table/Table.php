@@ -68,9 +68,9 @@ class Table extends \JTable
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry($table, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry($key, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		parent::__construct($table, $key, $db);
-		
+
 		$this->_excluded = array(
 				'asset_id',
 				'parent_id',
@@ -93,7 +93,7 @@ class Table extends \JTable
 	 *        	set the instance property value is used.
 	 * @param boolean $reset
 	 *        	True to reset the default values before loading the new row.
-	 *        	
+	 *        
 	 * @return boolean True if successful. False if row not found.
 	 *        
 	 * @link https://docs.joomla.org/JTable/load
@@ -105,7 +105,7 @@ class Table extends \JTable
 	public function load ($keys = null, $reset = true)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if ($ret = parent::load($keys, $reset))
 		{
 			if (isset($this->created_by))
@@ -155,7 +155,7 @@ class Table extends \JTable
 				// a.access WHERE a.id = '. (int)$this->id;
 				$query = $this->_db->getQuery(true);
 				$serverType = (new \JVersion())->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
-				
+
 				if ($serverType === 'postgresql')
 				{
 					$query->select(
@@ -189,14 +189,14 @@ class Table extends \JTable
 	protected function _serialize ()
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$mainTag = strtolower((new \ReflectionClass($this))->getShortName());
-		
+
 		// Initialise variables.
 		$xml = array();
-		
+
 		$xml[] = '<' . $mainTag . '>';
-		
+
 		foreach (get_object_vars($this) as $k => $v)
 		{
 			// If the value is null or non-scalar, or the field is internal
@@ -228,7 +228,7 @@ class Table extends \JTable
 			}
 			$xml[] = $this->_setValue($k, $v);
 		}
-		
+
 		foreach ($this->_aliases as $k => $query)
 		{
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
@@ -249,11 +249,11 @@ class Table extends \JTable
 				$xml[] = '</' . $k . 'list>';
 			}
 		}
-		
+
 		$xml[] = '</' . $mainTag . '>';
-		
+
 		\JLog::add(new \JLogEntry(implode("\n", $xml), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		// Return the XML array imploded over new lines.
 		return implode("\n", $xml);
 	}
@@ -261,7 +261,7 @@ class Table extends \JTable
 	private function _setValue ($k, $v)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__ . ' ' . print_r($k, true) . ' ' . print_r($v, true), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$xml = '';
 		if (is_object($v))
 		{
@@ -276,7 +276,7 @@ class Table extends \JTable
 				{
 					$xml .= $this->_setValue($k1, $v1);
 				}
-				
+
 				// Open root node.
 				$xml = '<' . $k . '>' . $xml . '</' . $k . '>';
 			}
@@ -288,7 +288,7 @@ class Table extends \JTable
 		else if ($v != '')
 		{
 			$v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
-			
+
 			$length = strlen($v);
 			for ($i = 0; $i < $length; $i ++)
 			{
@@ -303,10 +303,10 @@ class Table extends \JTable
 					$xml .= " ";
 				}
 			}
-			
+
 			$xml = '<' . $k . '><![CDATA[' . $xml . ']]></' . $k . '>';
 		}
-		
+
 		// Return the XML value.
 		return $xml;
 	}
@@ -319,7 +319,7 @@ class Table extends \JTable
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		return $this->_serialize();
 	}
 
@@ -332,7 +332,7 @@ class Table extends \JTable
 	 *        	the array to be imported
 	 * @param \JRegistry $params
 	 *        	the parameters of the conversation
-	 *        	
+	 *        
 	 * @throws
 	 * @return void
 	 * @access public
@@ -340,11 +340,11 @@ class Table extends \JTable
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$db = \JFactory::getDbo();
 		$nullDate = $db->getNullDate();
 		$userid = \JFactory::getUser()->id;
-		
+
 		$data = self::xml2array($record);
 		// TODO: fix alias
 		/**
@@ -356,10 +356,10 @@ class Table extends \JTable
 		 * $data['alias'] = str_replace(' ', '-', $data['alias']);
 		 * }
 		 */
-		
+
 		$data['checked_out'] = 0;
 		$data['checked_out_time'] = $nullDate;
-		
+
 		if (isset($data['catid']))
 		{
 			$data['catid'] = self::getCategoryId($data['catid'], $params->get('extension'), $params->get('category_default'));
@@ -400,7 +400,7 @@ class Table extends \JTable
 		{
 			$data['modified'] = self::fixdate($data['modified']);
 		}
-		
+
 		$import_fields = $params->get('fields', 0);
 		if ($import_fields)
 		{
@@ -421,7 +421,7 @@ class Table extends \JTable
 				unset($data['fieldlist']);
 			}
 		}
-		
+
 		if ((new \JVersion())->isCompatible('3.1') && isset($data['tag']))
 		{
 			$data['tags'] = (array) self::getTagId($data['tag']);
@@ -432,13 +432,13 @@ class Table extends \JTable
 			$data['tags'] = self::getTagId($data['taglist']);
 			unset($data['taglist']);
 		}
-		
+
 		if (isset($data['params']))
 		{
 			$registry = new \JRegistry($data['params']);
 			$data['params'] = $registry->toArray();
 		}
-		
+
 		\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 	}
 
@@ -447,14 +447,14 @@ class Table extends \JTable
 	 *
 	 * @param string $path
 	 *        	the path of the article to search for
-	 *        	
+	 *        
 	 * @return int|null the id of the article or null if the article doesn't
 	 *         exist
 	 */
 	public static function getArticleId ($path)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$db = \JFactory::getDBO();
 		$i = strrpos($path, '/');
 		$article_id = $db->setQuery(
@@ -466,7 +466,7 @@ class Table extends \JTable
 					->where($db->quoteName('c.alias') . ' = ' . $db->quote(substr($path, $i + 1)))
 					->where($db->quoteName('cc.path') . ' = ' . $db->quote(substr($path, 0, $i))))
 			->loadResult();
-		
+
 		\JLog::add(new \JLogEntry($path . ' -> ' . $article_id, \JLog::DEBUG, 'lib_j2xml'));
 		return $article_id;
 	}
@@ -476,13 +476,13 @@ class Table extends \JTable
 	 *
 	 * @param string $username
 	 *        	the username of the user to search for
-	 *        	
+	 *        
 	 * @return int the id of the user if it exists or the default user id
 	 */
 	public static function getUserId ($username, $default_user_id = null)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$db = \JFactory::getDBO();
 		$user_id = $db->setQuery(
 				$db->getQuery(true)
@@ -490,9 +490,9 @@ class Table extends \JTable
 					->from($db->quoteName('#__users'))
 					->where($db->quoteName('username') . ' = ' . $db->quote($username)))
 			->loadResult();
-		
+
 		$user_id = $user_id ?: ($default_user_id ?: \JFactory::getUser()->id);
-		
+
 		\JLog::add(new \JLogEntry($username . ' -> ' . $user_id, \JLog::DEBUG, 'lib_j2xml'));
 		return $user_id;
 	}
@@ -509,7 +509,7 @@ class Table extends \JTable
 	public static function getUsergroupId ($usergroup, $import = true)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if (empty($usergroup))
 		{
 			$usergroup_id = \JComponentHelper::getParams('com_users')->get('new_usertype');
@@ -548,7 +548,7 @@ class Table extends \JTable
 								'parent_id' => $parent_id
 						));
 						$usergroup_id = $u->id;
-						\JLog::add(new \JLogEntry(Text::sprintf('LIB_J2XML_MSG_USERGROUP_IMPORTED', $groups[$j]), \JLog::INFO, 'lib_j2xml'));
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USERGROUP_IMPORTED', $groups[$j]), \JLog::INFO, 'lib_j2xml'));
 					}
 					else
 					{
@@ -565,19 +565,19 @@ class Table extends \JTable
 		{
 			$usergroup_id = ComponentHelper::getParams('com_users')->get('new_usertype');
 		}
-		
+
 		\JLog::add(new \JLogEntry($usergroup . ' -> ' . $usergroup_id, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		return $usergroup_id;
 	}
 
 	public static function getAccessId ($access)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if (is_numeric($access))
 			return $access;
-		
+
 		$db = \JFactory::getDBO();
 		$access_id = $db->setQuery(
 				$db->getQuery(true)
@@ -589,7 +589,7 @@ class Table extends \JTable
 		{
 			$access_id = 3;
 		}
-		
+
 		\JLog::add(new \JLogEntry($access . ' -> ' . $access_id, \JLog::DEBUG, 'lib_j2xml'));
 		return $access_id;
 	}
@@ -597,10 +597,10 @@ class Table extends \JTable
 	public static function getCategoryId ($category, $extension, $default_category = 0)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if (is_numeric($category))
 			return $category;
-		
+
 		$db = \JFactory::getDBO();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('id'))
@@ -613,7 +613,7 @@ class Table extends \JTable
 		{
 			$category_id = $default_category;
 		}
-		
+
 		\JLog::add(new \JLogEntry($extension . '/' . $category . ' -> ' . $category_id, \JLog::DEBUG, 'lib_j2xml'));
 		return $category_id;
 	}
@@ -623,7 +623,7 @@ class Table extends \JTable
 	 *
 	 * @param string|array $tags
 	 *        	tag path
-	 *        	
+	 *        
 	 * @return mixed An array with tag ids, a single id or false if an error
 	 *         occurs
 	 *        
@@ -632,9 +632,9 @@ class Table extends \JTable
 	public static function getTagId ($tag)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$db = \JFactory::getDbo();
-		
+
 		try
 		{
 			if (is_array($tag))
@@ -663,7 +663,7 @@ class Table extends \JTable
 		catch (\Exception $e)
 		{
 		}
-		
+
 		return false;
 	}
 
@@ -672,7 +672,7 @@ class Table extends \JTable
 	 *
 	 * @param string $date
 	 *        	the datetime to be fixed
-	 *        	
+	 *        
 	 * @return string the fixed datetime
 	 *        
 	 * @since 18.8.301
@@ -680,7 +680,7 @@ class Table extends \JTable
 	protected static function fixDate ($date)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		return (($date == '0000-00-00 00:00:00') || ($date == '1970-01-01 00:00:00')) ? \JFactory::getDbo()->getNullDate() : (new \JDate($date))->toSQL(
 				false);
 	}
@@ -722,7 +722,42 @@ class Table extends \JTable
 		{
 			return $xmlObject;
 		}
-		
+
 		return $out;
 	}
+
+	/**
+	 * Import data
+	 *
+	 * @param \SimpleXMLElement $xml
+	 *        	xml
+	 * @param Registry $params
+	 *        	@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
+	 *        	overwrite if exists
+	 *        	@option string 'context'
+	 *        
+	 * @throws
+	 * @return void
+	 * @access public
+	 *        
+	 * @since 19.2.323
+	 */
+	public static function import ($xml, $params) {}
+
+	/**
+	 * Export data
+	 *
+	 * @param int $id
+	 *        	the id of the item to be exported
+	 * @param \SimpleXMLElement $xml
+	 *        	xml
+	 * @param array $options
+	 *
+	 * @throws
+	 * @return void
+	 * @access public
+	 *        
+	 * @since 19.2.323
+	 */
+	public static function export ($id, &$xml, $options) {}
 }

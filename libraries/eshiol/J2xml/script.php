@@ -20,6 +20,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Log\LogEntry;
+use Joomla\CMS\Version;
 
 /**
  * Installation class to perform additional changes during
@@ -36,7 +37,7 @@ class eshiolj2xmlInstallerScript
 	 *
 	 * @param \stdClass $parent
 	 *        	- Parent object calling this method.
-	 *        	
+	 *        
 	 * @return void
 	 */
 	public function install ($parent)
@@ -48,16 +49,16 @@ class eshiolj2xmlInstallerScript
 	 *
 	 * @param \stdClass $parent
 	 *        	- Parent object calling this method.
-	 *        	
+	 *        
 	 * @return void
 	 */
 	public function uninstall ($parent)
 	{
 		$db = Factory::getDbo();
-		
+
 		$queries = array();
-		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
-		
+		$serverType = (new Version())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+
 		if ($serverType === 'mysql')
 		{
 			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
@@ -73,7 +74,7 @@ class eshiolj2xmlInstallerScript
 			foreach ($queries as $query)
 			{
 				$db->setQuery($db->convertUtf8mb4QueryToUtf8($query));
-				
+
 				try
 				{
 					$db->execute();
@@ -81,7 +82,7 @@ class eshiolj2xmlInstallerScript
 				catch (\JDatabaseExceptionExecuting $e)
 				{
 					Log::add(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()), Log::WARNING, 'jerror');
-					
+
 					return false;
 				}
 			}
@@ -93,7 +94,7 @@ class eshiolj2xmlInstallerScript
 	 *
 	 * @param \stdClass $parent
 	 *        	- Parent object calling object.
-	 *        	
+	 *        
 	 * @return void
 	 */
 	public function update ($parent)
@@ -111,7 +112,7 @@ class eshiolj2xmlInstallerScript
 	 *        	- * discover_install
 	 * @param \stdClass $parent
 	 *        	- Parent object calling object.
-	 *        	
+	 *        
 	 * @return void
 	 */
 	public function preflight ($type, $parent)
@@ -128,16 +129,16 @@ class eshiolj2xmlInstallerScript
 	 *        	- * discover_install
 	 * @param \stdClass $parent
 	 *        	- Parent object calling object.
-	 *        	
+	 *        
 	 * @return void
 	 */
 	function postflight ($type, $parent)
 	{
 		$db = Factory::getDbo();
-		
+
 		$queries = array();
-		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
-		
+		$serverType = (new Version())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+
 		if ($serverType === 'mysql')
 		{
 			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
@@ -201,14 +202,14 @@ END;
 $$ LANGUAGE plpgsql;
 EOL;
 		}
-		
+
 		if (count($queries))
 		{
 			// Process each query in the $queries array (split out of sql file).
 			foreach ($queries as $query)
 			{
 				$db->setQuery($db->convertUtf8mb4QueryToUtf8($query));
-				
+
 				try
 				{
 					$db->execute();
@@ -216,7 +217,7 @@ EOL;
 				catch (\JDatabaseExceptionExecuting $e)
 				{
 					Log::add(Text::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()), Log::WARNING, 'jerror');
-					
+
 					return false;
 				}
 			}
