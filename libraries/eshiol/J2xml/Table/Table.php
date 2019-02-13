@@ -20,7 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.2.323
+ * @version 19.2.324
  * @since 1.5.3.39
  */
 class Table extends \JTable
@@ -287,7 +287,7 @@ class Table extends \JTable
 		}
 		else if ($v != '')
 		{
-			$v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
+//			$v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
 
 			$length = strlen($v);
 			for ($i = 0; $i < $length; $i ++)
