@@ -30,7 +30,7 @@ use eshiol\J2XML\Table\Viewlevel;
  *
  * Category Table
  *
- * @version 19.2.323
+ * @version 19.2.325
  * @since 1.5.1
  */
 class Category extends Table
@@ -95,7 +95,7 @@ class Category extends Table
 	 *        
 	 * @since 18.8.310
 	 */
-	public static function import ($xml, $params)
+	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 

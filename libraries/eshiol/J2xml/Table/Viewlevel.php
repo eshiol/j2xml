@@ -21,7 +21,7 @@ use eshiol\J2XML\Table\Table;
 /**
  * Viewlevel Table
  *
- * @version 19.2.323
+ * @version 19.2.325
  * @since 15.3.248
  */
 class Viewlevel extends Table
@@ -114,7 +114,7 @@ class Viewlevel extends Table
 	 *        
 	 * @since 18.8.310
 	 */
-	public static function import ($xml, $params)
+	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 

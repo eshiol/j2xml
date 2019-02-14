@@ -29,7 +29,7 @@ use eshiol\J2XML\Table\User;
 /**
  * Contact Table
  *
- * @version 19.2.323
+ * @version 19.2.325
  * @since 15.9.261
  */
 class Contact extends Table
@@ -179,7 +179,7 @@ class Contact extends Table
 	 *        
 	 * @since 19.2.322
 	 */
-	public static function import ($xml, $params)
+	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 

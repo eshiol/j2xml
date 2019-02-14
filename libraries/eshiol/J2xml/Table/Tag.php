@@ -26,7 +26,7 @@ use Joomla\Component\Tags\Administrator\Table\TagTable;
 /**
  * Tag table
  *
- * @version 19.2.323
+ * @version 19.2.325
  * @since 14.8.240
  */
 class Tag extends Table
@@ -61,7 +61,7 @@ class Tag extends Table
 	 *        
 	 * @since 18.8.310
 	 */
-	public static function import ($xml, $params)
+	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 

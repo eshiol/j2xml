@@ -23,7 +23,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.2.323
+ * @version 19.2.325
  * @since 19.2.323
  */
 class Fieldgroup extends Table
@@ -67,7 +67,7 @@ class Fieldgroup extends Table
 	 *        
 	 * @since 19.2.323
 	 */
-	public static function import ($xml, $params)
+	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 

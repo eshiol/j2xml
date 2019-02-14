@@ -35,7 +35,7 @@ jimport('joomla.application.router');
 /**
  * Content table
  *
- * @version 19.2.323
+ * @version 19.2.325
  * @since 1.5.1
  */
 class Content extends Table
@@ -186,7 +186,7 @@ class Content extends Table
 	 *        
 	 * @since 18.8.301
 	 */
-	public static function import ($xml, $params)
+	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 

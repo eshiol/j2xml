@@ -114,7 +114,7 @@ foreach ($files as $file)
 <?php
 		$link = 'index.php?option=com_content';
 		$this->_quickiconButton($link, 'icon-48-article.png', JText::_('COM_J2XML_TOOLBAR_ARTICLE_MANAGER'));
-		
+
 		$link = 'index.php?option=com_j2xml&amp;view=websites';
 		$this->_quickiconButton($link, 'icon-48-websites.png', JText::_('COM_J2XML_TOOLBAR_WEBSITE_MANAGER'), '../media/com_j2xml/images/');
 		?>
@@ -193,7 +193,7 @@ foreach ($files as $file)
 <?php
 		$link = 'index.php?option=com_content';
 		$this->_quickiconButton($link, 'icon-48-article.png', JText::_('COM_J2XML_TOOLBAR_ARTICLE_MANAGER'));
-		
+
 		if (class_exists('JPlatform'))
 		{
 			$link = 'index.php?option=com_j2xml&amp;view=websites';

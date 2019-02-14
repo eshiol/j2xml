@@ -28,7 +28,7 @@ use eshiol\J2XML\Table\User;
 /**
  * Usernote Table
  *
- * @version 19.2.323
+ * @version 19.2.325
  * @since 14.8.240
  */
 class Usernote extends \eshiol\J2XML\Table\Table
@@ -118,7 +118,7 @@ class Usernote extends \eshiol\J2XML\Table\Table
 	 * {@inheritdoc}
 	 * @see Table::import()
 	 */
-	public static function import ($xml, $params)
+	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 

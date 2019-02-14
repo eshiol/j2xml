@@ -20,7 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.2.324
+ * @version 19.2.325
  * @since 1.5.3.39
  */
 class Table extends \JTable
@@ -742,7 +742,7 @@ class Table extends \JTable
 	 *        
 	 * @since 19.2.323
 	 */
-	public static function import ($xml, $params) {}
+	public static function import ($xml, &$params) {}
 
 	/**
 	 * Export data

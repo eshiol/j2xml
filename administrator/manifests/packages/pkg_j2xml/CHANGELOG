@@ -1,10 +1,11 @@
---------------------- 3.7.192 Release  [13-February-2019] ---------------------
+--------------------- 3.7.192 Release  [14-February-2019] ---------------------
 
 cli_j2xml-3.7.17
 
 lib_eshiol-3.7.33
 
-lib_j2xml-19.2.323
+lib_j2xml-19.2.325
+  # php.ini allow_url_fopen=Off (build 325)
   # export (build 324)
   + view levels (build 323)
 

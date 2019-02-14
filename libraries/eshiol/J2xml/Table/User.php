@@ -28,7 +28,7 @@ use eshiol\J2XML\Table\Usernote;
 /**
  * User Table
  *
- * @version 19.2.323
+ * @version 19.2.325
  * @since 1.5.3beta4.39
  */
 class User extends Table
