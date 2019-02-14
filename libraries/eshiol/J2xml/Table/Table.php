@@ -20,7 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.2.325
+ * @version 19.2.326
  * @since 1.5.3.39
  */
 class Table extends \JTable
@@ -429,7 +429,7 @@ class Table extends \JTable
 		}
 		elseif (isset($data['taglist']))
 		{
-			$data['tags'] = self::getTagId($data['taglist']);
+			$data['tags'] = self::getTagId($data['taglist']['tag']);
 			unset($data['taglist']);
 		}
 
@@ -632,6 +632,7 @@ class Table extends \JTable
 	public static function getTagId ($tag)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry(print_r($tags, true), \JLog::DEBUG, 'lib_j2xml'));
 
 		$db = \JFactory::getDbo();
 

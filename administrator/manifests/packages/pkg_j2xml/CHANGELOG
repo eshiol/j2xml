@@ -4,7 +4,8 @@ cli_j2xml-3.7.17
 
 lib_eshiol-3.7.33
 
-lib_j2xml-19.2.325
+lib_j2xml-19.2.326
+  # tags (build 326)
   # php.ini allow_url_fopen=Off (build 325)
   # export (build 324)
   + view levels (build 323)
