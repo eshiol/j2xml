@@ -16,13 +16,13 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-use eshiol\J2XML\Importer;
 use eshiol\J2XML\Messages;
-use eshiol\J2XML\Version;
 
 jimport('eshiol.j2xml.Importer');
+jimport('eshiol.j2xmlpro.Importer');
 jimport('eshiol.j2xml.Messages');
 jimport('eshiol.j2xml.Version');
+jimport('eshiol.j2xmlpro.Version');
 
 // Import JTableCategory
 JLoader::register('JTableCategory', JPATH_PLATFORM . '/joomla/database/table/category.php');
@@ -34,7 +34,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Joomla! J2XML XML-RPC Plugin
  *
- * @version 3.7.192
+ * @version 3.7.193
  * @since 1.5.3
  */
 class XMLRPCJ2XMLServices
@@ -170,7 +170,7 @@ class XMLRPCJ2XMLServices
 		$version = explode(".", $xmlVersion);
 		$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
 
-		$j2xmlVersion = Version::$DOCVERSION;
+		$j2xmlVersion = class_exists('eshiol\J2xmlpro\Version') ? eshiol\J2xmlpro\Version::$DOCVERSION : eshiol\J2xml\Version::$DOCVERSION;
 		$version = explode(".", $j2xmlVersion);
 		$j2xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
 
@@ -198,7 +198,7 @@ class XMLRPCJ2XMLServices
 				$iparams->set('content_category_forceto', $params->get('category'));
 			}
 
-			$importer = new Importer();
+			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 			$importer->import($xml, $iparams);
 		}
 		else

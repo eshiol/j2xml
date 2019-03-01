@@ -16,16 +16,15 @@
 // no direct access
 defined('_JEXEC') or die();
 
-use eshiol\J2xml\Importer;
-
 JLoader::import('eshiol.j2xml.Importer');
+JLoader::import('eshiol.j2xmlpro.Importer');
 
 require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 
 /**
  * Controller class.
  *
- * @version 3.7.192
+ * @version 3.7.193
  * @since 1.5.3
  */
 class J2xmlControllerCpanel extends JControllerLegacy
@@ -205,7 +204,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$iparams->set('content_category_forceto', $params->get('category'));
 			}
 
-			$importer = new Importer();
+			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 			// set_time_limit(120);
 			$importer->import($xml, $iparams);
 		}

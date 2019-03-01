@@ -77,11 +77,10 @@ $lang->load('com_j2xml', JPATH_ADMINISTRATOR, null, false, false)
 	// Fallback to the j2xmlimporter file in the default language
 	|| $lang->load('com_j2xml', JPATH_ADMINISTRATOR, null, true);
 
-use eshiol\J2XML\Importer;
-use eshiol\J2XML\Version;
-
 jimport('eshiol.j2xml.Importer');
+jimport('eshiol.j2xmlpro.Importer');
 jimport('eshiol.j2xml.Version');
+jimport('eshiol.j2xmlpro.Version');
 jimport('eshiol.j2xml.messages');
 
 /**
@@ -196,7 +195,7 @@ class J2XMLCli extends JApplicationCli
 			$version = explode(".", $xmlVersion);
 			$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
 
-			$j2xmlVersion = Version::$DOCVERSION;
+			$j2xmlVersion = class_exists('eshiol\J2xmlpro\Version') ? eshiol\J2xmlpro\Version::$DOCVERSION : eshiol\J2xml\Version::$DOCVERSION;
 			$version = explode(".", $j2xmlVersion);
 			$j2xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
 
@@ -225,7 +224,7 @@ class J2XMLCli extends JApplicationCli
 					$iparams->set('content_category_forceto', $params->get('category'));
 				}
 
-				$importer = new Importer();
+				$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 				$importer->import($xml, $iparams);
 			}
 			else

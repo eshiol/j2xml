@@ -3,8 +3,7 @@
   <name>plg_system_j2xml</name>
   <author>Helios Ciancio</author>
   <creationDate>February 2019</creationDate>
-  <copyright>(C) 2010 - 2019 Helios Ciancio. All rights reserved.
-	</copyright>
+  <copyright><![CDATA[(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>

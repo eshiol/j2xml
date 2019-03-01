@@ -112,9 +112,8 @@ class plgSystemJ2XML extends JPlugin
 		$extension = $jinput->get('extension');
 
 		$db = JFactory::getDbo();
-		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
-			->select($db->quoteName('extension_id'))
+			->select($db->quoteName('enabled'))
 			->from($db->quoteName('#__extensions'))
 			->where($db->quoteName('type') . ' = ' . $db->quote('library'));
 		if ((new \JVersion())->isCompatible('3.9'))
@@ -125,14 +124,14 @@ class plgSystemJ2XML extends JPlugin
 		{
 			$query->where($db->quoteName('element') . ' = ' . $db->quote('j2xmlpro'));
 		}
-		$j2xmlpro = $db->setQuery($query)->loadResult();
+		$pro = (bool) $db->setQuery($query)->loadResult();
 
 		if (($option == 'com_content') && (! $view || $view == 'articles' || $view == 'featured') ||
 				($option == 'com_users') && (! $view || $view == 'users' || $view == 'levels') || ($option == 'com_weblinks') && (! $view || $view == 'weblinks') ||
 				($option == 'com_categories') && ($extension == 'com_content') && (! $view || $view == 'categories') ||
 				($option == 'com_contact') && (! $view || $view == 'contacts') ||
-				$j2xmlpro && ($option == 'com_menus') && (! $view || $view == 'menus') ||
-				$j2xmlpro && ($option == 'com_modules') && (! $view || $view == 'modules') ||
+				$pro && ($option == 'com_menus') && (! $view || $view == 'menus') ||
+				$pro && ($option == 'com_modules') && (! $view || $view == 'modules') ||
 				($option == 'com_fields') && (! $view || $view == 'fields'))
 		{
 			$toolbar = JToolBar::getInstance('toolbar');

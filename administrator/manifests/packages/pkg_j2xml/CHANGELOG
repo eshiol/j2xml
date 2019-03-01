@@ -1,18 +1,26 @@
---------------------- 3.7.192 Release  [14-February-2019] ---------------------
+----------------------- 3.7.193 Release  [1-March-2019] -----------------------
 
-cli_j2xml-3.7.17
+cli_j2xml-3.7.18
+  + J2XML Pro (build 193)
 
 lib_eshiol-3.7.33
 
-lib_j2xml-19.2.326
-  # tags (build 326)
+lib_j2xml-19.3.328
+  # fields (build 328)
+  # keep ids (build 327)
+  # contact (build 327)
+  # category (build 327)
+  # ajax (build 327)
+  # log (build 327)
+  # tags (build 326, 327)
   # php.ini allow_url_fopen=Off (build 325)
   # export (build 324)
   + view levels (build 323)
 
 lib_phpxmlrpc-3.1.1
 
-com_j2xml-3.7.192
+com_j2xml-3.7.193
+  + J2XML Pro (build 193)
   + view levels (build 192)
   - backlink (build 192)
   - clean (build 192)

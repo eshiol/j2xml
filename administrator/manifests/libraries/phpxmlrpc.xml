@@ -6,9 +6,8 @@
   <author>Helios Ciancio</author>
   <authorEmail>info (at) eshiol (dot) it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <copyright><![CDATA[(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.<br/>
-  
-	]]></copyright>
+  <copyright><![CDATA[Copyright (c) 1999,2000,2001 Edd Dumbill, Useful Information Company
+  <br/>(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>GNU/GPL v3</license>
   <version>3.1.1.20</version>
   <description>A php library for building xml-rpc clients and servers.

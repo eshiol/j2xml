@@ -2,7 +2,7 @@
  * @package J2XML Library
  * @subpackage lib_eshiol_j2xml
  * 
- * @version 19.2.323
+ * @version 19.3.328
  * @since 16.11.288
  * 
  * @author Helios Ciancio <info (at) eshiol (dot) it>
@@ -42,14 +42,14 @@ if (typeof (eshiol.j2xml.convert) === 'undefined') {
 	eshiol.j2xml.convert = [];
 }
 
-eshiol.j2xml.version = '19.2.323';
+eshiol.j2xml.version = '19.3.328';
 
 console.log('j2xml Library v' + eshiol.j2xml.version);
 
 /**
  * process item
  * 
- * @param {string}
+ * @param {array}
  *            nodes the array of item
  * @param {int}
  *            n
@@ -201,6 +201,10 @@ eshiol.j2xml.importer = function(name, url) {
 						+ "\n";
 				var footer = "\n</j2xml>";
 
+				$root.children("field").each(function(index) {
+					$nodes.push(header + eshiol.XMLToString(this) + footer);
+				});
+
 				$root.children("user").each(function(index) {
 					$nodes.push(header + eshiol.XMLToString(this) + footer);
 				});
@@ -215,7 +219,7 @@ eshiol.j2xml.importer = function(name, url) {
 
 				var base = '';
 				if ($root.children("base")) {
-					base = $root.children("base")[0].val();
+					base = eshiol.XMLToString($root.children("base")[0]);
 				}
 				$root.children("content").each(function(index) {
 					$nodes.push(header + base + eshiol.XMLToString(this) + footer);
@@ -225,7 +229,7 @@ eshiol.j2xml.importer = function(name, url) {
 						.children()
 						.each(
 								function(index) {
-									if ([ "base", "user", "tag", "category",
+									if ([ "base", "field", "user", "tag", "category",
 											"content" ].indexOf(this.nodeName) == -1) {
 										$nodes.push(header
 												+ eshiol.XMLToString(this)

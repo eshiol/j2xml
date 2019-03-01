@@ -28,7 +28,7 @@ include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpcs.inc';
 
 /**
  *
- * @version 19.2.326
+ * @version 19.2.327
  * @since 1.5.3beta3.38
  */
 class Sender
@@ -95,22 +95,22 @@ class Sender
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('xml: ' . $xml->asXML(), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$app = \JFactory::getApplication();
 		$version = explode(".", Version::$DOCVERSION);
 		$xmlVersionNumber = $version[0] . $version[1] . substr('0' . $version[2], strlen($version[2]) - 1);
-		
+
 		$dom = new \DOMDocument('1.0');
 		$dom->preserveWhiteSpace = false;
 		$dom->formatOutput = true;
 		$dom->loadXML($xml->asXML());
 		$data = $dom->saveXML();
-		
+
 		if ($options['gzip'])
 		{
 			$data = gzencode($data, 9);
 		}
-		
+
 		$db = \JFactory::getDBO();
 		$query = 'SELECT `title`, `remote_url`, `username`, `password` ' . 'FROM `#__j2xml_websites` WHERE `state`= 1 AND `id` = ' . $sid;
 		$db->setQuery($query);
@@ -118,20 +118,20 @@ class Sender
 		{
 			return;
 		}
-		
+
 		$str = $server['remote_url'];
-		
+
 		if (strpos($str, "://") === false)
 		{
 			$server['remote_url'] = "http://" . $server['remote_url'];
 		}
-		
+
 		if ($str[strlen($str) - 1] != '/')
 		{
 			$server['remote_url'] .= '/';
 		}
 		$server['remote_url'] .= 'index.php?option=com_j2xml&task=services.import&format=xmlrpc';
-		
+
 		$headers = false;
 		if (! function_exists('xmlrpc_set_type'))
 		{
@@ -178,14 +178,14 @@ class Sender
 									)
 							)
 					));
-			
+
 			$headers = @get_headers($server['remote_url']);
 		}
-		
+
 		if ($headers === false)
 		{
 			$res = self::_xmlrpc_j2xml_send($server['remote_url'], $data, $server['username'], $server['password'], $options['debug']);
-			\JLog::add(new \JLogEntry(print_r($res, true), \JLOG::DEBUG, 'lib_j2xml'));
+			\JLog::add(new \JLogEntry(print_r($res, true), \JLog::DEBUG, 'lib_j2xml'));
 			if ($res->faultcode())
 			{
 				$app->enqueueMessage($server['title'] . ': ' . \JText::_($res->faultString()), 'error');
@@ -245,7 +245,7 @@ class Sender
 				else
 				{
 					$response = xmlrpc_decode($file);
-					
+
 					\JLog::add(new \JLogEntry(print_r($response, true), \JLog::DEBUG, 'lib_j2xml'));
 					if ($response && xmlrpc_is_fault($response))
 					{
@@ -290,7 +290,7 @@ class Sender
 	private static function _xmlrpc_j2xml_send ($remote_url, $xml, $username, $password, $debug = 0)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$debug = 0;
 		$protocol = '';
 		$GLOBALS['xmlrpc_internalencoding'] = 'UTF-8';
@@ -306,14 +306,14 @@ class Sender
 		$msg->addparam($p2);
 		$p3 = new \xmlrpcval($password, 'string');
 		$msg->addparam($p3);
-		
+
 		$res = $client->send($msg, 0);
-		
+
 		if (! $res->faultcode())
 		{
 			return $res;
 		}
-		
+
 		if ($res->faultString() == "Didn't receive 200 OK from remote server. (HTTP/1.1 301 Foun)")
 		{
 			$res = $client->send($msg, 0, $protocol = 'http11');
@@ -350,11 +350,11 @@ if (! function_exists('http_parse_headers'))
 	{
 		$headers = array();
 		$key = '';
-		
+
 		foreach (explode("\n", $raw_headers) as $i => $h)
 		{
 			$h = explode(':', $h, 2);
-			
+
 			if (isset($h[1]))
 			{
 				if (! isset($headers[$h[0]]))
@@ -384,7 +384,7 @@ if (! function_exists('http_parse_headers'))
 				trim($h[0]);
 			}
 		}
-		
+
 		return $headers;
 	}
 }

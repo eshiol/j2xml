@@ -18,9 +18,8 @@ defined('_JEXEC') or die();
 
 jimport('joomla.application.component.controller');
 
-use eshiol\J2xml\Importer;
-
 jimport('eshiol.j2xml.Importer');
+jimport('eshiol.j2xmlpro.Importer');
 jimport('cms.response.json');
 
 require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
@@ -28,7 +27,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Controller class.
  *
- * @version 3.7.192
+ * @version 3.7.193
  * @since 3.6.160
  */
 class J2XMLControllerCpanel extends JControllerLegacy
@@ -152,7 +151,7 @@ class J2XMLControllerCpanel extends JControllerLegacy
 					$iparams->set('content_category_forceto', $params->get('category'));
 				}
 
-				$importer = new Importer();
+				$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 				// set_time_limit(120);
 				$importer->import($xml, $iparams);
 			}
@@ -170,8 +169,8 @@ class J2XMLControllerCpanel extends JControllerLegacy
 			$params->set('filename', $filename);
 
 			// set_time_limit(120);
-			$j2xml = new Importer();
-			$j2xml->import($xml, $params);
+			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
+			$importer->import($xml, $params);
 		}
 
 		JLog::add(new JLogEntry(print_r($this->app->getMessageQueue(), true), JLog::DEBUG, 'com_j2xml'));

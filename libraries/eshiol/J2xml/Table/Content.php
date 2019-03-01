@@ -35,7 +35,7 @@ jimport('joomla.application.router');
 /**
  * Content table
  *
- * @version 19.2.325
+ * @version 19.3.328
  * @since 1.5.1
  */
 class Content extends Table
@@ -269,7 +269,7 @@ class Content extends Table
 				// Trigger the onContentBeforeSave event.
 				$result = \JFactory::getApplication()->triggerEvent('onContentBeforeSave',
 						array(
-								$params->get('context'),
+								$params->get('context', 'com_content.article'),
 								&$table,
 								$isNew
 						));
@@ -321,9 +321,10 @@ class Content extends Table
 						// Trigger the onContentAfterSave event.
 						$result = \JFactory::getApplication()->triggerEvent('onContentAfterSave',
 								array(
-										$params->get('context'),
+										$params->get('context', 'com_content.article'),
 										&$table,
-										$isNew
+										$isNew,
+										$data
 								));
 					}
 					else

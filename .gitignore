@@ -8,8 +8,8 @@
 .project
 
 # Joomla
-files/
-images/
+/files/
+/images/
 
 # J2XML Pro
 administrator/manifests/libraries/j2xmlpro.xml

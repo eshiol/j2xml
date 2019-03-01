@@ -29,7 +29,7 @@ use eshiol\J2XML\Table\User;
 /**
  * Contact Table
  *
- * @version 19.2.325
+ * @version 19.2.327
  * @since 15.9.261
  */
 class Contact extends Table
@@ -239,12 +239,12 @@ class Contact extends Table
 
 				if ($table->store())
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CONTACT_IMPORTED', $table->name), \JLOG::INFO, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CONTACT_IMPORTED', $table->name), \JLog::INFO, 'lib_j2xml'));
 				}
 				else
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CONTACT_NOT_IMPORTED', $data['name']), \JLOG::ERROR, 'lib_j2xml'));
-					\JLog::add(new \JLogEntry($table->getError(), \JLOG::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CONTACT_NOT_IMPORTED', $data['name']), \JLog::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry($table->getError(), \JLog::ERROR, 'lib_j2xml'));
 				}
 
 				$table = null;

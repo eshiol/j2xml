@@ -30,7 +30,7 @@ use eshiol\J2XML\Table\Viewlevel;
  *
  * Category Table
  *
- * @version 19.2.325
+ * @version 19.2.327
  * @since 1.5.1
  */
 class Category extends Table
@@ -41,7 +41,7 @@ class Category extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        
+	 *
 	 * @since 1.5.1
 	 */
 	public function __construct (\JDatabaseDriver $db)
@@ -88,11 +88,11 @@ class Category extends Table
 	 *        	@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
 	 *        	overwrite if exists
 	 *        	@option string 'context'
-	 *        
+	 *
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function import ($xml, &$params)
@@ -149,11 +149,16 @@ class Category extends Table
 				$query = $db->getQuery(true)
 					->select(array(
 						$db->quoteName('id'),
-						$db->quoteName('title')
+						$db->quoteName('title'),
+						$db->quoteName('path')
 				))
 					->from($db->quoteName('#__categories'))
 					->where($db->quoteName('extension') . ' = ' . $db->quote($extension))
-					->where((($keep_id == 1) && ($id > 1)) ? $db->quoteName('id') . ' = ' . $id : $db->quoteName('path') . ' = ' . $db->quote($path));
+					->where($db->quoteName('path') . ' = ' . $db->quote($path));
+				if ($keep_id)
+				{
+					$query->where($db->quoteName('id') . ' = ' . $id);
+				}
 				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 				$db->setQuery($query);
 				$category = $db->loadObject();
@@ -260,10 +265,8 @@ class Category extends Table
 									$autoincrement = $id + 1;
 								}
 							}
-							catch (Exception $ex)
+							catch (\Exception $ex)
 							{
-								\JLog::add(
-										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_ID_PRESENT', $table->title), \JLog::WARNING, 'lib_j2xml'));
 							}
 						}
 						// Rebuild the tree path.
@@ -319,7 +322,7 @@ class Category extends Table
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function export ($id, &$xml, $options)
@@ -340,7 +343,9 @@ class Category extends Table
 			return;
 		}
 
-		$allowed_extensions = array('com_content');
+		$allowed_extensions = array(
+				'com_content'
+		);
 		if (in_array($item->extension, $allowed_extensions))
 		{
 			if (isset($options['content']) && $options['content'])

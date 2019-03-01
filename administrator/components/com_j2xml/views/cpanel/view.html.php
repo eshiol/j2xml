@@ -20,7 +20,7 @@ jimport('joomla.html.html.tabs');
 
 /**
  *
- * @version 3.7.192
+ * @version 3.7.193
  * @since 1.5.3
  */
 class J2XMLViewCpanel extends JViewLegacy
@@ -107,7 +107,22 @@ class J2XMLViewCpanel extends JViewLegacy
 			JLog::add(new JLogEntry("loading version_compare{$min}.js...", JLog::DEBUG, 'com_j2xml'));
 			$doc->addScript("../media/lib_eshiol_core/js/version_compare{$min}.js");
 			JLog::add(new JLogEntry("loading j2xml{$min}.js...", JLog::DEBUG, 'com_j2xml'));
-			$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml{$min}.js");
+
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true)
+			->select($db->quoteName('enabled'))
+			->from($db->quoteName('#__extensions'))
+			->where($db->quoteName('type') . ' = ' . $db->quote('library'));
+			if ((new \JVersion())->isCompatible('3.9'))
+			{
+				$query->where($db->quoteName('element') . ' = ' . $db->quote('eshiol/j2xmlpro'));
+			}
+			else
+			{
+				$query->where($db->quoteName('element') . ' = ' . $db->quote('j2xmlpro'));
+			}
+			$pro = ((bool) $db->setQuery($query)->loadResult()) ? 'pro' : '';
+			$doc->addScript("../media/lib_eshiol_j2xml{$pro}/js/j2xml{$min}.js");
 
 			$toolbar = JToolBar::getInstance('toolbar');
 			$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null,
