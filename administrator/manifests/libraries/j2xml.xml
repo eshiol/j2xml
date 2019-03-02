@@ -8,7 +8,7 @@
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright><![CDATA[(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>GNU/GPL v3</license>
-  <version>19.3.328</version>
+  <version>19.3.329</version>
   <description>LIB_J2XML_XML_DESCRIPTION</description>
   <scriptfile>script.php</scriptfile>
   <packagerurl>https://www.eshiol.it</packagerurl>

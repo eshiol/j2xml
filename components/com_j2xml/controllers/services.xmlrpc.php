@@ -20,7 +20,7 @@ require_once JPATH_SITE . '/components/com_j2xml/helpers/xmlrpc.php';
 
 /**
  *
- * @version 3.7.192
+ * @version 3.7.194
  * @since 2.5
  */
 class J2XMLControllerServices extends JControllerLegacy
@@ -58,6 +58,20 @@ class J2XMLControllerServices extends JControllerLegacy
 		$xmlrpcServer->response_charset_encoding = 'UTF-8';
 		// debug level
 		$xmlrpcServer->setDebug($params->get('debug'));
+		// set compression
+		$app = JFactory::getApplication();
+		if ($app->get('gzip') && !ini_get('zlib.output_compression') && ini_get('output_handler') !== 'ob_gzhandler')
+		{
+			// default values
+			// $xmlrpcServer->accepted_compression = array('gzip', 'deflate');
+			// $xmlrpcServer->compress_response = true;
+			$app->set('gzip', false);
+		}
+		else
+		{
+			$xmlrpcServer->accepted_compression = array('deflate');
+			$xmlrpcServer->compress_response = false;
+		}
 		// start the service
 		$xmlrpcServer->service();
 	}

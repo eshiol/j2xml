@@ -28,7 +28,7 @@ include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpcs.inc';
 
 /**
  *
- * @version 19.2.327
+ * @version 19.3.329
  * @since 1.5.3beta3.38
  */
 class Sender
@@ -298,6 +298,15 @@ class Sender
 		$client->return_type = 'xmlrpcvals';
 		$client->request_charset_encoding = 'UTF-8';
 		$client->user_agent = Version::$PRODUCT . ' ' . Version::getFullVersion();
+		if (\JFactory::getApplication()->get('gzip') && !ini_get('zlib.output_compression') && ini_get('output_handler') !== 'ob_gzhandler')
+		{
+			// default values
+			// $client->accepted_compression = array('gzip', 'deflate');
+		}
+		else
+		{
+			$client->accepted_compression = array('deflate');
+		}
 		$client->setDebug($debug);
 		$msg = new \xmlrpcmsg('j2xml.import');
 		$p1 = new \xmlrpcval(base64_encode($xml), 'base64');
