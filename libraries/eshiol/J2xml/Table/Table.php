@@ -756,7 +756,7 @@ class Table extends \JTable
 	 *
 	 * @since 19.2.320
 	 */
-	private static function xml2array ($xmlObject, $out = array ())
+	private static function xml2array ($xmlObject, $out = null)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
