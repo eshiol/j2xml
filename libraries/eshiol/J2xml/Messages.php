@@ -19,7 +19,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 /**
  *
- * @version 19.2.325
+ * @version 19.4.330
  * @since 14.10.245
  */
 class Messages
@@ -72,5 +72,6 @@ class Messages
 			'LIB_J2XML_MSG_USERNOTE_NOT_IMPORTED',
 			'LIB_J2XML_MSG_FIELDGROUP_IMPORTED',
 			'LIB_J2XML_MSG_FIELDGROUP_NOT_IMPORTED',
+			'LIB_J2XML_MSG_USER_SKIPPED',
 	);
 }

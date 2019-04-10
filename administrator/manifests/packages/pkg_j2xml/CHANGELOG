@@ -1,3 +1,20 @@
+----------------------- 3.7.195 Release [10-April-2019] -----------------------
+
+cli_j2xml-3.7.18
+
+lib_eshiol-3.7.33
+
+lib_j2xml-19.4.330
+  # sender LIB_J2XML_MSG_USER_SKIPPED (build 330)
+  # xml2array null value (build 330)
+
+lib_phpxmlrpc-3.1.1
+
+com_j2xml-3.7.195
+  # sender LIB_J2XML_MSG_USER_SKIPPED (build 195)
+
+plg_system_j2xml-3.7.45
+
 ----------------------- 3.7.194 Release  [1-March-2019] -----------------------
 
 cli_j2xml-3.7.18

@@ -34,7 +34,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Joomla! J2XML XML-RPC Plugin
  *
- * @version 3.7.193
+ * @version 3.7.195
  * @since 1.5.3
  */
 class XMLRPCJ2XMLServices
@@ -59,76 +59,68 @@ class XMLRPCJ2XMLServices
 	 * @return string
 	 * @since 1.5
 	 */
-	public static function import ($xml, $username = '', $password = '')
+	public static function import($xml, $username = '', $password = '')
 	{
 		global $xmlrpcerruser, $xmlrpcI4, $xmlrpcInt, $xmlrpcBoolean, $xmlrpcDouble, $xmlrpcString, $xmlrpcDateTime, $xmlrpcBase64, $xmlrpcArray, $xmlrpcStruct, $xmlrpcValue;
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-
+		
 		$lang = JFactory::getLanguage();
 		$lang->load('lib_j2xml', JPATH_SITE, null, false, false) || 
 		// Fallback to the library file in the default language
 		$lang->load('lib_j2xml', JPATH_SITE, null, true);
-
+		
 		$params = JComponentHelper::getParams('com_j2xml');
-		if ((int) $params->get('xmlrpc', 0) == 0)
-		{
+		if ((int) $params->get('xmlrpc', 0) == 0) {
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_XMLRPC_DISABLED'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
-
+		
 		$app = JFactory::getApplication();
 		$options = array();
 		$response = $app->login(array(
-				'username' => $username,
-				'password' => $password
+			'username' => $username,
+			'password' => $password
 		), $options);
-		if (true !== $response)
-		{
+		if (true !== $response) {
 			JLog::add(new JLogEntry(JText::_('JGLOBAL_AUTH_NO_USER'), JLog::DEBUG, 'com_j2xml'));
 			JLog::add(new JLogEntry(JText::_('JGLOBAL_AUTH_NO_USER'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
-
+		
 		$canDo = J2XMLHelper::getActions();
-		if (! $canDo->get('core.create') && ! $canDo->get('core.edit') && ! $canDo->get('core.edit.own'))
-		{
+		if (! $canDo->get('core.create') && ! $canDo->get('core.edit') && ! $canDo->get('core.edit.own')) {
 			JLog::add(new JLogEntry(JText::_('JLIB_LOGIN_DENIED'), JLog::DEBUG, 'com_j2xml'));
 			JLog::add(new JLogEntry(JText::_('JLIB_LOGIN_DENIED'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
-
+		
 		$data = self::gzdecode($xml);
 		if (! $data)
 			$data = $xml;
-
+		
 		libxml_use_internal_errors(true);
 		$xml = simplexml_load_string($data);
-		if (! $xml)
-		{
+		if (! $xml) {
 			$data = base64_decode($data);
 			libxml_clear_errors();
 		}
-
-		if (! mb_detect_encoding($data, 'UTF-8'))
-		{
+		
+		if (! mb_detect_encoding($data, 'UTF-8')) {
 			$data = mb_convert_encoding($data, 'UTF-8');
 		}
-
+		
 		$data = strstr($data, '<?xml version="1.0" ');
-
+		
 		$data = J2XMLHelper::stripInvalidXml($data);
 		if (! defined('LIBXML_PARSEHUGE'))
 			define(LIBXML_PARSEHUGE, 524288);
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-
-		if (! $xml)
-		{
+		
+		if (! $xml) {
 			$errors = libxml_get_errors();
-			foreach ($errors as $error)
-			{
+			foreach ($errors as $error) {
 				$msg = $error->code . ' - ' . JText::_($error->message);
-				switch ($error->level)
-				{
+				switch ($error->level) {
 					default:
 					case LIBXML_ERR_WARNING:
 						JLog::add(new JLogEntry(JText::_($msg), JLog::DEBUG, 'com_j2xml'));
@@ -149,36 +141,34 @@ class XMLRPCJ2XMLServices
 			}
 			libxml_clear_errors();
 		}
-
+		
 		$dispatcher = \JEventDispatcher::getInstance();
 		JPluginHelper::importPlugin('j2xml');
-
+		
 		JLog::add(new JLogEntry('onBeforeImport', JLog::DEBUG, 'com_j2xml'));
 		$results = $dispatcher->trigger('onBeforeImport', array(
-				'com_j2xml.xmlrpc',
-				&$xml
+			'com_j2xml.xmlrpc',
+			&$xml
 		));
-
-		if (! isset($xml['version']))
-		{
+		
+		if (! isset($xml['version'])) {
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLog::DEBUG, 'com_j2xml'));
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
-
+		
 		$xmlVersion = $xml['version'];
 		$version = explode(".", $xmlVersion);
 		$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
-
+		
 		$j2xmlVersion = class_exists('eshiol\J2xmlpro\Version') ? eshiol\J2xmlpro\Version::$DOCVERSION : eshiol\J2xml\Version::$DOCVERSION;
 		$version = explode(".", $j2xmlVersion);
 		$j2xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
-
-		if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500"))
-		{
+		
+		if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500")) {
 			// set_time_limit(120);
 			$params = JComponentHelper::getParams('com_j2xml');
-
+			
 			$iparams = new \JRegistry();
 			$iparams->set('categories', $params->get('import_categories', 1));
 			$iparams->set('contacts', $params->get('import_contacts', 1));
@@ -192,36 +182,31 @@ class XMLRPCJ2XMLServices
 			$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
 			$iparams->set('content', $params->get('import_content'));
 			$iparams->set('logger', 'xmlrpc');
-
-			if ($params->get('keep_category', 1) == 2)
-			{
+			
+			if ($params->get('keep_category', 1) == 2) {
 				$iparams->set('content_category_forceto', $params->get('category'));
 			}
-
+			
 			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 			$importer->import($xml, $iparams);
-		}
-		else
-		{
+		} else {
 			JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion), JLog::ERROR, 'com_j2xml'));
 		}
-
+		
 		$app->logout();
 		return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 	}
 
-	static function gzdecode ($data, &$filename = '', &$error = '', $maxlength = null)
+	static function gzdecode($data, &$filename = '', &$error = '', $maxlength = null)
 	{
 		$len = strlen($data);
-		if ($len < 18 || strcmp(substr($data, 0, 2), "\x1f\x8b"))
-		{
+		if ($len < 18 || strcmp(substr($data, 0, 2), "\x1f\x8b")) {
 			$error = "Not in GZIP format.";
 			return null; // Not GZIP format (See RFC 1952)
 		}
 		$method = ord(substr($data, 2, 1)); // Compression method
 		$flags = ord(substr($data, 3, 1)); // Flags
-		if ($flags & 31 != $flags)
-		{
+		if ($flags & 31 != $flags) {
 			$error = "Reserved bits not allowed.";
 			return null;
 		}
@@ -233,17 +218,14 @@ class XMLRPCJ2XMLServices
 		$headerlen = 10;
 		$extralen = 0;
 		$extra = "";
-		if ($flags & 4)
-		{
+		if ($flags & 4) {
 			// 2-byte length prefixed EXTRA data in header
-			if ($len - $headerlen - 2 < 8)
-			{
+			if ($len - $headerlen - 2 < 8) {
 				return false; // invalid
 			}
 			$extralen = unpack("v", substr($data, 8, 2));
 			$extralen = $extralen[1];
-			if ($len - $headerlen - 2 - $extralen < 8)
-			{
+			if ($len - $headerlen - 2 - $extralen < 8) {
 				return false; // invalid
 			}
 			$extra = substr($data, 10, $extralen);
@@ -251,16 +233,13 @@ class XMLRPCJ2XMLServices
 		}
 		$filenamelen = 0;
 		$filename = "";
-		if ($flags & 8)
-		{
+		if ($flags & 8) {
 			// C-style string
-			if ($len - $headerlen - 1 < 8)
-			{
+			if ($len - $headerlen - 1 < 8) {
 				return false; // invalid
 			}
 			$filenamelen = strpos(substr($data, $headerlen), chr(0));
-			if ($filenamelen === false || $len - $headerlen - $filenamelen - 1 < 8)
-			{
+			if ($filenamelen === false || $len - $headerlen - $filenamelen - 1 < 8) {
 				return false; // invalid
 			}
 			$filename = substr($data, $headerlen, $filenamelen);
@@ -268,34 +247,28 @@ class XMLRPCJ2XMLServices
 		}
 		$commentlen = 0;
 		$comment = "";
-		if ($flags & 16)
-		{
+		if ($flags & 16) {
 			// C-style string COMMENT data in header
-			if ($len - $headerlen - 1 < 8)
-			{
+			if ($len - $headerlen - 1 < 8) {
 				return false; // invalid
 			}
 			$commentlen = strpos(substr($data, $headerlen), chr(0));
-			if ($commentlen === false || $len - $headerlen - $commentlen - 1 < 8)
-			{
+			if ($commentlen === false || $len - $headerlen - $commentlen - 1 < 8) {
 				return false; // Invalid header format
 			}
 			$comment = substr($data, $headerlen, $commentlen);
 			$headerlen += $commentlen + 1;
 		}
 		$headercrc = "";
-		if ($flags & 2)
-		{
+		if ($flags & 2) {
 			// 2-bytes (lowest order) of CRC32 on header present
-			if ($len - $headerlen - 2 < 8)
-			{
+			if ($len - $headerlen - 2 < 8) {
 				return false; // invalid
 			}
 			$calccrc = crc32(substr($data, 0, $headerlen)) & 0xffff;
 			$headercrc = unpack("v", substr($data, $headerlen, 2));
 			$headercrc = $headercrc[1];
-			if ($headercrc != $calccrc)
-			{
+			if ($headercrc != $calccrc) {
 				$error = "Header checksum failed.";
 				return false; // Bad header CRC
 			}
@@ -308,17 +281,14 @@ class XMLRPCJ2XMLServices
 		$isize = $isize[1];
 		// decompression:
 		$bodylen = $len - $headerlen - 8;
-		if ($bodylen < 1)
-		{
+		if ($bodylen < 1) {
 			// IMPLEMENTATION BUG!
 			return null;
 		}
 		$body = substr($data, $headerlen, $bodylen);
 		$data = "";
-		if ($bodylen > 0)
-		{
-			switch ($method)
-			{
+		if ($bodylen > 0) {
+			switch ($method) {
 				case 8:
 					// Currently the only supported compression method:
 					$data = gzinflate($body, $maxlength);
@@ -332,8 +302,7 @@ class XMLRPCJ2XMLServices
 		$crc = sprintf("%u", crc32($data));
 		$crcOK = $crc == $datacrc;
 		$lenOK = $isize == strlen($data);
-		if (! $lenOK || ! $crcOK)
-		{
+		if (! $lenOK || ! $crcOK) {
 			$error = ($lenOK ? '' : 'Length check FAILED. ') . ($crcOK ? '' : 'Checksum FAILED.');
 			return false;
 		}
@@ -347,69 +316,64 @@ class XMLRPCJ2XMLServices
 	 *        	The message to log.
 	 * @param string $priority
 	 *        	Message priority based on {$this->priorities}.
-	 *        
+	 *        	
 	 * @return void
 	 *
 	 * @since 3.1.107
 	 */
-	public static function enqueueMessage ($message, $priority)
+	public static function enqueueMessage($message, $priority)
 	{
 		$codes = array(
-				'error' => 28,
-				'warning' => 29,
-				'notice' => 30,
-				'message' => 31
+			'error' => 28,
+			'warning' => 29,
+			'notice' => 30,
+			'message' => 31
 		);
-
+		
 		$found = false;
 		$msgs = array();
-
-		foreach (Messages::$messages as $i => $m)
-		{
-			if ($message == JText::_($m))
-			{
-				self::$_messageQueue[] = new xmlrpcval(
-						array(
-								"code" => new xmlrpcval($i, 'int'),
-								"string" => new xmlrpcval($message, 'string'),
-								"message" => new xmlrpcval($message, 'string')
-						), "struct");
+		
+		foreach (Messages::$messages as $i => $m) {
+			if ($message == JText::_($m)) {
+				self::$_messageQueue[] = new xmlrpcval(array(
+					"code" => new xmlrpcval($i, 'int'),
+					"string" => new xmlrpcval($message, 'string'),
+					"message" => new xmlrpcval($message, 'string')
+				), "struct");
 				$found = true;
 				break;
-			}
-			else
-			{
+			} else {
 				$pattern = '/' . str_replace(array(
-						'(',
-						')',
-						'.',
-						'%s'
+					'(',
+					')',
+					'[',
+					']',
+					'.',
+					'%s'
 				), array(
-						'\(',
-						'\)',
-						'\.',
-						'(.+)'
+					'\(',
+					'\)',
+					'\[',
+					'\]',
+					'\.',
+					'(.+)'
 				), JText::_($m)) . '/i';
-
-				if (preg_match($pattern, $message, $matches))
-				{
-					self::$_messageQueue[] = new xmlrpcval(
-							array(
-									"code" => new xmlrpcval($i, 'int'),
-									"string" => new xmlrpcval($matches[1], 'string'),
-									"message" => new xmlrpcval($message, 'string')
-							), "struct");
+				if (preg_match($pattern, $message, $matches)) {
+					self::$_messageQueue[] = new xmlrpcval(array(
+						"code" => new xmlrpcval($i, 'int'),
+						"string" => new xmlrpcval($matches[1], 'string'),
+						"message" => new xmlrpcval($message, 'string')
+					), "struct");
 					$found = true;
 					break;
 				}
 			}
 		}
 		if (! $found)
-			self::$_messageQueue[] = new xmlrpcval(
-					array(
-							"code" => new xmlrpcval(isset($codes[$priority]) ? $codes[$priority] : 28, 'int'),
-							"string" => new xmlrpcval($message, 'string'),
-							"message" => new xmlrpcval($message, 'string')
-					), "struct");
+			self::$_messageQueue[] = new xmlrpcval(array(
+				"code" => new xmlrpcval(isset($codes[$priority]) ? $codes[$priority] : 28, 'int'),
+				"string" => new xmlrpcval($message, 'string'),
+				"message" => new xmlrpcval($message, 'string')
+			), "struct");
 	}
 }

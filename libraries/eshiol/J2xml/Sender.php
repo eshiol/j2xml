@@ -28,7 +28,7 @@ include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpcs.inc';
 
 /**
  *
- * @version 19.3.329
+ * @version 19.4.330
  * @since 1.5.3beta3.38
  */
 class Sender
@@ -81,7 +81,8 @@ class Sender
 		'message', // LIB_J2XML_MSG_USERNOTE_IMPORTED 42
 		'notice', // LIB_J2XML_MSG_USERNOTE_NOT_IMPORTED 43
 		'message', // LIB_J2XML_MSG_FIELDGROUP_IMPORTED 44
-		'notice' // LIB_J2XML_MSG_FIELDGROUP_NOT_IMPORTED 45
+		'notice', // LIB_J2XML_MSG_FIELDGROUP_NOT_IMPORTED 45
+		'notice' // LIB_J2XML_MSG_USER_SKIPPED 46			
 	);
 
 	/*
