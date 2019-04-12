@@ -19,7 +19,7 @@
     <folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc-3.1.1.20.zip</folder>
     <folder type="component" id="j2xml">com_j2xml-3.7.195.zip</folder>
     <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.7.45.99.zip</folder>
-    <folder type="file" id="j2xml">cli_j2xml-3.7.18.75.zip</folder>
+    <folder type="file" id="j2xml">cli_j2xml-3.7.19.zip</folder>
   </files>
   <languages folder="language">
     <language tag="en-GB">en-GB/en-GB.pkg_j2xml.sys.ini</language>

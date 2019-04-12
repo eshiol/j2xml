@@ -218,29 +218,28 @@ eshiol.j2xml.importer = function(name, url) {
 				});
 
 				var base = '';
-				if ($root.children("base")) {
+				if ($root.children("base").length) {
 					base = eshiol.XMLToString($root.children("base")[0]);
 				}
-				$root.children("content").each(function(index) {
-					$nodes.push(header + base + eshiol.XMLToString(this) + footer);
-				});
+				$root.children("content").each(
+						function(index) {
+							$nodes.push(header + base
+									+ eshiol.XMLToString(this) + footer);
+						});
 
-				$root
-						.children()
-						.each(
-								function(index) {
-									if ([ "base", "field", "user", "tag", "category",
-											"content" ].indexOf(this.nodeName) == -1) {
-										$nodes.push(header
-												+ eshiol.XMLToString(this)
-												+ footer);
-									}
-								});
+				$root.children().each(
+						function(index) {
+							if ([ "base", "field", "user", "tag", "category",
+									"content" ].indexOf(this.nodeName) == -1) {
+								$nodes.push(header + eshiol.XMLToString(this)
+										+ footer);
+							}
+						});
 			} else {
 				$nodes.push(xml);
 			}
 		} catch (e) {
-			$nodes.push(xml);
+			var $nodes = [ xml ];
 		}
 
 		tot = $nodes.length;

@@ -24,7 +24,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Controller class.
  *
- * @version 3.7.193
+ * @version 3.7.195
  * @since 1.5.3
  */
 class J2xmlControllerCpanel extends JControllerLegacy
@@ -182,31 +182,48 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		}
 		else
 		{
-			$params->set('filename', $filename);
+			$xmlVersion = $xml['version'];
+			$version = explode(".", $xmlVersion);
+			$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
+			
+			$j2xmlVersion = class_exists('eshiol\J2xmlpro\Version') ? eshiol\J2xmlpro\Version::$DOCVERSION : eshiol\J2xml\Version::$DOCVERSION;
+			$version = explode(".", $j2xmlVersion);
+			$j2xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
+			
+			//if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500")) 
+			if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900"))
+			{				
+				$iparams = new \JRegistry();
+				$iparams->set('filename', $filename);
+				$iparams->set('version', (string) $xml['version']);
 
-			$iparams = new \JRegistry();
-			$iparams->set('categories', $params->get('import_categories', 1));
-			$iparams->set('contacts', $params->get('import_contacts', 1));
-			$iparams->set('fields', $params->get('import_fields', 1));
-			$iparams->set('images', $params->get('import_images', 1));
-
-			$iparams->set('keep_id', $params->get('keep_id', 0));
-			$iparams->set('tags', $params->get('import_tags', 1));
-			$iparams->set('users', $params->get('import_users', 1));
-			$iparams->set('superusers', $params->get('import_superusers', 0));
-			$iparams->set('usernotes', $params->get('import_usernotes', 1));
-			$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
-			$iparams->set('content', $params->get('import_content'));
-			$iparams->set('logger', 'xmlrpc');
-
-			if ($params->get('keep_category', 1) == 2)
-			{
-				$iparams->set('content_category_forceto', $params->get('category'));
+				$iparams->set('categories', $params->get('import_categories', 1));
+				$iparams->set('contacts', $params->get('import_contacts', 1));
+				$iparams->set('fields', $params->get('import_fields', 1));
+				$iparams->set('images', $params->get('import_images', 1));
+	
+				$iparams->set('keep_id', $params->get('keep_id', 0));
+				$iparams->set('tags', $params->get('import_tags', 1));
+				$iparams->set('users', $params->get('import_users', 1));
+				$iparams->set('superusers', $params->get('import_superusers', 0));
+				$iparams->set('usernotes', $params->get('import_usernotes', 1));
+				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
+				$iparams->set('content', $params->get('import_content'));
+				$iparams->set('logger', 'xmlrpc');
+	
+				if ($params->get('keep_category', 1) == 2)
+				{
+					$iparams->set('content_category_forceto', $params->get('category'));
+				}
+	
+				$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
+				// set_time_limit(120);
+				$importer->import($xml, $iparams);
 			}
-
-			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
-			// set_time_limit(120);
-			$importer->import($xml, $iparams);
+			else
+			{
+				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion),'error');
+			}
 		}
 		$this->setRedirect('index.php?option=com_j2xml');
 	}

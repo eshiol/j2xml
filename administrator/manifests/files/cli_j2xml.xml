@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="file" method="upgrade">
   <name>cli_j2xml</name>
-  <creationDate>February 2019</creationDate>
+  <creationDate>April 2019</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright><![CDATA[(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>GNU/GPL v3</license>
-  <version>3.7.18.75</version>
+  <version>3.7.19</version>
   <description>CLI_J2XML_XML_DESCRIPTION</description>
   <fileset>
     <files>

@@ -429,6 +429,26 @@ class Table extends \JTable
 			$data['modified'] = self::fixdate($data['modified']);
 		}
 
+		if ($params->get('version') == '15.9.0')
+		{
+			if (isset($data['title']))
+			{
+				$data['title'] = htmlspecialchars_decode($data['title']);
+			}
+			if (isset($data['introtext']))
+			{
+				$data['introtext'] = htmlspecialchars_decode($data['introtext']);
+			}
+			if (isset($data['fulltext']))
+			{
+				$data['fulltext'] = htmlspecialchars_decode($data['fulltext']);
+			}
+			if (isset($data['description']))
+			{
+				$data['description'] = htmlspecialchars_decode($data['description']);
+			}
+		}
+
 		$import_fields = $params->get('fields', 0);
 		if ($import_fields)
 		{

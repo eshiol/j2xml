@@ -27,7 +27,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Controller class.
  *
- * @version 3.7.193
+ * @version 3.7.195
  * @since 3.6.160
  */
 class J2XMLControllerCpanel extends JControllerLegacy
@@ -134,6 +134,7 @@ class J2XMLControllerCpanel extends JControllerLegacy
 				$iparams = new \JRegistry();
 
 				$iparams->set('filename', $filename);
+				$iparams->set('version', (string) $xml['version']);
 				$iparams->set('categories', $params->get('import_categories', 1));
 				$iparams->set('contacts', $params->get('import_contacts', 1));
 				$iparams->set('fields', $params->get('import_fields', 1));
@@ -144,7 +145,6 @@ class J2XMLControllerCpanel extends JControllerLegacy
 				$iparams->set('superusers', $params->get('import_superusers', 0));
 				$iparams->set('usernotes', $params->get('import_usernotes', 1));
 				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
-
 				$iparams->set('content', $params->get('import_content'));
 				if ($params->get('keep_category', 1) == 2)
 				{
@@ -156,7 +156,7 @@ class J2XMLControllerCpanel extends JControllerLegacy
 				$importer->import($xml, $iparams);
 			}
 		}
-
+/**
 		if (! $xml)
 		{
 			echo new \JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true,
@@ -167,12 +167,12 @@ class J2XMLControllerCpanel extends JControllerLegacy
 		else
 		{
 			$params->set('filename', $filename);
-
+			
 			// set_time_limit(120);
 			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 			$importer->import($xml, $params);
 		}
-
+*/
 		JLog::add(new JLogEntry(print_r($this->app->getMessageQueue(), true), JLog::DEBUG, 'com_j2xml'));
 
 		echo new \JResponseJson($response = null, $message = $this->app->getMessageQueue(), $error = false, $ignoreMessages = false);

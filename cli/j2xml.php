@@ -2,7 +2,7 @@
 /**
  * @package		J2XML.CLI
  * @subpackage	cli
- * @version		3.7.18
+ * @version		3.7.19
  * @since		2.5
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
@@ -199,13 +199,15 @@ class J2XMLCli extends JApplicationCli
 			$version = explode(".", $j2xmlVersion);
 			$j2xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
 
-			if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500"))
+			//if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500"))
+			if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900"))
 			{
 				set_time_limit(120);
 				// set_time_limit(120);
 				$params = JComponentHelper::getParams('com_j2xml');
 
 				$iparams = new \JRegistry();
+				$iparams->set('version', (string) $xml['version']);
 				$iparams->set('categories', $params->get('import_categories', 1));
 				$iparams->set('contacts', $params->get('import_contacts', 1));
 				$iparams->set('fields', $params->get('import_fields', 1));
