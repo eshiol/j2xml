@@ -20,7 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.2.327
+ * @version 19.4.331
  * @since 1.5.3.39
  */
 class Table extends \JTable
@@ -835,7 +835,7 @@ class Table extends \JTable
 	 *
 	 * @param \SimpleXMLElement $xml
 	 *        	xml
-	 * @param Registry $params
+	 * @param \JRegistry $params
 	 *        	@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
 	 *        	overwrite if exists
 	 *        	@option string 'context'

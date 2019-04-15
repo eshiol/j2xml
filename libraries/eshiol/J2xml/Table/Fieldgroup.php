@@ -23,7 +23,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.2.325
+ * @version 19.4.331
  * @since 19.2.323
  */
 class Fieldgroup extends Table
@@ -56,7 +56,7 @@ class Fieldgroup extends Table
 	 *
 	 * @param \SimpleXMLElement $xml
 	 *        	xml
-	 * @param Registry $params
+	 * @param \JRegistry $params
 	 *        	@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
 	 *        	overwrite if exists
 	 *        	@option string 'context'

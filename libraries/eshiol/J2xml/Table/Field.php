@@ -26,7 +26,7 @@ use eshiol\J2XML\Table\Table;
 /**
  * Field table
  *
- * @version 19.2.325
+ * @version 19.4.331
  * @since 17.6.299
  */
 class Field extends Table
@@ -90,7 +90,7 @@ class Field extends Table
 	 *
 	 * @param \SimpleXMLElement $xml
 	 *        	xml
-	 * @param Registry $params
+	 * @param \JRegistry $params
 	 *        	@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
 	 *        	overwrite if exists
 	 *        	@option string 'context'
