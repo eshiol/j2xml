@@ -16,6 +16,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
+JHtml::_('behavior.framework');
+
 jimport('joomla.html.html.tabs');
 
 /**

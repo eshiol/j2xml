@@ -1,4 +1,7 @@
------------------------ 3.7.195 Release [12-April-2019] -----------------------
+----------------------- 3.7.196 Release [15-April-2019] -----------------------
+
+15-April-2019
+  # Uncaught ReferenceError: Joomla is not defined (build 196)
 
 12-April-2019
   # version check (build 195)
