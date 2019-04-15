@@ -59,8 +59,6 @@
     <languages folder="admin/language">
       <language tag="en-GB">en-GB/en-GB.com_j2xml.ini</language>
       <language tag="en-GB">en-GB/en-GB.com_j2xml.sys.ini</language>
-      <language tag="it-IT">it-IT/it-IT.com_j2xml.ini</language>
-      <language tag="it-IT">it-IT/it-IT.com_j2xml.sys.ini</language>
     </languages>
   </administration>
   <media destination="com_j2xml" folder="media">

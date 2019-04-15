@@ -2,13 +2,13 @@
 <extension version="3.0" type="library" method="upgrade">
   <name>eshiol</name>
   <libraryname>eshiol/core</libraryname>
-  <creationDate>August 2018</creationDate>
+  <creationDate>April 2019</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright><![CDATA[(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>GNU/GPL v3</license>
-  <version>19.2.33.183</version>
+  <version>19.4.34</version>
   <description>LIB_ESHIOL_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
   <files>
@@ -21,8 +21,6 @@
   <languages folder="language">
     <language tag="en-GB">en-GB/en-GB.lib_eshiol.ini</language>
     <language tag="en-GB">en-GB/en-GB.lib_eshiol.sys.ini</language>
-    <language tag="it-IT">it-IT/it-IT.lib_eshiol.ini</language>
-    <language tag="it-IT">it-IT/it-IT.lib_eshiol.sys.ini</language>
   </languages>
   <media destination="lib_eshiol_core" folder="media">
     <folder>js</folder>

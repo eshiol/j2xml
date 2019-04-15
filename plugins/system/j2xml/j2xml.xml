@@ -7,7 +7,7 @@
   <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <version>3.7.45.99</version>
+  <version>3.7.46</version>
   <description>PLG_SYSTEM_J2XML_XML_DESCRIPTION</description>
   <scriptfile>enable.php</scriptfile>
   <files>
@@ -16,8 +16,6 @@
   <languages folder="language">
     <language tag="en-GB">en-GB/en-GB.plg_system_j2xml.ini</language>
     <language tag="en-GB">en-GB/en-GB.plg_system_j2xml.sys.ini</language>
-    <language tag="it-IT">it-IT/it-IT.plg_system_j2xml.ini</language>
-    <language tag="it-IT">it-IT/it-IT.plg_system_j2xml.sys.ini</language>
   </languages>
   <config>
     <fields name="params">

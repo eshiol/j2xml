@@ -13,7 +13,6 @@
     <files>
       <filename>cli/j2xml.php</filename>
       <filename>language/en-GB/en-GB.files_cli_j2xml.sys.ini</filename>
-      <filename>language/it-IT/it-IT.files_cli_j2xml.sys.ini</filename>
     </files>
   </fileset>
 </extension>
