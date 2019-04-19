@@ -21,7 +21,7 @@ jimport('eshiol.core.standard2');
 
 /**
  *
- * @version 3.7.45
+ * @version 3.7.46
  * @since 1.5.2
  */
 class plgSystemJ2XML extends JPlugin
@@ -31,6 +31,7 @@ class plgSystemJ2XML extends JPlugin
 	 * Load the language file on instantiation.
 	 *
 	 * @var boolean
+	 * @since  3.1
 	 */
 	protected $autoloadLanguage = true;
 
@@ -83,6 +84,10 @@ class plgSystemJ2XML extends JPlugin
 				));
 			}
 		}
+
+		// Joomla! 3.0 compatibility
+		$this->loadLanguage();
+
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
 	}
 

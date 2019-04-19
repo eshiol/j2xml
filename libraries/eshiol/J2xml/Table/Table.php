@@ -429,7 +429,7 @@ class Table extends \JTable
 			$data['modified'] = self::fixdate($data['modified']);
 		}
 
-		if ($params->get('version') == '15.9.0')
+		if (($params->get('version') == '15.9.0') || ($params->get('version') == '12.5.0'))
 		{
 			if (isset($data['title']))
 			{

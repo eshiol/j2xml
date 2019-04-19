@@ -2,7 +2,7 @@
 <extension version="3.0" type="plugin" group="system" method="upgrade">
   <name>plg_system_j2xml</name>
   <author>Helios Ciancio</author>
-  <creationDate>February 2019</creationDate>
+  <creationDate>April 2019</creationDate>
   <copyright><![CDATA[(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
   <authorEmail>info@eshiol.it</authorEmail>

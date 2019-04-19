@@ -1,7 +1,7 @@
 /**
  * @package		eshiol Library
  * @subpackage	lib_eshiol_core
- * @version		19.2.33
+ * @version		19.4.34
  * @since		12.0.1
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
@@ -18,7 +18,7 @@ if (typeof(eshiol) === 'undefined') {
 	var eshiol = {};
 }
 
-eshiol.version = '19.2.33';
+eshiol.version = '19.4.34';
 
 if (console) console.log('eshiol Library v'+eshiol.version);
 
