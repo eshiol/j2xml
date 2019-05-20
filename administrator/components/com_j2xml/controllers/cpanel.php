@@ -24,7 +24,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Controller class.
  *
- * @version 3.7.195
+ * @version 3.7.197
  * @since 1.5.3
  */
 class J2xmlControllerCpanel extends JControllerLegacy
@@ -208,6 +208,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$iparams->set('usernotes', $params->get('import_usernotes', 1));
 				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
 				$iparams->set('content', $params->get('import_content'));
+				$iparams->set('weblinks', $params->get('import_weblinks'));
 				$iparams->set('logger', 'xmlrpc');
 	
 				if ($params->get('keep_category', 1) == 2)

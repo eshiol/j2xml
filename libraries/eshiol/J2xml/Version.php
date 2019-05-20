@@ -19,7 +19,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 /**
  *
- * @version 19.5.332
+ * @version 19.5.333
  * @since 1.5.3
  */
 class Version
@@ -38,7 +38,7 @@ class Version
 	/**
 	 * @public static int Sub Release Level
 	 */
-	public static $DEV_LEVEL = '4';
+	public static $DEV_LEVEL = '5';
 
 	/**
 	 * @public static string Development Status
@@ -50,7 +50,7 @@ class Version
 	/**
 	 * @public static int build Number
 	 */
-	public static $BUILD = '331';
+	public static $BUILD = '333';
 
 	/**
 	 * @public static string Codename

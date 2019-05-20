@@ -183,6 +183,7 @@ class XMLRPCJ2XMLServices
 			$iparams->set('usernotes', $params->get('import_usernotes', 1));
 			$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
 			$iparams->set('content', $params->get('import_content'));
+			$iparams->set('weblinks', $params->get('import_weblinks'));
 			$iparams->set('logger', 'xmlrpc');
 			
 			if ($params->get('keep_category', 1) == 2) {

@@ -27,6 +27,7 @@ use eshiol\J2XML\Table\Tag;
 use eshiol\J2XML\Table\User;
 use eshiol\J2XML\Table\Usernote;
 use eshiol\J2XML\Table\Viewlevel;
+use eshiol\J2XML\Table\Weblink;
 use eshiol\J2XML\Version;
 \JLoader::import('eshiol.j2xml.Table.Category');
 \JLoader::import('eshiol.j2xml.Table.Contact');
@@ -38,6 +39,7 @@ use eshiol\J2XML\Version;
 \JLoader::import('eshiol.j2xml.Table.User');
 \JLoader::import('eshiol.j2xml.Table.Usernote');
 \JLoader::import('eshiol.j2xml.Table.Viewlevel');
+\JLoader::import('eshiol.j2xml.Table.Weblink');
 \JLoader::import('eshiol.j2xml.Version');
 
 \JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_weblinks/tables');
@@ -50,7 +52,7 @@ jimport('joomla.user.helper');
 /**
  * Importer
  *
- * @version 19.2.323
+ * @version 19.5.333
  * @since 1.6.0
  */
 class Importer
@@ -163,6 +165,12 @@ class Importer
 		if ($import_contacts)
 		{
 			Contact::import($xml, $params);
+		}
+
+		$import_weblinks = $params->get('weblinks');
+		if ($import_weblinks)
+		{
+			Weblink::import($xml, $params);
 		}
 
 		if ($params->get('fire', 1))

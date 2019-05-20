@@ -21,7 +21,7 @@ use eshiol\J2XML\Table\Table;
 /**
  * Viewlevel Table
  *
- * @version 19.2.325
+ * @version 19.5.333
  * @since 15.3.248
  */
 class Weblink extends Table
@@ -32,7 +32,7 @@ class Weblink extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        
+	 *
 	 * @since 1.5.3beta3.38
 	 */
 	public function __construct (\JDatabaseDriver $db)
@@ -81,7 +81,7 @@ class Weblink extends Table
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function export ($id, &$xml, $options)
@@ -118,19 +118,19 @@ class Weblink extends Table
 	 *        	@option int 'weblinks' 0: No | 1: Yes, if not exists | 2: Yes,
 	 *        	overwrite if exists
 	 *        	@option string 'context'
-	 *        
+	 *
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
-		$import_weblinks = 2; // $params->get('weblinks', 1);
-		if ($import_viewlevels == 0)
+		$import_weblinks = $params->get('weblinks', 1);
+		if ($import_weblinks == 0)
 			return;
 
 		$db = \JFactory::getDbo();
@@ -142,74 +142,50 @@ class Weblink extends Table
 
 		$params->set('extension', 'com_weblinks');
 		$params->def('category_default', self::getCategoryId('uncategorised', 'com_weblinks'));
-	/**
-	 * foreach($xml->xpath("//j2xml/viewlevel[not(title = '')]") as $record)
-	 * {
-	 * self::prepareData($record, $data, $params);
-	 *
-	 * $id = $data['id'];
-	 *
-	 * $query = $db->getQuery(true)
-	 * ->select(array($db->quoteName('id'), $db->quoteName('title')))
-	 * ->from($db->quoteName('#__weblinks'))
-	 * ->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias']));
-	 * \JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
-	 * $item = $db->setQuery($query)->loadObject();
-	 *
-	 * if (!$item || ($import_weblinks))
-	 * {
-	 * $table = new \eshiol\J2XML\Table\Weblink($db);
-	 * if (!$item)
-	 * {
-	 * $data['id'] = null;
-	 * }
-	 * else
-	 * {
-	 * $data['id'] = $item->id;
-	 * $table->load($data['id']);
-	 * }
-	 *
-	 * $table = JTable::getInstance('Weblink', 'WeblinksTable');
-	 *
-	 * \JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
-	 * $this->_db->setQuery($query);
-	 * $category_id = (int)$this->_db->loadResult();
-	 * if ($category_id > 0)
-	 * {
-	 * $categories_id['com_weblinks/'.$data['catid']] = $category_id;
-	 * $data['catid'] = $category_id;
-	 * }
-	 * else
-	 * {
-	 * \JLog::add(new
-	 * \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_WEBLINK_NOT_IMPORTED',
-	 * $data['title']), \JLog::ERROR, 'lib_j2xml'));
-	 * \JLog::add(new
-	 * \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_NOT_FOUND',
-	 * $data['catid']), \JLog::ERROR, 'lib_j2xml'));
-	 * continue;
-	 * }
-	 *
-	 * // Trigger the onContentBeforeSave event.
-	 * $table->bind($data);
-	 * if ($table->store())
-	 * {
-	 * \JLog::add(new
-	 * \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_WEBLINK_IMPORTED',
-	 * $table->title), \JLog::INFO, 'lib_j2xml'));
-	 * // Trigger the onContentAfterSave event.
-	 * }
-	 * else
-	 * {
-	 * \JLog::add(new
-	 * \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_WEBLINK_NOT_IMPORTED',
-	 * $data['title']), \JLog::ERROR, 'lib_j2xml'));
-	 * \JLog::add(new \JLogEntry($table->getError(), \JLog::ERROR,
-	 * 'lib_j2xml'));
-	 * }
-	 * $table = null;
-	 * }
-	 * }
-	 */
+
+		foreach ($xml->xpath("//j2xml/weblink[not(title = '')]") as $record)
+		{
+			self::prepareData($record, $data, $params);
+
+			$id = $data['id'];
+
+			$query = $db->getQuery(true)
+				->select(array(
+					$db->quoteName('id'),
+					$db->quoteName('title')
+			))
+				->from($db->quoteName('#__weblinks'))
+				->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias']));
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+			$item = $db->setQuery($query)->loadObject();
+
+			if (! $item || ($import_weblinks))
+			{
+				$table = new \eshiol\J2XML\Table\Weblink($db);
+				if (! $item)
+				{
+					$data['id'] = null;
+				}
+				else
+				{
+					$data['id'] = $item->id;
+					$table->load($data['id']);
+				}
+
+				// Trigger the onContentBeforeSave event.
+				$table->bind($data);
+				if ($table->store())
+				{
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_WEBLINK_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
+					// Trigger the onContentAfterSave event.
+				}
+				else
+				{
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_WEBLINK_NOT_IMPORTED', $data['title']), \JLog::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry($table->getError(), \JLog::ERROR, 'lib_j2xml'));
+				}
+				$table = null;
+			}
+		}
 	}
 }
