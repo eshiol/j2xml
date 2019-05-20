@@ -20,7 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.4.331
+ * @version 19.5.332
  * @since 1.5.3.39
  */
 class Table extends \JTable
@@ -371,7 +371,8 @@ class Table extends \JTable
 		$nullDate = $db->getNullDate();
 		$userid = \JFactory::getUser()->id;
 
-		$data = self::xml2array($record);
+		//$data = self::xml2array($record, $params->get('version') == '12.5.0');
+		$data = self::xml2array($record, version_compare($params->get('version', '19.2.0'), '19.2.0', 'lt'));
 		\JLog::add(new \JLogEntry('<pre>' . print_r($data, true) . '</pre>', \JLog::DEBUG, 'lib_j2xml'));
 
 		// TODO: fix alias
@@ -776,7 +777,7 @@ class Table extends \JTable
 	 *
 	 * @since 19.2.320
 	 */
-	private static function xml2array ($xmlObject, $out = null)
+	private static function xml2array ($xmlObject, $htmlEntityDecode = false, $out = null)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
@@ -793,13 +794,18 @@ class Table extends \JTable
 			{
 				if (trim($xmlObject))
 				{
+					$v = preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($xmlObject));
+					if ($htmlEntityDecode)
+					{
+						$v = html_entity_decode($v, ENT_QUOTES, 'UTF-8');
+					}
 					if ($a)
 					{
-						$out['value'] = preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($xmlObject));
+						$out['value'] = $v;
 					}
 					else
 					{
-						$out = preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($xmlObject));
+						$out = $v;
 					}
 				}
 			}
@@ -807,7 +813,7 @@ class Table extends \JTable
 			{
 				foreach ((array) $xmlObject as $index => $node)
 				{
-					$out[$index] = self::xml2array($node);
+					$out[$index] = self::xml2array($node, $htmlEntityDecode);
 				}
 			}
 		}
@@ -815,16 +821,24 @@ class Table extends \JTable
 		{
 			foreach ($xmlObject as $index => $node)
 			{
-				$out[$index] = self::xml2array($node);
+				$out[$index] = self::xml2array($node, $htmlEntityDecode);
 			}
 		}
 		elseif (is_string($xmlObject))
 		{
 			$out = preg_replace('/%u([0-9A-F]+)/', '&#x$1;', trim($xmlObject));
+			if ($htmlEntityDecode)
+			{
+				$out = html_entity_decode($out, ENT_QUOTES, 'UTF-8');
+			}
 		}
 		else
 		{
 			$out = $xmlObject;
+			if ($htmlEntityDecode)
+			{
+				$out = html_entity_decode($out, ENT_QUOTES, 'UTF-8');
+			}
 		}
 
 		return $out;

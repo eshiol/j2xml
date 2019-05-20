@@ -19,7 +19,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 /**
  *
- * @version 19.4.331
+ * @version 19.5.332
  * @since 1.5.3
  */
 class Version
