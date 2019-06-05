@@ -1,4 +1,4 @@
------------------------- 3.7.197 Release [20-May-2019] ------------------------
+------------------------ 3.7.198 Release [5-June-2019] ------------------------
 
 cli_j2xml-3.7.20
   # import weblinks (build 20)
@@ -11,7 +11,8 @@ lib_j2xml-19.5.333
 
 lib_phpxmlrpc-3.1.1
 
-com_j2xml-3.7.197
+com_j2xml-3.7.198
+  # plugin terze parti (build 198)
   # import weblinks (build 197)
 
 plg_system_j2xml-3.7.45
