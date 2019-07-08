@@ -2,7 +2,7 @@
 /**
  * @package		J2XML.CLI
  * @subpackage	cli
- * @version		3.7.20
+ * @version		3.7.21
  * @since		2.5
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
@@ -220,6 +220,9 @@ class J2XMLCli extends JApplicationCli
 				$iparams->set('content', $params->get('import_content'));
 				$iparams->set('weblinks', $params->get('import_weblinks'));
 				$iparams->set('logger', 'xmlrpc');
+
+				$iparams->set('keep_frontpage', $params->get('keep_frontpage'));
+				$iparams->set('keep_rating', $params->get('keep_rating'));
 
 				if ($params->get('keep_category', 1) == 2)
 				{

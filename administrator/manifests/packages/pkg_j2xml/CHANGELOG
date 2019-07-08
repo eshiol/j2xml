@@ -1,3 +1,24 @@
+------------------------ 3.7.199 Release [8-July-2019] ------------------------
+
+cli_j2xml-3.7.21
+  # featured (build 21)
+  # rating (build 21)
+
+lib_eshiol-3.7.33
+
+lib_j2xml-19.7.334
+  # import usergroups (build 334)
+  # featured (build 334)
+  # rating (build 334)
+
+lib_phpxmlrpc-3.1.1
+
+com_j2xml-3.7.199
+  # featured (build 199)
+  # rating (build 199)
+
+plg_system_j2xml-3.7.45
+
 ------------------------ 3.7.198 Release [5-June-2019] ------------------------
 
 cli_j2xml-3.7.20

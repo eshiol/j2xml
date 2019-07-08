@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3" type="file" method="upgrade">
 	<name>J2XML 3.7 Slovenian (it-IT) language pack</name>
-	<version>3.7.196.1</version>
-	<creationDate>15/04/2019</creationDate>
+	<version>3.7.199.1</version>
+	<creationDate>08/07/2019</creationDate>
 	<author>Helios Ciancio</author>
 	<authorEmail>info@eshiol.it</authorEmail>
 	<authorUrl>https://www.eshiol.it</authorUrl>
 	<copyright><![CDATA[(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
 	<description><![CDATA[<div style="text-align:left;">
-<h3>J2XML 3.7 Italian (it-IT) Language Package - Version 3.7.196v1</h3>
-<h3>J2XML 3.7 Italiano (it-IT) Pacchetto lingua - Versione 3.7.196v1</h3>
+<h3>J2XML 3.7 Italian (it-IT) Language Package - Version 3.7.199v1</h3>
+<h3>J2XML 3.7 Italiano (it-IT) Pacchetto lingua - Versione 3.7.199v1</h3>
 </div>]]></description>
 	<fileset>
 		<!-- Admin component language folder -->

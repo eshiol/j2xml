@@ -147,6 +147,10 @@ class J2XMLControllerCpanel extends JControllerLegacy
 				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
 				$iparams->set('content', $params->get('import_content'));
 				$iparams->set('weblinks', $params->get('import_weblinks'));
+
+				$iparams->set('keep_frontpage', $params->get('keep_frontpage'));
+				$iparams->set('keep_rating', $params->get('keep_rating'));
+
 				if ($params->get('keep_category', 1) == 2)
 				{
 					$iparams->set('content_category_forceto', $params->get('category'));
@@ -168,7 +172,7 @@ class J2XMLControllerCpanel extends JControllerLegacy
 		else
 		{
 			$params->set('filename', $filename);
-			
+
 			// set_time_limit(120);
 			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 			$importer->import($xml, $params);

@@ -35,7 +35,7 @@ jimport('joomla.application.router');
 /**
  * Content table
  *
- * @version 19.3.328
+ * @version 19.7.334
  * @since 1.5.1
  */
 class Content extends Table
@@ -76,7 +76,8 @@ class Content extends Table
 		$this->_excluded = array_merge($this->_excluded, array(
 				'sectionid',
 				'mask',
-				'title_alias'
+				'title_alias',
+				'ordering'
 		));
 
 		// $this->_aliases['featured'] = 'SELECT IFNULL(f.ordering,0) FROM
@@ -220,6 +221,9 @@ class Content extends Table
 				->loadResult();
 		}
 
+		$keep_frontpage = $params->get('keep_frontpage', 0);
+		$keep_rating = $params->get('keep_rating', 0);
+
 		foreach ($xml->xpath("//j2xml/content[not(name = '')]") as $record)
 		{
 			self::prepareData($record, $data, $params);
@@ -310,12 +314,47 @@ class Content extends Table
 										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $table->title, $id, $table->id),
 												\JLog::WARNING, 'lib_j2xml'));
 							}
-
-							// TODO: featuring, rating
 						}
 						else
 						{
 							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
+						}
+
+						if ($keep_frontpage == 0)
+						{
+							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $table->id;
+						}
+						elseif ($data['featured'] == 0)
+						{
+							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $table->id;
+						}
+						else
+						{
+							$query = 'INSERT IGNORE INTO `#__content_frontpage`'
+								. ' SET content_id = ' . $table->id . ','
+								. ' ordering = ' . $data['ordering'];
+						}
+						$db->setQuery($query);
+						$db->query();
+
+						if (($keep_rating == 0) || (!isset($data['rating_count'])) || ($data['rating_count'] == 0))
+						{
+							$query = "DELETE FROM `#__content_rating` WHERE `content_id`=" . $table->id;
+							$db->setQuery($query);
+							$db->query();
+						}
+						else
+						{
+							$rating = new \stdClass();
+							$rating->content_id = $table->id;
+							$rating->rating_count = $data['rating_count'];
+							$rating->rating_sum = $data['rating_sum'];
+							$rating->lastip = $_SERVER['REMOTE_ADDR'];
+							try {
+								$db->insertObject('#__content_rating', $rating);
+							} catch (\Exception $e) {
+								$db->updateObject('#__content_rating', $rating, 'content_id');
+							}
 						}
 
 						// Trigger the onContentAfterSave event.
@@ -402,6 +441,16 @@ class Content extends Table
 			// Set the column since its name is changed from published to state
 			$data['state'] = $data['published'];
 			unset($data['published']);
+		}
+
+		$data['featured'] = (int)($data['featured'] > 0);
+		if ($params->get('keep_frontpage') == 0)
+		{
+			$data['ordering'] = 0;
+		}
+		elseif (!isset($data['ordering']))
+		{
+			$data['ordering'] = $data['featured'];
 		}
 	}
 
