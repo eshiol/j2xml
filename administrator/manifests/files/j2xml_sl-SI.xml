@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3" type="file" method="upgrade">
 	<name>J2XML 3.7 Slovenian (sl-SI) language pack</name>
-	<version>3.7.196.1</version>
-	<creationDate>15/02/2019</creationDate>
+	<version>3.7.199.1</version>
+	<creationDate>13/07/2019</creationDate>
 	<author>Ervin Bizjak</author>
 	<authorEmail>ervin.bizjak@gmail.com</authorEmail>
 	<authorUrl></authorUrl>
@@ -10,8 +10,8 @@
 	(C) 2019 Ervin Bizjak. All rights reserved.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
 	<description><![CDATA[<div style="text-align:left;">
-<h3>J2XML 3.7 Slovenian (sl-SI) Language Package - Version 3.7.196v1 Package</h3>
-<h3>J2XML 3.7 Slovenski (sl-SI) jezikovni paket - Različica 3.7.196v1 Paket</h3>
+<h3>J2XML 3.7 Slovenian (sl-SI) Language Package - Version 3.7.199v1 Package</h3>
+<h3>J2XML 3.7 Slovenski (sl-SI) jezikovni paket - Različica 3.7.199v1 Paket</h3>
 </div>]]></description>
 	<fileset>
 		<!-- Admin component language folder -->
