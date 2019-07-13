@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3" type="file" method="upgrade">
 	<name>J2XML 3.7 Slovenian (sl-SI) language pack</name>
-	<version>3.7.196.1</version>
+	<version>3.7.199.1</version>
 	<creationDate>13/07/2019</creationDate>
 	<author>Ervin Bizjak</author>
 	<authorEmail>ervin.bizjak@gmail.com</authorEmail>
