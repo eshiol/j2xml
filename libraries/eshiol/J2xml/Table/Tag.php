@@ -37,7 +37,7 @@ class Tag extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        
+	 *
 	 * @since 14.8.240
 	 */
 	public function __construct (\JDatabaseDriver $db)
@@ -54,11 +54,11 @@ class Tag extends Table
 	 *        	@option int 'tags' 1: Yes, if not exists; 2: Yes, overwrite if
 	 *        	exists
 	 *        	@option string 'context'
-	 *        
+	 *
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function import ($xml, &$params)
@@ -148,7 +148,7 @@ class Tag extends Table
 	 *
 	 * @param array $tags
 	 *        	Array of tags paths
-	 *        
+	 *
 	 * @return array
 	 *
 	 * @since 18.8.310
@@ -199,7 +199,7 @@ class Tag extends Table
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function export ($id, &$xml, $options)

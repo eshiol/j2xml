@@ -14,7 +14,7 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
- 
+
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
@@ -76,7 +76,7 @@ class JToolbarButtonFile extends JToolbarButton
 		$doc->addScriptDeclaration("
 jQuery(window).on('resize', function(){
 	width = jQuery(window).width();
-	if (width < 480) 
+	if (width < 480)
 		width = width - 150;
 	else
 		width = 137;

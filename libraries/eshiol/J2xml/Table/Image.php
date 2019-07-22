@@ -36,11 +36,11 @@ class Image
 	 *        	@option int 'images' 1: Yes, if not exists; 2: Yes, overwrite
 	 *        	if exists
 	 *        	@option string 'context'
-	 *        
+	 *
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function import ($xml, &$params)
@@ -92,7 +92,7 @@ class Image
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function export ($image, &$xml, $options)

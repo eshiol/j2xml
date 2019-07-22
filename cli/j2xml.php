@@ -145,20 +145,20 @@ class J2XMLCli extends JApplicationCli
 				switch ($error->level) {
 					default:
 					case LIBXML_ERR_WARNING:
-						$this->out(sprintf('%d - %s at line %d', 
-							$error->message, $error->line, 
+						$this->out(sprintf('%d - %s at line %d',
+							$error->message, $error->line,
 							'message')
 						);
 						break;
 					case LIBXML_ERR_ERROR:
-						$this->out(sprintf('%d - %s at line %d', 
-							$error->message, $error->line, 
+						$this->out(sprintf('%d - %s at line %d',
+							$error->message, $error->line,
 							'notice')
 						);
 						break;
 					case LIBXML_ERR_FATAL:
-						$this->out(sprintf('%d - %s at line %d', 
-							$error->message, $error->line, 
+						$this->out(sprintf('%d - %s at line %d',
+							$error->message, $error->line,
 							'error')
 						);
 						break;

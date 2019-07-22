@@ -1,7 +1,7 @@
 <?php
-/** 
+/**
  * @version		16.11.23 libraries/eshiol/core/standard2.php
- * 
+ *
  * @package		eshiol Library
  * @subpackage	lib_eshiol
  * @since		12.0.1
@@ -10,8 +10,8 @@
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
- * eshiol Library is free software. This version may have been modified 
- * pursuant to the GNU General Public License, and as distributed it includes 
+ * eshiol Library is free software. This version may have been modified
+ * pursuant to the GNU General Public License, and as distributed it includes
  * or is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
@@ -112,8 +112,8 @@ class JToolbarButtonStandard2 extends JToolbarButton
 		{
 			$task = $tmp[1].'.'.$tmp[2];
 			$option = $tmp[0];
-		} 
-		else 
+		}
+		else
 			$option = '';
 
 		$cmd = "Joomla.submitbutton('{$task}');";
@@ -123,7 +123,7 @@ class JToolbarButtonStandard2 extends JToolbarButton
 				document.adminForm.action = '".JURI::base(true)."/index.php?option=com_".$option."';
 				".$cmd."
 				document.adminForm.action = action;
-			}"; 
+			}";
 		if ($list)
 			$cmd = "
 			if (document.adminForm.boxchecked.value==0)

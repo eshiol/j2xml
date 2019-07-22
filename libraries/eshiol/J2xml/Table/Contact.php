@@ -40,7 +40,7 @@ class Contact extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        
+	 *
 	 * @since 15.9.261
 	 */
 	public function __construct (\JDatabaseDriver $db)
@@ -100,7 +100,7 @@ class Contact extends Table
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function export ($id, &$xml, $options)
@@ -172,11 +172,11 @@ class Contact extends Table
 	 *        	@option int 'users' 0: No | 1: Yes, if not exists | 2: Yes,
 	 *        	overwrite if exists
 	 *        	@option string 'context'
-	 *        
+	 *
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 19.2.322
 	 */
 	public static function import ($xml, &$params)

@@ -145,7 +145,7 @@ class plgSystemJ2XML extends JPlugin
 			{
 				$control = 'viewlevels';
 			}
-			else 
+			else
 			{
 				$control = substr($option, 4);
 			}

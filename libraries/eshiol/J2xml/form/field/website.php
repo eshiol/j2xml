@@ -48,7 +48,7 @@ class JFormFieldWebsite extends JFormFieldList
 	 * Method to get the custom field options.
 	 *
 	 * @return array The field option objects.
-	 *        
+	 *
 	 * @since 14.10
 	 */
 	protected function getOptions ()

@@ -2,10 +2,10 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * 
+ *
  * @version		3.7.192
  * @since		1.5.3
- * 
+ *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
@@ -324,7 +324,7 @@ foreach ($this->items as $i => $item)
 					<?php else : ?>
 							<?php echo $this->escape($item->title); ?>
 					<?php endif; ?>
-					<!-- 
+					<!--
 					<p class="smallsub">(<span>Alias</span>: <?php echo $item->alias; ?>)</p>
 					-->
 							</td>

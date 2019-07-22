@@ -41,7 +41,7 @@ class Fieldgroup extends Table
 	 *        	string Name of the primary key field in the table.
 	 * @param
 	 *        	object JDatabase connector object.
-	 *        
+	 *
 	 * @since 19.2.323
 	 */
 	public function __construct (\JDatabaseDriver $db)
@@ -60,11 +60,11 @@ class Fieldgroup extends Table
 	 *        	@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
 	 *        	overwrite if exists
 	 *        	@option string 'context'
-	 *        
+	 *
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 19.2.323
 	 */
 	public static function import ($xml, &$params)
@@ -139,7 +139,7 @@ class Fieldgroup extends Table
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 19.2.323
 	 */
 	public static function export ($id, &$xml, $options)

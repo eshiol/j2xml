@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * 
+ *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
@@ -94,7 +94,7 @@ class J2XMLModelWebsites extends JModelList
 	 *
 	 * @param string $id
 	 *        	A prefix for the store id.
-	 *        
+	 *
 	 * @return string A store id.
 	 */
 	protected function getStoreId ($id = '')
@@ -122,7 +122,7 @@ class J2XMLModelWebsites extends JModelList
 		$query->select(
 				$this->getState('list.select',
 						'a.id AS id,' . 'a.title AS title,' . 'a.alias AS alias,' . 'a.remote_url AS remote_url,' . 'a.username AS username,' .
-								 'a.state AS state,' . 'a.checked_out AS checked_out,' . 'a.checked_out_time AS checked_out_time,' . 
+								 'a.state AS state,' . 'a.checked_out AS checked_out,' . 'a.checked_out_time AS checked_out_time,' .
 								// 'a.access_token, a.refresh_token,
 								// a.expire_time,'.
 								'a.type'));

@@ -42,7 +42,7 @@
 29-November-2016
   ^ log (build 35)
   $ language files (build 35)
-  
+
 ------------------------ 3.4.34 Release [2-March-2016] ------------------------
 
 2-March-2016
@@ -100,7 +100,7 @@
 
 27-May-2012
   + Initial Release for Joomla! 2.5
-  
+
 Legend:
 
 * -> Security Fix

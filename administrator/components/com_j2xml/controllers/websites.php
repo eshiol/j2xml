@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * 
+ *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
@@ -43,9 +43,9 @@ class J2XMLControllerWebsites extends JControllerAdmin
 	 *        	The class prefix. Optional.
 	 * @param array $config
 	 *        	Configuration array for model. Optional.
-	 *        
+	 *
 	 * @return object The model.
-	 *        
+	 *
 	 * @since 1.6
 	 */
 	public function getModel ($name = 'Website', $prefix = 'J2XMLModel', $config = array('ignore_request' => true))

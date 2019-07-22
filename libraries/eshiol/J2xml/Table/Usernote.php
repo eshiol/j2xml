@@ -39,7 +39,7 @@ class Usernote extends \eshiol\J2XML\Table\Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        
+	 *
 	 * @since 15.3.248
 	 */
 	public function __construct (\JDatabaseDriver $db)

@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * 
+ *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
@@ -20,7 +20,7 @@ jimport('joomla.application.component.view');
 
 /**
  * View to edit a website
- * 
+ *
  * @version		3.7.192
  * @since		1.5.3
  */

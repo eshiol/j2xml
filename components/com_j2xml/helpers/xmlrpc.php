@@ -65,7 +65,7 @@ class XMLRPCJ2XMLServices
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		$lang = JFactory::getLanguage();
-		$lang->load('lib_j2xml', JPATH_SITE, null, false, false) || 
+		$lang->load('lib_j2xml', JPATH_SITE, null, false, false) ||
 		// Fallback to the library file in the default language
 		$lang->load('lib_j2xml', JPATH_SITE, null, true);
 
@@ -319,7 +319,7 @@ class XMLRPCJ2XMLServices
 	 *        	The message to log.
 	 * @param string $priority
 	 *        	Message priority based on {$this->priorities}.
-	 *        
+	 *
 	 * @return void
 	 *
 	 * @since 3.1.107

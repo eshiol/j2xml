@@ -1,7 +1,7 @@
 <?php
 /**
  * @version		16.11.23 libraries/eshiol/core/send.php
- * 
+ *
  * @package		J2XML
  * @subpackage	plg_system_j2xml
  * @since		1.5.2
@@ -12,7 +12,7 @@
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License 
+ * is derivative of works licensed under the GNU General Public License
  * or other free or open source software licenses.
  */
 
@@ -128,7 +128,7 @@ class JToolbarButtonSend extends JToolbarButton
 			$cmd = "
 			if (document.adminForm.boxchecked.value==0)
 				alert('{$message}');
-			else 
+			else
 				eshiol.sendAjax('{$name}', '{$text}', '{$url}')";
 		return $cmd;
 	}

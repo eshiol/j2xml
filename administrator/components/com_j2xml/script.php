@@ -18,7 +18,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 /**
  * Installation class to perform additional changes during install/uninstall/update
- * 
+ *
  * @version		3.7.188
  * @since		3.7
  */

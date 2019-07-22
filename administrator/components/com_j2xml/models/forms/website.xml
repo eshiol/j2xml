@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-<!-- 
+<!--
 @version: 3.7.188
 @since: 1.5
 -->
@@ -56,7 +56,7 @@
 
  		<field name="redirect_uri" type="url" class="input-xxlarge readonly"
 			size="40" label="COM_J2XML_FIELD_REDIRECTURI_LABEL"
-			description="COM_J2XML_FIELD_REDIRECTURI_DESC" 
+			description="COM_J2XML_FIELD_REDIRECTURI_DESC"
 			showon="type:1"
 			filter="url"
 			readonly="true"

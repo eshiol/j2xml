@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * 
+ *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
@@ -39,7 +39,7 @@ class JFormFieldAuthType extends JFormFieldList
 	 * Method to get the field options.
 	 *
 	 * @return array The field option objects.
-	 *        
+	 *
 	 * @since 3.6.158
 	 */
 	public function getOptions ()

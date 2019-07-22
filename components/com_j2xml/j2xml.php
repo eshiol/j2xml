@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * 
+ *
  * @version		3.7.192
  * @since		1.7.0.64
  *

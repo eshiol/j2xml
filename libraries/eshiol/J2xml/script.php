@@ -37,7 +37,7 @@ class eshiolj2xmlInstallerScript
 	 *
 	 * @param \stdClass $parent
 	 *        	- Parent object calling this method.
-	 *        
+	 *
 	 * @return void
 	 */
 	public function install ($parent)
@@ -49,7 +49,7 @@ class eshiolj2xmlInstallerScript
 	 *
 	 * @param \stdClass $parent
 	 *        	- Parent object calling this method.
-	 *        
+	 *
 	 * @return void
 	 */
 	public function uninstall ($parent)
@@ -94,7 +94,7 @@ class eshiolj2xmlInstallerScript
 	 *
 	 * @param \stdClass $parent
 	 *        	- Parent object calling object.
-	 *        
+	 *
 	 * @return void
 	 */
 	public function update ($parent)
@@ -112,7 +112,7 @@ class eshiolj2xmlInstallerScript
 	 *        	- * discover_install
 	 * @param \stdClass $parent
 	 *        	- Parent object calling object.
-	 *        
+	 *
 	 * @return void
 	 */
 	public function preflight ($type, $parent)
@@ -129,7 +129,7 @@ class eshiolj2xmlInstallerScript
 	 *        	- * discover_install
 	 * @param \stdClass $parent
 	 *        	- Parent object calling object.
-	 *        
+	 *
 	 * @return void
 	 */
 	function postflight ($type, $parent)
@@ -141,7 +141,7 @@ class eshiolj2xmlInstallerScript
 
 		if ($serverType === 'mysql')
 		{
-			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
+			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath_p;";
 			$queries[] = preg_replace('!\s+!', ' ',
 					<<<EOL
 CREATE PROCEDURE usergroups_getpath(IN id INT, OUT path TEXT)

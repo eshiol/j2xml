@@ -8,8 +8,8 @@
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
- * eshiol Library is free software. This version may have been modified 
- * pursuant to the GNU General Public License, and as distributed it includes 
+ * eshiol Library is free software. This version may have been modified
+ * pursuant to the GNU General Public License, and as distributed it includes
  * or is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
@@ -86,7 +86,7 @@ eshiol.dump = function (arr,level) {
 	var level_padding = "";
 	for(var j=0;j<level+1;j++) level_padding += "    ";
 
-	if(typeof(arr) == 'object') { //Array/Hashes/Objects 
+	if(typeof(arr) == 'object') { //Array/Hashes/Objects
 		for(var item in arr) {
 			var value = arr[item];
 
@@ -103,7 +103,7 @@ eshiol.dump = function (arr,level) {
 	return dumped_text;
 }
 
-eshiol.sendAjax = function(name, title, url) 
+eshiol.sendAjax = function(name, title, url)
 {
 	text = $('toolbar-'+name).getElement('button').getElement('span').innerHTML;
 	Joomla.removeMessages();
@@ -123,7 +123,7 @@ eshiol.sendAjax = function(name, title, url)
 				'cb': $('cb'+i),
 				url: url+'&cid='+$('cb'+i).value,
 				method: 'post',
-				onRequest: function() 
+				onRequest: function()
 				{
 				},
 				onComplete: function(xhr, status, args)
@@ -164,7 +164,7 @@ eshiol.sendAjax = function(name, title, url)
 						AJAX_QUEUE[n].send();
 					}
 				},
-				onSuccess: function(r) 
+				onSuccess: function(r)
 				{
 					this.options.cb.checked = false;
 					if (r.error && r.message)
@@ -197,7 +197,7 @@ eshiol.sendAjax = function(name, title, url)
 	}
 }
 
-eshiol.sendAjaxByDate = function(name, title, url) 
+eshiol.sendAjaxByDate = function(name, title, url)
 {
 	d1 = $(name+'_begin').value;
 	d2 = $(name+'_end').value;
@@ -240,7 +240,7 @@ eshiol.sendAjaxByDate = function(name, title, url)
 					'cb': $('cb'+i),
 					url: url+'&cid='+$('cb'+i).value+'&date='+(year+"-"+month+"-"+day),
 					method: 'post',
-					onRequest: function() 
+					onRequest: function()
 					{
 					},
 					onComplete: function(xhr, status, args)
@@ -281,7 +281,7 @@ eshiol.sendAjaxByDate = function(name, title, url)
 							AJAX_QUEUE[n].send();
 						}
 					},
-					onSuccess: function(r) 
+					onSuccess: function(r)
 					{
 						this.options.cb.checked = false;
 						if (r.error && r.message)
@@ -327,4 +327,4 @@ eshiol.XMLToString = function(xmlDom)
         : xmlDom.xml;
 //    console.log(x);
 	return x;
-}   
+}

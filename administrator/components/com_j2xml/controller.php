@@ -2,10 +2,10 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * 
+ *
  * @version		3.7.192
  * @since		1.5.3
- * 
+ *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
@@ -35,7 +35,7 @@ class J2XMLController extends JControllerLegacy
 	 * @param
 	 *        	array An array of safe url parameters and their variable
 	 *        	types, for valid values see {@link JFilterInput::clean()}.
-	 *        
+	 *
 	 * @return JController This object to support chaining.
 	 * @since 1.5
 	 */

@@ -1,7 +1,7 @@
 <?php
 /**
  * @version		16.2.20 libraries/eshiol/core/sendbydate.php
- * 
+ *
  * @package		J2XML
  * @subpackage	plg_system_j2xml
  * @since		14.2.10
@@ -12,10 +12,10 @@
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License 
+ * is derivative of works licensed under the GNU General Public License
  * or other free or open source software licenses.
  */
- 
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -159,7 +159,7 @@ jQuery(window).on('resize', function(){
 			$cmd = "
 			if (document.adminForm.boxchecked.value==0)
 				alert('{$message}');
-			else 
+			else
 				eshiol.sendAjaxByDate('{$name}', '{$text}', '{$url}');
 			";
 			return $cmd;

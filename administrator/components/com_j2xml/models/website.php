@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * 
+ *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
@@ -157,9 +157,9 @@ class J2XMLModelWebsite extends JModelAdmin
 	 *
 	 * @param array $data
 	 *        	The form data.
-	 *        
+	 *
 	 * @return boolean True on success.
-	 *        
+	 *
 	 * @since 3.7
 	 */
 	public function save ($data)
@@ -180,9 +180,9 @@ class J2XMLModelWebsite extends JModelAdmin
 	 *
 	 * @param integer $pk
 	 *        	The id of the primary key.
-	 *        
+	 *
 	 * @return mixed Object on success, false on failure.
-	 *        
+	 *
 	 * @since 3.7
 	 */
 	public function getItem ($pk = null)

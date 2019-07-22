@@ -39,7 +39,7 @@ class User extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *        	A database connector object
-	 *        
+	 *
 	 * @since 1.5.3beta4.39
 	 */
 	public function __construct (\JDatabaseDriver $db)
@@ -64,13 +64,13 @@ class User extends Table
 		{
 			$this->_aliases['group'] = '
 				WITH RECURSIVE usergroups(id, title, parent_id, depth, path) AS (
-				  SELECT tn.id, tn.title, tn.parent_id, 1::INT AS depth, tn.title::TEXT AS path 
-				  FROM #__usergroups AS tn 
+				  SELECT tn.id, tn.title, tn.parent_id, 1::INT AS depth, tn.title::TEXT AS path
+				  FROM #__usergroups AS tn
 				  WHERE tn.parent_id = 0
 				UNION ALL
-				  SELECT c.id, c.title, c.parent_id, p.depth + 1 AS depth, 
+				  SELECT c.id, c.title, c.parent_id, p.depth + 1 AS depth,
 				        (p.path || \'","\' || c.title) AS path
-				  FROM usergroups AS p, #__usergroups AS c 
+				  FROM usergroups AS p, #__usergroups AS c
 				  WHERE c.parent_id = p.id
 				)
 				SELECT (\'["\' || path || \'"]\')
@@ -124,11 +124,11 @@ class User extends Table
 	 *        	@option int 'tags' 1: Yes, if not exists; 2: Yes, overwrite if
 	 *        	exists
 	 *        	@option string 'context'
-	 *        
+	 *
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function import ($xml, &$params)
@@ -379,7 +379,7 @@ class User extends Table
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *
 	 * @since 18.8.310
 	 */
 	public static function export ($id, &$xml, $options)

@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * 
+ *
  * @version		3.7.192
  * @since		1.5.3
  *
@@ -86,7 +86,7 @@ foreach ($files as $file)
 					$lang->load('lib_' . $extension);
 				}
 				$exts = $exts + array(
-						JText::_((string) $xml->name) . 
+						JText::_((string) $xml->name) .
 						// .' '.ucfirst($attr['group'])
 						' ' . ucfirst($attr['type']) => (string) $xml->version
 				);
@@ -151,7 +151,7 @@ foreach ($files as $file)
 								<td colspan="2">
 					<?php echo JText::_('Copyright'); ?>
 					<a href='http://www.eshiol.it' target='_blank'>
-					<?php echo str_replace("(C)", "&copy", $xml->copyright); ?> 
+					<?php echo str_replace("(C)", "&copy", $xml->copyright); ?>
 					<img src='../media/com_j2xml/images/eshiol.png' alt='eshiol.it'
 										title='eshiol.it' border='0'>
 								</a>
@@ -233,7 +233,7 @@ foreach ($files as $file)
 									<td colspan="2">
 					<?php echo JText::_('Copyright'); ?>
 					<a href='http://www.eshiol.it' target='_blank'>
-					<?php echo str_replace("(C)", "&copy", $xml->copyright); ?> 
+					<?php echo str_replace("(C)", "&copy", $xml->copyright); ?>
 					<img src='../media/com_j2xml/images/eshiol.png' alt='eshiol.it'
 											title='eshiol.it' border='0'>
 									</a>
