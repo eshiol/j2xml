@@ -319,6 +319,11 @@ class Sender
 
 		$res = $client->send($msg, 0);
 
+		\JLog::add(new \JLogEntry(__LINE__ . ' ' . print_r($res, true), \JLog::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry(__LINE__ . ' ' . $res->faultCode(), true), \JLog::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry(__LINE__ . ' ' . $res->faultString(), true), \JLog::DEBUG, 'lib_j2xml'));
+		return $res;
+
 		if (! $res->faultcode())
 		{
 			return $res;
@@ -327,6 +332,7 @@ class Sender
 		if ($res->faultString() == "Didn't receive 200 OK from remote server. (HTTP/1.1 301 Foun)")
 		{
 			$res = $client->send($msg, 0, $protocol = 'http11');
+			\JLog::add(new \JLogEntry(print_r($res, true), \JLog::DEBUG, 'lib_j2xml'));
 			if (! $res->faultcode())
 			{
 				return $res;
@@ -348,6 +354,7 @@ class Sender
 			$client->user_agent = Version::$PRODUCT . ' ' . Version::getFullVersion();
 			$client->setDebug($debug);
 			$res = $client->send($msg, 0, $protocol);
+			\JLog::add(new \JLogEntry(print_r($res, true), \JLog::DEBUG, 'lib_j2xml'));
 		}
 		return $res;
 	}

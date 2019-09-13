@@ -28,7 +28,7 @@ use eshiol\J2XML\Table\Usernote;
 /**
  * User Table
  *
- * @version 19.2.325
+ * @version 19.9.336
  * @since 1.5.3beta4.39
  */
 class User extends Table
@@ -190,7 +190,7 @@ class User extends Table
 			}
 			else
 			{
-				$data['password'] = $data['password2'] = JUserHelper::genRandomPassword();
+				$data['password'] = $data['password2'] = \JUserHelper::genRandomPassword();
 			}
 
 			$userId = $data['id'];

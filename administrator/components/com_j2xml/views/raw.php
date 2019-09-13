@@ -22,7 +22,7 @@ jimport('eshiol.j2xml.Exporter');
 /**
  * J2XML Component View
  *
- * @version 3.7.192
+ * @version 3.7.200
  * @since 3.2.137
  */
 class J2XMLView extends JViewLegacy
@@ -53,7 +53,16 @@ class J2XMLView extends JViewLegacy
 		}
 
 		$get_xml = strtolower(str_replace('J2XMLView', '', get_class($this)));
-		$exporter->$get_xml($ids, $xml, $options);
+		try
+		{
+			$exporter->$get_xml($ids, $xml, $options);
+		}
+		catch (\Exception $ex)
+		{
+			JLog::add(JText::sprintf('LIB_J2XML_MSG_USERGROUP_ERROR', $ex->getMessage()), JLog::ERROR, 'lib_j2xml');
+			$app->redirect('index.php?option=com_' . $get_xml);
+			return;
+		}
 
 		$options = array();
 		$options['debug'] = $params->get('debug', 0);

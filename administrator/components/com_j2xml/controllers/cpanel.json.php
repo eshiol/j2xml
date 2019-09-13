@@ -2,7 +2,7 @@
 /**
  * @package		J2XML
  * @subpackage	com_j2xml
- * 
+ *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
@@ -27,7 +27,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Controller class.
  *
- * @version 3.7.197
+ * @version 3.7.200
  * @since 3.6.160
  */
 class J2XMLControllerCpanel extends JControllerLegacy
@@ -43,7 +43,10 @@ class J2XMLControllerCpanel extends JControllerLegacy
 
 	function __construct ($default = array())
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
+
 		parent::__construct();
+
 		$this->app = JFactory::getApplication();
 	}
 
@@ -158,7 +161,17 @@ class J2XMLControllerCpanel extends JControllerLegacy
 
 				$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 				// set_time_limit(120);
-				$importer->import($xml, $iparams);
+
+				try
+				{
+					$importer->import($xml, $iparams);
+				}
+				catch (\Exception $ex)
+				{
+					JLog::add(JText::sprintf('LIB_J2XML_MSG_USERGROUP_ERROR', $ex->getMessage()), JLog::ERROR, 'lib_j2xml');
+					$this->app->redirect('index.php?option=com_j2xml');
+					return;
+				}
 			}
 		}
 /**

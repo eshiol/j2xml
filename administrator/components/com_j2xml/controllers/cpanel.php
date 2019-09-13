@@ -24,11 +24,19 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Controller class.
  *
- * @version 3.7.198
+ * @version 3.7.200
  * @since 1.5.3
  */
 class J2xmlControllerCpanel extends JControllerLegacy
 {
+
+	/**
+	 * The application object.
+	 *
+	 * @var JApplicationBase
+	 * @since 3.7.200
+	 */
+	protected $app;
 
 	/**
 	 * Custom Constructor
@@ -38,6 +46,8 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		parent::__construct($default);
+
+		$this->app = JFactory::getApplication();
 	}
 
 	public function display ($cachable = false, $urlparams = false)
@@ -188,7 +198,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 					$j2xmlVersion = class_exists('eshiol\J2xmlpro\Version') ? eshiol\J2xmlpro\Version::$DOCVERSION : eshiol\J2xml\Version::$DOCVERSION;
 			$version = explode(".", $j2xmlVersion);
 			$j2xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
-					if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500")) 
+					if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500"))
 			{							$iparams = new \JRegistry();
 				$iparams->set('filename', $filename);
 				$iparams->set('version', (string) $xml['version']);
@@ -214,7 +224,17 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				}
 				$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 				// set_time_limit(120);
-				$importer->import($xml, $iparams);
+
+				try
+				{
+					$importer->import($xml, $iparams);
+				}
+				catch (\Exception $ex)
+				{
+					JLog::add(JText::sprintf('LIB_J2XML_MSG_USERGROUP_ERROR', $ex->getMessage()), JLog::ERROR, 'lib_j2xml');
+					$this->app->redirect('index.php?option=com_j2xml');
+					return;
+				}
 			}
 			else
 			{

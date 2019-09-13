@@ -47,7 +47,7 @@ use eshiol\J2XML\Version;
 /**
  * Exporter
  *
- * @version 19.2.323
+ * @version 19.7.335
  * @since 1.5.2.14
  */
 class Exporter
@@ -73,6 +73,12 @@ class Exporter
 		$this->option = (PHP_SAPI != 'cli') ? \JFactory::getApplication()->input->getCmd('option') : 'cli_' .
 				 strtolower(get_class(\JApplicationCli::getInstance()));
 		$this->_db = \JFactory::getDbo();
+		
+		// Merge the default translation with the current translation
+		$jlang = \JFactory::getLanguage();
+		$jlang->load('lib_j2xml', JPATH_SITE, 'en-GB', true);
+		$jlang->load('lib_j2xml', JPATH_SITE, $jlang->getDefault(), true);
+		$jlang->load('lib_j2xml', JPATH_SITE, null, true);
 	}
 
 	/**

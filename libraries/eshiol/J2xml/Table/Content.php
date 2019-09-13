@@ -35,7 +35,7 @@ jimport('joomla.application.router');
 /**
  * Content table
  *
- * @version 19.7.334
+ * @version 19.9.336
  * @since 1.5.1
  */
 class Content extends Table
@@ -352,7 +352,7 @@ class Content extends Table
 							$rating->lastip = $_SERVER['REMOTE_ADDR'];
 							try {
 								$db->insertObject('#__content_rating', $rating);
-							} catch (\Exception $e) {
+							} catch (\Exception $ex) {
 								$db->updateObject('#__content_rating', $rating, 'content_id');
 							}
 						}
@@ -451,6 +451,11 @@ class Content extends Table
 		elseif (!isset($data['ordering']))
 		{
 			$data['ordering'] = $data['featured'];
+		}
+
+		if (! isset($data['catid']))
+		{
+			$data['catid'] = $params->get('content_category_default');
 		}
 	}
 

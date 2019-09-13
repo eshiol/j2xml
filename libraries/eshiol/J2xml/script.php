@@ -141,7 +141,7 @@ class eshiolj2xmlInstallerScript
 
 		if ($serverType === 'mysql')
 		{
-			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath_p;";
+			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
 			$queries[] = preg_replace('!\s+!', ' ',
 					<<<EOL
 CREATE PROCEDURE usergroups_getpath(IN id INT, OUT path TEXT)

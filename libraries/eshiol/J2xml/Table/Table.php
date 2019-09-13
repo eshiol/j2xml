@@ -20,12 +20,11 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.7.334
+ * @version 19.7.335
  * @since 1.5.3.39
  */
 class Table extends \JTable
 {
-
 	/**
 	 * An array of key names to be excluded in the toXML function
 	 *
@@ -111,41 +110,41 @@ class Table extends \JTable
 			if (isset($this->created_by))
 			{
 				$this->_aliases['created_by'] = (string) $this->_db->getQuery(true)
-				->select($this->_db->quoteName('username'))
-				->from($this->_db->quoteName('#__users'))
-				->where($this->_db->quoteName('id') . ' = ' . (int) $this->created_by);
+					->select($this->_db->quoteName('username'))
+					->from($this->_db->quoteName('#__users'))
+					->where($this->_db->quoteName('id') . ' = ' . (int) $this->created_by);
 				\JLog::add(new \JLogEntry($this->_aliases['created_by'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 			if (isset($this->created_user_id))
 			{
 				$this->_aliases['created_user_id'] = (string) $this->_db->getQuery(true)
-				->select($this->_db->quoteName('username'))
-				->from($this->_db->quoteName('#__users'))
-				->where($this->_db->quoteName('id') . ' = ' . (int) $this->created_user_id);
+					->select($this->_db->quoteName('username'))
+					->from($this->_db->quoteName('#__users'))
+					->where($this->_db->quoteName('id') . ' = ' . (int) $this->created_user_id);
 				\JLog::add(new \JLogEntry($this->_aliases['created_user_id'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 			if (isset($this->modified_by))
 			{
 				$this->_aliases['modified_by'] = (string) $this->_db->getQuery(true)
-				->select($this->_db->quoteName('username'))
-				->from($this->_db->quoteName('#__users'))
-				->where($this->_db->quoteName('id') . ' = ' . (int) $this->modified_by);
+					->select($this->_db->quoteName('username'))
+					->from($this->_db->quoteName('#__users'))
+					->where($this->_db->quoteName('id') . ' = ' . (int) $this->modified_by);
 				\JLog::add(new \JLogEntry($this->_aliases['modified_by'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 			if (isset($this->modified_user_id))
 			{
 				$this->_aliases['modified_user_id'] = (string) $this->_db->getQuery(true)
-				->select($this->_db->quoteName('username'))
-				->from($this->_db->quoteName('#__users'))
-				->where($this->_db->quoteName('id') . ' = ' . (int) $this->modified_user_id);
+					->select($this->_db->quoteName('username'))
+					->from($this->_db->quoteName('#__users'))
+					->where($this->_db->quoteName('id') . ' = ' . (int) $this->modified_user_id);
 				\JLog::add(new \JLogEntry($this->_aliases['modified_user_id'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 			if (isset($this->catid))
 			{
 				$this->_aliases['catid'] = (string) $this->_db->getQuery(true)
-				->select($this->_db->quoteName('path'))
-				->from($this->_db->quoteName('#__categories'))
-				->where($this->_db->quoteName('id') . ' = ' . (int) $this->catid);
+					->select($this->_db->quoteName('path'))
+					->from($this->_db->quoteName('#__categories'))
+					->where($this->_db->quoteName('id') . ' = ' . (int) $this->catid);
 				\JLog::add(new \JLogEntry($this->_aliases['catid'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 			if (isset($this->access))
@@ -159,21 +158,21 @@ class Table extends \JTable
 				if ($serverType === 'postgresql')
 				{
 					$query->select(
-							'CASE WHEN ' . $this->_db->quoteName('v.id') . '<=6 THEN TO_CHAR(' . $this->_db->quoteName('v.id') . ', \'9\') ELSE ' .
-							$this->_db->quoteName('v.title') . ' END');
+						'CASE WHEN ' . $this->_db->quoteName('v.id') . '<=6 THEN TO_CHAR(' . $this->_db->quoteName('v.id') . ', \'9\') ELSE ' .
+						$this->_db->quoteName('v.title') . ' END');
 				}
 				else
 				{
 					$query->select(
-							'IF(' . $this->_db->quoteName('v.id') . '<=6, ' . $this->_db->quoteName('v.id') . ', ' . $this->_db->quoteName('v.title') .
-							')');
+						'IF(' . $this->_db->quoteName('v.id') . '<=6, ' . $this->_db->quoteName('v.id') . ', ' . $this->_db->quoteName('v.title') .
+						')');
 				}
 				$query->from($this->_db->quoteName('#__viewlevels', 'v'))
-				->join('RIGHT',
+					->join('RIGHT',
 						$this->_db->quoteName($this->_tbl, 'a') . ' ON ' . $this->_db->quoteName('v.id') . ' = ' . $this->_db->quoteName('a.access'))
-						->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
-						$this->_aliases['access'] = (string) $query;
-						\JLog::add(new \JLogEntry($this->_aliases['access'], \JLog::DEBUG, 'lib_j2xml'));
+					->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
+				$this->_aliases['access'] = (string) $query;
+				\JLog::add(new \JLogEntry($this->_aliases['access'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 		}
 		return $ret;
@@ -230,8 +229,27 @@ class Table extends \JTable
 		foreach ($this->_aliases as $k => $query)
 		{
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
-			$this->_db->setQuery($query);
-			$v = $this->_db->loadObjectList();
+
+			try
+			{
+				$v = $this->_db->setQuery($query)->loadObjectList();
+			}
+			catch (\Exception $ex)
+			{
+				if ($ex->getCode() != 1305)
+				{
+					throw $ex;
+				}
+				elseif (self::fixDB())
+				{
+					$v = $this->_db->setQuery($query)->loadObjectList();
+				}
+				else
+				{
+					throw $ex;
+				}
+			}
+
 			\JLog::add(new \JLogEntry(print_r($v, true), \JLog::DEBUG, 'lib_j2xml'));
 			if (count($v) == 1)
 			{
@@ -277,64 +295,62 @@ class Table extends \JTable
 		 * }
 		 * }
 		 */
-		 $xml = '';
-		 if (is_object($v))
-		 {
-		 	$x = get_object_vars($v);
-		 	if (count($x) == 1)
-		 	{
-		 		$xml = $this->_setValue($k, array_shift($x));
-		 	}
-		 	else
-		 	{
-		 		foreach ($x as $k1 => $v1)
-		 		{
-		 			if (substr($k1, 0, 1) != '@')
-		 			{
-		 				$xml .= $this->_setValue($k1, $v1);
-		 			}
-		 			else
-		 			{
-		 				$kOpen .= ' ' . substr($k1, 1) . '="' . $v1 . '"';
-		 			}
-		 		}
-
+		$xml = '';
+		if (is_object($v))
+		{
+			$x = get_object_vars($v);
+			if (count($x) == 1)
+			{
+				$xml = $this->_setValue($k, array_shift($x));
+			}
+			else
+			{
+				foreach ($x as $k1 => $v1)
+				{
+					if (substr($k1, 0, 1) != '@')
+					{
+						$xml .= $this->_setValue($k1, $v1);
+					}
+					else
+					{
+						$kOpen .= ' ' . substr($k1, 1) . '="' . $v1 . '"';
+					}
+				}
 		 		// Open root node.
-		 		$xml = '<' . $kOpen . '>' . $xml . '</' . $k . '>';
-		 	}
-		 }
-		 else if (is_numeric($v))
-		 {
-		 	$xml = '<' . $kOpen . '>' . $v . '</' . $k . '>';
-		 }
-		 else if ($v != '')
-		 {
-		 	// $v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
-
+	 			$xml = '<' . $kOpen . '>' . $xml . '</' . $k . '>';
+			}
+		}
+		else if (is_numeric($v))
+		{
+			$xml = '<' . $kOpen . '>' . $v . '</' . $k . '>';
+		}
+		else if ($v != '')
+		{
+			// $v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
 		 	$length = strlen($v);
 		 	for ($i = 0; $i < $length; $i ++)
 		 	{
 		 		$current = ord($v{$i});
 		 		if (($current == 0x9) || ($current == 0xA) || ($current == 0xD) || (($current >= 0x20) && ($current <= 0xD7FF)) ||
-		 				(($current >= 0xE000) && ($current <= 0xFFFD)) || (($current >= 0x10000) && ($current <= 0x10FFFF)))
-		 		{
-		 			$xml .= chr($current);
-		 		}
-		 		else
-		 		{
-		 			$xml .= " ";
-		 		}
-		 	}
+					(($current >= 0xE000) && ($current <= 0xFFFD)) || (($current >= 0x10000) && ($current <= 0x10FFFF)))
+				{
+					$xml .= chr($current);
+				}
+				else
+				{
+					$xml .= " ";
+				}
+			}
 
-		 	$xml = '<' . $kOpen . '><![CDATA[' . $xml . ']]></' . $k . '>';
-		 }
-		 else
-		 {
-		 	$xml = '<' . $kOpen . ' />';
-		 }
+			$xml = '<' . $kOpen . '><![CDATA[' . $xml . ']]></' . $k . '>';
+		}
+		else
+		{
+			$xml = '<' . $kOpen . ' />';
+		}
 
-		 // Return the XML value.
-		 return $xml;
+		// Return the XML value.
+		return $xml;
 	}
 
 	/**
@@ -513,19 +529,19 @@ class Table extends \JTable
 		{
 			$db = \JFactory::getDBO();
 			$i = strrpos($article, '/');
-			$articleId = $db->setQuery(
-					$db->getQuery(true)
-					->select($db->quoteName('c.id'))
-					->from($db->quoteName('#__content', 'c'))
-					->join('INNER', $db->quoteName('#__categories', 'cc') . ' ON ' . $db->quoteName('c.catid') . ' = ' . $db->quoteName('cc.id'))
-					->where($db->quoteName('cc.extension') . ' = ' . $db->quote('com_content'))
-					->where($db->quoteName('c.alias') . ' = ' . $db->quote(substr($article, $i + 1)))
-					->where($db->quoteName('cc.path') . ' = ' . $db->quote(substr($article, 0, $i))))
-					->loadResult();
-					if (! $articleId)
-					{
-						$articleId = $defaultArticleId;
-					}
+			$query = $db->getQuery(true)
+				->select($db->quoteName('c.id'))
+				->from($db->quoteName('#__content', 'c'))
+				->join('INNER', $db->quoteName('#__categories', 'cc') . ' ON ' . $db->quoteName('c.catid') . ' = ' . $db->quoteName('cc.id'))
+				->where($db->quoteName('cc.extension') . ' = ' . $db->quote('com_content'))
+				->where($db->quoteName('c.alias') . ' = ' . $db->quote(substr($article, $i + 1)))
+				->where($db->quoteName('cc.path') . ' = ' . $db->quote(substr($article, 0, $i)));
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+			$articleId = $db->setQuery($query)->loadResult();
+			if (! $articleId)
+			{
+				$articleId = $defaultArticleId;
+			}
 		}
 
 		\JLog::add(new \JLogEntry($article . ' -> ' . $articleId, \JLog::DEBUG, 'lib_j2xml'));
@@ -547,17 +563,17 @@ class Table extends \JTable
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		$db = \JFactory::getDBO();
-		$userId = $db->setQuery(
-				$db->getQuery(true)
-				->select($db->quoteName('id'))
-				->from($db->quoteName('#__users'))
-				->where($db->quoteName('username') . ' = ' . $db->quote($username)))
-				->loadResult();
+		$query = $db->getQuery(true)
+			->select($db->quoteName('id'))
+			->from($db->quoteName('#__users'))
+			->where($db->quoteName('username') . ' = ' . $db->quote($username));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$userId = $db->setQuery($query)->loadResult();
 
-				$userId = $userId ?: ($defaultUserId ?: \JFactory::getUser()->id);
+		$userId = $userId ?: ($defaultUserId ?: \JFactory::getUser()->id);
 
-				\JLog::add(new \JLogEntry($username . ' -> ' . $userId, \JLog::DEBUG, 'lib_j2xml'));
-				return $userId;
+		\JLog::add(new \JLogEntry($username . ' -> ' . $userId, \JLog::DEBUG, 'lib_j2xml'));
+		return $userId;
 	}
 
 	/**
@@ -581,51 +597,76 @@ class Table extends \JTable
 		{
 			$db = \JFactory::getDBO();
 			$query = $db->getQuery(true)
-			->select($db->quoteName('id'))
-			->from($db->quoteName('#__usergroups'))
-			->where('usergroups_getpath(' . $db->quoteName('id') . ') = ' . $db->quote($usergroup));
+				->select($db->quoteName('id'))
+				->from($db->quoteName('#__usergroups'))
+				->where('usergroups_getpath(' . $db->quoteName('id') . ') = ' . $db->quote($usergroup));
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 
 			try
 			{
 				$usergroupId = $db->setQuery($query)->loadResult();
-				if ($import && ! $usergroupId)
+			}
+			catch (\Exception $ex)
+			{
+				if ($ex->getCode() != 1305)
 				{
-					// import usergroup tree if it doesn't exists
-					$groups = json_decode($usergroup);
-					$g = array();
-					$usergroupId = 0;
-					$parentId = 0;
-					for ($j = 0; $j < count($groups); $j ++)
-					{
-						$g[] = $groups[$j];
-						$usergroup = json_encode($g, JSON_NUMERIC_CHECK);
-						$query = $db->getQuery(true)
+					throw $ex;
+				}
+				elseif (self::fixDB())
+				{
+					$usergroupId = $db->setQuery($query)->loadResult();
+				}
+				else
+				{
+					throw $ex;
+				}
+
+				if ($ex->getCode() != 1305)
+				{
+					throw $ex;
+				}
+				elseif (self::fixDB())
+				{
+					$usergroupId = $db->setQuery($query)->loadResult();
+				}
+				else
+				{
+					throw $ex;
+				}
+			}
+
+			if ($import && ! $usergroupId)
+			{
+				// import usergroup tree if it doesn't exists
+				$groups = json_decode($usergroup);
+				$g = array();
+				$usergroupId = 0;
+				$parentId = 0;
+				for ($j = 0; $j < count($groups); $j ++)
+				{
+					$g[] = $groups[$j];
+					$usergroup = json_encode($g, JSON_NUMERIC_CHECK);
+					$query = $db->getQuery(true)
 						->select($db->quoteName('id'))
 						->from($db->quoteName('#__usergroups'))
 						->where($db->quoteName('title') . ' = ' . $db->quote($groups[$j]))
 						->where($db->quoteName('parent_id') . ' = ' . $parentId);
-						$usergroupId = $db->setQuery($query)->loadResult();
-						if (! ($usergroupId = $db->setQuery($query)->loadResult()))
-						{
-							$u = \JTable::getInstance('Usergroup');
-							$u->save(array(
-									'title' => $groups[$j],
-									'parent_id' => $parentId
-							));
-							$usergroupId = $u->id;
-							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USERGROUP_IMPORTED', $groups[$j]), \JLog::INFO, 'lib_j2xml'));
-						}
-						else
-						{
-							$parentId = $usergroupId;
-						}
+					$usergroupId = $db->setQuery($query)->loadResult();
+					if (! ($usergroupId = $db->setQuery($query)->loadResult()))
+					{
+						$u = \JTable::getInstance('Usergroup');
+						$u->save(array(
+							'title' => $groups[$j],
+							'parent_id' => $parentId
+						));
+						$usergroupId = $u->id;
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USERGROUP_IMPORTED', $groups[$j]), \JLog::INFO, 'lib_j2xml'));
+					}
+					else
+					{
+						$parentId = $usergroupId;
 					}
 				}
-			}
-			catch (\Exception $e)
-			{
-				\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USERGROUP_ERROR', $e->getMessage()), \JLog::ERROR, 'lib_j2xml'));
 			}
 		}
 		elseif ($usergroup > 0)
@@ -653,12 +694,12 @@ class Table extends \JTable
 		else
 		{
 			$db = \JFactory::getDBO();
-			$accessId = $db->setQuery(
-					$db->getQuery(true)
-					->select($db->quoteName('id'))
-					->from($db->quoteName('#__viewlevels'))
-					->where($db->quoteName('title') . ' = ' . $db->quote($access)))
-					->loadResult();
+			$query = $db->getQuery(true)
+				->select($db->quoteName('id'))
+				->from($db->quoteName('#__viewlevels'))
+				->where($db->quoteName('title') . ' = ' . $db->quote($access));
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+			$accessId = $db->setQuery($query)->loadResult();
 		}
 		if (! $accessId)
 		{
@@ -692,10 +733,10 @@ class Table extends \JTable
 		{
 			$db = \JFactory::getDBO();
 			$query = $db->getQuery(true)
-			->select($db->quoteName('id'))
-			->from($db->quoteName('#__categories'))
-			->where($db->quoteName('path') . ' = ' . $db->quote($category))
-			->where($db->quoteName('extension') . ' = ' . $db->quote($extension));
+				->select($db->quoteName('id'))
+				->from($db->quoteName('#__categories'))
+				->where($db->quoteName('path') . ' = ' . $db->quote($category))
+				->where($db->quoteName('extension') . ' = ' . $db->quote($extension));
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$categoryId = $db->setQuery($query)->loadResult();
 		}
@@ -732,26 +773,26 @@ class Table extends \JTable
 			{
 				$tags = array_unique($tag);
 				$query = 'SELECT CASE WHEN b.id IS NOT NULL THEN b.id ELSE CONCAT(\'#new#\', a.path) END FROM (' . 'SELECT ' .
-						$db->quote(array_shift($tags)) . ' as path';
-						foreach ($tags as $tag)
-						{
-							$query .= ' UNION ALL SELECT ' . $db->quote($tag);
-						}
-						$query .= ') a LEFT JOIN #__tags b on a.path = b.path';
-						\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
-						$tagId = $db->setQuery($query)->loadColumn();
+					$db->quote(array_shift($tags)) . ' as path';
+				foreach ($tags as $tag)
+				{
+					$query .= ' UNION ALL SELECT ' . $db->quote($tag);
+				}
+				$query .= ') a LEFT JOIN #__tags b on a.path = b.path';
+				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+				$tagId = $db->setQuery($query)->loadColumn();
 			}
 			else
 			{
 				$query = $db->getQuery(true)
-				->select($db->quoteName('id'))
-				->from($db->quoteName('#__tags'))
-				->where($db->quoteName('path') . ' = ' . $db->quote($tag));
+					->select($db->quoteName('id'))
+					->from($db->quoteName('#__tags'))
+					->where($db->quoteName('path') . ' = ' . $db->quote($tag));
 				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 				$tagId = $db->setQuery($query)->loadResult();
 			}
 		}
-		catch (\Exception $e)
+		catch (\Exception $ex)
 		{
 			$tagId = false;
 		}
@@ -949,8 +990,8 @@ class Table extends \JTable
 			$query = $db->getQuery(true);
 			$path = $query->concatenate(array($db->quoteName('menutype'), $db->quoteName('path')), '/');
 			$query->select($db->quoteName('id'))
-			->from($db->quoteName('#__menu'))
-			->where($path . ' = ' . $db->quote($menu));
+				->from($db->quoteName('#__menu'))
+				->where($path . ' = ' . $db->quote($menu));
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$menuId = $db->setQuery($query)->loadResult();
 		}
@@ -961,5 +1002,103 @@ class Table extends \JTable
 
 		\JLog::add(new \JLogEntry($menu . ' -> ' . $menuId, \JLog::DEBUG, 'lib_j2xml'));
 		return $menuId;
+	}
+
+	/**
+	 *
+	 * Create usergroups_getpath if it does not exist
+	 *
+	 * @return boolean
+	 *
+	 * @since 19.7.335
+	 */
+	public static function fixDB()
+	{
+		$db = \JFactory::getDBO();
+
+		$queries = array();
+		$query = $db->getQuery(true);
+
+		$serverType = (new \Joomla\CMS\Version())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+
+		if ($serverType === 'mysql')
+		{
+			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
+			$queries[] = preg_replace('!\s+!', ' ', <<<EOL
+CREATE PROCEDURE usergroups_getpath(IN id INT, OUT path TEXT)
+BEGIN
+    DECLARE temp_title VARCHAR(100);
+    DECLARE temp_path TEXT;
+    DECLARE temp_parent INT;
+	SET max_sp_recursion_depth = 255;
+
+	SELECT a.title, a.parent_id FROM #__usergroups a WHERE a.id=id INTO temp_title, temp_parent;
+
+	IF temp_parent = 0
+    THEN
+       SET path = temp_title;
+    ELSE
+        CALL usergroups_getpath(temp_parent, temp_path);
+        SET path = CONCAT(temp_path, '","', temp_title);
+    END IF;
+END;
+EOL
+);
+			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath;";
+			$queries[] = preg_replace('!\s+!', ' ', <<<EOL
+CREATE FUNCTION usergroups_getpath(id INT) RETURNS TEXT DETERMINISTIC
+BEGIN
+    DECLARE res TEXT;
+    CALL usergroups_getpath(id, res);
+    RETURN CONCAT('["', res, '"]');
+END;
+EOL
+);
+		}
+		elseif ($serverType === 'postgresql')
+		{
+			$queries[] = <<<EOL
+CREATE OR REPLACE FUNCTION usergroups_getpath(id INT, level INT default 0) RETURNS TEXT
+AS $$
+DECLARE temp_title VARCHAR(100);
+	temp_path TEXT;
+	temp_parent INT;
+BEGIN
+	SELECT a.title, a.parent_id FROM #__usergroups a WHERE a.id = $1 INTO temp_title, temp_parent;
+
+	IF temp_parent = 0
+	THEN
+		temp_path := temp_title;
+	ELSE
+		temp_path := CONCAT(usergroups_getpath(temp_parent, $2 + 1), '","', temp_title);
+	END IF;
+	IF $2 = 0
+	THEN
+		temp_path = CONCAT('["', temp_path, '"]');
+	END IF;
+	RETURN temp_path;
+END;
+$$ LANGUAGE plpgsql;
+EOL;
+		}
+
+		if ($queries)
+		{
+			// Process each query in the $queries array (split out of sql file).
+			foreach ($queries as $query)
+			{
+				$db->setQuery($db->convertUtf8mb4QueryToUtf8($query));
+
+				try
+				{
+					$db->execute();
+				}
+				catch (\JDatabaseExceptionExecuting $e)
+				{
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

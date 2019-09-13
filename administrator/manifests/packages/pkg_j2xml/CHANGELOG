@@ -1,3 +1,35 @@
+--------------------- 3.7.201 Release  [1-September-2019] ---------------------
+
+cli_j2xml-3.7.21
+
+lib_eshiol-3.7.33
+
+lib_j2xml-19.9.336
+  # import content (build 336)
+  # import users (build 336)
+
+lib_phpxmlrpc-3.1.1
+
+com_j2xml-3.7.200
+
+plg_system_j2xml-3.7.45
+
+----------------------- 3.7.200  Release [23-July-2019] -----------------------
+
+cli_j2xml-3.7.21
+
+lib_eshiol-3.7.33
+
+lib_j2xml-19.7.335
+  # 1305 FUNCTION usergroups_getpath does not exist (build 335)
+
+lib_phpxmlrpc-3.1.1
+
+com_j2xml-3.7.200
+  # 1305 FUNCTION usergroups_getpath does not exist (build 200)
+
+plg_system_j2xml-3.7.45
+
 ------------------------ 3.7.199 Release [8-July-2019] ------------------------
 
 cli_j2xml-3.7.21
@@ -68,7 +100,7 @@ cli_j2xml-3.7.18
 lib_eshiol-3.7.33
 
 lib_j2xml-19.3.329
-  # xmlrpc gzip (build 329) 
+  # xmlrpc gzip (build 329)
   # fields (build 328)
   # keep ids (build 327)
   # contact (build 327)
@@ -105,7 +137,7 @@ lib_j2xml-19.2.322
   + Menu (build 321)
   + Menutype (build 321)
   + Module (build 321)
-  
+
 lib_phpxmlrpc-3.1.1
 
 com_j2xml-3.7.191
@@ -153,7 +185,7 @@ com_j2xml-3.7.189
   ^ case sensitive class names (build 186)
   $ user notes (build 185)
   ^ j2xml library 18.8.310 (build 183)
-  + PostgresSQL compatibility (build 183) 
+  + PostgresSQL compatibility (build 183)
   - XmlrpcLogger (build 182)
 
 plg_system_j2xml-3.7.43
@@ -172,7 +204,7 @@ lib_j2xml-19.1.315
   - install.sql (build 312)
   ^ Table::getUsergroupId (build 311)
   ^ usergroups_getpath (build 311)
-  + PostgresSQL compatibility (build 310) 
+  + PostgresSQL compatibility (build 310)
   - eshHelperTags (build 310)
 
 lib_eshiol-18.8.32
@@ -183,7 +215,7 @@ com_j2xml-3.7.186
   ^ case sensitive class names (build 186)
   $ user notes (build 185)
   ^ j2xml library 18.8.310 (build 183)
-  + PostgresSQL compatibility (build 183) 
+  + PostgresSQL compatibility (build 183)
   - XmlrpcLogger (build 182)
 
 ---------------------- 3.7.181  Release [10-August-2018] ----------------------
@@ -212,7 +244,7 @@ plg_system-3.7.42
 --------------------- 3.7.178 Release [22-September-2017] ---------------------
 
 cli_j2xml-3.3.13
-  
+
 lib_eshiol-17.7.29
 
 lib_j2xml-17.8.303
@@ -248,7 +280,7 @@ plg_system-3.7.41
 
 cli_j2xml-3.3.13
   + added (build 13)
-  
+
 lib_eshiol-17.2.28
   ^ phpxmlrpc 3.1.0 (build 28)
   # Joomla Update System (build 27)
@@ -273,7 +305,7 @@ com_j2xml-3.7.173
   # websites view (build 166)
   + export modules (build 165)
   + export menus (build 164)
-  
+
 plg_system-3.7.41
   + fields (build 41)
   # JRequest deprecated (build 40)
@@ -288,7 +320,7 @@ pkg_j2xml-3.6.163
 
 lib_eshiol-17.1.26
   + Joomla Update System (build 26)
-  
+
 lib_j2xml-17.1.293
   + link source file (build 293)
   + backlink (build 293)
@@ -316,7 +348,7 @@ com_j2xml-3.6.163
   # messages (build 154)
   # log (build 153)
   # manifest (build 152)
-  
+
 plg_system-3.6.36
   + client side xsl transformation (build 37)
   + export contacts (build 36)
@@ -330,7 +362,7 @@ lib_eshiol-16.11.25
   + import Ajax (build 24)
   - Joomla 2.5 compatibility (build 23)
   + PHP Console (build 22)
-  
+
 lib_j2xml-16.11.288
   + import Ajax (build 288)
   # import (build 287)
@@ -358,7 +390,7 @@ com_j2xml-3.3.151
 
 cli_j2xml
   ! removed
-  
+
 plg_system-3.4.34
   ^ check #__j2xml_websites (build 34)
   - Joomla! 2.5 compatibility (build 33)
@@ -372,7 +404,7 @@ lib_eshiol-16.4.21
   ^ file button - plugins (build 19)
   ^ file button (build 18)
   ^ sendbydate button (17, 18)
-  
+
 lib_j2xml-16.5.279
   # usergroup null (build 279)
   + import users with clear password (build 278)
@@ -408,11 +440,11 @@ plg_system-3.3.32
 com_j2xml-3.3.145
   ^ clean (build 145)
 
-lib_eshiol-16.1.16  
+lib_eshiol-16.1.16
   ^ XMLRPC for PHP 3.0.1 (build 16)
 
 lib_j2xml-16.1.273
-  # send (build 273)  
+  # send (build 273)
 
 ---------------------- 3.3.13 Release  [20-October-2015] ----------------------
 
@@ -429,19 +461,19 @@ com_j2xml-3.3.143
   + login xmlrpc (build 143)
   ^ import xmlrpc (build 143)
   - import for Joomla! 2.5 (build 142)
-  
+
 --------------------- 3.3.11 Release  [15-September-2015] ---------------------
 
 lib_j2xml-16.1.272
   # J2XMLImporter::getArticleId($path) (build 272)
   + onContentBeforeExport (build 272)
-  
+
 --------------------- 3.2.10 Release  [14-September-2015] ---------------------
   ! stable release
 
 lib_j2xml-15.9.271
   # export (build 271)
-  
+
 ---------------------- 3.2.9 Release [14-September-2015] ----------------------
 
 lib_j2xml-15.9.270
@@ -525,12 +557,12 @@ com_j2xml-3.2.131
   ^ develop delete icon replace by purge icon (build 131)
   ^ upload file (build 131)
   + file format check (build 130)
-  
+
 lib_eshiol-15.6.13
   # JToolbarButtonFile (build 13)
 
 cli_j2xml-3.2.7
-  $ language fixes (build 7)  
+  $ language fixes (build 7)
 
 ------------------------ 3.2.a2 Build  [12-March-2015] ------------------------
 
@@ -538,14 +570,14 @@ com_j2xml-3.2.129
   ^ develop function (build 129)
   + Joomla! 1.6 compatibility (build 128)
 
-lib_eshiol-15.2.12  
+lib_eshiol-15.2.12
   + Joomla! 1.6 compatibility (build 12)
-  
-lib_j2xml-15.3.248  
+
+lib_j2xml-15.3.248
   + export custom viewing access level (build 248)
-  # import tags (build 247) 
+  # import tags (build 247)
   + Joomla! 1.6 compatibility (build 246)
-  
+
 plg_system_j2xml-3.2.31
   + Joomla! 1.6 compatibility (build 31)
 
@@ -595,32 +627,32 @@ lib_eshiol-14.2.10
   # send button (build 10)
   + send by date button (build 10)
   # send button (build 9)
-  
+
 lib_j2xml-14.3.237
   # sender (build 237)
   # DIRECTORY_SEPARATOR (build 236)
   # images export (build 235)
   # DS (build 234)
-  # HTTP/1.1 303 (build 233)  
+  # HTTP/1.1 303 (build 233)
   # images url decode (build 232)
   # user import (build 231)
   # import (build 230)
   # xmlrpc fatal error (build 229)
-  # import category (build 228)  
+  # import category (build 228)
 
 plg_system_j2xml-3.1.30
-  # bug fixed (build 30) 
-  
+  # bug fixed (build 30)
+
 --------------------- 3.1.rc2 Release  [5-September-2013] ---------------------
 
 cli_j2xml-3.1.3
   + help screen
-  
+
 com_j2xml-3.1.114
   # import button in Joomla! 3.x
-  
-plg_system_j2xml-3.1.29 
-  # send button in Joomla! 2.5 
+
+plg_system_j2xml-3.1.29
+  # send button in Joomla! 2.5
 
 Legend:
 
