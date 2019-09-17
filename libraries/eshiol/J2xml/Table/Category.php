@@ -278,9 +278,15 @@ class Category extends Table
 									new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_ID_PRESENT', $table->title, $id, $table->id), \JLog::WARNING,
 											'lib_j2xml'));
 						}
-						else
+						elseif (empty($data['original_id']))
 						{
 							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
+						}
+						else
+						{
+							\JLog::add(
+									new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_ID_PRESENT', $table->title, $data['original_id'], $table->id), \JLog::WARNING,
+											'lib_j2xml'));
 						}
 					}
 					else
