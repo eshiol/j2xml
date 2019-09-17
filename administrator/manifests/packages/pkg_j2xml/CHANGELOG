@@ -1,16 +1,18 @@
---------------------- 3.7.201 Release  [1-September-2019] ---------------------
+--------------------- 3.7.201 Release [17-September-2019] ---------------------
 
 cli_j2xml-3.7.21
 
 lib_eshiol-3.7.33
 
-lib_j2xml-19.9.336
+lib_j2xml-19.9.337
+  + original_id (build 337)
   # import content (build 336)
   # import users (build 336)
 
 lib_phpxmlrpc-3.1.1
 
-com_j2xml-3.7.200
+com_j2xml-3.7.201
+  # keep user id (build 201)
 
 plg_system_j2xml-3.7.45
 
