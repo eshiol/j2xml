@@ -24,7 +24,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Controller class.
  *
- * @version 3.7.200
+ * @version 3.7.201
  * @since 1.5.3
  */
 class J2xmlControllerCpanel extends JControllerLegacy
@@ -203,6 +203,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$iparams->set('filename', $filename);
 				$iparams->set('version', (string) $xml['version']);
 
+				$iparams->set('keep_user_id', $params->get('keep_user_id', 0));
 				$iparams->set('categories', $params->get('import_categories', 1));
 				$iparams->set('contacts', $params->get('import_contacts', 1));
 				$iparams->set('fields', $params->get('import_fields', 1));
