@@ -457,6 +457,24 @@ class Content extends Table
 		{
 			$data['catid'] = $params->get('content_category_default');
 		}
+		
+		if ($params->get('linksourcefile'))
+		{
+			$urls = json_decode($data['urls']);
+			if (empty($urls->urla))
+			{
+				$urls->urla = $params->get('filename');
+			} 
+			elseif (empty($urls->urlb))
+			{
+				$urls->urlb = $params->get('filename');
+			}
+			elseif (empty($urls->urlc))
+			{
+				$urls->urlc = $params->get('filename');
+			}
+			$data['urls'] = json_encode($urls);
+		}
 	}
 
 	/**

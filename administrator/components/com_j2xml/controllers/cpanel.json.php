@@ -150,8 +150,8 @@ class J2XMLControllerCpanel extends JControllerLegacy
 				$iparams->set('usernotes', $params->get('import_usernotes', 1));
 				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
 				$iparams->set('content', $params->get('import_content'));
+				$iparams->set('linksourcefile', $params->get('linksourcefile'));
 				$iparams->set('weblinks', $params->get('import_weblinks'));
-
 				$iparams->set('keep_frontpage', $params->get('keep_frontpage'));
 				$iparams->set('keep_rating', $params->get('keep_rating'));
 
