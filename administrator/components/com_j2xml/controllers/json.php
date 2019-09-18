@@ -100,4 +100,4 @@ class J2XMLControllerJson extends JControllerLegacy
 
 		echo new \JResponseJson();
 	}
-}
+}
