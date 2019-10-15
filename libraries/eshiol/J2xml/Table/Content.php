@@ -35,7 +35,7 @@ jimport('joomla.application.router');
 /**
  * Content table
  *
- * @version 19.9.336
+ * @version 19.9.338
  * @since 1.5.1
  */
 class Content extends Table
@@ -235,18 +235,48 @@ class Content extends Table
 			}
 
 			$content = $db->setQuery(
-					$db->getQuery(true)
-						->select(array(
-							$db->quoteName('id'),
-							$db->quoteName('title')
-					))
-						->from($db->quoteName('#__content'))
-						->where($db->quoteName('catid') . ' = ' . $db->quote($data['catid']))
-						->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias'])))
+				$query = $db->getQuery(true)
+					->select(array(
+						$db->quoteName('id'),
+						$db->quoteName('title')
+				))
+					->from($db->quoteName('#__content'))
+					->where($db->quoteName('catid') . ' = ' . $db->quote($data['catid']))
+					->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias'])))
 				->loadObject();
 
 			$table = new \JTableContent($db);
-			if (! $content || ($import_content == 2))
+			
+			if (($import_content == 1) && $content)
+			{
+				if ($id == $content->id)
+				{
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_EXISTS', $id, $data['title']), \JLog::NOTICE, 'lib_j2xml'));
+				}
+				elseif ($keep_id)
+				{
+					\JLog::add(
+						new \JLogEntry(\JText::sprintf(
+							'LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED',
+							$id, $content->id, $data['title'],
+							\JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
+				}
+				else
+				{
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_EXISTS', $id . '->' . $content->id, $data['title']), \JLog::NOTICE, 'lib_j2xml'));
+				}
+				continue;
+			}
+			elseif (($import_content == 2) && $content && $keep_id && ($id != $content->id))
+			{
+				\JLog::add(
+					new \JLogEntry(\JText::sprintf(
+						'LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED',
+						$id, $content->id, $data['title'],
+						\JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
+				continue;
+			}
+			else
 			{
 				if (! $content)
 				{ // new article
@@ -277,7 +307,6 @@ class Content extends Table
 								&$table,
 								$isNew
 						));
-
 				if (! in_array(false, $result, true))
 				{
 					if ($table->store())
@@ -306,20 +335,32 @@ class Content extends Table
 									$autoincrement = $id + 1;
 								}
 
-								\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
+								if ($id != $table->id)
+								{
+									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $id, $table->id, $table->title), \JLog::INFO, 'lib_j2xml'));
+								}
+								else
+								{
+									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $id, $table->title), \JLog::INFO, 'lib_j2xml'));
+								}
 							}
 							catch (\Exception $ex)
 							{
 								\JLog::add(
 										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $table->title, $id, $table->id),
-												\JLog::WARNING, 'lib_j2xml'));
+										\JLog::WARNING, 'lib_j2xml'));
+								continue;
 							}
+						}
+						elseif ($id != $table->id)
+						{
+							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $id, $table->id, $table->title), \JLog::INFO, 'lib_j2xml'));
 						}
 						else
 						{
-							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
+							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $id, $table->title), \JLog::INFO, 'lib_j2xml'));
 						}
-
+						
 						if ($keep_frontpage == 0)
 						{
 							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $table->id;
@@ -374,7 +415,15 @@ class Content extends Table
 												$table->getError()), \JLog::ERROR, 'lib_j2xml'));
 					}
 				}
+				else
+				{
+					\JLog::add(
+							new \JLogEntry(__LINE__.
+									\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'] . ' (id = ' . $id . ')',
+											$table->getError()), \JLog::NOTICE, 'lib_j2xml'));
+				}
 			}
+
 			if ($keep_id && ($autoincrement > $maxid))
 			{
 				$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
@@ -456,24 +505,6 @@ class Content extends Table
 		if (! isset($data['catid']))
 		{
 			$data['catid'] = $params->get('content_category_default');
-		}
-		
-		if ($params->get('linksourcefile'))
-		{
-			$urls = json_decode($data['urls']);
-			if (empty($urls->urla))
-			{
-				$urls->urla = $params->get('filename');
-			} 
-			elseif (empty($urls->urlb))
-			{
-				$urls->urlb = $params->get('filename');
-			}
-			elseif (empty($urls->urlc))
-			{
-				$urls->urlc = $params->get('filename');
-			}
-			$data['urls'] = json_encode($urls);
 		}
 	}
 

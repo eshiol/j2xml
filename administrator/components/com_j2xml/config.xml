@@ -334,6 +334,7 @@
 			extension="com_content"
 			label="COM_J2XML_CONFIG_KEEP_CATEGORY_FORCE_CATEGORY_LABEL"
 			description="COM_J2XML_CONFIG_KEEP_CATEGORY_FORCE_CATEGORY_DESC"
+			showon="keep_category:2"
 			/>
 
 		<field

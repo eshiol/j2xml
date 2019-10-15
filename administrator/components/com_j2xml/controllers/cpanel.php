@@ -131,7 +131,14 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		}
 		if (! ($data = implode(gzfile($filename))))
 		{
-			$data = file_get_contents($filename);
+			$contextOptions = array(
+				'ssl' => array(
+					'verify_peer' => false,
+					'verify_peer_name' => false
+				)
+			);
+
+			$data = file_get_contents($filename, false, stream_context_create($arrContextOptions));
 		}
 		$data = mb_convert_encoding($data, 'UTF-8');
 
