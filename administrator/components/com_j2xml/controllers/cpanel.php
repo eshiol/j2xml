@@ -205,7 +205,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 					$j2xmlVersion = class_exists('eshiol\J2xmlpro\Version') ? eshiol\J2xmlpro\Version::$DOCVERSION : eshiol\J2xml\Version::$DOCVERSION;
 			$version = explode(".", $j2xmlVersion);
 			$j2xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
-					if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500"))
+			if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500") || ($xmlVersionNumber == "180800"))
 			{							$iparams = new \JRegistry();
 				$iparams->set('filename', $filename);
 				$iparams->set('version', (string) $xml['version']);
