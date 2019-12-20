@@ -26,7 +26,7 @@ use eshiol\J2XML\Table\Table;
 /**
  * Field table
  *
- * @version 19.4.331
+ * @version 19.11.339
  * @since 17.6.299
  */
 class Field extends Table
@@ -179,6 +179,7 @@ class Field extends Table
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
+		$params->set('extension', 'com_fields');
 		parent::prepareData($record, $data, $params);
 
 		if (! isset($data['description']))

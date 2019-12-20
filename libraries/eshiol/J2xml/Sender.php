@@ -28,7 +28,7 @@ include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpcs.inc';
 
 /**
  *
- * @version 19.4.330
+ * @version 19.12.340
  * @since 1.5.3beta3.38
  */
 class Sender
@@ -190,7 +190,6 @@ class Sender
 			if ($res->faultcode())
 			{
 				$app->enqueueMessage($server['title'] . ': ' . \JText::_($res->faultString()), 'error');
-				$app->enqueueMessage($server['title'] . ': ' . \JText::_($res->faultString()), 'error');
 			}
 			else
 			{
@@ -200,19 +199,27 @@ class Sender
 				{
 					$msg = $msgs->arraymem($i);
 					$code = $msg->structmem('code')->scalarval();
-					$string = $msg->structmem('string')->scalarval();
+					//$string = $msg->structmem('string')->scalarval();
+					$matches = $msg->structmem('strings');
+
 					if (! isset(Messages::$messages[$code]))
 					{
 						$app->enqueueMessage($server['title'] . ': ' . $msg->structmem('message')
 							->scalarval(), 'notice');
 					}
-					elseif ($string)
+					elseif ($matches)
 					{
-						$app->enqueueMessage($server['title'] . ': ' . \JText::sprintf(Messages::$messages[$code], $string), self::$codes[$code]);
+						$strings = array();
+						foreach ($matches->scalarval() as $string) {
+							$strings[] = $string->scalarval();
+						}
+						//$app->enqueueMessage($server['title'] . ': ' . \JText::sprintf(Messages::$messages[$code], $string), self::$codes[$code]);
+						$app->enqueueMessage($server['title'] . ': ' . vsprintf(\JText::_(Messages::$messages[$code]), $strings), self::$codes[$code]);
 					}
 					else
 					{
-						$app->enqueueMessage($server['title'] . ': ' . \JText::_(Messages::$messages[$code]), self::$codes[$code]);
+						$app->enqueueMessage($server['title'] . ': ' . $msg->structmem('message')
+							->scalarval(), self::$codes[$code]);
 					}
 				}
 			}
@@ -256,18 +263,18 @@ class Sender
 					{
 						foreach ($response as $msg)
 						{
-							if (isset(Messages::$messages[$msg['code']]))
+							if (! isset(Messages::$messages[$msg['code']]))
 							{
-								$app->enqueueMessage($server['title'] . ': ' . \JText::sprintf(Messages::$messages[$msg['code']], $msg['string']),
-										self::$codes[$msg['code']]);
+								$app->enqueueMessage($server['title'] . ': ' . $msg['message'], 'notice');
 							}
-							elseif (isset(self::$codes[$msg['code']]))
+							elseif (isset($msg['strings']))
 							{
-								$app->enqueueMessage($server['title'] . ': ' . $msg['message'], self::$codes[$msg['code']]);
+								// $app->enqueueMessage($server['title'] . ': ' . \JText::sprintf(Messages::$messages[$msg['code']], $msg['string']), self::$codes[$msg['code']]);
+								$app->enqueueMessage($server['title'] . ': ' . vsprintf(\JText::_(Messages::$messages[$msg['code']]), $msg['strings']), self::$codes[$msg['code']]);
 							}
 							else
 							{
-								$app->enqueueMessage($server['title'] . ': ' . $msg['message'], 'notice');
+								$app->enqueueMessage($server['title'] . ': ' . $msg['message'], self::$codes[$msg['code']]);
 							}
 						}
 					}
@@ -318,11 +325,6 @@ class Sender
 		$msg->addparam($p3);
 
 		$res = $client->send($msg, 0);
-
-		\JLog::add(new \JLogEntry(__LINE__ . ' ' . print_r($res, true), \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry(__LINE__ . ' ' . $res->faultCode(), true), \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry(__LINE__ . ' ' . $res->faultString(), true), \JLog::DEBUG, 'lib_j2xml'));
-		return $res;
 
 		if (! $res->faultcode())
 		{

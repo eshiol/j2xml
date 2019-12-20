@@ -26,7 +26,7 @@ use Joomla\Component\Tags\Administrator\Table\TagTable;
 /**
  * Tag table
  *
- * @version 19.2.325
+ * @version 19.11.339
  * @since 14.8.240
  */
 class Tag extends Table
@@ -283,6 +283,7 @@ class Tag extends Table
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
+		$params->set('extension', 'com_tags');
 		parent::prepareData($record, $data, $params);
 
 		if (empty($data['alias']))

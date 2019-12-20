@@ -35,7 +35,7 @@ jimport('joomla.application.router');
 /**
  * Content table
  *
- * @version 19.9.338
+ * @version 19.11.339
  * @since 1.5.1
  */
 class Content extends Table
@@ -337,28 +337,26 @@ class Content extends Table
 
 								if ($id != $table->id)
 								{
-									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $id, $table->id, $table->title), \JLog::INFO, 'lib_j2xml'));
+									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title, $id, $table->id), \JLog::INFO, 'lib_j2xml'));
 								}
 								else
 								{
-									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $id, $table->title), \JLog::INFO, 'lib_j2xml'));
+									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $table->title, $id), \JLog::INFO, 'lib_j2xml'));
 								}
 							}
 							catch (\Exception $ex)
 							{
-								\JLog::add(
-										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $table->title, $id, $table->id),
-										\JLog::WARNING, 'lib_j2xml'));
+								\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $table->title, $id, $table->id), \JLog::WARNING, 'lib_j2xml'));
 								continue;
 							}
 						}
 						elseif ($id != $table->id)
 						{
-							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $id, $table->id, $table->title), \JLog::INFO, 'lib_j2xml'));
+							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title, $id, $table->id), \JLog::INFO, 'lib_j2xml'));
 						}
 						else
 						{
-							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $id, $table->title), \JLog::INFO, 'lib_j2xml'));
+							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $table->title, $id), \JLog::INFO, 'lib_j2xml'));
 						}
 						
 						if ($keep_frontpage == 0)
@@ -418,7 +416,7 @@ class Content extends Table
 				else
 				{
 					\JLog::add(
-							new \JLogEntry(__LINE__.
+							new \JLogEntry(
 									\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'] . ' (id = ' . $id . ')',
 											$table->getError()), \JLog::NOTICE, 'lib_j2xml'));
 				}
@@ -454,6 +452,7 @@ class Content extends Table
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
+		$params->set('extension', 'com_content');
 		parent::prepareData($record, $data, $params);
 
 		if (empty($data['alias']))
@@ -635,5 +634,17 @@ class Content extends Table
 		}
 
 		return $xml;
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 * @see Table::getCategoryId()
+	 */
+	public static function getCategoryId ($category, $extension = 'com_content', $defaultCategoryId = 0)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
+		
+		return parent::getCategoryId($category, $extension, $defaultCategoryId);
 	}
 }

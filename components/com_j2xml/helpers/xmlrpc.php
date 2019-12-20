@@ -34,7 +34,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Joomla! J2XML XML-RPC Plugin
  *
- * @version 3.7.195
+ * @version 3.7.202
  * @since 1.5.3
  */
 class XMLRPCJ2XMLServices
@@ -326,6 +326,8 @@ class XMLRPCJ2XMLServices
 	 */
 	public static function enqueueMessage($message, $priority)
 	{
+		JLog::add(new JLogEntry($message, JLog::DEBUG, 'com_j2xml'));
+
 		$codes = array(
 			'error' => 28,
 			'warning' => 29,
@@ -346,25 +348,32 @@ class XMLRPCJ2XMLServices
 				$found = true;
 				break;
 			} else {
-				$pattern = '/' . str_replace(array(
-					'(',
-					')',
-					'[',
-					']',
-					'.',
-					'%s'
-				), array(
-					'\(',
-					'\)',
-					'\[',
-					'\]',
-					'\.',
-					'(.+)'
-				), JText::_($m)) . '/i';
-				if (preg_match($pattern, $message, $matches)) {
+				$pattern = '/' . str_replace(array('(', ')', '[', ']', '.'), array('\(', '\)', '\[', '\]', '\.'), JText::_($m)) . '/i';
+				$pattern = preg_replace('/%(?:\d+\$)?[+-]?(?:[ 0]|\'.{1})?-?\d*(?:\.\d+)?[bcdeEufFgGosxX]/', '(.+)', $pattern); 				
+				
+				if (preg_match($pattern, $message, $matches)) 
+				{
+					array_shift($matches);
+
+					preg_match_all($pattern, JText::_($m), $expected);
+					array_shift($expected);
+	
+					$j = 1;
+					foreach($expected as $index => $value)
+					{
+						$expected[$index] = trim(strstr(strstr($value[0], '%'), '$', true), '%$') ?: $j++;
+					}
+					$expected = array_flip($expected);
+					ksort($expected);
+
+					$strings = array();
+					foreach ($expected as $index => $value) {
+						$strings[] = new xmlrpcval($matches[$value], 'string');
+					}
 					self::$_messageQueue[] = new xmlrpcval(array(
 						"code" => new xmlrpcval($i, 'int'),
-						"string" => new xmlrpcval($matches[1], 'string'),
+//						"string" => new xmlrpcval($matches[1], 'string'),
+						"strings" => new xmlrpcval($strings, 'array'),
 						"message" => new xmlrpcval($message, 'string')
 					), "struct");
 					$found = true;

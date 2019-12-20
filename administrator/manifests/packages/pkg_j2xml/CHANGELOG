@@ -1,3 +1,37 @@
+--------------------- 3.7.202 Release  [19-December-2019] ---------------------
+
+cli_j2xml-3.7.21
+
+lib_eshiol-19.11.35
+
+lib_j2xml-19.12.340
+  # send (build 340)
+
+lib_phpxmlrpc-3.1.1
+
+com_j2xml-3.7.202
+  # send (build 202)
+
+plg_system_j2xml-3.7.45
+
+--------------------- 3.7.201.1 Release [7-November-2019] ---------------------
+
+cli_j2xml-3.7.21
+
+lib_eshiol-19.11.35
+  ^ library structure (build 21)
+
+lib_j2xml-19.11.339
+  ^ data preparing (build 339)
+  ^ log (build 338)
+
+lib_phpxmlrpc-3.1.1
+  ^ library structure (build 21)
+
+com_j2xml-3.7.201
+
+plg_system_j2xml-3.7.45
+
 --------------------- 3.7.201 Release [17-September-2019] ---------------------
 
 cli_j2xml-3.7.21

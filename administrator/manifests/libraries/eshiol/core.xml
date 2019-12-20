@@ -2,13 +2,13 @@
 <extension version="3.0" type="library" method="upgrade">
   <name>eshiol</name>
   <libraryname>eshiol/core</libraryname>
-  <creationDate>April 2019</creationDate>
+  <creationDate>November 2019</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright><![CDATA[(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>GNU/GPL v3</license>
-  <version>19.4.34</version>
+  <version>19.11.35</version>
   <description>LIB_ESHIOL_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
   <files>

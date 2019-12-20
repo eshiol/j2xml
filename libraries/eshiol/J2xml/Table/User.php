@@ -28,7 +28,7 @@ use eshiol\J2XML\Table\Usernote;
 /**
  * User Table
  *
- * @version 19.9.336
+ * @version 19.11.339
  * @since 1.5.3beta4.39
  */
 class User extends Table
@@ -350,6 +350,7 @@ class User extends Table
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
+		$params->set('extension', 'com_users');
 		parent::prepareData($record, $data, $params);
 
 		$db = \JFactory::getDbo();
