@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -20,7 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.7.335
+ * @version 20.2.341
  * @since 1.5.3.39
  */
 class Table extends \JTable
@@ -330,7 +330,7 @@ class Table extends \JTable
 		 	$length = strlen($v);
 		 	for ($i = 0; $i < $length; $i ++)
 		 	{
-		 		$current = ord($v{$i});
+		 		$current = ord($v[$i]);
 		 		if (($current == 0x9) || ($current == 0xA) || ($current == 0xD) || (($current >= 0x20) && ($current <= 0xD7FF)) ||
 					(($current >= 0xE000) && ($current <= 0xFFFD)) || (($current >= 0x10000) && ($current <= 0x10FFFF)))
 				{

@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -19,7 +19,7 @@ defined('_JEXEC') or die();
 /**
  * Content component helper.
  *
- * @version 3.7.192
+ * @version 3.7.203
  * @since 2.5.85
  */
 class J2XMLHelper
@@ -108,7 +108,7 @@ class J2XMLHelper
 		$length = strlen($value);
 		for ($i = 0; $i < $length; $i ++)
 		{
-			$current = ord($value{$i});
+			$current = ord($value[$i]);
 			if (($current == 0x9) || ($current == 0xA) || ($current == 0xD) || (($current >= 0x20) && ($current <= 0xD7FF)) ||
 					 (($current >= 0xE000) && ($current <= 0xFFFD)) || (($current >= 0x10000) && ($current <= 0x10FFFF)))
 			{
