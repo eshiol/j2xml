@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -21,7 +21,7 @@ use eshiol\J2XML\Table\Table;
 /**
  * Viewlevel Table
  *
- * @version 19.5.333
+ * @version __DEPLOY_VERSION__
  * @since 15.3.248
  */
 class Weblink extends Table
@@ -37,8 +37,6 @@ class Weblink extends Table
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-
 		parent::__construct('#__weblinks', 'id', $db);
 	}
 
@@ -50,7 +48,8 @@ class Weblink extends Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
-		if ((new \JVersion())->isCompatible('3.1'))
+		$version = new \JVersion();
+		if ($version->isCompatible('3.1'))
 		{
 			// $this->_aliases['tag']='SELECT t.path FROM #__tags t,
 			// #__contentitem_tag_map m WHERE type_alias =
@@ -63,7 +62,6 @@ class Weblink extends Table
 				->where($this->_db->quoteName('type_alias') . ' = ' . $this->_db->quote('com_weblinks.weblink'))
 				->where($this->_db->quoteName('t.id') . ' = ' . $this->_db->quoteName('m.tag_id'))
 				->where($this->_db->quoteName('m.content_item_id') . ' = ' . $this->_db->quote((string) $this->id));
-			\JLog::add(new \JLogEntry($this->_aliases['tag'], \JLog::DEBUG, 'lib_j2xml'));
 		}
 
 		return parent::_serialize();
@@ -86,10 +84,6 @@ class Weblink extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($xml->xpath("//j2xml/weblink/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -127,8 +121,6 @@ class Weblink extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$import_weblinks = $params->get('weblinks', 1);
 		if ($import_weblinks == 0)
 			return;
@@ -156,7 +148,6 @@ class Weblink extends Table
 			))
 				->from($db->quoteName('#__weblinks'))
 				->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias']));
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$item = $db->setQuery($query)->loadObject();
 
 			if (! $item || ($import_weblinks))

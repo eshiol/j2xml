@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -29,7 +29,7 @@ use eshiol\J2XML\Table\User;
 /**
  * Contact Table
  *
- * @version 19.2.327
+ * @version __DEPLOY_VERSION__
  * @since 15.9.261
  */
 class Contact extends Table
@@ -45,8 +45,6 @@ class Contact extends Table
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		parent::__construct('#__contact_details', 'id', $db);
 
 		$this->type_alias = 'com_contact.contact';
@@ -60,17 +58,15 @@ class Contact extends Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		// $this->_aliases['user_id']='SELECT username FROM #__users WHERE id =
 		// '.(int)$this->user_id;
 		$this->_aliases['user_id'] = (string) $this->_db->getQuery(true)
 			->select($this->_db->quoteName('username'))
 			->from($this->_db->quoteName('#__users'))
 			->where($this->_db->quoteName('id') . ' = ' . (int) $this->user_id);
-		\JLog::add(new \JLogEntry($this->_aliases['user_id'], \JLog::DEBUG, 'lib_j2xml'));
 
-		if ((new \JVersion())->isCompatible('3.1'))
+		$version = new \JVersion();
+		if ($version->isCompatible('3.1'))
 		{
 			// $this->_aliases['tag']='SELECT t.path FROM #__tags t,
 			// #__contentitem_tag_map m WHERE type_alias = "com_contact.contact"
@@ -82,7 +78,6 @@ class Contact extends Table
 				->where($this->_db->quoteName('type_alias') . ' = ' . $this->_db->quote($this->type_alias))
 				->where($this->_db->quoteName('t.id') . ' = ' . $this->_db->quoteName('m.tag_id'))
 				->where($this->_db->quoteName('m.content_item_id') . ' = ' . $this->_db->quote((string) $this->id));
-			\JLog::add(new \JLogEntry($this->_aliases['tag'], \JLog::DEBUG, 'lib_j2xml'));
 		}
 
 		return parent::_serialize();
@@ -105,10 +100,6 @@ class Contact extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($xml->xpath("//j2xml/contact/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -147,7 +138,8 @@ class Contact extends Table
 			}
 		}
 
-		if ((new \JVersion())->isCompatible('3.1'))
+		$version = new \JVersion();
+		if ($version->isCompatible('3.1'))
 		{
 			$htags = new \JHelperTags();
 			$itemtags = $htags->getItemTags('com_contact.contact', $id);
@@ -181,8 +173,6 @@ class Contact extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$import_users = $params->get('users', 1);
 		if (! $import_users)
 			return;
@@ -216,7 +206,6 @@ class Contact extends Table
 				$query->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias']))
 					->where($db->quoteName('catid') . ' = ' . $db->quote($data['catid']));
 			}
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 
 			$data['id'] = $db->setQuery($query)->loadResult();
 
@@ -235,7 +224,6 @@ class Contact extends Table
 				unset($data['params']);
 
 				$table->bind($data);
-				\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 
 				if ($table->store())
 				{

@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -21,7 +21,7 @@ jimport('eshiol.core.standard2');
 
 /**
  *
- * @version 3.7.46
+ * @version __DEPLOY_VERSION__
  * @since 1.5.2
  */
 class plgSystemJ2XML extends JPlugin
@@ -59,36 +59,34 @@ class plgSystemJ2XML extends JPlugin
 		if (PHP_SAPI == 'cli')
 		{
 			JLog::addLogger(array(
-					'logger' => 'echo',
-					'extension' => 'plg_system_j2xml'
+				'logger' => 'echo',
+				'extension' => 'plg_system_j2xml'
 			), JLog::ALL & ~ JLog::DEBUG, array(
-					'plg_system_j2xml'
+				'plg_system_j2xml'
 			));
 		}
 		else
 		{
 			JLog::addLogger(
-					array(
-							'logger' => (null !== $this->params->get('logger')) ? $this->params->get('logger') : 'messagequeue',
-							'extension' => 'plg_system_j2xml'
-					), JLog::ALL & ~ JLog::DEBUG, array(
-							'plg_system_j2xml'
-					));
+				array(
+					'logger' => ($this->params->get('logger') !== null) ? $this->params->get('logger') : 'messagequeue',
+					'extension' => 'plg_system_j2xml'
+				), JLog::ALL & ~ JLog::DEBUG, array(
+					'plg_system_j2xml'
+				));
 			if ($this->params->get('phpconsole') && class_exists('LogLoggerPhpconsole'))
 			{
 				JLog::addLogger(array(
-						'logger' => 'phpconsole',
-						'extension' => 'plg_system_j2xml_phpconsole'
+					'logger' => 'phpconsole',
+					'extension' => 'plg_system_j2xml_phpconsole'
 				), JLog::DEBUG, array(
-						'plg_system_j2xml'
+					'plg_system_j2xml'
 				));
 			}
 		}
 
 		// Joomla! 3.0 compatibility
 		$this->loadLanguage();
-
-		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
 	}
 
 	/**
@@ -98,7 +96,6 @@ class plgSystemJ2XML extends JPlugin
 	 */
 	public function onAfterDispatch ()
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
 		$app = JFactory::getApplication();
 		if ($app->getName() != 'administrator')
 		{
@@ -121,7 +118,8 @@ class plgSystemJ2XML extends JPlugin
 			->select($db->quoteName('enabled'))
 			->from($db->quoteName('#__extensions'))
 			->where($db->quoteName('type') . ' = ' . $db->quote('library'));
-		if ((new \JVersion())->isCompatible('3.9'))
+		$version = new \JVersion();
+		if ($version->isCompatible('3.9'))
 		{
 			$query->where($db->quoteName('element') . ' = ' . $db->quote('eshiol/j2xmlpro'));
 		}
@@ -176,7 +174,6 @@ class plgSystemJ2XML extends JPlugin
 	 */
 	private static function getWebsites ()
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
 			->select('id, title')

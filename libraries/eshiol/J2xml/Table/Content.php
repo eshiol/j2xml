@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -35,7 +35,7 @@ jimport('joomla.application.router');
 /**
  * Content table
  *
- * @version 19.11.339
+ * @version __DEPLOY_VERSION__
  * @since 1.5.1
  */
 class Content extends Table
@@ -51,17 +51,16 @@ class Content extends Table
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-
 		parent::__construct('#__content', 'id', $db);
 
-		/*
-		 * if ((new \JVersion())->isCompatible('3.4'))
-		 * {
-		 * // Set the alias since the column is called state
-		 * $this->setColumnAlias('published', 'state');
-		 * }
-		 */
+		/**
+		$version = new \JVersion();
+		if ($version->isCompatible('3.4'))
+		{
+			// Set the alias since the column is called state
+			$this->setColumnAlias('published', 'state');
+		}
+		*/
 	}
 
 	/**
@@ -71,8 +70,6 @@ class Content extends Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-
 		$this->_excluded = array_merge($this->_excluded, array(
 				'sectionid',
 				'mask',
@@ -89,7 +86,6 @@ class Content extends Table
 			->join('RIGHT',
 				$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
 			->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
-		\JLog::add(new \JLogEntry($this->_aliases['featured'], \JLog::DEBUG, 'lib_j2xml'));
 
 		// $this->_aliases['rating_sum'] = 'SELECT IFNULL(rating_sum,0) FROM
 		// #__content_rating f RIGHT JOIN #__content a ON f.content_id = a.id
@@ -100,7 +96,6 @@ class Content extends Table
 			->join('RIGHT',
 				$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
 			->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
-		\JLog::add(new \JLogEntry($this->_aliases['rating_sum'], \JLog::DEBUG, 'lib_j2xml'));
 
 		// $this->_aliases['rating_count'] = 'SELECT IFNULL(rating_count,0) FROM
 		// #__content_rating f RIGHT JOIN #__content a ON f.content_id = a.id
@@ -111,7 +106,6 @@ class Content extends Table
 			->join('RIGHT',
 				$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
 			->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
-		\JLog::add(new \JLogEntry($this->_aliases['rating_count'], \JLog::DEBUG, 'lib_j2xml'));
 
 		\JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
 		$config = \JFactory::getConfig();
@@ -122,7 +116,8 @@ class Content extends Table
 		$canonical = str_replace(\JUri::base(true) . '/', \JUri::root(), $router->build($url));
 		// $this->_aliases['canonical'] = 'SELECT \'' . $canonical . '\' FROM
 		// DUAL';
-		$serverType = (new \JVersion())->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
+		$version = new \JVersion();
+		$serverType = $version->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
 		if ($serverType === 'sqlserver')
 		{
 			$this->_aliases['canonical'] = (string) $this->_db->getQuery(true)
@@ -133,9 +128,8 @@ class Content extends Table
 		{
 			$this->_aliases['canonical'] = (string) $this->_db->getQuery(true)->select($this->_db->quote($canonical));
 		}
-		\JLog::add(new \JLogEntry($this->_aliases['canonical'], \JLog::DEBUG, 'lib_j2xml'));
 
-		if ((new \JVersion())->isCompatible('3.1'))
+		if ($version->isCompatible('3.1'))
 		{
 			// $this->_aliases['tag']='SELECT t.path FROM #__tags t,
 			// #__contentitem_tag_map m WHERE type_alias = "com_content.article"
@@ -148,10 +142,9 @@ class Content extends Table
 				->where($this->_db->quoteName('type_alias') . ' = ' . $this->_db->quote('com_content.article'))
 				->where($this->_db->quoteName('t.id') . ' = ' . $this->_db->quoteName('m.tag_id'))
 				->where($this->_db->quoteName('m.content_item_id') . ' = ' . $this->_db->quote((string) $this->id));
-			\JLog::add(new \JLogEntry($this->_aliases['tag'], \JLog::DEBUG, 'lib_j2xml'));
 		}
 
-		if ((new \JVersion())->isCompatible('3.7'))
+		if ($version->isCompatible('3.7'))
 		{
 			// $this->_aliases['field'] = 'SELECT f.name, v.value FROM
 			// #__fields_values v, #__fields f WHERE f.id = v.field_id AND
@@ -163,7 +156,6 @@ class Content extends Table
 				->from($this->_db->quoteName('#__fields', 'f'))
 				->where($this->_db->quoteName('f.id') . ' = ' . $this->_db->quoteName('v.field_id'))
 				->where($this->_db->quoteName('v.item_id') . ' = ' . $this->_db->quote((string) $this->id));
-			\JLog::add(new \JLogEntry($this->_aliases['field'], \JLog::DEBUG, 'lib_j2xml'));
 		}
 
 		return parent::_serialize();
@@ -189,8 +181,6 @@ class Content extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$import_content = $params->get('content', 0);
 		if ($import_content == 0)
 			return;
@@ -201,6 +191,7 @@ class Content extends Table
 		$db = \JFactory::getDBO();
 		$nullDate = $db->getNullDate();
 		$userid = \JFactory::getUser()->id;
+		$version = new \JVersion();
 
 		\JPluginHelper::importPlugin('content');
 
@@ -289,10 +280,9 @@ class Content extends Table
 					$data['id'] = $content->id;
 				}
 
-				\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 				$table->bind($data);
 
-				if ((new \JVersion())->isCompatible('3.1'))
+				if ($version->isCompatible('3.1'))
 				{
 					if (isset($data['tags']))
 					{
@@ -319,7 +309,6 @@ class Content extends Table
 									->update($db->quoteName('#__content'))
 									->set($db->quoteName('id') . ' = ' . $id)
 									->where($db->quoteName('id') . ' = ' . $table->id);
-								\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 								$db->setQuery($query)->execute();
 								$table->id = $id;
 
@@ -327,7 +316,6 @@ class Content extends Table
 									->update($db->quoteName('#__assets'))
 									->set($db->quoteName('name') . ' = ' . $db->quote('com_content.article.' . $id))
 									->where($db->quoteName('id') . ' = ' . $table->asset_id);
-								\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 								$db->setQuery($query)->execute();
 
 								if ($id >= $autoincrement)
@@ -424,7 +412,7 @@ class Content extends Table
 
 			if ($keep_id && ($autoincrement > $maxid))
 			{
-				$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+				$serverType = ($version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
 				if ($serverType === 'postgresql')
 				{
@@ -434,7 +422,6 @@ class Content extends Table
 				{
 					$query = 'ALTER TABLE ' . $db->quoteName('#__content') . ' AUTO_INCREMENT = ' . $autoincrement;
 				}
-				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 				$db->setQuery($query)->execute();
 				$maxid = $autoincrement;
 			}
@@ -450,7 +437,7 @@ class Content extends Table
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
+		$version = new \JVersion();
 
 		$params->set('extension', 'com_content');
 		parent::prepareData($record, $data, $params);
@@ -482,8 +469,7 @@ class Content extends Table
 			$data['language'] = '*';
 		}
 
-		// if (! (new \JVersion())->isCompatible('3.4') &&
-		// isset($data['published']))
+		// if (!$version->isCompatible('3.4') && isset($data['published']))
 		if (isset($data['published']))
 		{
 			// Set the column since its name is changed from published to state
@@ -524,15 +510,12 @@ class Content extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($xml->xpath("//j2xml/content/id[text() = '" . $id . "']"))
 		{
 			return;
 		}
 
+		$version = new \JVersion();
 		$db = \JFactory::getDbo();
 		$item = new Content($db);
 		if (! $item->load($id))
@@ -559,7 +542,7 @@ class Content extends Table
 			Category::export($item->catid, $xml, $options);
 		}
 
-		if ((new \JVersion())->isCompatible('3.1'))
+		if ($version()->isCompatible('3.1'))
 		{
 			$htags = new \JHelperTags();
 			$itemtags = $htags->getItemTags('com_content.article', $id);
@@ -569,7 +552,7 @@ class Content extends Table
 			}
 		}
 
-		if ((new \JVersion())->isCompatible('3.7'))
+		if ($version()->isCompatible('3.7'))
 		{
 
 			$query = $db->getQuery(true)
@@ -643,8 +626,6 @@ class Content extends Table
 	 */
 	public static function getCategoryId ($category, $extension = 'com_content', $defaultCategoryId = 0)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
 		return parent::getCategoryId($category, $extension, $defaultCategoryId);
 	}
 }

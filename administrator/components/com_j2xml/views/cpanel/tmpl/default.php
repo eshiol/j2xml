@@ -3,12 +3,12 @@
  * @package		J2XML
  * @subpackage	com_j2xml
  *
- * @version		3.7.192
+ * @version		__DEPLOY_VERSION__
  * @since		1.5.3
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -28,11 +28,12 @@ $title = JText::_('Welcome_to_j2xml');
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
 $exts = array();
-$libraries = '/libraries' . ((new \JVersion())->isCompatible('3.9') ? '/eshiol' : '');
+$version = new \JVersion();
+$libraries = '/libraries' . ($version->isCompatible('3.9') ? '/eshiol' : '');
 
 $files = array();
 
-if ((new \JVersion())->isCompatible('3.9'))
+if ($version->isCompatible('3.9'))
 {
 	if (JFolder::exists(JPATH_MANIFESTS . '/libraries/eshiol'))
 	{

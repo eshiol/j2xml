@@ -20,7 +20,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 20.2.341
+ * @version __DEPLOY_VERSION__
  * @since 1.5.3.39
  */
 class Table extends \JTable
@@ -64,20 +64,16 @@ class Table extends \JTable
 	 */
 	function __construct ($table, $key, &$db)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry($table, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry($key, \JLog::DEBUG, 'lib_j2xml'));
-
 		parent::__construct($table, $key, $db);
 
 		$this->_excluded = array(
-				'asset_id',
-				'parent_id',
-				'lft',
-				'rgt',
-				'level',
-				'checked_out',
-				'checked_out_time'
+			'asset_id',
+			'parent_id',
+			'lft',
+			'rgt',
+			'level',
+			'checked_out',
+			'checked_out_time'
 		);
 		$this->_aliases = array();
 	}
@@ -103,8 +99,6 @@ class Table extends \JTable
 	 */
 	public function load ($keys = null, $reset = true)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($ret = parent::load($keys, $reset))
 		{
 			if (isset($this->created_by))
@@ -113,7 +107,6 @@ class Table extends \JTable
 					->select($this->_db->quoteName('username'))
 					->from($this->_db->quoteName('#__users'))
 					->where($this->_db->quoteName('id') . ' = ' . (int) $this->created_by);
-				\JLog::add(new \JLogEntry($this->_aliases['created_by'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 			if (isset($this->created_user_id))
 			{
@@ -121,7 +114,6 @@ class Table extends \JTable
 					->select($this->_db->quoteName('username'))
 					->from($this->_db->quoteName('#__users'))
 					->where($this->_db->quoteName('id') . ' = ' . (int) $this->created_user_id);
-				\JLog::add(new \JLogEntry($this->_aliases['created_user_id'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 			if (isset($this->modified_by))
 			{
@@ -129,7 +121,6 @@ class Table extends \JTable
 					->select($this->_db->quoteName('username'))
 					->from($this->_db->quoteName('#__users'))
 					->where($this->_db->quoteName('id') . ' = ' . (int) $this->modified_by);
-				\JLog::add(new \JLogEntry($this->_aliases['modified_by'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 			if (isset($this->modified_user_id))
 			{
@@ -137,7 +128,6 @@ class Table extends \JTable
 					->select($this->_db->quoteName('username'))
 					->from($this->_db->quoteName('#__users'))
 					->where($this->_db->quoteName('id') . ' = ' . (int) $this->modified_user_id);
-				\JLog::add(new \JLogEntry($this->_aliases['modified_user_id'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 			if (isset($this->catid))
 			{
@@ -145,7 +135,6 @@ class Table extends \JTable
 					->select($this->_db->quoteName('path'))
 					->from($this->_db->quoteName('#__categories'))
 					->where($this->_db->quoteName('id') . ' = ' . (int) $this->catid);
-				\JLog::add(new \JLogEntry($this->_aliases['catid'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 			if (isset($this->access))
 			{
@@ -153,7 +142,8 @@ class Table extends \JTable
 				// FROM #__viewlevels f RIGHT JOIN '.$this->_tbl.' a ON f.id =
 				// a.access WHERE a.id = '. (int)$this->id;
 				$query = $this->_db->getQuery(true);
-				$serverType = (new \JVersion())->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
+				$version = new \JVersion();
+				$serverType = $version->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
 
 				if ($serverType === 'postgresql')
 				{
@@ -172,7 +162,6 @@ class Table extends \JTable
 						$this->_db->quoteName($this->_tbl, 'a') . ' ON ' . $this->_db->quoteName('v.id') . ' = ' . $this->_db->quoteName('a.access'))
 					->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
 				$this->_aliases['access'] = (string) $query;
-				\JLog::add(new \JLogEntry($this->_aliases['access'], \JLog::DEBUG, 'lib_j2xml'));
 			}
 		}
 		return $ret;
@@ -189,8 +178,6 @@ class Table extends \JTable
 	 */
 	protected function _serialize ($tag = true)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		// Initialise variables.
 		$xml = array();
 
@@ -228,8 +215,6 @@ class Table extends \JTable
 
 		foreach ($this->_aliases as $k => $query)
 		{
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
-
 			try
 			{
 				$v = $this->_db->setQuery($query)->loadObjectList();
@@ -250,7 +235,6 @@ class Table extends \JTable
 				}
 			}
 
-			\JLog::add(new \JLogEntry(print_r($v, true), \JLog::DEBUG, 'lib_j2xml'));
 			if (count($v) == 1)
 			{
 				$xml[] = $this->_setValue($k, $v[0]);
@@ -269,7 +253,8 @@ class Table extends \JTable
 		// Return the XML array imploded over new lines.
 		if ($tag)
 		{
-			$mainTag = strtolower((new \ReflectionClass($this))->getShortName());
+			$class = new \ReflectionClass($this);
+			$mainTag = strtolower($class->getShortName());
 			$ret = '<' . $mainTag . '>' . implode("\n", $xml) . '</' . $mainTag . '>';
 		}
 		else
@@ -283,17 +268,15 @@ class Table extends \JTable
 
 	protected function _setValue ($k, $v)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$kOpen = $k;
 		/**
-		 * if (! is_null($attributes))
-		 * {
-		 * foreach ($attributes as $ak => $av)
-		 * {
-		 * $kOpen .= ' ' . $ak . '="' . $av . '"';
-		 * }
-		 * }
+		if (! is_null($attributes))
+		{
+			foreach ($attributes as $ak => $av)
+			{
+				$kOpen .= ' ' . $ak . '="' . $av . '"';
+			}
+		}
 		 */
 		$xml = '';
 		if (is_object($v))
@@ -316,8 +299,8 @@ class Table extends \JTable
 						$kOpen .= ' ' . substr($k1, 1) . '="' . $v1 . '"';
 					}
 				}
-		 		// Open root node.
-	 			$xml = '<' . $kOpen . '>' . $xml . '</' . $k . '>';
+				// Open root node.
+				$xml = '<' . $kOpen . '>' . $xml . '</' . $k . '>';
 			}
 		}
 		else if (is_numeric($v))
@@ -327,11 +310,11 @@ class Table extends \JTable
 		else if ($v != '')
 		{
 			// $v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
-		 	$length = strlen($v);
-		 	for ($i = 0; $i < $length; $i ++)
-		 	{
-		 		$current = ord($v[$i]);
-		 		if (($current == 0x9) || ($current == 0xA) || ($current == 0xD) || (($current >= 0x20) && ($current <= 0xD7FF)) ||
+			$length = strlen($v);
+			for ($i = 0; $i < $length; $i ++)
+			{
+				$current = ord($v[$i]);
+				if (($current == 0x9) || ($current == 0xA) || ($current == 0xD) || (($current >= 0x20) && ($current <= 0xD7FF)) ||
 					(($current >= 0xE000) && ($current <= 0xFFFD)) || (($current >= 0x10000) && ($current <= 0x10FFFF)))
 				{
 					$xml .= chr($current);
@@ -360,8 +343,6 @@ class Table extends \JTable
 	 */
 	function toXML ($mapKeysToText = false)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		return $this->_serialize();
 	}
 
@@ -381,130 +362,126 @@ class Table extends \JTable
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$db = \JFactory::getDbo();
 		$nullDate = $db->getNullDate();
 		$userid = \JFactory::getUser()->id;
 
 		//$data = self::xml2array($record, $params->get('version') == '12.5.0');
 		$data = self::xml2array($record, version_compare($params->get('version', '19.2.0'), '19.2.0', 'lt'));
-		\JLog::add(new \JLogEntry('<pre>' . print_r($data, true) . '</pre>', \JLog::DEBUG, 'lib_j2xml'));
 
 		// TODO: fix alias
 		/**
-		 * if (empty($data['alias']))
-		 * {
-		 * getTableColumns($name, false);
-		 *
-		 * $data['alias'] = $data['title'] ? $data['title'] : $data['name'];
-		 * $data['alias'] = str_replace(' ', '-', $data['alias']);
-		 * }
+		if (empty($data['alias']))
+		{
+			getTableColumns($name, false);
+
+			$data['alias'] = $data['title'] ? $data['title'] : $data['name'];
+			$data['alias'] = str_replace(' ', '-', $data['alias']);
+		}
 		 */
 
-		 $data['checked_out'] = 0;
-		 $data['checked_out_time'] = $nullDate;
+		$data['checked_out'] = 0;
+		$data['checked_out_time'] = $nullDate;
 
-		 if (isset($data['catid']))
-		 {
-		 	$data['catid'] = self::getCategoryId($data['catid'], $params->get('extension'), $params->get('category_default'));
-		 }
-		 if (isset($data['created_by']))
-		 {
-		 	$data['created_by'] = self::getUserId($data['created_by'], $userid);
-		 }
-		 if (isset($data['created_user_id']))
-		 {
-		 	$data['created_user_id'] = self::getUserId($data['created_user_id'], $userid);
-		 }
-		 if (isset($data['modified_by']))
-		 {
-		 	$data['modified_by'] = self::getUserId($data['modified_by'], 0);
-		 }
-		 if (isset($data['modified_user_id']))
-		 {
-		 	$data['modified_user_id'] = self::getUserId($data['modified_user_id'], 0);
-		 }
-		 if (isset($data['access']))
-		 {
-		 	$data['access'] = self::getAccessId($data['access']);
-		 }
-		 if (isset($data['publish_up']) && ($data['publish_up'] != $nullDate))
-		 {
-		 	$data['publish_up'] = self::fixdate($data['publish_up']);
-		 }
-		 if (isset($data['publish_down']) && ($data['publish_down'] != $nullDate))
-		 {
-		 	$data['publish_down'] = self::fixdate($data['publish_down']);
-		 }
-		 if (isset($data['created']) && ($data['created'] != $nullDate))
-		 {
-		 	$data['created'] = self::fixdate($data['created']);
-		 }
-		 if (isset($data['modified']) && ($data['modified'] != $nullDate))
-		 {
-		 	$data['modified'] = self::fixdate($data['modified']);
-		 }
+		if (isset($data['catid']))
+		{
+			$data['catid'] = self::getCategoryId($data['catid'], $params->get('extension'), $params->get('category_default'));
+		}
+		if (isset($data['created_by']))
+		{
+			$data['created_by'] = self::getUserId($data['created_by'], $userid);
+		}
+		if (isset($data['created_user_id']))
+		{
+			$data['created_user_id'] = self::getUserId($data['created_user_id'], $userid);
+		}
+		if (isset($data['modified_by']))
+		{
+			$data['modified_by'] = self::getUserId($data['modified_by'], 0);
+		}
+		if (isset($data['modified_user_id']))
+		{
+			$data['modified_user_id'] = self::getUserId($data['modified_user_id'], 0);
+		}
+		if (isset($data['access']))
+		{
+			$data['access'] = self::getAccessId($data['access']);
+		}
+		if (isset($data['publish_up']) && ($data['publish_up'] != $nullDate))
+		{
+			$data['publish_up'] = self::fixdate($data['publish_up']);
+		}
+		if (isset($data['publish_down']) && ($data['publish_down'] != $nullDate))
+		{
+			$data['publish_down'] = self::fixdate($data['publish_down']);
+		}
+		if (isset($data['created']) && ($data['created'] != $nullDate))
+		{
+			$data['created'] = self::fixdate($data['created']);
+		}
+		if (isset($data['modified']) && ($data['modified'] != $nullDate))
+		{
+			$data['modified'] = self::fixdate($data['modified']);
+		}
 
-		 if (($params->get('version') == '15.9.0') || ($params->get('version') == '12.5.0'))
-		 {
-		 	if (isset($data['title']))
-		 	{
-		 		$data['title'] = htmlspecialchars_decode($data['title']);
-		 	}
-		 	if (isset($data['introtext']))
-		 	{
-		 		$data['introtext'] = htmlspecialchars_decode($data['introtext']);
-		 	}
-		 	if (isset($data['fulltext']))
-		 	{
-		 		$data['fulltext'] = htmlspecialchars_decode($data['fulltext']);
-		 	}
-		 	if (isset($data['description']))
-		 	{
-		 		$data['description'] = htmlspecialchars_decode($data['description']);
-		 	}
-		 }
+		if (($params->get('version') == '15.9.0') || ($params->get('version') == '12.5.0'))
+		{
+			if (isset($data['title']))
+			{
+				$data['title'] = htmlspecialchars_decode($data['title']);
+			}
+			if (isset($data['introtext']))
+			{
+				$data['introtext'] = htmlspecialchars_decode($data['introtext']);
+			}
+			if (isset($data['fulltext']))
+			{
+				$data['fulltext'] = htmlspecialchars_decode($data['fulltext']);
+			}
+			if (isset($data['description']))
+			{
+				$data['description'] = htmlspecialchars_decode($data['description']);
+			}
+		}
 
-		 $import_fields = $params->get('fields', 0);
-		 if ($import_fields)
-		 {
-		 	if (isset($data['field']))
-		 	{
-		 		$data['com_fields'] = array(
-		 				$data['field']['name'] => $data['field']['value']
-		 		);
-		 		unset($data['field']);
-		 	}
-		 	elseif (isset($data['fieldlist']['field']))
-		 	{
-		 		$data['com_fields'] = array();
-		 		foreach ($data['fieldlist']['field'] as $field)
-		 		{
-		 			$data['com_fields'][$field['name']] = $field['value'];
-		 		}
-		 		unset($data['fieldlist']);
-		 	}
-		 }
+		$import_fields = $params->get('fields', 0);
+		if ($import_fields)
+		{
+			if (isset($data['field']))
+			{
+				$data['com_fields'] = array(
+					$data['field']['name'] => $data['field']['value']
+				);
+				unset($data['field']);
+			}
+			elseif (isset($data['fieldlist']['field']))
+			{
+				$data['com_fields'] = array();
+				foreach ($data['fieldlist']['field'] as $field)
+				{
+					$data['com_fields'][$field['name']] = $field['value'];
+				}
+				unset($data['fieldlist']);
+			}
+		}
 
-		 if ((new \JVersion())->isCompatible('3.1') && isset($data['tag']))
-		 {
-		 	$data['tags'] = (array) self::getTagId($data['tag']);
-		 	unset($data['tag']);
-		 }
-		 elseif (isset($data['taglist']))
-		 {
-		 	$data['tags'] = self::getTagId($data['taglist']['tag']);
-		 	unset($data['taglist']);
-		 }
+		$version = new \JVersion();
+		if ($version->isCompatible('3.1') && isset($data['tag']))
+		{
+			$data['tags'] = (array) self::getTagId($data['tag']);
+			unset($data['tag']);
+		}
+		elseif (isset($data['taglist']))
+		{
+			$data['tags'] = self::getTagId($data['taglist']['tag']);
+			unset($data['taglist']);
+		}
 
-		 if (isset($data['params']))
-		 {
-		 	$registry = new \JRegistry($data['params']);
-		 	$data['params'] = $registry->toArray();
-		 }
-
-		 \JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
+		if (isset($data['params']))
+		{
+			$registry = new \JRegistry($data['params']);
+			$data['params'] = $registry->toArray();
+		}
 	}
 
 	/**
@@ -519,8 +496,6 @@ class Table extends \JTable
 	 */
 	public static function getArticleId ($article, $defaultArticleId = 0)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		if (is_numeric($article))
 		{
 			$articleId = $article;
@@ -536,7 +511,6 @@ class Table extends \JTable
 				->where($db->quoteName('cc.extension') . ' = ' . $db->quote('com_content'))
 				->where($db->quoteName('c.alias') . ' = ' . $db->quote(substr($article, $i + 1)))
 				->where($db->quoteName('cc.path') . ' = ' . $db->quote(substr($article, 0, $i)));
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$articleId = $db->setQuery($query)->loadResult();
 			if (! $articleId)
 			{
@@ -544,7 +518,6 @@ class Table extends \JTable
 			}
 		}
 
-		\JLog::add(new \JLogEntry($article . ' -> ' . $articleId, \JLog::DEBUG, 'lib_j2xml'));
 		return $articleId;
 	}
 
@@ -560,19 +533,15 @@ class Table extends \JTable
 	 */
 	public static function getUserId ($username, $defaultUserId = null)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$db = \JFactory::getDBO();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('id'))
 			->from($db->quoteName('#__users'))
 			->where($db->quoteName('username') . ' = ' . $db->quote($username));
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$userId = $db->setQuery($query)->loadResult();
 
 		$userId = $userId ?: ($defaultUserId ?: \JFactory::getUser()->id);
 
-		\JLog::add(new \JLogEntry($username . ' -> ' . $userId, \JLog::DEBUG, 'lib_j2xml'));
 		return $userId;
 	}
 
@@ -587,8 +556,6 @@ class Table extends \JTable
 	 */
 	public static function getUsergroupId ($usergroup, $import = true)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		if (empty($usergroup))
 		{
 			$usergroupId = \JComponentHelper::getParams('com_users')->get('new_usertype');
@@ -600,7 +567,6 @@ class Table extends \JTable
 				->select($db->quoteName('id'))
 				->from($db->quoteName('#__usergroups'))
 				->where('usergroups_getpath(' . $db->quoteName('id') . ') = ' . $db->quote($usergroup));
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 
 			try
 			{
@@ -678,15 +644,11 @@ class Table extends \JTable
 			$usergroupId = ComponentHelper::getParams('com_users')->get('new_usertype');
 		}
 
-		\JLog::add(new \JLogEntry($usergroup . ' -> ' . $usergroupId, \JLog::DEBUG, 'lib_j2xml'));
-
 		return $usergroupId;
 	}
 
 	public static function getAccessId ($access)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		if (is_numeric($access))
 		{
 			$accessId = $access;
@@ -698,7 +660,6 @@ class Table extends \JTable
 				->select($db->quoteName('id'))
 				->from($db->quoteName('#__viewlevels'))
 				->where($db->quoteName('title') . ' = ' . $db->quote($access));
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$accessId = $db->setQuery($query)->loadResult();
 		}
 		if (! $accessId)
@@ -706,7 +667,6 @@ class Table extends \JTable
 			$accessId = 3;
 		}
 
-		\JLog::add(new \JLogEntry($access . ' -> ' . $accessId, \JLog::DEBUG, 'lib_j2xml'));
 		return $accessId;
 	}
 
@@ -723,8 +683,6 @@ class Table extends \JTable
 	 */
 	public static function getCategoryId ($category, $extension, $defaultCategoryId = 0)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		if (is_numeric($category))
 		{
 			$categoryId = $category;
@@ -737,7 +695,6 @@ class Table extends \JTable
 				->from($db->quoteName('#__categories'))
 				->where($db->quoteName('path') . ' = ' . $db->quote($category))
 				->where($db->quoteName('extension') . ' = ' . $db->quote($extension));
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$categoryId = $db->setQuery($query)->loadResult();
 		}
 		if (! $categoryId)
@@ -745,7 +702,6 @@ class Table extends \JTable
 			$categoryId = $defaultCategoryId;
 		}
 
-		\JLog::add(new \JLogEntry($extension . '/' . $category . ' -> ' . $categoryId, \JLog::DEBUG, 'lib_j2xml'));
 		return $categoryId;
 	}
 
@@ -762,9 +718,6 @@ class Table extends \JTable
 	 */
 	public static function getTagId ($tag)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry(print_r($tag, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		$db = \JFactory::getDbo();
 
 		try
@@ -779,7 +732,6 @@ class Table extends \JTable
 					$query .= ' UNION ALL SELECT ' . $db->quote($tag);
 				}
 				$query .= ') a LEFT JOIN #__tags b on a.path = b.path';
-				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 				$tagId = $db->setQuery($query)->loadColumn();
 			}
 			else
@@ -788,7 +740,6 @@ class Table extends \JTable
 					->select($db->quoteName('id'))
 					->from($db->quoteName('#__tags'))
 					->where($db->quoteName('path') . ' = ' . $db->quote($tag));
-				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 				$tagId = $db->setQuery($query)->loadResult();
 			}
 		}
@@ -812,10 +763,8 @@ class Table extends \JTable
 	 */
 	protected static function fixDate ($date)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
-		return (($date == '0000-00-00 00:00:00') || ($date == '1970-01-01 00:00:00')) ? \JFactory::getDbo()->getNullDate() : (new \JDate($date))->toSQL(
-				false);
+		$d = new \JDate($date);
+		return (($date == '0000-00-00 00:00:00') || ($date == '1970-01-01 00:00:00')) ? \JFactory::getDbo()->getNullDate() : $d->toSQL(false);
 	}
 
 	/**
@@ -828,8 +777,6 @@ class Table extends \JTable
 	 */
 	private static function xml2array ($xmlObject, $htmlEntityDecode = false, $out = null)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		if (is_object($xmlObject))
 		{
 			if ($a = $xmlObject->attributes())
@@ -949,7 +896,6 @@ class Table extends \JTable
 	 */
 	public function bind ($array, $ignore = '')
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		if (isset($array['params']) && is_array($array['params']))
 		{
 			$registry = new \JRegistry($array['params']);
@@ -978,8 +924,6 @@ class Table extends \JTable
 	 */
 	public static function getMenuId ($menu, $defaultMenuId = 0)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		if (is_numeric($menu))
 		{
 			$menuId = $menu;
@@ -992,7 +936,6 @@ class Table extends \JTable
 			$query->select($db->quoteName('id'))
 				->from($db->quoteName('#__menu'))
 				->where($path . ' = ' . $db->quote($menu));
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$menuId = $db->setQuery($query)->loadResult();
 		}
 		if (! $menuId)
@@ -1000,7 +943,6 @@ class Table extends \JTable
 			$menuId = $defaultMenuId;
 		}
 
-		\JLog::add(new \JLogEntry($menu . ' -> ' . $menuId, \JLog::DEBUG, 'lib_j2xml'));
 		return $menuId;
 	}
 
@@ -1019,7 +961,8 @@ class Table extends \JTable
 		$queries = array();
 		$query = $db->getQuery(true);
 
-		$serverType = (new \Joomla\CMS\Version())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+		$version = new \JVersion();
+		$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
 		if ($serverType === 'mysql')
 		{

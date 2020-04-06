@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -21,7 +21,7 @@ use eshiol\J2XML\Table\Table;
 /**
  * Viewlevel Table
  *
- * @version 19.2.325
+ * @version __DEPLOY_VERSION__
  * @since 15.3.248
  */
 class Viewlevel extends Table
@@ -37,8 +37,6 @@ class Viewlevel extends Table
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-
 		parent::__construct('#__viewlevels', 'id', $db);
 	}
 
@@ -49,14 +47,12 @@ class Viewlevel extends Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry(print_r($this->rules, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		$this->_excluded = array_merge($this->_excluded, array(
 				'rules'
 		));
 
-		$serverType = (new \JVersion())->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
+		$version = new \JVersion();
+		$serverType = $version->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
 
 		if ($serverType === 'postgresql')
 		{
@@ -93,7 +89,6 @@ class Viewlevel extends Table
 							')'
 					), $this->rules));
 		}
-		\JLog::add(new \JLogEntry($this->_aliases['rule'], \JLog::DEBUG, 'lib_j2xml'));
 
 		return parent::_serialize();
 	}
@@ -116,8 +111,6 @@ class Viewlevel extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$import_viewlevels = 2; // $params->get('viewlevels', 1);
 		if ($import_viewlevels == 0)
 			return;
@@ -136,7 +129,6 @@ class Viewlevel extends Table
 			))
 				->from($db->quoteName('#__viewlevels'))
 				->where($db->quoteName('title') . ' = ' . $db->quote($data['title']));
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$item = $db->setQuery($query)->loadObject();
 
 			if (! $item || ($import_viewlevels == 2))
@@ -180,7 +172,6 @@ class Viewlevel extends Table
 						$groups = json_decode($rules_id[$i]);
 						$g = array();
 						$id = 0;
-						\JLog::add(new \JLogEntry(print_r($groups, true), \JLog::DEBUG, 'lib_j2xml'));
 
 						for ($j = 0; $j < count($groups); $j ++)
 						{
@@ -207,7 +198,6 @@ class Viewlevel extends Table
 				}
 				$data['rules'] = json_encode($rules_id, JSON_NUMERIC_CHECK);
 
-				\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 				if ($table->save($data))
 				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_VIEWLEVEL_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
@@ -240,10 +230,6 @@ class Viewlevel extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($xml->xpath("//j2xml/viewlevel/id[text() = '" . $id . "']"))
 		{
 			return;

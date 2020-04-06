@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -19,8 +19,8 @@ defined('_JEXEC') or die('Restricted access.');
 /**
  * Installation class to perform additional changes during install/uninstall/update
  *
- * @version		3.7.188
- * @since		3.7
+ * @version __DEPLOY_VERSION__
+ * @since 3.7
  */
 class Com_J2xmlInstallerScript
 {
@@ -44,20 +44,21 @@ class Com_J2xmlInstallerScript
 	 */
 	public function uninstall($parent)
 	{
-		if ((new \JVersion())->isCompatible('3.9')) return;
+		$version = new \JVersion();
+		if ($version->isCompatible('3.9')) return;
 
 		$db = \JFactory::getDbo();
-		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+		$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
 		$queries = array();
 		if ($serverType === 'mysql')
 		{
-			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
-			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath;";
+			$queries[] = 'DROP PROCEDURE IF EXISTS usergroups_getpath;';
+			$queries[] = 'DROP FUNCTION IF EXISTS usergroups_getpath;';
 		}
 		elseif ($serverType === 'postgresql')
 		{
-			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath(INT);";
+			$queries[] = 'DROP FUNCTION IF EXISTS usergroups_getpath(INT);';
 		}
 
 		if (count($queries))
@@ -65,7 +66,7 @@ class Com_J2xmlInstallerScript
 			// Process each query in the $queries array (split out of sql file).
 			foreach ($queries as $query)
 			{
-				if ((new \JVersion())->isCompatible('3.5'))
+				if ($version->isCompatible('3.5'))
 				{
 					$query = $db->convertUtf8mb4QueryToUtf8($query);
 				}
@@ -127,10 +128,11 @@ class Com_J2xmlInstallerScript
 	{
 		if ($type == 'discover_install') return;
 
-		if ((new \JVersion())->isCompatible('3.9')) return;
+		$version = new \JVersion();
+		if ($version->isCompatible('3.9')) return;
 
 		$db = \JFactory::getDbo();
-		$serverType = (new \JVersion())->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+		$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
 		$queries = array();
 		if ($serverType === 'mysql')
@@ -200,7 +202,7 @@ EOL;
 			// Process each query in the $queries array (split out of sql file).
 			foreach ($queries as $query)
 			{
-				if ((new \JVersion())->isCompatible('3.5'))
+				if ($version->isCompatible('3.5'))
 				{
 					$query = $db->convertUtf8mb4QueryToUtf8($query);
 				}
