@@ -542,7 +542,7 @@ class Content extends Table
 			Category::export($item->catid, $xml, $options);
 		}
 
-		if ($version()->isCompatible('3.1'))
+		if ($version->isCompatible('3.1'))
 		{
 			$htags = new \JHelperTags();
 			$itemtags = $htags->getItemTags('com_content.article', $id);
@@ -552,7 +552,7 @@ class Content extends Table
 			}
 		}
 
-		if ($version()->isCompatible('3.7'))
+		if ($version->isCompatible('3.7'))
 		{
 
 			$query = $db->getQuery(true)

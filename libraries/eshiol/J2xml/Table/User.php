@@ -414,6 +414,7 @@ class User extends Table
 			Usernote::export($id_usernote, $xml, $options);
 		}
 
+		$version = new \JVersion();
 		if ($version->isCompatible('3.7'))
 		{
 			$query = $db->getQuery(true)
