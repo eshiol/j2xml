@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -34,7 +34,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Joomla! J2XML XML-RPC Plugin
  *
- * @version 3.7.202
+ * @version __DEPLOY_VERSION__
  * @since 1.5.3
  */
 class XMLRPCJ2XMLServices
@@ -62,7 +62,6 @@ class XMLRPCJ2XMLServices
 	public static function import($xml, $username = '', $password = '')
 	{
 		global $xmlrpcerruser, $xmlrpcI4, $xmlrpcInt, $xmlrpcBoolean, $xmlrpcDouble, $xmlrpcString, $xmlrpcDateTime, $xmlrpcBase64, $xmlrpcArray, $xmlrpcStruct, $xmlrpcValue;
-		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
 		$lang = JFactory::getLanguage();
 		$lang->load('lib_j2xml', JPATH_SITE, null, false, false) ||
@@ -82,14 +81,12 @@ class XMLRPCJ2XMLServices
 			'password' => $password
 		), $options);
 		if (true !== $response) {
-			JLog::add(new JLogEntry(JText::_('JGLOBAL_AUTH_NO_USER'), JLog::DEBUG, 'com_j2xml'));
 			JLog::add(new JLogEntry(JText::_('JGLOBAL_AUTH_NO_USER'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
 
 		$canDo = J2XMLHelper::getActions();
 		if (! $canDo->get('core.create') && ! $canDo->get('core.edit') && ! $canDo->get('core.edit.own')) {
-			JLog::add(new JLogEntry(JText::_('JLIB_LOGIN_DENIED'), JLog::DEBUG, 'com_j2xml'));
 			JLog::add(new JLogEntry(JText::_('JLIB_LOGIN_DENIED'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
@@ -123,17 +120,14 @@ class XMLRPCJ2XMLServices
 				switch ($error->level) {
 					default:
 					case LIBXML_ERR_WARNING:
-						JLog::add(new JLogEntry(JText::_($msg), JLog::DEBUG, 'com_j2xml'));
 						JLog::add(new JLogEntry(JText::_($msg), JLog::WARNING, 'com_j2xml'));
 						return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 						break;
 					case LIBXML_ERR_ERROR:
-						JLog::add(new JLogEntry(JText::_($msg), JLog::DEBUG, 'com_j2xml'));
 						JLog::add(new JLogEntry(JText::_($msg), JLog::ERROR, 'com_j2xml'));
 						return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 						break;
 					case LIBXML_ERR_FATAL:
-						JLog::add(new JLogEntry(JText::_($msg), JLog::DEBUG, 'com_j2xml'));
 						JLog::add(new JLogEntry(JText::_($msg), JLog::CRITICAL, 'com_j2xml'));
 						return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 						break;
@@ -145,14 +139,12 @@ class XMLRPCJ2XMLServices
 		$dispatcher = \JEventDispatcher::getInstance();
 		JPluginHelper::importPlugin('j2xml');
 
-		JLog::add(new JLogEntry('onBeforeImport', JLog::DEBUG, 'com_j2xml'));
 		$results = $dispatcher->trigger('onBeforeImport', array(
 			'com_j2xml.xmlrpc',
 			&$xml
 		));
 
 		if (! isset($xml['version'])) {
-			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLog::DEBUG, 'com_j2xml'));
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 		}
@@ -326,8 +318,6 @@ class XMLRPCJ2XMLServices
 	 */
 	public static function enqueueMessage($message, $priority)
 	{
-		JLog::add(new JLogEntry($message, JLog::DEBUG, 'com_j2xml'));
-
 		$codes = array(
 			'error' => 28,
 			'warning' => 29,

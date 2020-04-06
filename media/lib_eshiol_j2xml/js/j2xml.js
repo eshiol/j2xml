@@ -2,12 +2,12 @@
  * @package J2XML Library
  * @subpackage lib_eshiol_j2xml
  * 
- * @version 19.12.340
+ * @version __DEPLOY_VERSION__
  * @since 16.11.288
  * 
  * @author Helios Ciancio <info (at) eshiol (dot) it>
  * @link http://www.eshiol.it
- * @copyright Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3 J2XML is free
  *          software. This version may have been modified pursuant to the GNU
  *          General Public License, and as distributed it includes or is
@@ -42,7 +42,7 @@ if (typeof (eshiol.j2xml.convert) === 'undefined') {
 	eshiol.j2xml.convert = [];
 }
 
-eshiol.j2xml.version = '19.12.340';
+eshiol.j2xml.version = '__DEPLOY_VERSION__';
 
 console.log('j2xml Library v' + eshiol.j2xml.version);
 

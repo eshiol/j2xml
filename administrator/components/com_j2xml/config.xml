@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-@version: 3.7.191
+@version: __DEPLOY_VERSION__
 -->
 <config>
 	<fieldset

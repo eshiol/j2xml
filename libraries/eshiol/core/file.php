@@ -1,13 +1,11 @@
 <?php
 /**
- * @version		16.11.25 libraries/eshiol/core/file.php
  * @package		J2XML
  * @subpackage	lib_eshiol
- * @since		14.9.11
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -18,6 +16,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
+/**
+ * Renders a file button
+ * 
+ * @version __DEPLOY_VERSION__
+ * @since 14.9.11
+ */
 class JToolbarButtonFile extends JToolbarButton
 {
 	/**

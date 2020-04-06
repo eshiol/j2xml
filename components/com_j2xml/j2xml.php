@@ -3,12 +3,12 @@
  * @package		J2XML
  * @subpackage	com_j2xml
  *
- * @version		3.7.192
+ * @version		__DEPLOY_VERSION__
  * @since		1.7.0.64
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -25,11 +25,11 @@ jimport('joomla.log.log');
 if ($params->get('debug') || defined('JDEBUG') && JDEBUG)
 {
 	JLog::addLogger(array(
-			'text_file' => $params->get('log', 'eshiol.log.php'),
-			'extension' => 'com_j2xml_file'
+		'text_file' => $params->get('log', 'eshiol.log.php'),
+		'extension' => 'com_j2xml_file'
 	), JLog::DEBUG, array(
-			'lib_j2xml',
-			'com_j2xml'
+		'lib_j2xml',
+		'com_j2xml'
 	));
 }
 
@@ -79,15 +79,14 @@ else
 		if ($this->params->get('phpconsole') && class_exists('JLogLoggerPhpconsole'))
 		{
 			JLog::addLogger(array(
-					'logger' => 'phpconsole',
-					'extension' => 'com_j2xml_phpconsole'
+				'logger' => 'phpconsole',
+				'extension' => 'com_j2xml_phpconsole'
 			), JLog::DEBUG, array(
-					'lib_j2xml',
-					'com_j2xml'
+				'lib_j2xml',
+				'com_j2xml'
 			));
 		}
 	}
-	JLog::add(new JLogEntry('J2XML', JLog::DEBUG, 'com_j2xml'));
 	$controllerPath .= '.php';
 	// Set the name for the controller and instantiate it
 	$controllerClass .= ucfirst($controllerName);

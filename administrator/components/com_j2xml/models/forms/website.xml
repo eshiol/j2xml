@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
 <!--
-@version: 3.7.188
+@version: __DEPLOY_VERSION__
 @since: 1.5
 -->
 	<fieldset name="details" addfieldpath="/administrator/components/com_j2xml/models/fields">

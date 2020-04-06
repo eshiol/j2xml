@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -21,7 +21,7 @@ defined('JPATH_PLATFORM') or die();
 /**
  * Image table
  *
- * @version 19.2.325
+ * @version __DEPLOY_VERSION__
  * @since 18.8.310
  */
 class Image
@@ -45,8 +45,6 @@ class Image
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$import_images = $params->get('images', 0);
 		if ($import_images == 0)
 			return;
@@ -97,22 +95,16 @@ class Image
 	 */
 	public static function export ($image, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('image: ' . $image, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($xml->xpath("//j2xml/img[@src = '" . htmlentities($image, ENT_QUOTES, "UTF-8") . "']"))
 		{
 			return;
 		}
 
 		$file_path = JPATH_SITE . '/' . urldecode($image);
-		\JLog::add(new \JLogEntry('image path: ' . $file_path, \JLog::DEBUG, 'lib_j2xml'));
 		if (\JFile::exists($file_path))
 		{
 			$img = $xml->addChild('img', base64_encode(file_get_contents($file_path)));
 			$img->addAttribute('src', htmlentities($image, ENT_QUOTES, "UTF-8"));
-			\JLog::add(new \JLogEntry('image added: ' . $image, \JLog::DEBUG, 'lib_j2xml'));
 		}
 	}
 }

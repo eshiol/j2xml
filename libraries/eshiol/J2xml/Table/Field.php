@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -26,7 +26,7 @@ use eshiol\J2XML\Table\Table;
 /**
  * Field table
  *
- * @version 19.11.339
+ * @version __DEPLOY_VERSION__
  * @since 17.6.299
  */
 class Field extends Table
@@ -42,8 +42,6 @@ class Field extends Table
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		parent::__construct('#__fields', 'id', $db);
 	}
 
@@ -54,8 +52,6 @@ class Field extends Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$this->_excluded = array_merge($this->_excluded, array(
 				'group_id'
 		));
@@ -68,7 +64,6 @@ class Field extends Table
 				->select($this->_db->quoteName('title'))
 				->from($this->_db->quoteName('#__fields_groups'))
 				->where($this->_db->quoteName('id') . ' = ' . (int) $this->group_id);
-			\JLog::add(new \JLogEntry($this->_aliases['group'], \JLog::DEBUG, 'lib_j2xml'));
 		}
 
 		// $this->_aliases['category'] = 'SELECT c.path FROM #__categories c,
@@ -80,7 +75,6 @@ class Field extends Table
 			->from($this->_db->quoteName('#__fields_categories', 'fc'))
 			->where($this->_db->quoteName('c.id') . ' = ' . $this->_db->quoteName('fc.category_id'))
 			->where($this->_db->quoteName('fc.field_id') . ' = ' . (int) $this->id);
-		\JLog::add(new \JLogEntry($this->_aliases['category'], \JLog::DEBUG, 'lib_j2xml'));
 
 		return parent::_serialize();
 	}
@@ -103,8 +97,6 @@ class Field extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$import_fields = $params->get('fields', 0);
 		if ($import_fields == 0)
 			return;
@@ -118,15 +110,14 @@ class Field extends Table
 		{
 			self::prepareData($record, $data, $params);
 
-			\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 			$field = $db->setQuery(
-					$db->getQuery(true)
-						->select($db->quoteName('id'))
-						->select($db->quoteName('name'))
-						->from($db->quoteName('#__fields'))
-						->where($db->quoteName('context') . ' = ' . $db->quote($data['context']))
-						->where($db->quoteName('name') . ' = ' . $db->quote($data['name'])))
-				->loadObject();
+				$db->getQuery(true)
+					->select($db->quoteName('id'))
+					->select($db->quoteName('name'))
+					->from($db->quoteName('#__fields'))
+					->where($db->quoteName('context') . ' = ' . $db->quote($data['context']))
+					->where($db->quoteName('name') . ' = ' . $db->quote($data['name'])))
+			->loadObject();
 
 			if (! $field || ($import_fields == 2))
 			{
@@ -153,7 +144,6 @@ class Field extends Table
 
 				// TODO: Trigger the onContentBeforeSave event.
 				$table->bind($data);
-				\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 				if ($table->store())
 				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_FIELD_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
@@ -177,8 +167,6 @@ class Field extends Table
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$params->set('extension', 'com_fields');
 		parent::prepareData($record, $data, $params);
 
@@ -210,10 +198,6 @@ class Field extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($xml->xpath("//j2xml/field/id[text() = '" . $id . "']"))
 		{
 			return;

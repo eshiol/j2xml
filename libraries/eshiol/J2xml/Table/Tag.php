@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -26,7 +26,7 @@ use Joomla\Component\Tags\Administrator\Table\TagTable;
 /**
  * Tag table
  *
- * @version 19.11.339
+ * @version __DEPLOY_VERSION__
  * @since 14.8.240
  */
 class Tag extends Table
@@ -63,8 +63,6 @@ class Tag extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$import_tags = $params->get('tags', 0);
 		if ($import_tags == 0)
 			return;
@@ -124,7 +122,6 @@ class Tag extends Table
 					$data['id'] = $tag->id;
 				}
 
-				\JLog::add(new \JLogEntry('saving tag...' . print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 				$table->bind($data);
 				$table->setLocation($data['parent_id'], 'last-child');
 
@@ -155,8 +152,6 @@ class Tag extends Table
 	 */
 	public static function convertPathsToIds ($tags)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($tags)
 		{
 			// Remove duplicates
@@ -204,10 +199,6 @@ class Tag extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($xml->xpath("//j2xml/tag/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -281,8 +272,6 @@ class Tag extends Table
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$params->set('extension', 'com_tags');
 		parent::prepareData($record, $data, $params);
 

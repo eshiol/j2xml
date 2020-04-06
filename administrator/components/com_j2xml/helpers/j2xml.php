@@ -19,7 +19,7 @@ defined('_JEXEC') or die();
 /**
  * Content component helper.
  *
- * @version 3.7.203
+ * @version __DEPLOY_VERSION__
  * @since 2.5.85
  */
 class J2XMLHelper

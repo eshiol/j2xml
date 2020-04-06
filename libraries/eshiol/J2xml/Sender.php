@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -28,7 +28,7 @@ include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpcs.inc';
 
 /**
  *
- * @version 19.12.340
+ * @version __DEPLOY_VERSION__
  * @since 1.5.3beta3.38
  */
 class Sender
@@ -94,9 +94,6 @@ class Sender
 	 */
 	static function send ($xml, $options, $sid)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('xml: ' . $xml->asXML(), \JLog::DEBUG, 'lib_j2xml'));
-
 		$app = \JFactory::getApplication();
 		$version = explode(".", Version::$DOCVERSION);
 		$xmlVersionNumber = $version[0] . $version[1] . substr('0' . $version[2], strlen($version[2]) - 1);
@@ -145,40 +142,23 @@ class Sender
 		{
 			$objData = $data;
 			xmlrpc_set_type($objData, 'base64');
-			\JLog::add(
-					new \JLogEntry(
-							print_r(
-									array(
-											'http' => array(
-													'method' => "POST",
-													'url' => $server['remote_url'],
-													'header' => "Content-Type: text/xml",
-													'user_agent' => Version::$PRODUCT . ' ' . Version::getFullVersion(),
-													'content' => xmlrpc_encode_request('j2xml.import',
-															array(
-																	$objData,
-																	$server['username'],
-																	'********'
-															))
-											)
-									), true), \JLog::DEBUG, 'lib_j2xml'));
 			$request = xmlrpc_encode_request('j2xml.import', array(
-					$objData,
-					$server['username'],
-					$server['password']
+				$objData,
+				$server['username'],
+				$server['password']
 			));
 			$context = stream_context_create(
-					array(
-							'http' => array(
-									'method' => "POST",
-									'header' => "Content-Type: text/xml",
-									'user_agent' => Version::$PRODUCT . ' ' . Version::getFullVersion(),
-									'content' => $request,
-									'http' => array(
-											'header' => 'Accept-Charset: UTF-8, *;q=0'
-									)
-							)
-					));
+				array(
+					'http' => array(
+						'method' => "POST",
+						'header' => "Content-Type: text/xml",
+						'user_agent' => Version::$PRODUCT . ' ' . Version::getFullVersion(),
+						'content' => $request,
+						'http' => array(
+							'header' => 'Accept-Charset: UTF-8, *;q=0'
+						)
+					)
+				));
 
 			$headers = @get_headers($server['remote_url']);
 		}
@@ -186,7 +166,6 @@ class Sender
 		if ($headers === false)
 		{
 			$res = self::_xmlrpc_j2xml_send($server['remote_url'], $data, $server['username'], $server['password'], $options['debug']);
-			\JLog::add(new \JLogEntry(print_r($res, true), \JLog::DEBUG, 'lib_j2xml'));
 			if ($res->faultcode())
 			{
 				$app->enqueueMessage($server['title'] . ': ' . \JText::_($res->faultString()), 'error');
@@ -226,7 +205,6 @@ class Sender
 		}
 		else
 		{
-			\JLog::add(new \JLogEntry("GET " . $server['remote_url'] . "\n" . print_r($headers, true), \JLog::DEBUG, 'lib_j2xml'));
 			if (substr($headers[0], 9, 3) == '301')
 			{
 				foreach ($headers as $header)
@@ -254,7 +232,6 @@ class Sender
 				{
 					$response = xmlrpc_decode($file);
 
-					\JLog::add(new \JLogEntry(print_r($response, true), \JLog::DEBUG, 'lib_j2xml'));
 					if ($response && xmlrpc_is_fault($response))
 					{
 						$app->enqueueMessage($server['title'] . ': ' . \JText::_($response['faultString']), 'error');
@@ -297,8 +274,6 @@ class Sender
 	 */
 	private static function _xmlrpc_j2xml_send ($remote_url, $xml, $username, $password, $debug = 0)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$debug = 0;
 		$protocol = '';
 		$GLOBALS['xmlrpc_internalencoding'] = 'UTF-8';
@@ -334,7 +309,6 @@ class Sender
 		if ($res->faultString() == "Didn't receive 200 OK from remote server. (HTTP/1.1 301 Foun)")
 		{
 			$res = $client->send($msg, 0, $protocol = 'http11');
-			\JLog::add(new \JLogEntry(print_r($res, true), \JLog::DEBUG, 'lib_j2xml'));
 			if (! $res->faultcode())
 			{
 				return $res;
@@ -356,7 +330,6 @@ class Sender
 			$client->user_agent = Version::$PRODUCT . ' ' . Version::getFullVersion();
 			$client->setDebug($debug);
 			$res = $client->send($msg, 0, $protocol);
-			\JLog::add(new \JLogEntry(print_r($res, true), \JLog::DEBUG, 'lib_j2xml'));
 		}
 		return $res;
 	}

@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -23,7 +23,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version 19.4.331
+ * @version __DEPLOY_VERSION__
  * @since 19.2.323
  */
 class Fieldgroup extends Table
@@ -46,8 +46,6 @@ class Fieldgroup extends Table
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		parent::__construct('#__fields_groups', 'id', $db);
 	}
 
@@ -69,8 +67,6 @@ class Fieldgroup extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$import_fields = $params->get('fields', 0);
 		if ($import_fields == 0)
 			return;
@@ -84,7 +80,6 @@ class Fieldgroup extends Table
 		{
 			self::prepareData($record, $data, $params);
 
-			\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 			$query = $db->getQuery(true)
 				->select($db->quoteName('id'))
 				->select($db->quoteName('title'))
@@ -110,7 +105,6 @@ class Fieldgroup extends Table
 
 				// TODO: Trigger the onContentBeforeSave event.
 				$table->bind($data);
-				\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 				if ($table->store())
 				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_FIELDGROUP_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
@@ -144,10 +138,6 @@ class Fieldgroup extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($xml->xpath("//j2xml/fieldgroup/id[text() = '" . $id . "']"))
 		{
 			return;

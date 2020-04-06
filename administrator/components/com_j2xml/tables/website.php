@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -19,7 +19,7 @@ defined('_JEXEC') or die();
 /**
  * Website table
  *
- * @version 3.7.192
+ * @version __DEPLOY_VERSION__
  * @since 1.5.3
  */
 class J2XMLTableWebsite extends JTable
@@ -27,8 +27,6 @@ class J2XMLTableWebsite extends JTable
 
 	function __construct (&$_db)
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-
 		$this->checked_out_time = $_db->getNullDate();
 		parent::__construct('#__j2xml_websites', 'id', $_db);
 	}
@@ -54,8 +52,6 @@ class J2XMLTableWebsite extends JTable
 	 */
 	public function publish ($pks = null, $state = 1, $userId = 0)
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-
 		// Initialise variables.
 		$k = $this->_tbl_key;
 

@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.
+ * @copyright	(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -27,7 +27,7 @@ jimport('joomla.log.logger');
  *
  * This class is designed to output logs as xmlrpc message
  *
- * @version 4.3.1
+ * @version __DEPLOY_VERSION__
  * @since 4.3.1
  */
 class XmlrpcLogger extends \JLogLogger

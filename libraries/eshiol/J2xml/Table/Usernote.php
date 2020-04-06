@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -28,7 +28,7 @@ use eshiol\J2XML\Table\User;
 /**
  * Usernote Table
  *
- * @version 19.2.325
+ * @version __DEPLOY_VERSION__
  * @since 14.8.240
  */
 class Usernote extends \eshiol\J2XML\Table\Table
@@ -44,8 +44,6 @@ class Usernote extends \eshiol\J2XML\Table\Table
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-
 		parent::__construct('#__user_notes', 'id', $db);
 	}
 
@@ -56,10 +54,6 @@ class Usernote extends \eshiol\J2XML\Table\Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		if ($xml->xpath("//j2xml/usernote/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -120,8 +114,6 @@ class Usernote extends \eshiol\J2XML\Table\Table
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$import_usernotes = $params->get('usernotes', 1);
 		if ($import_usernotes == 0)
 			return;
@@ -134,11 +126,9 @@ class Usernote extends \eshiol\J2XML\Table\Table
 		}
 
 		$users = json_decode($params->get('imported_users', '[]'), true);
-		\JLog::add(new \JLogEntry(print_r($users, true), \JLog::DEBUG, 'lib_j2xml'));
 		foreach ($users as $user_id => $overwrite)
 		{
 			$username = \JFactory::getUser($user_id)->username;
-			\JLog::add(new \JLogEntry($username . ' -> ' . (bool) $overwrite, \JLog::DEBUG, 'lib_j2xml'));
 			$path = "//j2xml/usernote[user_id='{$username}']";
 			foreach ($xml->xpath($path) as $record)
 			{
@@ -178,8 +168,6 @@ class Usernote extends \eshiol\J2XML\Table\Table
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$params->set('extension', 'com_users');
 		parent::prepareData($record, $data, $params);
 
@@ -196,13 +184,10 @@ class Usernote extends \eshiol\J2XML\Table\Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		$this->_aliases['user_id'] = (string) $this->_db->getQuery(true)
 			->select($this->_db->quoteName('username'))
 			->from($this->_db->quoteName('#__users'))
 			->where($this->_db->quoteName('id') . ' = ' . (int) $this->user_id);
-		\JLog::add(new \JLogEntry($this->_aliases['user_id'], \JLog::DEBUG, 'lib_j2xml'));
 
 		return parent::_serialize();
 	}

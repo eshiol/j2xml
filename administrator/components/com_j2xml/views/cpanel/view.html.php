@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -22,7 +22,7 @@ jimport('joomla.html.html.tabs');
 
 /**
  *
- * @version 3.7.193
+ * @version __DEPLOY_VERSION__
  * @since 1.5.3
  */
 class J2XMLViewCpanel extends JViewLegacy
@@ -102,20 +102,17 @@ class J2XMLViewCpanel extends JViewLegacy
 			jimport('eshiol.core.file');
 
 			$min = ($this->params->get('debug', 0) ? '' : '.min');
-			JLog::add(new JLogEntry("loading encryption{$min}.js...", JLog::DEBUG, 'com_j2xml'));
 			$doc->addScript("../media/lib_eshiol_core/js/encryption{$min}.js");
-			JLog::add(new JLogEntry("loading core{$min}.js...", JLog::DEBUG, 'com_j2xml'));
 			$doc->addScript("../media/lib_eshiol_core/js/core{$min}.js");
-			JLog::add(new JLogEntry("loading version_compare{$min}.js...", JLog::DEBUG, 'com_j2xml'));
 			$doc->addScript("../media/lib_eshiol_core/js/version_compare{$min}.js");
-			JLog::add(new JLogEntry("loading j2xml{$min}.js...", JLog::DEBUG, 'com_j2xml'));
 
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true)
-			->select($db->quoteName('enabled'))
-			->from($db->quoteName('#__extensions'))
-			->where($db->quoteName('type') . ' = ' . $db->quote('library'));
-			if ((new \JVersion())->isCompatible('3.9'))
+				->select($db->quoteName('enabled'))
+				->from($db->quoteName('#__extensions'))
+				->where($db->quoteName('type') . ' = ' . $db->quote('library'));
+			$version = new \JVersion();
+			if ($version->isCompatible('3.9'))
 			{
 				$query->where($db->quoteName('element') . ' = ' . $db->quote('eshiol/j2xmlpro'));
 			}

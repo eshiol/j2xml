@@ -1,13 +1,11 @@
 <?php
 /**
- * @version		3.2.31 plugins/system/j2xml/enable.php
- *
  * @package		J2XML
  * @subpackage	plg_system_j2xml
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -18,6 +16,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
+/**
+ * @version __DEPLOY_VERSION__
+ */
 class PlgSystemJ2xmlInstallerScript
 {
 	public function install($parent)

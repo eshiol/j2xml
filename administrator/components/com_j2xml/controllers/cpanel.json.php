@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -27,7 +27,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Controller class.
  *
- * @version 3.7.201
+ * @version __DEPLOY_VERSION__
  * @since 3.6.160
  */
 class J2XMLControllerCpanel extends JControllerLegacy
@@ -43,8 +43,6 @@ class J2XMLControllerCpanel extends JControllerLegacy
 
 	function __construct ($default = array())
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-
 		parent::__construct();
 
 		$this->app = JFactory::getApplication();
@@ -52,8 +50,6 @@ class J2XMLControllerCpanel extends JControllerLegacy
 
 	function import ()
 	{
-		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-
 		$data = $this->app->input->post->get('j2xml_data', '', 'RAW');
 		$filename = $this->app->input->post->get('j2xml_filename', '', 'RAW');
 
@@ -78,9 +74,6 @@ class J2XMLControllerCpanel extends JControllerLegacy
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
-		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-
-		JLog::add(new JLogEntry('data: ' . $data, JLog::DEBUG, 'com_j2xml'));
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 
 		if (! $xml)
@@ -192,8 +185,6 @@ class J2XMLControllerCpanel extends JControllerLegacy
 			$importer->import($xml, $params);
 		}
 */
-		JLog::add(new JLogEntry(print_r($this->app->getMessageQueue(), true), JLog::DEBUG, 'com_j2xml'));
-
 		echo new \JResponseJson($response = null, $message = $this->app->getMessageQueue(), $error = false, $ignoreMessages = false);
 		$this->app->close();
 	}

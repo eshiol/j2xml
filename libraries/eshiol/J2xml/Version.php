@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -19,7 +19,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 /**
  *
- * @version 19.12.340
+ * @version __DEPLOY_VERSION__
  * @since 1.5.3
  */
 class Version
@@ -33,12 +33,12 @@ class Version
 	/**
 	 * @public static int Main Release Level
 	 */
-	public static $RELEASE = '19';
+	public static $RELEASE = '20';
 
 	/**
 	 * @public static int Sub Release Level
 	 */
-	public static $DEV_LEVEL = '12';
+	public static $DEV_LEVEL = '4';
 
 	/**
 	 * @public static string Development Status
@@ -50,7 +50,7 @@ class Version
 	/**
 	 * @public static int build Number
 	 */
-	public static $BUILD = '340';
+	public static $BUILD = '342';
 
 	/**
 	 * @public static string Codename
@@ -60,7 +60,7 @@ class Version
 	/**
 	 * @public static string Copyright Text
 	 */
-	public static $COPYRIGHT = 'Copyright &copy; 2010 - 2019 Helios Ciancio <a href="http://www.eshiol.it" title="eshiol.it"><img src="../media/com_j2xml/images/eshiol.png" alt="eshiol.it" /></a>. All rights reserved.';
+	public static $COPYRIGHT = 'Copyright &copy; 2010 - 2020 Helios Ciancio <a href="http://www.eshiol.it" title="eshiol.it"><img src="../media/com_j2xml/images/eshiol.png" alt="eshiol.it" /></a>. All rights reserved.';
 
 	/**
 	 * @public static string License
@@ -115,7 +115,6 @@ class Version
 
 	public static function docversion_compare ($version)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		$a = explode(".", rtrim($version, ".0")); // Split version into pieces and
 		                                          // remove trailing .0
 		$b = explode(".", rtrim(self::$DOCVERSION, ".0")); // Split version into
