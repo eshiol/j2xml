@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2019 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -52,7 +52,7 @@ jimport('joomla.user.helper');
 /**
  * Importer
  *
- * @version 19.5.333
+ * @version __DEPLOY_VERSION__
  * @since 1.6.0
  */
 class Importer
@@ -70,8 +70,6 @@ class Importer
 
 	function __construct ()
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-
 		// Merge the default translation with the current translation
 		$jlang = \JFactory::getLanguage();
 		$jlang->load('lib_j2xml', JPATH_SITE, 'en-GB', true);
@@ -107,9 +105,6 @@ class Importer
 	 */
 	function import ($xml, $params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		\JLog::add(new \JLogEntry(print_r($params, true), \JLog::DEBUG, 'lib_j2xml'));
-
 		\JFactory::getLanguage()->load('lib_j2xml', JPATH_SITE, null, false, true);
 
 		$import_viewlevels = $params->get('viewlevels');
@@ -118,7 +113,8 @@ class Importer
 			Viewlevel::import($xml, $params);
 		}
 
-		if ((new \JVersion())->isCompatible('3.7'))
+		$version = new \JVersion();
+		if ($version->isCompatible('3.7'))
 		{
 			$import_fields = $params->get('fields');
 			if ($import_fields)
@@ -134,7 +130,7 @@ class Importer
 			User::import($xml, $params);
 		}
 
-		if ((new \JVersion())->isCompatible('3.1'))
+		if ($version->isCompatible('3.1'))
 		{
 			$import_tags = $params->get('tags');
 			if ($import_tags)
