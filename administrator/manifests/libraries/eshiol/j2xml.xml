@@ -2,13 +2,13 @@
 <extension version="3.9" type="library" method="upgrade">
   <name>j2xml</name>
   <libraryname>eshiol/j2xml</libraryname>
-  <creationDate>February 2020</creationDate>
+  <creationDate>April 2020</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright><![CDATA[(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>GNU/GPL v3</license>
-  <version>20.2.341</version>
+  <version>20.4.342</version>
   <description>LIB_J2XML_XML_DESCRIPTION</description>
   <scriptfile>script.php</scriptfile>
   <packagerurl>https://www.eshiol.it</packagerurl>

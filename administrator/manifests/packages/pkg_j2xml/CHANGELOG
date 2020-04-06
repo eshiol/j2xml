@@ -1,3 +1,23 @@
+----------------------- 3.7.204 Release  [6-April-2020] -----------------------
+
+cli_j2xml-3.7.22
+  # PHP 5.3 compatibility
+
+lib_eshiol-20.4.36
+  # PHP 5.3 compatibility
+
+lib_j2xml-20.4.342
+  # PHP 5.3 compatibility
+
+lib_phpxmlrpc-3.1.1.22
+  # PHP 5.3 compatibility
+
+com_j2xml-3.7.204
+  # PHP 5.3 compatibility
+
+plg_system_j2xml-3.7.46
+  # PHP 5.3 compatibility
+
 --------------------- 3.7.203 Release  [12-February-2020] ---------------------
 
 cli_j2xml-3.7.21

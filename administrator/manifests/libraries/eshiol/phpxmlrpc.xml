@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.0" type="library" method="upgrade">
+<extension version="3.9" type="library" method="upgrade">
   <name>XML-RPC for PHP</name>
   <libraryname>eshiol/phpxmlrpc</libraryname>
-  <creationDate>November 2019</creationDate>
+  <creationDate>April 2020</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info (at) eshiol (dot) it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright><![CDATA[Copyright (c) 1999,2000,2001 Edd Dumbill, Useful Information Company
-  <br/>(C) 2010 - 2019 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
+  <br/>(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>GNU/GPL v3</license>
-  <version>3.1.1.21</version>
+  <version>3.1.1.22</version>
   <description>A php library for building xml-rpc clients and servers.
 	</description>
   <files>

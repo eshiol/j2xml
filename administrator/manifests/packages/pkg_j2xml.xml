@@ -2,9 +2,9 @@
 <extension type="package" version="3.0" method="upgrade">
   <name>pkg_j2xml</name>
   <author>Helios Ciancio</author>
-  <creationDate>February 2020</creationDate>
+  <creationDate>April 2020</creationDate>
   <packagename>j2xml</packagename>
-  <version>3.7.203</version>
+  <version>3.7.204</version>
   <url>http://www.eshiol.it</url>
   <copyright><![CDATA[(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <packager>Helios Ciancio</packager>
@@ -14,12 +14,12 @@
     <server type="extension" priority="2" name="J2XML">https://www.eshiol.it/files/j2xml37/j2xml.xml</server>
   </updateservers>
   <files>
-    <folder type="library" id="eshiol">lib_eshiol_core-19.11.35.zip</folder>
-    <folder type="library" id="j2xml">lib_eshiol_j2xml-20.2.341.zip</folder>
-    <folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc-3.1.1.21.zip</folder>
-    <folder type="component" id="j2xml">com_j2xml-3.7.203.zip</folder>
-    <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.7.46.zip</folder>
-    <folder type="file" id="j2xml">cli_j2xml-3.7.21.zip</folder>
+    <folder type="library" id="eshiol">lib_eshiol_core-20.4.36.zip</folder>
+    <folder type="library" id="j2xml">lib_eshiol_j2xml-20.4.342.zip</folder>
+    <folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc-3.1.1.22.zip</folder>
+    <folder type="component" id="j2xml">com_j2xml-3.7.204.zip</folder>
+    <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.7.47.zip</folder>
+    <folder type="file" id="j2xml">cli_j2xml-3.7.22.zip</folder>
   </files>
   <languages folder="language">
     <language tag="en-GB">en-GB/en-GB.pkg_j2xml.sys.ini</language>
