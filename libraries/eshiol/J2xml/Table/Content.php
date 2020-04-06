@@ -412,7 +412,7 @@ class Content extends Table
 
 			if ($keep_id && ($autoincrement > $maxid))
 			{
-				$serverType = ($version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+				$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
 				if ($serverType === 'postgresql')
 				{
