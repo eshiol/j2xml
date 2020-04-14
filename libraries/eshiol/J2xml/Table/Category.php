@@ -103,6 +103,7 @@ class Category extends Table
 
 		\JFactory::getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
 		$db = \JFactory::getDbo();
+		$version = new \JVersion();
 
 		$keep_id = $params->get('keep_id', 0);
 		if ($keep_id)
