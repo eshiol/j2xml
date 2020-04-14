@@ -85,6 +85,9 @@
 			<option
 				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
 			</option>
+			<option
+				value="3">COM_J2XML_YES_OVERWRITE_IF_NEWER
+			</option>
 		</field>
 
 		<field
