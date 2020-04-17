@@ -12,23 +12,23 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-namespace eshiol\J2XML;
+namespace eshiol\J2xml;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-use eshiol\J2XML\Table\Category;
-use eshiol\J2XML\Table\Contact;
-use eshiol\J2XML\Table\Content;
-use eshiol\J2XML\Table\Field;
-use eshiol\J2XML\Table\Fieldgroup;
-use eshiol\J2XML\Table\Image;
-use eshiol\J2XML\Table\Tag;
-use eshiol\J2XML\Table\User;
-use eshiol\J2XML\Table\Usernote;
-use eshiol\J2XML\Table\Viewlevel;
-use eshiol\J2XML\Table\Weblink;
-use eshiol\J2XML\Version;
+use eshiol\J2xml\Table\Category;
+use eshiol\J2xml\Table\Contact;
+use eshiol\J2xml\Table\Content;
+use eshiol\J2xml\Table\Field;
+use eshiol\J2xml\Table\Fieldgroup;
+use eshiol\J2xml\Table\Image;
+use eshiol\J2xml\Table\Tag;
+use eshiol\J2xml\Table\User;
+use eshiol\J2xml\Table\Usernote;
+use eshiol\J2xml\Table\Viewlevel;
+use eshiol\J2xml\Table\Weblink;
+use eshiol\J2xml\Version;
 \JLoader::import('eshiol.j2xml.Table.Category');
 \JLoader::import('eshiol.j2xml.Table.Contact');
 \JLoader::import('eshiol.j2xml.Table.Content');

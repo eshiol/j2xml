@@ -12,13 +12,13 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-namespace eshiol\J2XML\Table;
+namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
-use eshiol\J2XML\Table\Contact;
-use eshiol\J2XML\Table\Field;
-use eshiol\J2XML\Table\Table;
-use eshiol\J2XML\Table\Usernote;
+use eshiol\J2xml\Table\Contact;
+use eshiol\J2xml\Table\Field;
+use eshiol\J2xml\Table\Table;
+use eshiol\J2xml\Table\Usernote;
 \JLoader::import('eshiol.j2xml.Table.Contact');
 \JLoader::import('eshiol.j2xml.Table.Field');
 \JLoader::import('eshiol.j2xml.Table.Table');

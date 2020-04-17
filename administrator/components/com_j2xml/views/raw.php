@@ -43,13 +43,13 @@ class J2XMLView extends JViewLegacy
 		$options['categories'] = 1;
 		$options['contacts'] = $params->get('export_contacts', '1');
 
-		if (class_exists('eshiol\J2XMLPRO\Exporter'))
+		if (class_exists('eshiol\J2xmlpro\Exporter'))
 		{
-			$exporter = new eshiol\J2XMLPRO\Exporter();
+			$exporter = new eshiol\J2xmlpro\Exporter();
 		}
 		else
 		{
-			$exporter = new eshiol\J2XML\Exporter();
+			$exporter = new eshiol\J2xml\Exporter();
 		}
 
 		$get_xml = strtolower(str_replace('J2XMLView', '', get_class($this)));

@@ -12,13 +12,13 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-namespace eshiol\J2XML;
+namespace eshiol\J2xml;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-use eshiol\J2XML\Messages;
-use eshiol\J2XML\Version;
+use eshiol\J2xml\Messages;
+use eshiol\J2xml\Version;
 jimport('joomla.log.log');
 jimport('eshiol.j2xml.Messages');
 jimport('eshiol.j2xml.Version');
