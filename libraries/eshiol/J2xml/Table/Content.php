@@ -53,14 +53,14 @@ class Content extends Table
 	{
 		parent::__construct('#__content', 'id', $db);
 
-		/**
-		$version = new \JVersion();
-		if ($version->isCompatible('3.4'))
-		{
-			// Set the alias since the column is called state
-			$this->setColumnAlias('published', 'state');
-		}
-		*/
+	/**
+	 * $version = new \JVersion();
+	 * if ($version->isCompatible('3.4'))
+	 * {
+	 * // Set the alias since the column is called state
+	 * $this->setColumnAlias('published', 'state');
+	 * }
+	 */
 	}
 
 	/**
@@ -226,45 +226,47 @@ class Content extends Table
 			}
 
 			$content = $db->setQuery(
-				$query = $db->getQuery(true)
-					->select(array(
-						$db->quoteName('id'),
-						$db->quoteName('title')
-				))
-					->from($db->quoteName('#__content'))
-					->where($db->quoteName('catid') . ' = ' . $db->quote($data['catid']))
-					->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias'])))
+					$query = $db->getQuery(true)
+						->select(
+							array(
+									$db->quoteName('id'),
+									$db->quoteName('title'),
+									'GREATEST(' . $db->quoteName('created') . ',' . $db->quoteName('modified') . ') ' . $db->quoteName('modified')
+							))
+						->from($db->quoteName('#__content'))
+						->where($db->quoteName('catid') . ' = ' . $db->quote($data['catid']))
+						->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias'])))
 				->loadObject();
 
 			$table = new \JTableContent($db);
 
-			if (($import_content == 1) && $content)
+			if ((($import_content == 1) && $content) || (($import_content == 3) && $content && $content->modified >= $data['modified']))
 			{
 				if ($id == $content->id)
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_EXISTS', $id, $data['title']), \JLog::NOTICE, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_EXISTS', $data['title'], $id), \JLog::NOTICE, 'lib_j2xml'));
 				}
 				elseif ($keep_id)
 				{
 					\JLog::add(
-						new \JLogEntry(\JText::sprintf(
-							'LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED',
-							$id, $content->id, $data['title'],
-							\JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
+							new \JLogEntry(
+									\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $content->id,
+											\JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
 				}
 				else
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_EXISTS', $id . '->' . $content->id, $data['title']), \JLog::NOTICE, 'lib_j2xml'));
+					\JLog::add(
+							new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_EXISTS', $data['title'], $id . '->' . $content->id), \JLog::NOTICE,
+									'lib_j2xml'));
 				}
 				continue;
 			}
-			elseif (($import_content == 2) && $content && $keep_id && ($id != $content->id))
+			elseif (($import_content >= 2) && $content && $keep_id && ($id != $content->id))
 			{
 				\JLog::add(
-					new \JLogEntry(\JText::sprintf(
-						'LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED',
-						$id, $content->id, $data['title'],
-						\JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
+						new \JLogEntry(
+								\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $content->id,
+										\JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
 				continue;
 			}
 			else
@@ -325,28 +327,36 @@ class Content extends Table
 
 								if ($id != $table->id)
 								{
-									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title, $id, $table->id), \JLog::INFO, 'lib_j2xml'));
+									\JLog::add(
+											new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title, $id, $table->id),
+													\JLog::INFO, 'lib_j2xml'));
 								}
 								else
 								{
-									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $table->title, $id), \JLog::INFO, 'lib_j2xml'));
+									\JLog::add(
+											new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $table->title, $id), \JLog::INFO,
+													'lib_j2xml'));
 								}
 							}
 							catch (\Exception $ex)
 							{
-								\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $table->title, $id, $table->id), \JLog::WARNING, 'lib_j2xml'));
+								\JLog::add(
+										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $table->title, $id, $table->id),
+												\JLog::WARNING, 'lib_j2xml'));
 								continue;
 							}
 						}
 						elseif ($id != $table->id)
 						{
-							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title, $id, $table->id), \JLog::INFO, 'lib_j2xml'));
+							\JLog::add(
+									new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title, $id, $table->id), \JLog::INFO,
+											'lib_j2xml'));
 						}
 						else
 						{
 							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $table->title, $id), \JLog::INFO, 'lib_j2xml'));
 						}
-	
+
 						if ($keep_frontpage == 0)
 						{
 							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $table->id;
@@ -357,14 +367,13 @@ class Content extends Table
 						}
 						else
 						{
-							$query = 'INSERT IGNORE INTO `#__content_frontpage`'
-								. ' SET content_id = ' . $table->id . ','
-								. ' ordering = ' . $data['ordering'];
+							$query = 'INSERT IGNORE INTO `#__content_frontpage`' . ' SET content_id = ' . $table->id . ',' . ' ordering = ' .
+									 $data['ordering'];
 						}
 						$db->setQuery($query);
 						$db->query();
 
-						if (($keep_rating == 0) || (!isset($data['rating_count'])) || ($data['rating_count'] == 0))
+						if (($keep_rating == 0) || (! isset($data['rating_count'])) || ($data['rating_count'] == 0))
 						{
 							$query = "DELETE FROM `#__content_rating` WHERE `content_id`=" . $table->id;
 							$db->setQuery($query);
@@ -377,9 +386,12 @@ class Content extends Table
 							$rating->rating_count = $data['rating_count'];
 							$rating->rating_sum = $data['rating_sum'];
 							$rating->lastip = $_SERVER['REMOTE_ADDR'];
-							try {
+							try
+							{
 								$db->insertObject('#__content_rating', $rating);
-							} catch (\Exception $ex) {
+							}
+							catch (\Exception $ex)
+							{
 								$db->updateObject('#__content_rating', $rating, 'content_id');
 							}
 						}
@@ -405,8 +417,8 @@ class Content extends Table
 				{
 					\JLog::add(
 							new \JLogEntry(
-									\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'] . ' (id = ' . $id . ')',
-											$table->getError()), \JLog::NOTICE, 'lib_j2xml'));
+									\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'] . ' (id = ' . $id . ')', $table->getError()),
+									\JLog::NOTICE, 'lib_j2xml'));
 				}
 			}
 
@@ -477,12 +489,12 @@ class Content extends Table
 			unset($data['published']);
 		}
 
-		$data['featured'] = (int)($data['featured'] > 0);
+		$data['featured'] = (int) ($data['featured'] > 0);
 		if ($params->get('keep_frontpage') == 0)
 		{
 			$data['ordering'] = 0;
 		}
-		elseif (!isset($data['ordering']))
+		elseif (! isset($data['ordering']))
 		{
 			$data['ordering'] = $data['featured'];
 		}

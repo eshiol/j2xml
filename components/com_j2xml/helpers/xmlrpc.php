@@ -339,7 +339,8 @@ class XMLRPCJ2XMLServices
 				break;
 			} else {
 				$pattern = '/' . str_replace(array('(', ')', '[', ']', '.'), array('\(', '\)', '\[', '\]', '\.'), JText::_($m)) . '/i';
-				$pattern = preg_replace('/%(?:\d+\$)?[+-]?(?:[ 0]|\'.{1})?-?\d*(?:\.\d+)?[bcdeEufFgGosxX]/', '(.+)', $pattern); 
+				$pattern = preg_replace('/%(?:\d+\$)?[+-]?(?:[ 0]|\'.{1})?-?\d*(?:\.\d+)?[bcdeEufFgGosxX]/', '(.+)', $pattern);
+
 				if (preg_match($pattern, $message, $matches)) 
 				{
 					array_shift($matches);
