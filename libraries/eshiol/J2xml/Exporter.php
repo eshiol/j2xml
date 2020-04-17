@@ -71,7 +71,7 @@ class Exporter
 		$this->option = (PHP_SAPI != 'cli') ? \JFactory::getApplication()->input->getCmd('option') : 'cli_' .
 				 strtolower(get_class(\JApplicationCli::getInstance()));
 		$this->_db = \JFactory::getDbo();
-		
+
 		// Merge the default translation with the current translation
 		$jlang = \JFactory::getLanguage();
 		$jlang->load('lib_j2xml', JPATH_SITE, 'en-GB', true);
