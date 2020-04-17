@@ -50,7 +50,7 @@ class Version
 	/**
 	 * @public static int build Number
 	 */
-	public static $BUILD = '343';
+	public static $BUILD = '344';
 
 	/**
 	 * @public static string Codename

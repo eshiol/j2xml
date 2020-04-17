@@ -1,3 +1,19 @@
+----------------------- 3.7.205 Release [17-April-2020] -----------------------
+
+cli_j2xml-3.7.22
+
+lib_eshiol-20.4.37
+
+lib_j2xml-20.4.344
+  + overwrite article if newer
+
+lib_phpxmlrpc-3.1.1.22
+
+com_j2xml-3.7.205
+  + overwrite article if newer
+
+plg_system_j2xml-3.7.46
+
 ---------------------- 3.7.204.1 Release [14-April-2020] ----------------------
 
 cli_j2xml-3.7.22

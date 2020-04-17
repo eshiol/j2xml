@@ -237,7 +237,7 @@ class Content extends Table
 				->loadObject();
 
 			$table = new \JTableContent($db);
-			
+
 			if (($import_content == 1) && $content)
 			{
 				if ($id == $content->id)
@@ -346,7 +346,7 @@ class Content extends Table
 						{
 							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $table->title, $id), \JLog::INFO, 'lib_j2xml'));
 						}
-						
+	
 						if ($keep_frontpage == 0)
 						{
 							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $table->id;
