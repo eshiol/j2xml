@@ -12,12 +12,12 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-namespace eshiol\J2XML\Table;
+namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
-use eshiol\J2XML\Table\Image;
-use eshiol\J2XML\Table\Table;
-use eshiol\J2XML\Table\User;
+use eshiol\J2xml\Table\Image;
+use eshiol\J2xml\Table\Table;
+use eshiol\J2xml\Table\User;
 use Joomla\Component\Tags\Administrator\Table\TagTable;
 \JLoader::import('eshiol.j2xml.Table.Image');
 \JLoader::import('eshiol.j2xml.Table.Table');

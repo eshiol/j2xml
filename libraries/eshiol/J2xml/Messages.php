@@ -12,7 +12,7 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-namespace eshiol\J2XML;
+namespace eshiol\J2xml;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access.');

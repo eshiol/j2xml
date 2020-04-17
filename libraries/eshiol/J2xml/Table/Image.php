@@ -12,7 +12,7 @@
  * is derivative of works licensed under the GNU General Public License or
  * other free or open source software licenses.
  */
-namespace eshiol\J2XML\Table;
+namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
 \JLoader::import('joomla.filesystem.file');

@@ -16,7 +16,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-use eshiol\J2XML\Messages;
+use eshiol\J2xml\Messages;
 
 jimport('eshiol.j2xml.Importer');
 jimport('eshiol.j2xmlpro.Importer');
