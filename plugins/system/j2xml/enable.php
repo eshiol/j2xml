@@ -1,7 +1,7 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	plg_system_j2xml
+ * @package		Joomla.Plugins
+ * @subpackage	System.J2xml
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
@@ -12,25 +12,25 @@
  * is derivative of works licensed under the GNU General Public License
  * or other free or open source software licenses.
  */
-
-// no direct access
-defined('_JEXEC') or die('Restricted access.');
+defined('_JEXEC') or die();
 
 /**
+ *
  * @version __DEPLOY_VERSION__
  */
 class PlgSystemJ2xmlInstallerScript
 {
-	public function install($parent)
+
+	public function install ($parent)
 	{
 		// Enable plugin
-		$db  = JFactory::getDbo();
-		$query = $db->getQuery(true);
-		$query->update('#__extensions');
-		$query->set($db->quoteName('enabled') . ' = 1');
-		$query->where($db->quoteName('type') . ' = ' . $db->quote('plugin'));
-		$query->where($db->quoteName('element') . ' = ' . $db->quote('j2xml'));
-		$query->where($db->quoteName('folder') . ' = ' . $db->quote('system'));
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true)
+			->update('#__extensions')
+			->set($db->quoteName('enabled') . ' = 1')
+			->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))
+			->where($db->quoteName('element') . ' = ' . $db->quote('j2xml'))
+			->where($db->quoteName('folder') . ' = ' . $db->quote('system'));
 		$db->setQuery($query);
 		$db->execute();
 	}

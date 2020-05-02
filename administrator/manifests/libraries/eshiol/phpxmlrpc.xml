@@ -9,11 +9,12 @@
   <copyright><![CDATA[Copyright (c) 1999,2000,2001 Edd Dumbill, Useful Information Company
   <br/>(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>GNU/GPL v3</license>
-  <version>3.1.1.22</version>
+  <version>4.4.1.23</version>
   <description>A php library for building xml-rpc clients and servers.
 	</description>
   <files>
     <folder>lib</folder>
     <folder>Log</folder>
+    <folder>src</folder>
   </files>
 </extension>

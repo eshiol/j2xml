@@ -14,11 +14,11 @@
     <server type="extension" priority="2" name="J2XML">https://www.eshiol.it/files/j2xml37/j2xml.xml</server>
   </updateservers>
   <files>
-    <folder type="library" id="eshiol">lib_eshiol_core-20.4.36.zip</folder>
-    <folder type="library" id="j2xml">lib_eshiol_j2xml-20.4.344.zip</folder>
-    <folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc-3.1.1.22.zip</folder>
+    <folder type="library" id="core">lib_eshiol_core-20.4.37.zip</folder>
+    <folder type="library" id="j2xml">lib_eshiol_j2xml-20.4.346.zip</folder>
+    <folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc-4.4.1.23.zip</folder>
     <folder type="component" id="j2xml">com_j2xml-3.7.205.zip</folder>
-    <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.7.47.zip</folder>
+    <folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.7.48.zip</folder>
     <folder type="file" id="j2xml">cli_j2xml-3.7.22.zip</folder>
   </files>
   <languages folder="language">

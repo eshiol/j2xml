@@ -1,7 +1,7 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	plg_system_j2xml
+ * @package		Joomla.Plugins
+ * @subpackage	System.J2xml
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		http://www.eshiol.it
@@ -12,9 +12,7 @@
  * is derivative of works licensed under the GNU General Public License
  * or other free or open source software licenses.
  */
-
-// no direct access
-defined('_JEXEC') or die('Restricted access.');
+defined('_JEXEC') or die();
 
 jimport('eshiol.core.send');
 jimport('eshiol.core.standard2');
@@ -24,7 +22,7 @@ jimport('eshiol.core.standard2');
  * @version __DEPLOY_VERSION__
  * @since 1.5.2
  */
-class plgSystemJ2XML extends JPlugin
+class plgSystemJ2xml extends JPlugin
 {
 
 	/**
@@ -147,16 +145,33 @@ class plgSystemJ2XML extends JPlugin
 			{
 				$control = substr($option, 4);
 			}
-			$toolbar->appendButton('Standard2', 'download', 'PLG_SYSTEM_J2XML_BUTTON_EXPORT', "j2xml.{$control}.export", true);
-			$doc = JFactory::getDocument();
-			$doc->addScript("../media/lib_eshiol_core/js/encryption.js");
-			$doc->addScript("../media/lib_eshiol_core/js/core.js");
-			$websites = self::getWebsites();
-			if ($n = count($websites))
+			
+			// Backward Joomla! 2.5
+			if (version_compare(JPlatform::RELEASE, '12', 'ge'))
 			{
-				for ($i = 0; $i < $n; $i ++)
-					$websites[$i]->url = "index.php?option=com_j2xml&task={$control}.send&w_id=" . $websites[$i]->id;
-				$toolbar->appendButton('Send', 'out', 'PLG_SYSTEM_J2XML_BUTTON_SEND', $websites, true);
+				$toolbar->appendButton('Standard2', 'download', 'PLG_SYSTEM_J2XML_BUTTON_EXPORT', "j2xml.{$control}.export", true);
+				$websites = self::getWebsites();
+				if ($n = count($websites))
+				{
+					for ($i = 0; $i < $n; $i ++)
+					{
+						$websites[$i]->url = "index.php?option=com_j2xml&task={$control}.send&w_id=" . $websites[$i]->id;
+					}
+					$toolbar->appendButton('Send', 'out', 'PLG_SYSTEM_J2XML_BUTTON_SEND', $websites, true);
+				}
+			}
+			else
+			{
+				$doc = JFactory::getDocument();
+				$toolbar->prependButton('Separator', 'divider');
+				$websites = self::getWebsites();
+				if (count($websites))
+				{
+					$doc->addStyleDeclaration(".icon-32-j2xml_send{background:url(../media/plg_system_j2xml/images/icon-32-send.png) no-repeat;}");
+					$toolbar->prependButton('Send', 'j2xml_send', 'PLG_SYSTEM_J2XML_BUTTON_SEND', "j2xml.{$control}.send", 'websites');
+				}
+				$doc->addStyleDeclaration(".icon-32-j2xml_export{background:url(../media/plg_system_j2xml/images/icon-32-export.png) no-repeat;}");
+				$toolbar->prependButton('Standard2', 'j2xml_export', 'PLG_SYSTEM_J2XML_BUTTON_EXPORT', "j2xml.{$control}.export");
 			}
 		}
 
