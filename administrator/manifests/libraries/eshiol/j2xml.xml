@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.9" type="library" method="upgrade">
   <name>j2xml</name>
-  <libraryname>eshiol/j2xml</libraryname>
+  <libraryname>eshiol/J2xml</libraryname>
   <creationDate>April 2020</creationDate>
   <author>Helios Ciancio</author>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright><![CDATA[(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>GNU/GPL v3</license>
-  <version>20.4.344</version>
+  <version>20.4.346</version>
   <description>LIB_J2XML_XML_DESCRIPTION</description>
   <scriptfile>script.php</scriptfile>
   <packagerurl>https://www.eshiol.it</packagerurl>
   <files>
+    <filename>classmap.php</filename>
     <filename>Exporter.php</filename>
     <filename>Importer.php</filename>
     <filename>Messages.php</filename>

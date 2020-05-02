@@ -8,7 +8,7 @@
   <authorUrl>www.eshiol.it</authorUrl>
   <copyright><![CDATA[(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>GNU/GPL v3</license>
-  <version>20.4.36</version>
+  <version>20.4.37</version>
   <description>LIB_ESHIOL_XML_DESCRIPTION</description>
   <packagerurl>http://www.eshiol.it</packagerurl>
   <files>
@@ -23,6 +23,7 @@
     <language tag="en-GB">en-GB/en-GB.lib_eshiol.sys.ini</language>
   </languages>
   <media destination="lib_eshiol_core" folder="media">
+    <folder>images</folder>
     <folder>js</folder>
   </media>
 </extension>

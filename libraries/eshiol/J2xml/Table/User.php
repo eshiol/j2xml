@@ -347,6 +347,11 @@ class User extends Table
 		{
 			$data['lastvisitDate'] = $db->getNullDate();
 		}
+		
+		if (empty($data['group']))
+		{
+			$data['group'] = 2;
+		}
 	}
 
 	/**

@@ -26,7 +26,7 @@ use Joomla\CMS\Component\ComponentHelper;
 class Table extends \JTable
 {
 	/**
-	 * An array of key names to be excluded in the toXML function
+	 * An array of key names to be not exported
 	 *
 	 * @var array
 	 * @since 1.5.3.39
@@ -34,12 +34,20 @@ class Table extends \JTable
 	protected $_excluded = array();
 
 	/**
-	 * An array of key names to be exported as alias in the toXML function
+	 * An array of key names to be exported as alias
 	 *
 	 * @var array
 	 * @since 1.5.3.39
 	 */
 	protected $_aliases = array();
+
+	/**
+	 * An array of key names to be exported in json encoded format
+	 *
+	 * @var array
+	 * @since __DEPLOY_VERSION__
+	 */
+	protected $_jsonEncode = array();
 
 	/**
 	 *
