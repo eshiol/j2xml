@@ -1,18 +1,24 @@
------------------------ 3.7.205 Release [17-April-2020] -----------------------
+------------------------ 3.7.205 Release  [8-May-2020] ------------------------
 
 cli_j2xml-3.7.22
 
 lib_eshiol-20.4.37
+  # Joomla! 2.5 backward compatibility (build 37)
 
-lib_j2xml-20.4.344
-  + overwrite article if newer
+lib_j2xml-20.4.346
+  # set default user group to Registered (build 346)
+  # Joomla! 2.5 backward compatibility (build 345)
+  + overwrite article if newer (build 344)
 
-lib_phpxmlrpc-3.1.1.22
+lib_phpxmlrpc-4.4.1.23
+  # PHP XmlRpc 4.4.1 (build 23)
 
 com_j2xml-3.7.205
-  + overwrite article if newer
+  + overwrite article if newer (build 205)
 
-plg_system_j2xml-3.7.46
+plg_system_j2xml-3.7.48
+  # Joomla! 2.5 backward compatibility (build 48)
+  # PHP 5.3 compatibility (build 47)
 
 ---------------------- 3.7.204.1 Release [14-April-2020] ----------------------
 
