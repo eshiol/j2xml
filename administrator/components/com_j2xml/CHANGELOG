@@ -1,186 +1,24 @@
------------------------ 3.7.205 Release [17-April-2020] -----------------------
+<?php
+/**
+ * @package		J2XML
+ * @subpackage	com_j2xml
+ * @version		3.3
+ *
+ * @author		Helios Ciancio <info@eshiol.it>
+ * @link		http://www.eshiol.it
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * J2XML is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License or
+ * other free or open source software licenses.
+ */
+?>
 
-17-April-2020
-  + overwrite article if newer (205)
+------------------------ 3.3.154 Release  [8-May-2020] ------------------------
 
------------------------ 3.7.204 Release  [6-April-2020] -----------------------
-
-6-April-2020
-  # PHP 5.3 compatibility (build 204)
-
---------------------- 3.7.203 Release  [12-February-2020] ---------------------
-
-12-February-2020
-  # PHP 7.2 compatibility (build 203)
-
---------------------- 3.7.202 Release  [20-December-2019] ---------------------
-
-20-December-2019
-  # send (build 202)
-
---------------------- 3.7.201 Release [16-September-2019] ---------------------
-
-16-September-2019
-  # keep user id (build 201)
-
------------------------ 3.7.200 Release  [23-July-2019] -----------------------
-
-23-July-2019
-  # 1305 FUNCTION usergroups_getpath does not exist (build 200)
-
------------------------- 3.7.199 Release [8-July-2019] ------------------------
-
-8-July-2019
-  # featured (build 199)
-  # rating (build 199)
-
------------------------- 3.7.198 Release [20-May-2019] ------------------------
-
-5-June-2019
-  # 3rd party plugin (build 198)
-
-20-May-2019
-  # Import weblinks (build 197)
-
------------------------ 3.7.196 Release [15-April-2019] -----------------------
-
-15-April-2019
-  # Uncaught ReferenceError: Joomla is not defined (build 196)
-
-12-April-2019
-  # version check (build 195)
-  # sender LIB_J2XML_MSG_USER_SKIPPED (build 195)
-
------------------------ 3.7.194 Release  [1-March-2019] -----------------------
-
-1-March-2019
-  # xmlrpc gzip (build 194)
-
-20-February-2019
-  + J2XML Pro (build 193)
-
-13-February-2019
-  + view levels (build 192)
-  - backlink (build 192)
-  - clean (build 192)
-
---------------------- 3.7.191 Release  [11-February-2019] ---------------------
-
-11-February-2019
-  ^ import super users (build 191)
-  + import user notes (build 191)
-  + menus (build 190)
-  + modules (build 190)
-
---------------------- 3.7.189 Release  [10-February-2019] ---------------------
-
-10-February-2019 
-  ^ Joomla! 3+ compatibility (build 189)
-  - menus (build 189)
-  - modules (build 189)
-  ^ sender (build 188)
-
-28-January-2019
-  ^ log (build 187)
-  ^ sender (build 187)
-
-22-January-2019
-  ^ case sensitive class names (build 186)
-
----------------------- 3.7.185 Release [5-November-2018] ----------------------
-
-5-November-2018
-  $ user notes (build 185)
-
-16-August-2018
-  ^ j2xml library 18.8.310 (build 183)
-  + PostgresSQL compatibility (build 183) 
-
-14-August-2018
-  - XmlrpcLogger (build 182)
-
------------------------ 3.7.181 Release [6-August-2018] -----------------------
-
-6-August-2018
-  + minify.js (build 181)
-  # encoding (build 181)
-
---------------------- 3.7.179 Release [26-September-2017] ---------------------
-
-26-September-2017
-  # export (build 179)
-
-22-September-2017
-  # backward compatibility (build 178)
-
-15-September-2017
-  # upload file via URL (build 177)
-
-17-August-2017
-  ^ ajax disable by default (build 176)
-
-31-July-2017
-  ^ importer (build 175)
-
-20-June-2017
-  # minor bugs fix (build 174)
-
------------------------ 3.7.173 Release  [19-June-2017] -----------------------
-
-19-July-2017
-  + version compare (build 173)
-
-15-June-2017
-  + fields (build 172)
-
-26-April-2017
-  # minor bugs (build 171)
-  # JError deprecated (build 170)
-  # JRequest deprecated (build 169)
-
------------------------ 3.6.168 Release [25-April-2017] -----------------------
-
-25-April-2017
-  # upload file (build 168)
-
-3-March-2017
-  # cpanel.json (build 167)
-
-2-February-2017
-  # websites view (build 166)
-
-28-January-2017
-  + export modules (build 165)
-  + export menus (build 164)
-
-25-January-2017
-  + link source file (build 163)
-  + backlink (build 163)
-  + filename (build 163)
-
-13-January-2017
-  + export contacts (build 161)
-  + ajax (build 160)
-  - 2.5 compatibility (build 160)
-  + import Ajax (build 159, 162)
-  + PHP Console (build 158)
-  + OAuth2 (build 158)
-
----------------------- 3.6.157 Release [31-October-2016] ----------------------
-
-31-October-2016
-  ^ debug (build 157)
-  ^ utf8_encode (build 156)
-
----------------------- 3.3.155 Release [17-October-2016] ----------------------
-
-17-October-2016
-  ^ purify xml (build 155)
-
---------------------- 3.3.154 Release [19-September-2016] ---------------------
-
-19-September-2016
-  # messages (build 154)
+8-May-2020
+  ^ support libraries 20.04 (build 154)
 
 ------------------------ 3.3.153 Release [31-May-2016] ------------------------
 

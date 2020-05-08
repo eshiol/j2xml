@@ -1,101 +1,3 @@
-<?php
-/**
- * @package		J2XML
- * @subpackage	com_j2xml
- *
- * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
- * J2XML is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- */
-
-// no direct access
-defined('_JEXEC') or die();
-
-jimport('joomla.application.component.controller');
-
-jimport('eshiol.j2xml.Exporter');
-jimport('eshiol.j2xmlpro.Exporter');
-jimport('eshiol.j2xml.Sender');
-
-jimport('cms.response.json');
-
-/**
- * Content controller class.
- *
- * @version __DEPLOY_VERSION__
- * @since 3.2.135
- */
-class J2XMLControllerJson extends JControllerLegacy
-{
-
-	function __construct ($default = array())
-	{
-		parent::__construct();
-	}
-
-	public function display ($cachable = false, $urlparams = false)
-	{
-		$this->input->set('view', 'content');
-		parent::display($cachable, $urlparams);
-	}
-
-	function send ()
-	{
-		if (! JSession::checkToken('request'))
-		{
-			// Check for a valid token. If invalid, send a 403 with the error
-			// message.
-			JLog::add(new JLogEntry(JText::_('JINVALID_TOKEN'), JLog::WARNING, 'com_j2xml'));
-			echo new \JResponseJson();
-			return;
-		}
-
-		$cid = (array) $this->input->get('cid', array(
-				0
-		), 'array');
-		$sid = $this->input->get('w_id', null, 'int');
-
-		if (! $sid)
-			$sid = $this->input->get('j2xml_send_id', null, 'int');
-
-		if (! $sid)
-		{
-			JLog::add(new JLogEntry(JText::_('UNKNOWN_HOST'), JLog::WARNING, 'com_j2xml'));
-			echo new \JResponseJson();
-			return;
-		}
-
-		$params = JComponentHelper::getParams('com_j2xml');
-
-		$options = array();
-		$options['images'] = $params->get('export_images', '1');
-		$options['categories'] = 1;
-		$options['users'] = $params->get('export_users', '1');
-		$options['contacts'] = $params->get('export_contacts', '1');
-
-		if (class_exists('eshiol\J2xmlpro\Exporter'))
-		{
-			$exporter = new eshiol\J2xmlpro\Exporter();
-		}
-		else
-		{
-			$exporter = new eshiol\J2xml\Exporter();
-		}
-
-		$get_xml = strtolower(str_replace('J2XMLController', '', get_class($this)));
-		$exporter->$get_xml($cid, $xml, $options);
-
-		$options = array();
-		$options['debug'] = $params->get('debug', 0);
-		$options['gzip'] = $params->get('export_gzip', '0');
-
-		eshiol\J2xml\Sender::send($xml, $options, $sid);
-
-		echo new \JResponseJson();
-	}
-}
+<?php/** * @version		3.2.137 administrator/components/com_j2xml/controllers/json.php *  * @package		J2XML * @subpackage	com_j2xml * @since		3.2.135 *  * @author		Helios Ciancio <info@eshiol.it> * @link		http://www.eshiol.it * @copyright	Copyright (C) 2010-2015 Helios Ciancio. All Rights Reserved * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3 * J2XML is free software. This version may have been modified pursuant * to the GNU General Public License, and as distributed it includes or * is derivative of works licensed under the GNU General Public License or * other free or open source software licenses. */ // no direct accessdefined('_JEXEC') or die('Restricted access.');jimport('joomla.application.component.controller');jimport('eshiol.j2xml.exporter');jimport('eshiol.j2xml.sender');
+if (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge'))	jimport('cms.response.json');else	require_once(JPATH_ADMINISTRATOR.DS.'components'.DS.'com_languages'.DS.'helpers'.DS.'jsonresponse.php');/** * Content controller class. */class J2XMLControllerJson extends JControllerAbstract{				function __construct($default = array())	{		parent::__construct();	}	public function display($cachable = false, $urlparams = false)	{		JRequest::setVar('view', 'content');		parent::display($cachable, $urlparams);	}		function send()	{		if (!JSession::checkToken('request'))		{			// Check for a valid token. If invalid, send a 403 with the error message.			JError::raiseWarning(403, JText::_('JINVALID_TOKEN'));			echo (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge')) ? new JResponseJson() : new JJsonResponse();			return;		}		$cid = JRequest::getVar('cid', array(0), null, 'array');		$sid = JRequest::getVar('w_id', null, null, 'int');						if (!$sid)			$sid = JRequest::getVar('j2xml_send_id', null, null, 'int');				if (!$sid)		{			JError::raiseWarning(1, JText::_('UNKNOWN_HOST'));
+			echo (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge')) ? new JResponseJson() : new JJsonResponse();			return;				}								$params = JComponentHelper::getParams('com_j2xml');				$options = array();		$options['images'] = $params->get('export_images', '1');		$options['categories'] = 1;		$options['users'] = $params->get('export_users', '1');		$options['contacts'] = $params->get('export_contacts', '1');				$j2xml = new J2XMLExporter();		$export = strtolower(str_replace('J2XMLController', '', get_class($this)));			$j2xml->$export($cid, $xml, $options);				$options = array();		$options['debug'] = $params->get('debug', 0);		$options['gzip'] = $params->get('export_gzip', '0');				J2XMLSender::send($xml, $options, $sid);				echo (class_exists('JPlatform') && version_compare(JPlatform::RELEASE, '12', 'ge')) ? new JResponseJson() : new JJsonResponse();	}}?>
