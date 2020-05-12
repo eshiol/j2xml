@@ -2,12 +2,12 @@
 <extension version="3.0" type="plugin" group="system" method="upgrade">
   <name>plg_system_j2xml</name>
   <author>Helios Ciancio</author>
-  <creationDate>April 2020</creationDate>
+  <creationDate>May 2020</creationDate>
   <copyright><![CDATA[(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
   <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
   <authorEmail>info@eshiol.it</authorEmail>
   <authorUrl>www.eshiol.it</authorUrl>
-  <version>3.7.48</version>
+  <version>3.7.49</version>
   <description>PLG_SYSTEM_J2XML_XML_DESCRIPTION</description>
   <scriptfile>enable.php</scriptfile>
   <files>

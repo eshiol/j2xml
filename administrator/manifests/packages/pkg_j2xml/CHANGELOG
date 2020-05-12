@@ -1,3 +1,37 @@
+------------------------ 3.7.207 Release [12-May-2020] ------------------------
+
+cli_j2xml-3.7.23
+
+lib_eshiol-20.4.37
+
+lib_j2xml-20.5.348
+  # Ajax (build 348)
+
+lib_phpxmlrpc-4.4.1.23
+
+com_j2xml-3.7.207
+  # Ajax (build 207)
+
+plg_system_j2xml-3.7.49
+
+------------------------ 3.7.206 Release [11-May-2020] ------------------------
+
+cli_j2xml-3.7.23
+  # Class 'eshiol\J2xml\Exporter' not found (build 23)
+
+lib_eshiol-20.4.37
+
+lib_j2xml-20.4.347
+  # Class 'eshiol\J2xml\Exporter' not found (build 347)
+
+lib_phpxmlrpc-4.4.1.23
+
+com_j2xml-3.7.206
+  # Class 'eshiol\J2xml\Exporter' not found (build 23)
+
+plg_system_j2xml-3.7.49
+  # J2xml Pro (build 49)
+
 ------------------------ 3.7.205 Release  [8-May-2020] ------------------------
 
 cli_j2xml-3.7.22
