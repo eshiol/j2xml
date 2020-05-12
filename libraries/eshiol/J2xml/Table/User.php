@@ -19,10 +19,10 @@ use eshiol\J2xml\Table\Contact;
 use eshiol\J2xml\Table\Field;
 use eshiol\J2xml\Table\Table;
 use eshiol\J2xml\Table\Usernote;
-\JLoader::import('eshiol.j2xml.Table.Contact');
-\JLoader::import('eshiol.j2xml.Table.Field');
-\JLoader::import('eshiol.j2xml.Table.Table');
-\JLoader::import('eshiol.j2xml.Table.Usernote');
+\JLoader::import('eshiol.J2xml.Table.Contact');
+\JLoader::import('eshiol.J2xml.Table.Field');
+\JLoader::import('eshiol.J2xml.Table.Table');
+\JLoader::import('eshiol.J2xml.Table.Usernote');
 \JLoader::register('UsersModelUser', JPATH_ADMINISTRATOR . '/components/com_users/models/user.php');
 
 /**

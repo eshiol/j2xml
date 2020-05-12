@@ -16,7 +16,7 @@ namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
 use eshiol\J2xml\Table\Table;
-\JLoader::import('eshiol.j2xml.Table.Table');
+\JLoader::import('eshiol.J2xml.Table.Table');
 
 /**
  * Viewlevel Table

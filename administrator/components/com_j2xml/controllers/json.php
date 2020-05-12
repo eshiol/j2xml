@@ -18,9 +18,9 @@ defined('_JEXEC') or die();
 
 jimport('joomla.application.component.controller');
 
-jimport('eshiol.j2xml.Exporter');
-jimport('eshiol.j2xmlpro.Exporter');
-jimport('eshiol.j2xml.Sender');
+jimport('eshiol.J2xml.Exporter');
+jimport('eshiol.J2xmlpro.Exporter');
+jimport('eshiol.J2xml.Sender');
 
 jimport('cms.response.json');
 

@@ -16,8 +16,8 @@
 // no direct access
 defined('_JEXEC') or die();
 
-JLoader::import('eshiol.j2xml.Importer');
-JLoader::import('eshiol.j2xmlpro.Importer');
+JLoader::import('eshiol.J2xml.Importer');
+JLoader::import('eshiol.J2xmlpro.Importer');
 
 require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 

@@ -22,13 +22,13 @@ use eshiol\J2xml\Table\Table;
 use eshiol\J2xml\Table\Tag;
 use eshiol\J2xml\Table\User;
 use eshiol\J2xml\Table\Viewlevel;
-\JLoader::import('eshiol.j2xml.Table.Category');
-\JLoader::import('eshiol.j2xml.Table.Field');
-\JLoader::import('eshiol.j2xml.Table.Image');
-\JLoader::import('eshiol.j2xml.Table.Table');
-\JLoader::import('eshiol.j2xml.Table.Tag');
-\JLoader::import('eshiol.j2xml.Table.User');
-\JLoader::import('eshiol.j2xml.Table.Viewlevel');
+\JLoader::import('eshiol.J2xml.Table.Category');
+\JLoader::import('eshiol.J2xml.Table.Field');
+\JLoader::import('eshiol.J2xml.Table.Image');
+\JLoader::import('eshiol.J2xml.Table.Table');
+\JLoader::import('eshiol.J2xml.Table.Tag');
+\JLoader::import('eshiol.J2xml.Table.User');
+\JLoader::import('eshiol.J2xml.Table.Viewlevel');
 
 jimport('joomla.application.router');
 

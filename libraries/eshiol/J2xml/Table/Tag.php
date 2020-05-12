@@ -19,9 +19,9 @@ use eshiol\J2xml\Table\Image;
 use eshiol\J2xml\Table\Table;
 use eshiol\J2xml\Table\User;
 use Joomla\Component\Tags\Administrator\Table\TagTable;
-\JLoader::import('eshiol.j2xml.Table.Image');
-\JLoader::import('eshiol.j2xml.Table.Table');
-\JLoader::import('eshiol.j2xml.Table.User');
+\JLoader::import('eshiol.J2xml.Table.Image');
+\JLoader::import('eshiol.J2xml.Table.Table');
+\JLoader::import('eshiol.J2xml.Table.User');
 
 /**
  * Tag table

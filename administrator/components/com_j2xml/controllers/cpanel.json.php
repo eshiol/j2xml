@@ -18,8 +18,8 @@ defined('_JEXEC') or die();
 
 jimport('joomla.application.component.controller');
 
-jimport('eshiol.j2xml.Importer');
-jimport('eshiol.j2xmlpro.Importer');
+jimport('eshiol.J2xml.Importer');
+jimport('eshiol.J2xmlpro.Importer');
 jimport('cms.response.json');
 
 require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';

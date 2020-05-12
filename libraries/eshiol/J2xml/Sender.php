@@ -20,8 +20,8 @@ defined('_JEXEC') or die('Restricted access.');
 use eshiol\J2xml\Messages;
 use eshiol\J2xml\Version;
 jimport('joomla.log.log');
-jimport('eshiol.j2xml.Messages');
-jimport('eshiol.j2xml.Version');
+jimport('eshiol.J2xml.Messages');
+jimport('eshiol.J2xml.Version');
 
 include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpc.inc';
 include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpcs.inc';

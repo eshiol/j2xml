@@ -78,11 +78,11 @@ $lang->load('com_j2xml', JPATH_ADMINISTRATOR, null, false, false)
 	// Fallback to the j2xmlimporter file in the default language
 	|| $lang->load('com_j2xml', JPATH_ADMINISTRATOR, null, true);
 
-jimport('eshiol.j2xml.Importer');
-jimport('eshiol.j2xmlpro.Importer');
-jimport('eshiol.j2xml.Version');
-jimport('eshiol.j2xmlpro.Version');
-jimport('eshiol.j2xml.messages');
+jimport('eshiol.J2xml.Importer');
+jimport('eshiol.J2xmlpro.Importer');
+jimport('eshiol.J2xml.Version');
+jimport('eshiol.J2xmlpro.Version');
+jimport('eshiol.J2xml.messages');
 
 /**
  * @package  Joomla.CLI

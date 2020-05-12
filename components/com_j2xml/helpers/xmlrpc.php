@@ -18,11 +18,11 @@ defined('_JEXEC') or die('Restricted access.');
 
 use eshiol\J2xml\Messages;
 
-jimport('eshiol.j2xml.Importer');
-jimport('eshiol.j2xmlpro.Importer');
-jimport('eshiol.j2xml.Messages');
-jimport('eshiol.j2xml.Version');
-jimport('eshiol.j2xmlpro.Version');
+jimport('eshiol.J2xml.Importer');
+jimport('eshiol.J2xmlpro.Importer');
+jimport('eshiol.J2xml.Messages');
+jimport('eshiol.J2xml.Version');
+jimport('eshiol.J2xmlpro.Version');
 
 // Import JTableCategory
 JLoader::register('JTableCategory', JPATH_PLATFORM . '/joomla/database/table/category.php');

@@ -19,10 +19,10 @@ use eshiol\J2xml\Table\Category;
 use eshiol\J2xml\Table\Image;
 use eshiol\J2xml\Table\Table;
 use eshiol\J2xml\Table\User;
-\JLoader::import('eshiol.j2xml.Table.Category');
-\JLoader::import('eshiol.j2xml.Table.Image');
-\JLoader::import('eshiol.j2xml.Table.Table');
-\JLoader::import('eshiol.j2xml.Table.User');
+\JLoader::import('eshiol.J2xml.Table.Category');
+\JLoader::import('eshiol.J2xml.Table.Image');
+\JLoader::import('eshiol.J2xml.Table.Table');
+\JLoader::import('eshiol.J2xml.Table.User');
 \JLoader::register('UsersTableNote', JPATH_ADMINISTRATOR . '/components/com_users/tables/note.php');
 
 /**

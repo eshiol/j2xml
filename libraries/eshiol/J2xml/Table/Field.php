@@ -19,9 +19,9 @@ use eshiol\J2xml\Table\Category;
 use eshiol\J2xml\Table\Fieldgroup;
 use eshiol\J2xml\Table\Table;
 // use Joomla\Component\Fields\Administrator\Table\FieldTable;
-\JLoader::import('eshiol.j2xml.Table.Category');
-\JLoader::import('eshiol.j2xml.Table.Fieldgroup');
-\JLoader::import('eshiol.j2xml.Table.Table');
+\JLoader::import('eshiol.J2xml.Table.Category');
+\JLoader::import('eshiol.J2xml.Table.Fieldgroup');
+\JLoader::import('eshiol.J2xml.Table.Table');
 
 /**
  * Field table

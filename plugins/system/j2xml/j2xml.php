@@ -119,11 +119,11 @@ class plgSystemJ2xml extends JPlugin
 		$version = new \JVersion();
 		if ($version->isCompatible('3.9'))
 		{
-			$query->where($db->quoteName('element') . ' = ' . $db->quote('eshiol/j2xmlpro'));
+			$query->where($db->quoteName('element') . ' = ' . $db->quote('eshiol/J2xmlpro'));
 		}
 		else
 		{
-			$query->where($db->quoteName('element') . ' = ' . $db->quote('j2xmlpro'));
+			$query->where($db->quoteName('element') . ' = ' . $db->quote('J2xmlpro'));
 		}
 		$pro = (bool) $db->setQuery($query)->loadResult();
 

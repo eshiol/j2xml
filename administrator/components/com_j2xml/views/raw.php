@@ -16,8 +16,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
-jimport('eshiol.j2xmlpro.Exporter');
-jimport('eshiol.j2xml.Exporter');
+jimport('eshiol.J2xmlpro.Exporter');
+jimport('eshiol.J2xml.Exporter');
 
 /**
  * J2XML Component View
