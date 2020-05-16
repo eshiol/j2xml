@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.9" type="library" method="upgrade">
-  <name>XML-RPC for PHP</name>
-  <libraryname>eshiol/phpxmlrpc</libraryname>
-  <creationDate>April 2020</creationDate>
-  <author>Helios Ciancio</author>
-  <authorEmail>info (at) eshiol (dot) it</authorEmail>
-  <authorUrl>www.eshiol.it</authorUrl>
-  <copyright><![CDATA[Copyright (c) 1999,2000,2001 Edd Dumbill, Useful Information Company
-  <br/>(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
-  <license>GNU/GPL v3</license>
-  <version>4.4.1.23</version>
-  <description>A php library for building xml-rpc clients and servers.
-	</description>
-  <files>
-    <folder>lib</folder>
-    <folder>Log</folder>
-    <folder>src</folder>
-  </files>
+	<name>XML-RPC for PHP</name>
+	<libraryname>eshiol/phpxmlrpc</libraryname>
+	<description>A php library for building xml-rpc clients and servers.</description>
+	<author>Helios Ciancio</author>
+	<authorEmail>info (at) eshiol (dot) it</authorEmail>
+	<authorUrl>www.eshiol.it</authorUrl>
+	<creationDate>May 2019</creationDate>
+	<copyright><![CDATA[(C) 2016 - 2020 Helios Ciancio. All Rights Reserved.
+	<br/>(C) 1999,2000,2001 Edd Dumbill, Useful Information Company.]]></copyright>
+	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
+	<version>4.4.1.24</version>
+	<files>
+		<folder>Log</folder>
+		<folder>lib</folder>
+		<folder>src</folder>
+	</files>
+	<media destination="lib_eshiol_phpxmlrpc" folder="media">
+		<folder>js</folder>
+	</media>
 </extension>

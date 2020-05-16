@@ -27,7 +27,6 @@ jimport('joomla.log.logger');
  *
  * This class is designed to output logs as xmlrpc message
  *
- * @version __DEPLOY_VERSION__
  * @since 4.3.1
  */
 class XmlrpcLogger extends \JLogLogger
@@ -36,8 +35,6 @@ class XmlrpcLogger extends \JLogLogger
 	 * Constructor.
 	 *
 	 * @param   array  &$options  Log object options.
-	 *
-	 * @since   18.8.32
 	 */
 	public function __construct(array &$options)
 	{
@@ -58,8 +55,6 @@ class XmlrpcLogger extends \JLogLogger
 	 *        	The log entry object to add to the log.
 	 *
 	 * @return void
-	 *
-	 * @since 13.8
 	 */
 	public function addEntry (\JLogEntry $entry)
 	{
