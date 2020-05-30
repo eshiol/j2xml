@@ -45,17 +45,6 @@ class eshiolj2xmlInstallerScript
 	 */
 	public function uninstall($parent)
 	{
-		if ($type == 'discover_install') return;
-
-		$db = \JFactory::getDbo();
-		try
-		{
-			$db->setQuery("DROP TABLE #__j2xml_usergroups")->execute();
-		}
-		catch (Exception $e)
-		{
-			// If the query fails we will go on. It just means the table to be dropped does not exist.
-		}
 	}
 
 	/**
