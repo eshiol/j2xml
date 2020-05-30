@@ -127,74 +127,64 @@ class Com_J2xmlInstallerScript
 	function postflight($type, $parent)
 	{
 		if ($type == 'discover_install') return;
-
+		
 		$version = new \JVersion();
 		if ($version->isCompatible('3.9')) return;
-
-		$db = \JFactory::getDbo();
+		
+		$db		 = \JFactory::getDbo();
 		$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
+		try
+		{
+			if ($serverType == 'postgresql')
+			{
+				$query = "CREATE TABLE IF NOT EXISTS \"#__j2xml_usergroups\" (
+					\"id\" serial NOT NULL,
+					\"parent_id\" bigint DEFAULT 0 NOT NULL,
+					\"title\" varchar(100) DEFAULT '' NOT NULL,
+					PRIMARY KEY  (\"id\")
+					);";
+				$db->setQuery($query)->execute();
+			}
+			else
+			{
+				$query = "CREATE TABLE IF NOT EXISTS `#__j2xml_usergroups` (
+					`id` int(10) unsigned NOT NULL,
+					`parent_id` int(10) unsigned NOT NULL DEFAULT '0',
+					`title` varchar(100) NOT NULL DEFAULT '',
+					PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;";
+				$db->setQuery($query)->execute();
+			}
+			$db->setQuery("TRUNCATE TABLE #__j2xml_usergroups")->execute();
+			$db->setQuery("INSERT INTO #__j2xml_usergroups " .
+					"SELECT id, parent_id, CONCAT('[\"',REPLACE(`title`,'\"','\\\"'),'\"]') " .
+					"FROM #__usergroups;")->execute();
+			do {
+				$db->setQuery("UPDATE `#__j2xml_usergroups` j " .
+						"INNER JOIN `#__usergroups` g " .
+						"ON j.parent_id = g.id " .
+						"SET j.parent_id = g.parent_id," .
+						"j.title = CONCAT('[\"',REPLACE(`g`.`title`,'\"','\\\"'), '\",', SUBSTR(`j`.`title`,2));")->execute();
+				$n = $db->setQuery("SELECT COUNT(*) " .
+						"FROM #__j2xml_usergroups " .
+						"WHERE parent_id > 0")->loadResult();
+			} while ($n > 0);
+		}
+		catch (Exception $e)
+		{
+			// If the query fails we will go on
+		}
+		
 		$queries = array();
 		if ($serverType === 'mysql')
 		{
 			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
-			$queries[] = preg_replace('!\s+!', ' ',<<<EOL
-CREATE PROCEDURE usergroups_getpath(IN id INT, OUT path TEXT)
-BEGIN
-    DECLARE temp_title VARCHAR(100);
-    DECLARE temp_path TEXT;
-    DECLARE temp_parent INT;
-	SET max_sp_recursion_depth = 255;
-
-	SELECT a.title, a.parent_id FROM #__usergroups a WHERE a.id=id INTO temp_title, temp_parent;
-
-	IF temp_parent = 0
-    THEN
-       SET path = temp_title;
-    ELSE
-        CALL usergroups_getpath(temp_parent, temp_path);
-        SET path = CONCAT(temp_path, '","', temp_title);
-    END IF;
-END;
-EOL
-					);
 			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath;";
-			$queries[] = preg_replace('!\s+!', ' ',<<<EOL
-CREATE FUNCTION usergroups_getpath(id INT) RETURNS TEXT DETERMINISTIC
-BEGIN
-    DECLARE res TEXT;
-    CALL usergroups_getpath(id, res);
-    RETURN CONCAT('["', res, '"]');
-END;
-EOL
-					);
 		}
 		elseif ($serverType === 'postgresql')
 		{
 			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath(INT);";
-			$queries[] = <<<EOL
-CREATE OR REPLACE FUNCTION usergroups_getpath(id INT, level INT default 0) RETURNS TEXT
-AS $$
-DECLARE temp_title VARCHAR(100);
-	temp_path TEXT;
-	temp_parent INT;
-BEGIN
-	SELECT a.title, a.parent_id FROM #__usergroups a WHERE a.id = $1 INTO temp_title, temp_parent;
-
-	IF temp_parent = 0
-	THEN
-		temp_path := temp_title;
-	ELSE
-		temp_path := CONCAT(usergroups_getpath(temp_parent, $2 + 1), '","', temp_title);
-	END IF;
-	IF $2 = 0
-	THEN
-		temp_path = CONCAT('["', temp_path, '"]');
-	END IF;
-	RETURN temp_path;
-END;
-$$ LANGUAGE plpgsql;
-EOL;
 		}
 
 		if (count($queries))
