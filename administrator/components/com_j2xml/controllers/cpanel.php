@@ -202,31 +202,32 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			$version = explode(".", $j2xmlVersion);
 			$j2xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
 					if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500"))
-			{							$iparams = new \JRegistry();
+			{
+				$iparams = new \JRegistry();
 				$iparams->set('filename', $filename);
 				$iparams->set('version', (string) $xml['version']);
 
-				$iparams->set('keep_user_id', $params->get('keep_user_id', 0));
 				$iparams->set('categories', $params->get('import_categories', 1));
 				$iparams->set('contacts', $params->get('import_contacts', 1));
+				$iparams->set('content', $params->get('import_content', 1));
 				$iparams->set('fields', $params->get('import_fields', 1));
 				$iparams->set('images', $params->get('import_images', 1));
-				$iparams->set('keep_id', $params->get('keep_id', 0));
-				$iparams->set('tags', $params->get('import_tags', 1));
-				$iparams->set('users', $params->get('import_users', 1));
-				$iparams->set('superusers', $params->get('import_superusers', 0));
-				$iparams->set('usernotes', $params->get('import_usernotes', 1));
-				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
-				$iparams->set('content', $params->get('import_content'));
-				$iparams->set('linksourcefile', $params->get('linksourcefile'));
-				$iparams->set('weblinks', $params->get('import_weblinks'));
-				$iparams->set('keep_frontpage', $params->get('keep_frontpage'));
-				$iparams->set('keep_rating', $params->get('keep_rating'));
-
 				if ($params->get('keep_category', 1) == 2)
 				{
 					$iparams->set('content_category_forceto', $params->get('category'));
 				}
+				$iparams->set('keep_frontpage', $params->get('keep_frontpage'));
+				$iparams->set('keep_id', $params->get('keep_id', 0));
+				$iparams->set('keep_rating', $params->get('keep_rating'));
+				$iparams->set('keep_user_id', $params->get('keep_user_id', 0));
+				$iparams->set('linksourcefile', $params->get('linksourcefile'));
+				$iparams->set('superusers', $params->get('import_superusers', 0));
+				$iparams->set('tags', $params->get('import_tags', 1));
+				$iparams->set('usernotes', $params->get('import_usernotes', 1));
+				$iparams->set('users', $params->get('import_users', 1));
+				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
+				$iparams->set('weblinks', $params->get('import_weblinks', 0));
+
 				$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 				// set_time_limit(120);
 
