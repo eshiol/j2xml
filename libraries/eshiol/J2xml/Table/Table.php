@@ -1,7 +1,7 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
@@ -9,8 +9,8 @@
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
@@ -20,7 +20,6 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version __DEPLOY_VERSION__
  * @since 1.5.3.39
  */
 class Table extends \JTable
@@ -45,7 +44,7 @@ class Table extends \JTable
 	 * An array of key names to be exported in json encoded format
 	 *
 	 * @var array
-	 * @since __DEPLOY_VERSION__
+	 * @since 13.6.116
 	 */
 	protected $_jsonEncode = array();
 
@@ -63,15 +62,17 @@ class Table extends \JTable
 	 * for a particular database table.
 	 *
 	 * @param
-	 *        	string Name of the table to model.
+	 *			string Name of the table to model.
 	 * @param
-	 *        	string Name of the primary key field in the table.
+	 *			string Name of the primary key field in the table.
 	 * @param
-	 *        	object JDatabase connector object.
+	 *			object JDatabase connector object.
 	 * @since 1.0
 	 */
 	function __construct ($table, $key, &$db)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		parent::__construct($table, $key, $db);
 
 		$this->_excluded = array(
@@ -91,11 +92,11 @@ class Table extends \JTable
 	 * to the JTable instance properties.
 	 *
 	 * @param mixed $keys
-	 *        	An optional primary key value to load the row by, or an array
-	 *        	of fields to match. If not
-	 *        	set the instance property value is used.
+	 *			An optional primary key value to load the row by, or an array
+	 *			of fields to match. If not
+	 *			set the instance property value is used.
 	 * @param boolean $reset
-	 *        	True to reset the default values before loading the new row.
+	 *			True to reset the default values before loading the new row.
 	 *
 	 * @return boolean True if successful. False if row not found.
 	 *
@@ -107,6 +108,8 @@ class Table extends \JTable
 	 */
 	public function load ($keys = null, $reset = true)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if ($ret = parent::load($keys, $reset))
 		{
 			if (isset($this->created_by))
@@ -179,13 +182,15 @@ class Table extends \JTable
 	 * Export item list to xml
 	 *
 	 * @param
-	 *        	bool tag use the main class tag
+	 *			bool tag use the main class tag
 	 * @access public
 	 * @param
-	 *        	boolean Map foreign keys to text values
+	 *			boolean Map foreign keys to text values
 	 */
 	protected function _serialize ($tag = true)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		// Initialise variables.
 		$xml = array();
 
@@ -223,25 +228,7 @@ class Table extends \JTable
 
 		foreach ($this->_aliases as $k => $query)
 		{
-			try
-			{
-				$v = $this->_db->setQuery($query)->loadObjectList();
-			}
-			catch (\Exception $ex)
-			{
-				if ($ex->getCode() != 1305)
-				{
-					throw $ex;
-				}
-				elseif (self::fixDB())
-				{
-					$v = $this->_db->setQuery($query)->loadObjectList();
-				}
-				else
-				{
-					throw $ex;
-				}
-			}
+			$v = $this->_db->setQuery($query)->loadObjectList();
 
 			if (count($v) == 1)
 			{
@@ -276,6 +263,8 @@ class Table extends \JTable
 
 	protected function _setValue ($k, $v)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$kOpen = $k;
 		/**
 		if (! is_null($attributes))
@@ -351,6 +340,8 @@ class Table extends \JTable
 	 */
 	function toXML ($mapKeysToText = false)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		return $this->_serialize();
 	}
 
@@ -358,11 +349,11 @@ class Table extends \JTable
 	 * Method to convert the object to be imported into an array
 	 *
 	 * @param \SimpleXMLElement $record
-	 *        	the object to be imported
+	 *			the object to be imported
 	 * @param array $data
-	 *        	the array to be imported
+	 *			the array to be imported
 	 * @param \JRegistry $params
-	 *        	the parameters of the conversation
+	 *			the parameters of the conversation
 	 *
 	 * @throws
 	 * @return void
@@ -370,6 +361,8 @@ class Table extends \JTable
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$db = \JFactory::getDbo();
 		$nullDate = $db->getNullDate();
 		$userid = \JFactory::getUser()->id;
@@ -496,14 +489,16 @@ class Table extends \JTable
 	 * Get the article id from the article path
 	 *
 	 * @param string $article
-	 *        	the path of the article to search for
+	 *			the path of the article to search for
 	 * @param int $defaultArticleId
-	 *        	the id to return if the article doesn't exist
+	 *			the id to return if the article doesn't exist
 	 *
 	 * @return int the id of the article if it exists or the default article id
 	 */
 	public static function getArticleId ($article, $defaultArticleId = 0)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if (is_numeric($article))
 		{
 			$articleId = $article;
@@ -533,14 +528,16 @@ class Table extends \JTable
 	 * Get the user id from the username
 	 *
 	 * @param string $username
-	 *        	the username of the user to search for
+	 *			the username of the user to search for
 	 * @param int $defaultUserId
-	 *        	the id to return if the user doesn't exist
+	 *			the id to return if the user doesn't exist
 	 *
 	 * @return int the id of the user if it exists or the default user id
 	 */
 	public static function getUserId ($username, $defaultUserId = null)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$db = \JFactory::getDBO();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('id'))
@@ -564,6 +561,8 @@ class Table extends \JTable
 	 */
 	public static function getUsergroupId ($usergroup, $import = true)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if (empty($usergroup))
 		{
 			$usergroupId = \JComponentHelper::getParams('com_users')->get('new_usertype');
@@ -573,41 +572,10 @@ class Table extends \JTable
 			$db = \JFactory::getDBO();
 			$query = $db->getQuery(true)
 				->select($db->quoteName('id'))
-				->from($db->quoteName('#__usergroups'))
-				->where('usergroups_getpath(' . $db->quoteName('id') . ') = ' . $db->quote($usergroup));
+				->from($db->quoteName('#__j2xml_usergroups', 'g'))
+				->where($db->quoteName('title') . ' = ' . $db->quote($usergroup));
 
-			try
-			{
-				$usergroupId = $db->setQuery($query)->loadResult();
-			}
-			catch (\Exception $ex)
-			{
-				if ($ex->getCode() != 1305)
-				{
-					throw $ex;
-				}
-				elseif (self::fixDB())
-				{
-					$usergroupId = $db->setQuery($query)->loadResult();
-				}
-				else
-				{
-					throw $ex;
-				}
-
-				if ($ex->getCode() != 1305)
-				{
-					throw $ex;
-				}
-				elseif (self::fixDB())
-				{
-					$usergroupId = $db->setQuery($query)->loadResult();
-				}
-				else
-				{
-					throw $ex;
-				}
-			}
+			$usergroupId = $db->setQuery($query)->loadResult();
 
 			if ($import && ! $usergroupId)
 			{
@@ -657,6 +625,8 @@ class Table extends \JTable
 
 	public static function getAccessId ($access)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if (is_numeric($access))
 		{
 			$accessId = $access;
@@ -682,15 +652,17 @@ class Table extends \JTable
 	 * Get the category id from the category path
 	 *
 	 * @param string $category
-	 *        	the path of the category to search for
+	 *			the path of the category to search for
 	 * @param int $defaultCategoryId
-	 *        	the id to return if the category doesn't exist
+	 *			the id to return if the category doesn't exist
 	 *
 	 * @return int the id of the category if it exists or the default category
-	 *         id
+	 *		 id
 	 */
 	public static function getCategoryId ($category, $extension, $defaultCategoryId = 0)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if (is_numeric($category))
 		{
 			$categoryId = $category;
@@ -717,15 +689,17 @@ class Table extends \JTable
 	 * get tag id from tag path
 	 *
 	 * @param string|array $tag
-	 *        	tag path
+	 *			tag path
 	 *
 	 * @return mixed An array with tag ids, a single id or false if an error
-	 *         occurs
+	 *		 occurs
 	 *
 	 * @since 14.8.240
 	 */
 	public static function getTagId ($tag)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$db = \JFactory::getDbo();
 
 		try
@@ -763,7 +737,7 @@ class Table extends \JTable
 	 * fix the datetime
 	 *
 	 * @param string $date
-	 *        	the datetime to be fixed
+	 *			the datetime to be fixed
 	 *
 	 * @return string the fixed datetime
 	 *
@@ -771,6 +745,8 @@ class Table extends \JTable
 	 */
 	protected static function fixDate ($date)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$d = new \JDate($date);
 		return (($date == '0000-00-00 00:00:00') || ($date == '1970-01-01 00:00:00')) ? \JFactory::getDbo()->getNullDate() : $d->toSQL(false);
 	}
@@ -785,6 +761,8 @@ class Table extends \JTable
 	 */
 	private static function xml2array ($xmlObject, $htmlEntityDecode = false, $out = null)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if (is_object($xmlObject))
 		{
 			if ($a = $xmlObject->attributes())
@@ -852,11 +830,11 @@ class Table extends \JTable
 	 * Import data
 	 *
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param \JRegistry $params
-	 *        	@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
-	 *        	overwrite if exists
-	 *        	@option string 'context'
+	 *			@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
+	 *			overwrite if exists
+	 *			@option string 'context'
 	 *
 	 * @throws
 	 * @return void
@@ -872,9 +850,9 @@ class Table extends \JTable
 	 * Export data
 	 *
 	 * @param int $id
-	 *        	the id of the item to be exported
+	 *			the id of the item to be exported
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param array $options
 	 *
 	 * @throws
@@ -891,19 +869,21 @@ class Table extends \JTable
 	 * Overloaded bind function.
 	 *
 	 * @param array $array
-	 *        	Named array.
+	 *			Named array.
 	 * @param mixed $ignore
-	 *        	An optional array or space separated list of properties to
-	 *        	ignore while binding.
+	 *			An optional array or space separated list of properties to
+	 *			ignore while binding.
 	 *
 	 * @return mixed Null if operation was satisfactory, otherwise returns an
-	 *         error
+	 *		 error
 	 *
 	 * @see Table::bind()
 	 * @since 19.2.327
 	 */
 	public function bind ($array, $ignore = '')
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if (isset($array['params']) && is_array($array['params']))
 		{
 			$registry = new \JRegistry($array['params']);
@@ -924,14 +904,16 @@ class Table extends \JTable
 	 * Get the menu id from the menu path
 	 *
 	 * @param string $menu
-	 *        	the path of the menu to search for
+	 *			the path of the menu to search for
 	 * @param int $defaultMenuId
-	 *        	the id to return if the menu doesn't exist
+	 *			the id to return if the menu doesn't exist
 	 *
 	 * @return int the id of the menu if it exists or the default menu id
 	 */
 	public static function getMenuId ($menu, $defaultMenuId = 0)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if (is_numeric($menu))
 		{
 			$menuId = $menu;
@@ -952,104 +934,5 @@ class Table extends \JTable
 		}
 
 		return $menuId;
-	}
-
-	/**
-	 *
-	 * Create usergroups_getpath if it does not exist
-	 *
-	 * @return boolean
-	 *
-	 * @since 19.7.335
-	 */
-	public static function fixDB()
-	{
-		$db = \JFactory::getDBO();
-
-		$queries = array();
-		$query = $db->getQuery(true);
-
-		$version = new \JVersion();
-		$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
-
-		if ($serverType === 'mysql')
-		{
-			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
-			$queries[] = preg_replace('!\s+!', ' ', <<<EOL
-CREATE PROCEDURE usergroups_getpath(IN id INT, OUT path TEXT)
-BEGIN
-    DECLARE temp_title VARCHAR(100);
-    DECLARE temp_path TEXT;
-    DECLARE temp_parent INT;
-	SET max_sp_recursion_depth = 255;
-
-	SELECT a.title, a.parent_id FROM #__usergroups a WHERE a.id=id INTO temp_title, temp_parent;
-
-	IF temp_parent = 0
-    THEN
-       SET path = temp_title;
-    ELSE
-        CALL usergroups_getpath(temp_parent, temp_path);
-        SET path = CONCAT(temp_path, '","', temp_title);
-    END IF;
-END;
-EOL
-);
-			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath;";
-			$queries[] = preg_replace('!\s+!', ' ', <<<EOL
-CREATE FUNCTION usergroups_getpath(id INT) RETURNS TEXT DETERMINISTIC
-BEGIN
-    DECLARE res TEXT;
-    CALL usergroups_getpath(id, res);
-    RETURN CONCAT('["', res, '"]');
-END;
-EOL
-);
-		}
-		elseif ($serverType === 'postgresql')
-		{
-			$queries[] = <<<EOL
-CREATE OR REPLACE FUNCTION usergroups_getpath(id INT, level INT default 0) RETURNS TEXT
-AS $$
-DECLARE temp_title VARCHAR(100);
-	temp_path TEXT;
-	temp_parent INT;
-BEGIN
-	SELECT a.title, a.parent_id FROM #__usergroups a WHERE a.id = $1 INTO temp_title, temp_parent;
-
-	IF temp_parent = 0
-	THEN
-		temp_path := temp_title;
-	ELSE
-		temp_path := CONCAT(usergroups_getpath(temp_parent, $2 + 1), '","', temp_title);
-	END IF;
-	IF $2 = 0
-	THEN
-		temp_path = CONCAT('["', temp_path, '"]');
-	END IF;
-	RETURN temp_path;
-END;
-$$ LANGUAGE plpgsql;
-EOL;
-		}
-
-		if ($queries)
-		{
-			// Process each query in the $queries array (split out of sql file).
-			foreach ($queries as $query)
-			{
-				$db->setQuery($db->convertUtf8mb4QueryToUtf8($query));
-
-				try
-				{
-					$db->execute();
-				}
-				catch (\JDatabaseExceptionExecuting $e)
-				{
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 }

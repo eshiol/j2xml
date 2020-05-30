@@ -1,16 +1,16 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
+ * @link		https://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
@@ -23,12 +23,11 @@ use eshiol\J2xml\Table\Usernote;
 \JLoader::import('eshiol.J2xml.Table.Field');
 \JLoader::import('eshiol.J2xml.Table.Table');
 \JLoader::import('eshiol.J2xml.Table.Usernote');
-\JLoader::register('UsersModelUser', JPATH_ADMINISTRATOR . '/components/com_users/models/user.php');
 
 /**
  * User Table
  *
- * @version __DEPLOY_VERSION__
+
  * @since 1.5.3beta4.39
  */
 class User extends Table
@@ -38,12 +37,14 @@ class User extends Table
 	 * Constructor
 	 *
 	 * @param \JDatabaseDriver $db
-	 *        	A database connector object
+	 *			A database connector object
 	 *
 	 * @since 1.5.3beta4.39
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		parent::__construct('#__users', 'id', $db);
 	}
 
@@ -54,6 +55,8 @@ class User extends Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$version = new \JVersion();
 		$serverType = $version->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
 
@@ -66,7 +69,7 @@ class User extends Table
 				  WHERE tn.parent_id = 0
 				UNION ALL
 				  SELECT c.id, c.title, c.parent_id, p.depth + 1 AS depth,
-				        (p.path || \'","\' || c.title) AS path
+						(p.path || \'","\' || c.title) AS path
 				  FROM usergroups AS p, #__usergroups AS c
 				  WHERE c.parent_id = p.id
 				)
@@ -77,8 +80,8 @@ class User extends Table
 		else
 		{
 			$this->_aliases['group'] = (string) $this->_db->getQuery(true)
-				->select('usergroups_getpath(' . $this->_db->quoteName('id') . ')')
-				->from($this->_db->quoteName('#__usergroups', 'g'))
+				->select($this->_db->quoteName('title'))
+				->from($this->_db->quoteName('#__j2xml_usergroups', 'g'))
 				->from($this->_db->quoteName('#__user_usergroup_map', 'm'))
 				->where($this->_db->quoteName('g.id') . ' = ' . $this->_db->quoteName('m.group_id'))
 				->where($this->_db->quoteName('m.user_id') . ' = ' . (int) $this->id);
@@ -113,11 +116,11 @@ class User extends Table
 	 * Import data
 	 *
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param \JRegistry $params
-	 *        	@option int 'tags' 1: Yes, if not exists; 2: Yes, overwrite if
-	 *        	exists
-	 *        	@option string 'context'
+	 *			@option int 'tags' 1: Yes, if not exists; 2: Yes, overwrite if
+	 *			exists
+	 *			@option string 'context'
 	 *
 	 * @throws
 	 * @return void
@@ -127,6 +130,8 @@ class User extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$import_users = $params->get('users', 1);
 		$import_superusers = $params->get('superusers', 0);
 		if (! $import_users)
@@ -135,7 +140,7 @@ class User extends Table
 		$keepId = $params->get('keep_user_id', '0');
 		$keep_user_attribs = $params->get('keep_user_attribs', '1');
 
-		\JFactory::getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
+		\JFactory::getApplication()->getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
 
 		$db = \JFactory::getDbo();
 
@@ -146,6 +151,16 @@ class User extends Table
 			->loadResult();
 
 		$version = new \JVersion();
+		if ($version->isCompatible('4'))
+		{
+			$userModel = "\Joomla\Component\Users\Administrator\Model\UserModel";
+		}
+		else 
+		{
+			\JLoader::register('UsersModelUser', JPATH_ADMINISTRATOR . '/components/com_users/models/user.php');
+			$userModel = "\UsersModelUser";
+		}
+		
 		$users = array();
 		foreach ($xml->xpath("//j2xml/user[not(username = '')]") as $record)
 		{
@@ -198,7 +213,7 @@ class User extends Table
 
 			if (! $data['id'] || ($import_users == 2))
 			{
-				$user = new \UsersModelUser();
+				$user = new $userModel();
 				$result = $user->save($data);
 
 				$id = $db->setQuery(
@@ -331,26 +346,48 @@ class User extends Table
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$params->set('extension', 'com_users');
 		parent::prepareData($record, $data, $params);
 
-		$db = \JFactory::getDbo();
-
-		// fix null date
-		if (($data['lastResetTime'] == '0000-00-00 00:00:00') || ($data['lastResetTime'] == '1970-01-01 00:00:00'))
-		{
-			$data['lastResetTime'] = $db->getNullDate();
-		}
-
-		// fix null date
-		if (($data['lastvisitDate'] == '0000-00-00 00:00:00') || ($data['lastvisitDate'] == '1970-01-01 00:00:00'))
-		{
-			$data['lastvisitDate'] = $db->getNullDate();
-		}
+		$db      = \JFactory::getDbo();
+		$version = new \JVersion();
 		
-		if (empty($data['group']))
+		if (! $version->isCompatible('4'))
+		{
+			// fix null date
+			if (empty($data['lastResetTime']))
+			{
+				$data['lastResetTime'] = $db->getNullDate();
+			}
+			elseif (($data['lastResetTime'] == '0000-00-00 00:00:00') || ($data['lastResetTime'] == '1970-01-01 00:00:00'))
+			{
+				$data['lastResetTime'] = $db->getNullDate();
+			}
+		
+			// fix null date
+			if (($data['lastvisitDate'] == '0000-00-00 00:00:00') || ($data['lastvisitDate'] == '1970-01-01 00:00:00'))
+			{
+				$data['lastvisitDate'] = $db->getNullDate();
+			}
+		}
+
+		// set default user group
+		if (empty($data['grouplist']) && empty($data['group']))
 		{
 			$data['group'] = 2;
+		}
+
+		// fix null values
+		if (empty($data['otpKey']))
+		{
+			$data['otpKey'] = '';
+		}
+		
+		if (empty($data['otep']))
+		{
+			$data['otep'] = '';
 		}
 	}
 
@@ -358,9 +395,9 @@ class User extends Table
 	 * Export data
 	 *
 	 * @param int $id
-	 *        	the id of the item to be exported
+	 *			the id of the item to be exported
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param array $options
 	 *
 	 * @throws
@@ -371,6 +408,8 @@ class User extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if ($xml->xpath("//j2xml/user/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -382,6 +421,13 @@ class User extends Table
 		if (! $item->load($id))
 		{
 			return;
+		}
+
+		if (isset($options['password']) && ($options['password'] == 0))
+		{
+			array_push($item->_excluded, 'password');
+			array_push($item->_excluded, 'otpKey');
+			array_push($item->_excluded, 'otep');
 		}
 
 		$doc = dom_import_simplexml($xml)->ownerDocument;

@@ -1,16 +1,16 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
+ * @link		https://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml;
 
@@ -29,6 +29,7 @@ use eshiol\J2xml\Table\Usernote;
 use eshiol\J2xml\Table\Viewlevel;
 use eshiol\J2xml\Table\Weblink;
 use eshiol\J2xml\Version;
+
 \JLoader::import('eshiol.J2xml.Table.Category');
 \JLoader::import('eshiol.J2xml.Table.Contact');
 \JLoader::import('eshiol.J2xml.Table.Content');
@@ -45,14 +46,14 @@ use eshiol\J2xml\Version;
 \JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_weblinks/tables');
 \JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_contact/tables');
 
-// jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
-jimport('joomla.user.helper');
+// \JLoader::import('joomla.filesystem.folder');
+\JLoader::import('joomla.filesystem.file');
+\JLoader::import('joomla.user.helper');
 
 /**
  * Importer
  *
- * @version __DEPLOY_VERSION__
+
  * @since 1.6.0
  */
 class Importer
@@ -70,42 +71,63 @@ class Importer
 
 	function __construct ()
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		// Merge the default translation with the current translation
-		$jlang = \JFactory::getLanguage();
+		$jlang = \JFactory::getApplication()->getLanguage();
 		$jlang->load('lib_j2xml', JPATH_SITE, 'en-GB', true);
 		$jlang->load('lib_j2xml', JPATH_SITE, $jlang->getDefault(), true);
 		$jlang->load('lib_j2xml', JPATH_SITE, null, true);
 
-		$this->_db = \JFactory::getDBO();
+		$db = \JFactory::getDBO();
+		
 		$this->_user = \JFactory::getUser();
-
-		$this->_nullDate = $this->_db->getNullDate();
+		$this->_nullDate = $db->getNullDate();
 		$this->_user_id = $this->_user->get('id');
 		$this->_now = \JFactory::getDate()->format("%Y-%m-%d-%H-%M-%S");
 		$this->_option = (PHP_SAPI != 'cli') ? \JFactory::getApplication()->input->getCmd('option') : 'cli_' .
 				 strtolower(get_class(\JApplicationCli::getInstance()));
+		
+		// TODO: use query object - postgresql
+		$db->setQuery("CREATE TABLE IF NOT EXISTS `#__j2xml_usergroups` (`id` int(10) unsigned NOT NULL, `parent_id` int(10) unsigned NOT NULL DEFAULT '0', `title` varchar(100) NOT NULL DEFAULT '') ENGINE=InnoDB  DEFAULT CHARSET=utf8;")->execute();
+		$db->setQuery("TRUNCATE TABLE `#__j2xml_usergroups`;")->execute();
+		$db->setQuery("INSERT INTO `#__j2xml_usergroups` " .
+			"SELECT `id`,`parent_id`,CONCAT('[\"',REPLACE(`title`,'\"','\\\"'),'\"]') " .
+			"FROM `#__usergroups`;")->execute();
+		do {
+			$db->setQuery("UPDATE `#__j2xml_usergroups` j " .
+				"INNER JOIN `#__usergroups` g " .
+				"ON j.parent_id = g.id " .
+				"SET j.parent_id = g.parent_id," .
+				"j.title = CONCAT('[\"',REPLACE(`g`.`title`,'\"','\\\"'), '\",', SUBSTR(`j`.`title`,2));")->execute();
+			$n = $db->setQuery("SELECT COUNT(*) " .
+				"FROM `#__j2xml_usergroups` " .
+			"WHERE `parent_id` > 0;")->loadResult();
+		} while ($n > 0);
 	}
 
 	/**
 	 * Import data
 	 *
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param \JRegistry $options
-	 *        	An optional associative array of settings.
-	 *        	@option boolean 'import_content' import articles
-	 *        	@option int 'default_category'
-	 *        	@option int 'content_category'
-	 *        
+	 *			An optional associative array of settings.
+	 *			@option boolean 'import_content' import articles
+	 *			@option int 'default_category'
+	 *			@option int 'content_category'
+	 *		
 	 * @throws
 	 * @return boolean
 	 * @access public
-	 *        
+	 *		
 	 * @since 1.6.0
 	 */
 	function import ($xml, $params)
 	{
-		\JFactory::getLanguage()->load('lib_j2xml', JPATH_SITE, null, false, true);
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
+		\JFactory::getApplication()->getLanguage()->load('lib_j2xml', JPATH_SITE, null, false, true);
 
 		$import_viewlevels = $params->get('viewlevels');
 		if ($import_viewlevels)
@@ -172,12 +194,11 @@ class Importer
 		if ($params->get('fire', 1))
 		{
 			\JPluginHelper::importPlugin('j2xml');
-			$dispatcher = \JEventDispatcher::getInstance();
 			// Trigger the onAfterImport event.
-			$dispatcher->trigger('onAfterImport', array(
-					'com_j2xml.import',
-					&$xml,
-					$params
+			$results = \JFactory::getApplication()->triggerEvent('onJ2xmlAfterImport', array(
+				'com_j2xml.import',
+				&$xml,
+				$params
 			));
 		}
 

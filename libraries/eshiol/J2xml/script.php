@@ -1,18 +1,17 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
+ * @link		https://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
-
 // no direct access
 defined('_JEXEC') or die('Restricted access.');
 
@@ -20,7 +19,7 @@ defined('_JEXEC') or die('Restricted access.');
  * Installation class to perform additional changes during
  * install/uninstall/update
  *
- * @version __DEPLOY_VERSION__
+
  * @since 18.11.311
  */
 class eshiolj2xmlInstallerScript
@@ -46,45 +45,16 @@ class eshiolj2xmlInstallerScript
 	 */
 	public function uninstall($parent)
 	{
-		$version = new \JVersion();
-		if ($version->isCompatible('3.9')) return;
+		if ($type == 'discover_install') return;
 
 		$db = \JFactory::getDbo();
-		$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
-
-		$queries = array();
-		if ($serverType === 'mysql')
+		try
 		{
-			$queries[] = 'DROP PROCEDURE IF EXISTS usergroups_getpath;';
-			$queries[] = 'DROP FUNCTION IF EXISTS usergroups_getpath;';
+			$db->setQuery("DROP TABLE #__j2xml_usergroups")->execute();
 		}
-		elseif ($serverType === 'postgresql')
+		catch (Exception $e)
 		{
-			$queries[] = 'DROP FUNCTION IF EXISTS usergroups_getpath(INT);';
-		}
-
-		if (count($queries))
-		{
-			// Process each query in the $queries array (split out of sql file).
-			foreach ($queries as $query)
-			{
-				if ($version->isCompatible('3.5'))
-				{
-					$query = $db->convertUtf8mb4QueryToUtf8($query);
-				}
-				$db->setQuery($query);
-
-				try
-				{
-					$db->execute();
-				}
-				catch (\JDatabaseExceptionExecuting $e)
-				{
-					\JLog::add(\JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()), \JLog::WARNING, 'jerror');
-
-					return false;
-				}
-			}
+			// If the query fails we will go on. It just means the table to be dropped does not exist.
 		}
 	}
 
@@ -103,10 +73,10 @@ class eshiolj2xmlInstallerScript
 	 * Runs just before any installation action is preformed on the component.
 	 * Verifications and pre-requisites should run in this function.
 	 *
-	 * @param  string    $type   - Type of PreFlight action. Possible values are:
-	 *                           - * install
-	 *                           - * update
-	 *                           - * discover_install
+	 * @param  string	$type   - Type of PreFlight action. Possible values are:
+	 *						   - * install
+	 *						   - * update
+	 *						   - * discover_install
 	 * @param  \stdClass $parent - Parent object calling object.
 	 *
 	 * @return void
@@ -118,10 +88,10 @@ class eshiolj2xmlInstallerScript
 	/**
 	 * Runs right after any installation action is preformed on the component.
 	 *
-	 * @param  string    $type   - Type of PostFlight action. Possible values are:
-	 *                           - * install
-	 *                           - * update
-	 *                           - * discover_install
+	 * @param  string	$type   - Type of PostFlight action. Possible values are:
+	 *						   - * install
+	 *						   - * update
+	 *						   - * discover_install
 	 * @param  \stdClass $parent - Parent object calling object.
 	 *
 	 * @return void
@@ -130,97 +100,50 @@ class eshiolj2xmlInstallerScript
 	{
 		if ($type == 'discover_install') return;
 
-		$version = new \JVersion();
-		if ($version->isCompatible('3.9')) return;
-
-		$db = \JFactory::getDbo();
+		$db		 = \JFactory::getDbo();
+		$version	= new \JVersion();
 		$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
-		$queries = array();
-		if ($serverType === 'mysql')
+		try
 		{
-			$queries[] = "DROP PROCEDURE IF EXISTS usergroups_getpath;";
-			$queries[] = preg_replace('!\s+!', ' ',<<<EOL
-CREATE PROCEDURE usergroups_getpath(IN id INT, OUT path TEXT)
-BEGIN
-    DECLARE temp_title VARCHAR(100);
-    DECLARE temp_path TEXT;
-    DECLARE temp_parent INT;
-	SET max_sp_recursion_depth = 255;
-
-	SELECT a.title, a.parent_id FROM #__usergroups a WHERE a.id=id INTO temp_title, temp_parent;
-
-	IF temp_parent = 0
-    THEN
-       SET path = temp_title;
-    ELSE
-        CALL usergroups_getpath(temp_parent, temp_path);
-        SET path = CONCAT(temp_path, '","', temp_title);
-    END IF;
-END;
-EOL
-					);
-			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath;";
-			$queries[] = preg_replace('!\s+!', ' ',<<<EOL
-CREATE FUNCTION usergroups_getpath(id INT) RETURNS TEXT DETERMINISTIC
-BEGIN
-    DECLARE res TEXT;
-    CALL usergroups_getpath(id, res);
-    RETURN CONCAT('["', res, '"]');
-END;
-EOL
-					);
-		}
-		elseif ($serverType === 'postgresql')
-		{
-			$queries[] = "DROP FUNCTION IF EXISTS usergroups_getpath(INT);";
-			$queries[] = <<<EOL
-CREATE OR REPLACE FUNCTION usergroups_getpath(id INT, level INT default 0) RETURNS TEXT
-AS $$
-DECLARE temp_title VARCHAR(100);
-	temp_path TEXT;
-	temp_parent INT;
-BEGIN
-	SELECT a.title, a.parent_id FROM #__usergroups a WHERE a.id = $1 INTO temp_title, temp_parent;
-
-	IF temp_parent = 0
-	THEN
-		temp_path := temp_title;
-	ELSE
-		temp_path := CONCAT(usergroups_getpath(temp_parent, $2 + 1), '","', temp_title);
-	END IF;
-	IF $2 = 0
-	THEN
-		temp_path = CONCAT('["', temp_path, '"]');
-	END IF;
-	RETURN temp_path;
-END;
-$$ LANGUAGE plpgsql;
-EOL;
-		}
-
-		if (count($queries))
-		{
-			// Process each query in the $queries array (split out of sql file).
-			foreach ($queries as $query)
+			if ($serverType == 'postgresql')
 			{
-				if ($version->isCompatible('3.5'))
-				{
-					$query = $db->convertUtf8mb4QueryToUtf8($query);
-				}
-				$db->setQuery($query);
-
-				try
-				{
-					$db->execute();
-				}
-				catch (\JDatabaseExceptionExecuting $e)
-				{
-					\JLog::add(\JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $e->getMessage()), \JLog::WARNING, 'jerror');
-
-					return false;
-				}
+				$query = "CREATE TABLE IF NOT EXISTS \"#__j2xml_usergroups\" (
+					\"id\" serial NOT NULL,
+					\"parent_id\" bigint DEFAULT 0 NOT NULL,
+					\"title\" varchar(100) DEFAULT '' NOT NULL,
+					PRIMARY KEY  (\"id\")
+					);";
+				$db->setQuery($query)->execute();
 			}
+			else
+			{
+				$query = "CREATE TABLE IF NOT EXISTS `#__j2xml_usergroups` (
+					`id` int(10) unsigned NOT NULL,
+					`parent_id` int(10) unsigned NOT NULL DEFAULT '0',
+					`title` varchar(100) NOT NULL DEFAULT '',
+					PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;";
+				$db->setQuery($query)->execute();
+			}
+			$db->setQuery("TRUNCATE TABLE #__j2xml_usergroups")->execute();
+			$db->setQuery("INSERT INTO #__j2xml_usergroups " .
+					"SELECT id, parent_id, CONCAT('[\"',REPLACE(`title`,'\"','\\\"'),'\"]') " .
+					"FROM #__usergroups;")->execute();
+			do {
+				$db->setQuery("UPDATE `#__j2xml_usergroups` j " .
+						"INNER JOIN `#__usergroups` g " .
+						"ON j.parent_id = g.id " .
+						"SET j.parent_id = g.parent_id," .
+						"j.title = CONCAT('[\"',REPLACE(`g`.`title`,'\"','\\\"'), '\",', SUBSTR(`j`.`title`,2));")->execute();
+				$n = $db->setQuery("SELECT COUNT(*) " .
+						"FROM #__j2xml_usergroups " .
+						"WHERE parent_id > 0")->loadResult();
+			} while ($n > 0);
+		}
+		catch (Exception $e)
+		{
+			// If the query fails we will go on
 		}
 	}
 }
