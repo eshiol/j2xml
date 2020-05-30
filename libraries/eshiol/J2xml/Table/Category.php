@@ -107,7 +107,15 @@ class Category extends Table
 		if (! $extension)
 			return;
 
-		\JFactory::getApplication()->getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
+		$version = new \JVersion();
+		if ($version->isCompatible('3.2'))
+		{
+			\JFactory::getApplication()->getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
+		}
+		else 
+		{
+			\JFactory::getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
+		}
 		$db = \JFactory::getDbo();
 		$version = new \JVersion();
 

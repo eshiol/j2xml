@@ -24,8 +24,6 @@ use eshiol\J2xml\Table\User;
 use eshiol\J2xml\Table\Viewlevel;
 use Joomla\Utilities\ArrayHelper;
 
-if (!class_exists('Joomla\\Utilities\\ArrayHelper')) class_alias('JArrayHelper', 'Joomla\\Utilities\\ArrayHelper');
-
 \JLoader::import('eshiol.J2xml.Table.Category');
 \JLoader::import('eshiol.J2xml.Table.Field');
 \JLoader::import('eshiol.J2xml.Table.Image');
@@ -426,12 +424,37 @@ class Content extends Table
 							}
 						}
 
-						if (\JLanguageAssociations::isEnabled() && !empty($data['associations']))
+						if ($version->isCompatible('3.2'))
+						{
+							$isEnabled = \JLanguageAssociations::isEnabled();
+						}
+						else
+						{
+							if (\JLanguageMultilang::isEnabled())
+							{
+								$params = new \JRegistry(\JPluginHelper::getPlugin('system', 'languagefilter')->params);
+								
+								$isEnabled  = (boolean) $params->get('item_associations', true);
+							}
+							else
+							{
+								$isEnabled = false;
+							}
+						}
+
+						if ($isEnabled && !empty($data['associations']))
 						{
 							$associations = $data['associations'];
 
 							// Unset any invalid associations
-							$associations = ArrayHelper::toInteger($associations);
+							if ($version->isCompatible('3.4'))
+							{
+								$associations = ArrayHelper::toInteger($associations);
+							}
+							else
+							{
+								\JArrayHelper::toInteger($associations);
+							}
 
 							// Unset any invalid associations
 							foreach ($associations as $tag => $id)

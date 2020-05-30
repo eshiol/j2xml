@@ -74,7 +74,15 @@ class Importer
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 		
 		// Merge the default translation with the current translation
-		$jlang = \JFactory::getApplication()->getLanguage();
+		$version = new \JVersion();
+		if ($version->isCompatible('3.2'))
+		{
+			$jlang = \JFactory::getApplication()->getLanguage();
+		}
+		else
+		{
+			$jlang = \JFactory::getLanguage();
+		}
 		$jlang->load('lib_j2xml', JPATH_SITE, 'en-GB', true);
 		$jlang->load('lib_j2xml', JPATH_SITE, $jlang->getDefault(), true);
 		$jlang->load('lib_j2xml', JPATH_SITE, null, true);
@@ -127,8 +135,6 @@ class Importer
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 		
-		\JFactory::getApplication()->getLanguage()->load('lib_j2xml', JPATH_SITE, null, false, true);
-
 		$import_viewlevels = $params->get('viewlevels');
 		if ($import_viewlevels)
 		{

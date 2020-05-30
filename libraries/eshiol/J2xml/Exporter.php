@@ -74,7 +74,15 @@ class Exporter
 		$db = \JFactory::getDbo();
 
 		// Merge the default translation with the current translation
-		$jlang = \JFactory::getApplication()->getLanguage();
+		$version = new \JVersion();
+		if ($version->isCompatible('3.2'))
+		{
+			$jlang = \JFactory::getApplication()->getLanguage();
+		}
+		else
+		{
+			$jlang = \JFactory::getLanguage();
+		}
 		$jlang->load('lib_j2xml', JPATH_SITE, 'en-GB', true);
 		$jlang->load('lib_j2xml', JPATH_SITE, $jlang->getDefault(), true);
 		$jlang->load('lib_j2xml', JPATH_SITE, null, true);

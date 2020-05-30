@@ -140,7 +140,15 @@ class User extends Table
 		$keepId = $params->get('keep_user_id', '0');
 		$keep_user_attribs = $params->get('keep_user_attribs', '1');
 
-		\JFactory::getApplication()->getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
+		$version = new \JVersion();
+		if ($version->isCompatible('3.2'))
+		{
+			\JFactory::getApplication()->getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
+		}
+		else
+		{
+			\JFactory::getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
+		}
 
 		$db = \JFactory::getDbo();
 
