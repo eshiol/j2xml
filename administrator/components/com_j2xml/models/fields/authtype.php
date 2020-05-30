@@ -45,17 +45,17 @@ class JFormFieldAuthType extends JFormFieldList
 	public function getOptions ()
 	{
 		$options = array();
-		$options[] = (object) [
-				'value' => 0,
-				'text' => JText::_('COM_J2XML_FIELD_AUTH_TYPE_USERNAMEPASSWORD')
-		];
+		$options[] = (object) array (
+			'value' => 0,
+			'text' => JText::_('COM_J2XML_FIELD_AUTH_TYPE_USERNAMEPASSWORD')
+		);
 		$params = JComponentHelper::getParams('com_j2xml');
 		if ($params->get('oauth2', 0) == 1)
 		{
-			$options[] = (object) [
+			$options[] = (object) array (
 					'value' => 1,
 					'text' => JText::_('COM_J2XML_FIELD_AUTH_TYPE_OAUTH2')
-			];
+			);
 		}
 		return $options;
 	}
