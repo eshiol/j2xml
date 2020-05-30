@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.9" type="library" method="upgrade">
-  <name>j2xml</name>
-  <libraryname>eshiol/J2xml</libraryname>
-  <creationDate>May 2020</creationDate>
-  <author>Helios Ciancio</author>
-  <authorEmail>info@eshiol.it</authorEmail>
-  <authorUrl>www.eshiol.it</authorUrl>
-  <copyright><![CDATA[(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
-  <license>GNU/GPL v3</license>
-  <version>20.5.348</version>
-  <description>LIB_J2XML_XML_DESCRIPTION</description>
-  <scriptfile>script.php</scriptfile>
-  <packagerurl>https://www.eshiol.it</packagerurl>
-  <files>
-    <filename>classmap.php</filename>
-    <filename>Exporter.php</filename>
-    <filename>Importer.php</filename>
-    <filename>Messages.php</filename>
-    <filename>Sender.php</filename>
-    <filename>Version.php</filename>
-    <folder>form</folder>
-    <folder>Table</folder>
-  </files>
-  <languages folder="language">
-    <language tag="en-GB">en-GB/en-GB.lib_j2xml.ini</language>
-    <language tag="en-GB">en-GB/en-GB.lib_j2xml.sys.ini</language>
-  </languages>
-  <media destination="lib_eshiol_j2xml" folder="media">
-    <folder>js</folder>
-  </media>
+	<name>J2XML</name>
+	<libraryname>eshiol/J2xml</libraryname>
+	<description>LIB_J2XML_XML_DESCRIPTION</description>
+	<author>Helios Ciancio</author>
+	<authorEmail>info (at) eshiol (dot) it</authorEmail>
+	<authorUrl>www.eshiol.it</authorUrl>
+	<creationDate>May 2020</creationDate>
+	<copyright><![CDATA[(C) 2010 - 2020 Helios Ciancio. All Rights Reserved.]]></copyright>
+	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
+	<version>20.5.349</version>
+	<scriptfile>script.php</scriptfile>
+	<files>
+    	<filename>Exporter.php</filename>
+		<filename>Importer.php</filename>
+		<filename>Messages.php</filename>
+		<filename>Sender.php</filename>
+		<filename>Version.php</filename>
+		<filename>classmap.php</filename>
+		<folder>Table</folder>
+	</files>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.lib_j2xml.ini</language>
+		<language tag="en-GB">en-GB/en-GB.lib_j2xml.sys.ini</language>
+	</languages>
+	<media destination="lib_eshiol_j2xml" folder="media">
+		<folder>js</folder>
+	</media>
 </extension>
+
+
