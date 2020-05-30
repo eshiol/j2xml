@@ -1,3 +1,24 @@
+------------------------ 3.7.208 Release [18-May-2020] ------------------------
+
+cli_j2xml-3.7.23
+
+lib_eshiol-20.4.37
+
+lib_j2xml-20.5.349
+  + associations (build 349)
+  # set default user group to Registered (build 349)
+  # Joomla! 4 compatibility (build 349)
+  # User - do not export password (build 349)
+  ^ usergroups_getpath() -> #__j2xml_usergroups (build 349)
+
+lib_phpxmlrpc-4.4.1.23
+
+com_j2xml-3.7.208
+  # import articles (build 208)
+  ^ usergroups_getpath() -> #__j2xml_usergroups (build 208)
+
+plg_system_j2xml-3.7.49
+
 ------------------------ 3.7.207 Release [12-May-2020] ------------------------
 
 cli_j2xml-3.7.23
