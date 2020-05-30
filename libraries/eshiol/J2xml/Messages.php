@@ -1,16 +1,16 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
+ * @link		https://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml;
 
@@ -19,7 +19,7 @@ defined('_JEXEC') or die('Restricted access.');
 
 /**
  *
- * @version __DEPLOY_VERSION__
+
  * @since 14.10.245
  */
 class Messages
@@ -58,7 +58,7 @@ class Messages
 			// 'LIB_J2XML_MSG_UNKNOWN_WARNING',
 			// 'LIB_J2XML_MSG_UNKNOWN_NOTICE',
 			// 'LIB_J2XML_MSG_UNKNOWN_MESSAGE',
-			32 => 'LIB_J2XML_XMLRPC_DISABLED',
+			32 => 'LIB_J2XML_MSG_XMLRPC_DISABLED',
 			'LIB_J2XML_MSG_MENUTYPE_IMPORTED',
 			'LIB_J2XML_MSG_MENUTYPE_NOT_IMPORTED',
 			'LIB_J2XML_MSG_MENU_IMPORTED',

@@ -1,16 +1,16 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
+ * @link		https://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml;
 
@@ -19,29 +19,29 @@ defined('_JEXEC') or die('Restricted access.');
 
 use eshiol\J2xml\Messages;
 use eshiol\J2xml\Version;
-jimport('joomla.log.log');
-jimport('eshiol.J2xml.Messages');
-jimport('eshiol.J2xml.Version');
+\JLoader::import('joomla.log.log');
+\JLoader::import('eshiol.J2xml.Messages');
+\JLoader::import('eshiol.J2xml.Version');
 
 include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpc.inc';
 include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpcs.inc';
 
 /**
  *
- * @version __DEPLOY_VERSION__
+
  * @since 1.5.3beta3.38
  */
 class Sender
 {
 
-	private static $codes = array(
+	public static $codes = array(
 		'-1' => 'message',
 		'message', // LIB_J2XML_MSG_ARTICLE_IMPORTED
 		'notice', // LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED
 		'message', // LIB_J2XML_MSG_USER_IMPORTED
 		'notice', // LIB_J2XML_MSG_USER_NOT_IMPORTED
-		// 'message', // LIB_J2XML_MSG_SECTION_IMPORTED
-		// 'notice', // LIB_J2XML_MSG_SECTION_NOT_IMPORTED
+		'notice', // 'message', // not used: LIB_J2XML_MSG_SECTION_IMPORTED
+		'notice', // not used: LIB_J2XML_MSG_SECTION_NOT_IMPORTED
 		6 => 'message', // LIB_J2XML_MSG_CATEGORY_IMPORTED
 		'notice', // LIB_J2XML_MSG_CATEGORY_NOT_IMPORTED
 		'message', // LIB_J2XML_MSG_FOLDER_WAS_SUCCESSFULLY_CREATED
@@ -50,7 +50,7 @@ class Sender
 		'notice', // LIB_J2XML_MSG_IMAGE_NOT_IMPORTED
 		'message', // LIB_J2XML_MSG_WEBLINK_IMPORTED
 		'notice', // LIB_J2XML_MSG_WEBLINK_NOT_IMPORTED
-        // 'notice', // LIB_J2XML_MSG_WEBLINKCAT_NOT_PRESENT
+		'notice', // not used: LIB_J2XML_MSG_WEBLINKCAT_NOT_PRESENT
 		15 => 'error', // LIB_J2XML_MSG_XMLRPC_NOT_SUPPORTED
 		'notice', // LIB_J2XML_MSG_CATEGORY_ID_PRESENT 16
 		'error', // LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED 17
@@ -68,7 +68,7 @@ class Sender
 		'warning', // LIB_J2XML_MSG_UNKNOWN_WARNING 29
 		'notice', // LIB_J2XML_MSG_UNKNOWN_NOTICE 30
 		'message', // LIB_J2XML_MSG_UNKNOWN_MESSAGE 31
-		32 => 'notice', // LIB_J2XML_MSG_XMLRPC_DISABLED 32
+		'notice', // LIB_J2XML_MSG_XMLRPC_DISABLED 32
 		'message', // LIB_J2XML_MSG_MENUTYPE_IMPORTED 33
 		'notice', // LIB_J2XML_MSG_MENUTYPE_NOT_IMPORTED 34
 		'message', // LIB_J2XML_MSG_MENU_IMPORTED 35
@@ -94,6 +94,8 @@ class Sender
 	 */
 	static function send ($xml, $options, $sid)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$app = \JFactory::getApplication();
 		$version = explode(".", Version::$DOCVERSION);
 		$xmlVersionNumber = $version[0] . $version[1] . substr('0' . $version[2], strlen($version[2]) - 1);
@@ -134,7 +136,7 @@ class Sender
 		if (! function_exists('xmlrpc_set_type'))
 		{
 			$headers = false;
-			// $app->enqueueMessage(\JText::_('LIB_J2XML_XMLRPC_ERROR'),
+			// $app->enqueueMessage(\JText::_('LIB_J2XML_MSG_XMLRPC_ERROR'),
 			// 'error');
 			// return;
 		}
@@ -268,12 +270,14 @@ class Sender
 	 * @param string $username
 	 * @param string $password
 	 * @param int $debug
-	 *        	when 1 (or 2) will enable debugging of the underlying xmlrpc
-	 *        	call (defaults to 0)
+	 *			when 1 (or 2) will enable debugging of the underlying xmlrpc
+	 *			call (defaults to 0)
 	 * @return xmlrpcresp obj instance
 	 */
 	private static function _xmlrpc_j2xml_send ($remote_url, $xml, $username, $password, $debug = 0)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$debug = 0;
 		$protocol = '';
 		$GLOBALS['xmlrpc_internalencoding'] = 'UTF-8';
@@ -284,7 +288,7 @@ class Sender
 		if (\JFactory::getApplication()->get('gzip') && !ini_get('zlib.output_compression') && ini_get('output_handler') !== 'ob_gzhandler')
 		{
 			// default values
-			// $client->accepted_compression = array('gzip', 'deflate');
+			$client->accepted_compression = array('gzip', 'deflate');
 		}
 		else
 		{
@@ -340,6 +344,8 @@ if (! function_exists('http_parse_headers'))
 
 	function http_parse_headers ($raw_headers)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$headers = array();
 		$key = '';
 

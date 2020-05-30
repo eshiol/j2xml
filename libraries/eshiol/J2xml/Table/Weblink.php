@@ -1,16 +1,16 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
+ * @link		https://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
@@ -21,7 +21,7 @@ use eshiol\J2xml\Table\Table;
 /**
  * Viewlevel Table
  *
- * @version __DEPLOY_VERSION__
+
  * @since 15.3.248
  */
 class Weblink extends Table
@@ -31,12 +31,14 @@ class Weblink extends Table
 	 * Constructor
 	 *
 	 * @param \JDatabaseDriver $db
-	 *        	A database connector object
+	 *			A database connector object
 	 *
 	 * @since 1.5.3beta3.38
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		parent::__construct('#__weblinks', 'id', $db);
 	}
 
@@ -48,6 +50,8 @@ class Weblink extends Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$version = new \JVersion();
 		if ($version->isCompatible('3.1'))
 		{
@@ -71,9 +75,9 @@ class Weblink extends Table
 	 * Export data
 	 *
 	 * @param int $id
-	 *        	the id of the item to be exported
+	 *			the id of the item to be exported
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param array $options
 	 *
 	 * @throws
@@ -84,6 +88,8 @@ class Weblink extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if ($xml->xpath("//j2xml/weblink/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -107,11 +113,11 @@ class Weblink extends Table
 	 * Import data
 	 *
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param \JRegistry $params
-	 *        	@option int 'weblinks' 0: No | 1: Yes, if not exists | 2: Yes,
-	 *        	overwrite if exists
-	 *        	@option string 'context'
+	 *			@option int 'weblinks' 0: No | 1: Yes, if not exists | 2: Yes,
+	 *			overwrite if exists
+	 *			@option string 'context'
 	 *
 	 * @throws
 	 * @return void
@@ -121,6 +127,8 @@ class Weblink extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$import_weblinks = $params->get('weblinks', 1);
 		if ($import_weblinks == 0)
 			return;

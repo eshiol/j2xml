@@ -1,16 +1,16 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
+ * @link		https://www.eshiol.it
  * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
@@ -28,7 +28,7 @@ use eshiol\J2xml\Table\User;
 /**
  * Usernote Table
  *
- * @version __DEPLOY_VERSION__
+
  * @since 14.8.240
  */
 class Usernote extends \eshiol\J2xml\Table\Table
@@ -38,12 +38,14 @@ class Usernote extends \eshiol\J2xml\Table\Table
 	 * Constructor
 	 *
 	 * @param \JDatabaseDriver $db
-	 *        	A database connector object
+	 *			A database connector object
 	 *
 	 * @since 15.3.248
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		parent::__construct('#__user_notes', 'id', $db);
 	}
 
@@ -54,6 +56,8 @@ class Usernote extends \eshiol\J2xml\Table\Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if ($xml->xpath("//j2xml/usernote/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -114,6 +118,8 @@ class Usernote extends \eshiol\J2xml\Table\Table
 	 */
 	public static function import ($xml, &$params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$import_usernotes = $params->get('usernotes', 1);
 		if ($import_usernotes == 0)
 			return;
@@ -168,6 +174,8 @@ class Usernote extends \eshiol\J2xml\Table\Table
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$params->set('extension', 'com_users');
 		parent::prepareData($record, $data, $params);
 
@@ -184,6 +192,8 @@ class Usernote extends \eshiol\J2xml\Table\Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$this->_aliases['user_id'] = (string) $this->_db->getQuery(true)
 			->select($this->_db->quoteName('username'))
 			->from($this->_db->quoteName('#__users'))

@@ -1,7 +1,7 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
@@ -9,8 +9,8 @@
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
@@ -21,7 +21,7 @@ defined('JPATH_PLATFORM') or die();
 /**
  * Image table
  *
- * @version __DEPLOY_VERSION__
+
  * @since 18.8.310
  */
 class Image
@@ -31,11 +31,11 @@ class Image
 	 * Import data
 	 *
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param \JRegistry $params
-	 *        	@option int 'images' 1: Yes, if not exists; 2: Yes, overwrite
-	 *        	if exists
-	 *        	@option string 'context'
+	 *			@option int 'images' 1: Yes, if not exists; 2: Yes, overwrite
+	 *			if exists
+	 *			@option string 'context'
 	 *
 	 * @throws
 	 * @return void
@@ -45,6 +45,8 @@ class Image
 	 */
 	public static function import ($xml, &$params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$import_images = $params->get('images', 0);
 		if ($import_images == 0)
 			return;
@@ -82,9 +84,9 @@ class Image
 	 * Export data
 	 *
 	 * @param string $_image
-	 *        	the image to be exported
+	 *			the image to be exported
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param array $options
 	 *
 	 * @throws
@@ -95,6 +97,8 @@ class Image
 	 */
 	public static function export ($image, &$xml, $options)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if ($xml->xpath("//j2xml/img[@src = '" . htmlentities($image, ENT_QUOTES, "UTF-8") . "']"))
 		{
 			return;

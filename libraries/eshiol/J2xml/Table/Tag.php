@@ -1,7 +1,7 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
@@ -9,8 +9,8 @@
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
@@ -26,7 +26,7 @@ use Joomla\Component\Tags\Administrator\Table\TagTable;
 /**
  * Tag table
  *
- * @version __DEPLOY_VERSION__
+
  * @since 14.8.240
  */
 class Tag extends Table
@@ -36,12 +36,14 @@ class Tag extends Table
 	 * Constructor
 	 *
 	 * @param \JDatabaseDriver $db
-	 *        	A database connector object
+	 *			A database connector object
 	 *
 	 * @since 14.8.240
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		parent::__construct('#__tags', 'id', $db);
 	}
 
@@ -49,11 +51,11 @@ class Tag extends Table
 	 * Import data
 	 *
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param \JRegistry $params
-	 *        	@option int 'tags' 1: Yes, if not exists; 2: Yes, overwrite if
-	 *        	exists
-	 *        	@option string 'context'
+	 *			@option int 'tags' 1: Yes, if not exists; 2: Yes, overwrite if
+	 *			exists
+	 *			@option string 'context'
 	 *
 	 * @throws
 	 * @return void
@@ -63,6 +65,8 @@ class Tag extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$import_tags = $params->get('tags', 0);
 		if ($import_tags == 0)
 			return;
@@ -144,7 +148,7 @@ class Tag extends Table
 	 * Function that converts tags paths into array of ids
 	 *
 	 * @param array $tags
-	 *        	Array of tags paths
+	 *			Array of tags paths
 	 *
 	 * @return array
 	 *
@@ -152,6 +156,8 @@ class Tag extends Table
 	 */
 	public static function convertPathsToIds ($tags)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if ($tags)
 		{
 			// Remove duplicates
@@ -186,9 +192,9 @@ class Tag extends Table
 	 * Export data
 	 *
 	 * @param int $id
-	 *        	the id of the item to be exported
+	 *			the id of the item to be exported
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param array $options
 	 *
 	 * @throws
@@ -199,6 +205,8 @@ class Tag extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if ($xml->xpath("//j2xml/tag/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -272,6 +280,8 @@ class Tag extends Table
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$params->set('extension', 'com_tags');
 		parent::prepareData($record, $data, $params);
 

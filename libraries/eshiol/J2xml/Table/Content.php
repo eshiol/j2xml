@@ -1,7 +1,7 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
@@ -9,8 +9,8 @@
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
@@ -22,6 +22,10 @@ use eshiol\J2xml\Table\Table;
 use eshiol\J2xml\Table\Tag;
 use eshiol\J2xml\Table\User;
 use eshiol\J2xml\Table\Viewlevel;
+use Joomla\Utilities\ArrayHelper;
+
+if (!class_exists('Joomla\\Utilities\\ArrayHelper')) class_alias('JArrayHelper', 'Joomla\\Utilities\\ArrayHelper');
+
 \JLoader::import('eshiol.J2xml.Table.Category');
 \JLoader::import('eshiol.J2xml.Table.Field');
 \JLoader::import('eshiol.J2xml.Table.Image');
@@ -30,27 +34,35 @@ use eshiol\J2xml\Table\Viewlevel;
 \JLoader::import('eshiol.J2xml.Table.User');
 \JLoader::import('eshiol.J2xml.Table.Viewlevel');
 
-jimport('joomla.application.router');
+\JLoader::import('joomla.application.router');
 
 /**
  * Content table
  *
- * @version __DEPLOY_VERSION__
  * @since 1.5.1
  */
 class Content extends Table
 {
+	/**
+	 * The context used for the associations table
+	 *
+	 * @var      string
+	 * @since    20.5.349
+	 */
+	static protected $associationsContext = 'com_content.item';
 
 	/**
 	 * Constructor
 	 *
 	 * @param \JDatabaseDriver $db
-	 *        	A database connector object
-	 *        
+	 *			A database connector object
+	 *		
 	 * @since 1.5.1
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		parent::__construct('#__content', 'id', $db);
 
 	/**
@@ -70,6 +82,8 @@ class Content extends Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$this->_excluded = array_merge($this->_excluded, array(
 				'sectionid',
 				'mask',
@@ -158,6 +172,18 @@ class Content extends Table
 				->where($this->_db->quoteName('v.item_id') . ' = ' . $this->_db->quote((string) $this->id));
 		}
 
+		$query = $this->_db->getQuery(true);
+		$this->_aliases['association'] = (string) $query
+			->select($query->concatenate(array($this->_db->quoteName('cc.path'), $this->_db->quoteName('c.alias')), '/'))
+			->from($this->_db->quoteName('#__associations', 'asso1'))
+			->join('INNER', $this->_db->quoteName('#__associations', 'asso2') . ' ON ' . $this->_db->quoteName('asso1.key') . ' = ' . $this->_db->quoteName('asso2.key'))
+			->join('INNER', $this->_db->quoteName('#__content', 'c') . ' ON ' . $this->_db->quoteName('asso2.id') . ' = ' . $this->_db->quoteName('c.id'))
+			->join('INNER', $this->_db->quoteName('#__categories', 'cc') . ' ON ' . $this->_db->quoteName('c.catid') . ' = ' . $this->_db->quoteName('cc.id'))
+			->where(array(
+				$this->_db->quoteName('asso1.id') . ' = ' . (int) $this->id,
+				$this->_db->quoteName('asso1.context') . ' = ' . $this->_db->quote('com_content.item'),
+				$this->_db->quoteName('asso2.id') . ' <> ' . (int) $this->id));
+		
 		return parent::_serialize();
 	}
 
@@ -165,25 +191,29 @@ class Content extends Table
 	 * Import data
 	 *
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param \JRegistry $params
-	 *        	@option int 'content' 0: No (default); 1: Yes, if not exists;
-	 *        	2: Yes, overwrite if exists
-	 *        	@option int 'content_category_default'
-	 *        	@option int 'content_category_forceto'
-	 *        	@option string 'context'
-	 *        
+	 *			@option int 'content' 0: No (default); 1: Yes, if not exists;
+	 *			2: Yes, overwrite if exists
+	 *			@option int 'content_category_default'
+	 *			@option int 'content_category_forceto'
+	 *			@option string 'context'
+	 *		
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *		
 	 * @since 18.8.301
 	 */
 	public static function import ($xml, &$params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$import_content = $params->get('content', 0);
 		if ($import_content == 0)
+		{
 			return;
+		}
 
 		$params->def('content_category_default', self::getCategoryId('uncategorised', 'com_content'));
 		$force_to = $params->get('content_category_forceto');
@@ -293,13 +323,13 @@ class Content extends Table
 				}
 
 				// Trigger the onContentBeforeSave event.
-				$result = \JFactory::getApplication()->triggerEvent('onContentBeforeSave',
+				$results = \JFactory::getApplication()->triggerEvent('onContentBeforeSave',
 						array(
 								$params->get('context', 'com_content.article'),
 								&$table,
 								$isNew
 						));
-				if (! in_array(false, $result, true))
+				if (! in_array(false, $results, true))
 				{
 					if ($table->store())
 					{
@@ -396,8 +426,82 @@ class Content extends Table
 							}
 						}
 
+						if (\JLanguageAssociations::isEnabled() && !empty($data['associations']))
+						{
+							$associations = $data['associations'];
+
+							// Unset any invalid associations
+							$associations = ArrayHelper::toInteger($associations);
+
+							// Unset any invalid associations
+							foreach ($associations as $tag => $id)
+							{
+								if (!$id)
+								{
+									unset($associations[$tag]);
+								}
+							}
+
+							// Show a warning if the item isn't assigned to a language but we have associations.
+							if ($associations && $table->language === '*')
+							{
+								$app->enqueueMessage(
+									\JText::_(strtoupper($this->option) . '_ERROR_ALL_LANGUAGE_ASSOCIATED'),
+									'warning'
+									);
+							}
+
+							// Get associationskey for edited item
+							$query = $db->getQuery(true)
+								->select($db->quoteName('key'))
+								->from($db->quoteName('#__associations'))
+								->where($db->quoteName('context') . ' = ' . $db->quote(self::$associationsContext))
+								->where($db->quoteName('id') . ' = ' . (int) $id);
+							$db->setQuery($query);
+							$old_key = $db->loadResult();
+
+							// Deleting old associations for the associated items
+							$query = $db->getQuery(true)
+								->delete($db->quoteName('#__associations'))
+								->where($db->quoteName('context') . ' = ' . $db->quote(self::$associationsContext));
+
+							if ($associations)
+							{
+								$query->where('(' . $db->quoteName('id') . ' IN (' . implode(',', $associations) . ') OR '
+									. $db->quoteName('key') . ' = ' . $db->quote($old_key) . ')');
+							}
+							else
+							{
+								$query->where($db->quoteName('key') . ' = ' . $db->quote($old_key));
+							}
+
+							$db->setQuery($query);
+							$db->execute();
+
+							// Adding self to the association
+							if ($table->language !== '*')
+							{
+								$associations[$table->language] = (int) $table->id;
+							}
+
+							if (count($associations) > 1)
+							{
+								// Adding new association for these items
+								$key   = md5(json_encode($associations));
+								$query = $db->getQuery(true)
+									->insert('#__associations');
+
+								foreach ($associations as $id)
+								{
+									$query->values(((int) $id) . ',' . $db->quote(self::$associationsContext) . ',' . $db->quote($key));
+								}
+								$db->setQuery($query);
+								$db->execute();
+							}
+						}
+
 						// Trigger the onContentAfterSave event.
-						$result = \JFactory::getApplication()->triggerEvent('onContentAfterSave',
+						$results = \JFactory::getApplication()->triggerEvent('onContentAfterSave',
 								array(
 										$params->get('context', 'com_content.article'),
 										&$table,
@@ -449,6 +553,9 @@ class Content extends Table
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
+		$db      = \JFactory::getDBO();
 		$version = new \JVersion();
 
 		$params->set('extension', 'com_content');
@@ -503,25 +610,65 @@ class Content extends Table
 		{
 			$data['catid'] = $params->get('content_category_default');
 		}
+
+		if (isset($data['associationlist']))
+		{
+			foreach ($data['associationlist']['association'] as $association)
+			{
+				$id = self::getArticleId($association);
+				if ($id)
+				{
+					$tag = $db->setQuery($db->getQuery(true)
+						->select($db->quoteName('language'))
+						->from($db->quoteName('#__content'))
+						->where($db->quoteName('id') . ' = ' . $id))
+						->loadResult();
+					if ($tag !== '*')
+					{
+						$data['associations'][$tag] = $id;
+					}
+				}
+			}
+			unset($data['associationlist']);
+		}
+		elseif (isset($data['association']))
+		{
+			$id = self::getArticleId($data['association']);
+			if ($id)
+			{
+				$tag = $db->setQuery($db->getQuery(true)
+					->select($db->quoteName('language'))
+					->from($db->quoteName('#__content'))
+					->where($db->quoteName('id') . ' = ' . $id))
+					->loadResult();
+				if ($tag !== '*')
+				{
+					$data['associations'][$tag] = $id;
+				}
+			}
+			unset($data['association']);
+		}
 	}
 
 	/**
 	 * Export data
 	 *
 	 * @param int $id
-	 *        	the id of the item to be exported
+	 *			the id of the item to be exported
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param array $options
 	 *
 	 * @throws
 	 * @return void
 	 * @access public
-	 *        
+	 *		
 	 * @since 18.8.310
 	 */
 	public static function export ($id, &$xml, $options)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if ($xml->xpath("//j2xml/content/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -536,9 +683,9 @@ class Content extends Table
 		}
 
 		$params = new \JRegistry($options);
-		$dispatcher = \JEventDispatcher::getInstance();
 		\JPluginHelper::importPlugin('j2xml');
-		$results = $dispatcher->trigger('onBeforeContentExport', array(
+
+		$results = \JFactory::getApplication()->triggerEvent('onJ2xmlBeforeExportContent', array(
 				'lib_j2xml.article',
 				&$item,
 				$params
@@ -638,6 +785,8 @@ class Content extends Table
 	 */
 	public static function getCategoryId ($category, $extension = 'com_content', $defaultCategoryId = 0)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		return parent::getCategoryId($category, $extension, $defaultCategoryId);
 	}
 }

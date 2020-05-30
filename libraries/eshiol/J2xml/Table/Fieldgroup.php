@@ -1,7 +1,7 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	lib_j2xml
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
@@ -9,8 +9,8 @@
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
@@ -23,7 +23,7 @@ use Joomla\CMS\Component\ComponentHelper;
 /**
  * Table
  *
- * @version __DEPLOY_VERSION__
+
  * @since 19.2.323
  */
 class Fieldgroup extends Table
@@ -36,16 +36,18 @@ class Fieldgroup extends Table
 	 * for a particular database table.
 	 *
 	 * @param
-	 *        	string Name of the table to model.
+	 *			string Name of the table to model.
 	 * @param
-	 *        	string Name of the primary key field in the table.
+	 *			string Name of the primary key field in the table.
 	 * @param
-	 *        	object JDatabase connector object.
+	 *			object JDatabase connector object.
 	 *
 	 * @since 19.2.323
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		parent::__construct('#__fields_groups', 'id', $db);
 	}
 
@@ -53,11 +55,11 @@ class Fieldgroup extends Table
 	 * Import data
 	 *
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param \JRegistry $params
-	 *        	@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
-	 *        	overwrite if exists
-	 *        	@option string 'context'
+	 *			@option int 'fields' 0: No | 1: Yes, if not exists | 2: Yes,
+	 *			overwrite if exists
+	 *			@option string 'context'
 	 *
 	 * @throws
 	 * @return void
@@ -67,6 +69,8 @@ class Fieldgroup extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		$import_fields = $params->get('fields', 0);
 		if ($import_fields == 0)
 			return;
@@ -125,9 +129,9 @@ class Fieldgroup extends Table
 	 * Export data
 	 *
 	 * @param int $id
-	 *        	the id of the item to be exported
+	 *			the id of the item to be exported
 	 * @param \SimpleXMLElement $xml
-	 *        	xml
+	 *			xml
 	 * @param array $options
 	 *
 	 * @throws
@@ -138,6 +142,8 @@ class Fieldgroup extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
 		if ($xml->xpath("//j2xml/fieldgroup/id[text() = '" . $id . "']"))
 		{
 			return;

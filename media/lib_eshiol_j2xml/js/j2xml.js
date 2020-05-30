@@ -1,259 +1,344 @@
 /**
- * @package J2XML Library
- * @subpackage lib_eshiol_j2xml
- * 
- * @version __DEPLOY_VERSION__
- * @since 16.11.288
- * 
- * @author Helios Ciancio <info (at) eshiol (dot) it>
- * @link http://www.eshiol.it
- * @copyright Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
- * @license http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3 J2XML is free
- *          software. This version may have been modified pursuant to the GNU
- *          General Public License, and as distributed it includes or is
- *          derivative of works licensed under the GNU General Public License or
- *          other free or open source software licenses.
+ * @package		Joomla.Libraries
+ * @subpackage	eshiol.J2XML
+ *
+ * @since		16.11.288
+ *
+ * @author		Helios Ciancio <info (at) eshiol (dot) it>
+ * @link		https://www.eshiol.it
+ * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * J2XML is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 
 // Avoid `console` errors in browsers that lack a console.
-(function() {
-	var methods = [ 'assert', 'clear', 'count', 'debug', 'dir', 'dirxml',
-			'error', 'exception', 'group', 'groupCollapsed', 'groupEnd',
-			'info', 'log', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-			'timeStamp', 'trace', 'warn' ];
+( function(){
+	var methods = [
+		'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+		'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+		'profile', 'profileEnd', 'table', 'time', 'timeEnd', 'timeStamp',
+		'trace', 'warn'
+	];
 	console = window.console = window.console || {};
-	methods.forEach(function(method) {
-		if (!console[method]) {
-			console[method] = function() {
-			};
+	methods.forEach( function( method ){
+		if( !console[method] ){
+			console[method] = function (){};
 		}
 	});
-}());
 
-if (typeof (eshiol) === 'undefined') {
-	eshiol = {};
+	console.dump = function( object ){
+		if( window.JSON && window.JSON.stringify ){
+			console.log( JSON.stringify( object ) );
+		}
+		else{
+			console.log( object );
+		}
+	};
+}() );
+
+Joomla.JText.strings['SUCCESS'] = 'Message';
+
+if( typeof( eshiol ) === 'undefined' ){
+	var eshiol = {};
 }
 
-if (typeof (eshiol.j2xml) === 'undefined') {
+if( typeof( eshiol.j2xml ) === 'undefined' ){
 	eshiol.j2xml = {};
 }
 
-if (typeof (eshiol.j2xml.convert) === 'undefined') {
+if( typeof( eshiol.j2xml.convert ) === 'undefined' ){
 	eshiol.j2xml.convert = [];
 }
 
 eshiol.j2xml.version = '__DEPLOY_VERSION__';
 
-console.log('j2xml Library v' + eshiol.j2xml.version);
+console.log( 'J2XML Library v' + eshiol.j2xml.version );
 
 /**
- * process item
- * 
- * @param {array}
- *            nodes the array of item
- * @param {int}
- *            n
- * @param {int}
- *            tot
- * 
- * @return {boolean} true on success.
+ * Remove messages
+ *
+ * @param	object	messageContainer	the messages container
+ *
+ * @return  void
  */
-eshiol.j2xml.send = function($nodes, n, tot) {
-	console.log('eshiol.j2xml.send');
+if( typeof( eshiol.removeMessages ) === 'undefined' ){
+	eshiol.removeMessages = function( messageContainer ){
+		if( typeof( messageContainer ) === 'undefined' ){
+			messageContainer = jQuery('#system-message-container');
+		}
 
-	if ($nodes.length > 0) {
-		// item = $nodes.pop();
-		item = $nodes.shift();
-		console.log(item);
-		jQuery.ajax({
-			type : 'POST',
-			url : 'index.php?option=com_j2xml&task=cpanel.import&format=json',
-			data : {
-				'j2xml_data' : item
-			},
-			success : function(response, textStatus, jqXHR) {
-				// Callback handler that will be called on success
-				console.log('done');
-				console.log(response);
-				if (!response.success && response.message) {
-					eshiol.renderMessages({
-						'error' : [ response.message ]
-					});
-				} else if (response.messages) {
-					eshiol.renderMessages(response.messages);
-				}
-			},
-			dataType : 'json'
-		}).always(function() {
-			console.log('always');
-			n++;
-			if (n == tot) {
-				button.innerHTML = button_text + 'ed... 100%';
-				setTimeout(function() {
-					button.innerHTML = button_text;
-				}, 2000);
-			} else {
-				x = Math.floor(n / tot * 100);
-				button.innerHTML = button_text + 'ing... ' + x + '%';
-			}
-			document.getElementById('j-main-container').scrollIntoView();
-			eshiol.j2xml.send($nodes, n, tot);
-		});
-	}
+		// Empty container
+		messageContainer.empty();
+
+		// Fix Chrome bug not updating element height
+		messageContainer.css( 'display', 'none' );
+		messageContainer.outerHeight( true );
+		messageContainer.css( 'display', '' );
+	};
 }
 
 /**
- * Upload a file
- * 
- * @param {string}
- *            name The name of the button
- * @param {string}
- *            url The url to process the file
- * @return {boolean} true on success.
+ * Render messages sent via JSON
+ *
+ * @param	object	messages			JavaScript object containing the messages to render
+ * @param	object	messageContainer	the container where render the messages
+ * @return	void
  */
-eshiol.j2xml.importer = function(name, url) {
-	console.log('eshiol.j2xml.importer');
-	console.log(name);
-	console.log(url);
-
-	console.log('filetype: ' + jQuery('#' + name + '_filetype').val());
-
-	switch (jQuery('#' + name + '_filetype').val()) {
-	case '2':
-		if (jQuery('#' + name + '_url').val()) {
-			return false;
-		} else {
-			alert('Please select a file');
-			return true;
+if( typeof( eshiol.renderMessages ) === 'undefined' ){
+	eshiol.renderMessages = function( messages, messageContainer ){
+		if( typeof( messageContainer ) === 'undefined' ){
+			messageContainer = jQuery( '#system-message-container' );
 		}
-		break;
-	case '3':
-		if (jQuery('#' + name + '_server').val()) {
-			return false;
-		} else {
-			alert('Please select a file');
-			return true;
-		}
-		break;
-	default:
-		if (!jQuery('#' + name + '_local').val()) {
-			alert('Please select a file');
-			return true;
-		}
-		break;
-	}
 
-	if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-		alert('The File APIs are not fully supported in this browser.');
-		return false;
-	}
-
-	Joomla.removeMessages();
-
-	var AJAX_QUEUE = [];
-
-	input = jQuery('#' + name + '_local')
-	if (!input) {
-		alert("Um, couldn't find the fileinput element.");
-		return false;
-	}
-
-	input = input[0];
-	if (!input.files) {
-		alert("This browser doesn't seem to support the `files` property of file inputs.");
-		return false;
-	}
-
-	if (!input.files[0]) {
-		alert("Please select a file before clicking 'Load'");
-		return false;
-	}
-
-	output_default = jQuery('#' + name + '_upload').find('span')[0].html;
-
-	file = input.files[0];
-
-	jQuery('#' + name + '_local').val('');
-	jQuery('#' + name + '_local1').val('');
-
-	fr = new FileReader();
-	fr.onload = function() {
-		var xml = fr.result;
-
-		eshiol.j2xml.convert.forEach(function(fn) {
-			xml = fn(xml);
-		});
-
-		var xmlDoc;
-		var $nodes = Array();
-		try {
-			xmlDoc = jQuery.parseXML(xml);
-			$xml = jQuery(xmlDoc);
-			root = $xml.find(":root")[0];
-
-			if (root.nodeName == "j2xml") {
-				console.log(jQuery(root).attr('version'));
-
-				$root = jQuery(root);
-
-				var header = '<?xml version="1.0" encoding="UTF-8" ?>' + "\n"
-						+ '<j2xml version="' + $root.attr("version") + '">'
-						+ "\n";
-				var footer = "\n</j2xml>";
-
-				$root.children("field").each(function(index) {
-					$nodes.push(header + eshiol.XMLToString(this) + footer);
-				});
-
-				$root.children("user").each(function(index) {
-					$nodes.push(header + eshiol.XMLToString(this) + footer);
-				});
-
-				$root.children("tag").each(function(index) {
-					$nodes.push(header + eshiol.XMLToString(this) + footer);
-				});
-
-				$root.children("category").each(function(index) {
-					$nodes.push(header + eshiol.XMLToString(this) + footer);
-				});
-
-				var base = '';
-				if ($root.children("base").length) {
-					base = eshiol.XMLToString($root.children("base")[0]);
-				}
-				$root.children("content").each(
-						function(index) {
-							$nodes.push(header + base
-									+ eshiol.XMLToString(this) + footer);
-						});
-
-				$root.children().each(
-						function(index) {
-							if ([ "base", "field", "user", "tag", "category",
-									"content" ].indexOf(this.nodeName) == -1) {
-								$nodes.push(header + eshiol.XMLToString(this)
-										+ footer);
-							}
-						});
-			} else {
-				$nodes.push(xml);
+		jQuery.each( messages, function( type, message ){
+			if( type == 'message' ){
+				type = 'success';
 			}
-		} catch (e) {
-			var $nodes = [ xml ];
-		}
 
-		tot = $nodes.length;
-		if (tot == 0) {
-			return true;
-		}
-		n = 0;
+			var div = messageContainer.find( 'div.alert.alert-' + type );
+			if( !div[0] ){
+				jQuery( '<button/>', {
+					'class': 'close',
+					'data-dismiss': 'alert',
+					'type': 'button',
+					'html': '&times;'
+				} ).appendTo( messageContainer );
 
-		button = jQuery('#' + name + '_upload').find('span')[0];
-		button_text = button.innerHTML;
-		button.innerHTML = button_text + 'ing... 0%';
+				div = jQuery( '<div/>', {
+					'class': 'alert alert-' + type
+				} ).appendTo( messageContainer );
 
-		eshiol.j2xml.send($nodes, n, tot);
+				jQuery( '<h4/>', {
+					'class' : 'alert-heading',
+					'html': Joomla.JText._( type, type.charAt( 0 ).toUpperCase() + type.slice( 1 ) )
+				} ).appendTo( div );
+			}
+			else{
+				div = div[0];
+			}
+
+			jQuery.each( message, function( index, item ){
+				jQuery( '<p/>', {
+					'html': item
+				} ).appendTo( div );
+			} );
+		} );
 	};
-	fr.readAsText(file);
-	return true;
+}
+
+eshiol.j2xml.codes = [
+	'message', // LIB_J2XML_MSG_ARTICLE_IMPORTED 0
+	'notice', // LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED 1
+	'message', // LIB_J2XML_MSG_USER_IMPORTED 2
+	'notice', // LIB_J2XML_MSG_USER_NOT_IMPORTED 3
+	'notice', // 'message', // not used: LIB_J2XML_MSG_SECTION_IMPORTED 4
+	'notice', // not used: LIB_J2XML_MSG_SECTION_NOT_IMPORTED 5
+	'message', // LIB_J2XML_MSG_CATEGORY_IMPORTED 6
+	'notice', // LIB_J2XML_MSG_CATEGORY_NOT_IMPORTED 7
+	'message', // LIB_J2XML_MSG_FOLDER_WAS_SUCCESSFULLY_CREATED 8
+	'notice', // LIB_J2XML_MSG_ERROR_CREATING_FOLDER 9
+	'message', // LIB_J2XML_MSG_IMAGE_IMPORTED 10
+	'notice', // LIB_J2XML_MSG_IMAGE_NOT_IMPORTED 11
+	'message', // LIB_J2XML_MSG_WEBLINK_IMPORTED 12
+	'notice', // LIB_J2XML_MSG_WEBLINK_NOT_IMPORTED 13
+	'notice', // not used: LIB_J2XML_MSG_WEBLINKCAT_NOT_PRESENT 14
+	'error', // LIB_J2XML_MSG_XMLRPC_NOT_SUPPORTED 15
+	'notice', // LIB_J2XML_MSG_CATEGORY_ID_PRESENT 16
+	'error', // LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED 17
+	'error', // LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN 18
+	'error', // JERROR_ALERTNOTAUTH 19
+	'message', // LIB_J2XML_MSG_TAG_IMPORTED 20
+	'notice', // LIB_J2XML_MSG_TAG_NOT_IMPORTED 21
+	'message', // LIB_J2XML_MSG_CONTACT_IMPORTED 22
+	'notice', // LIB_J2XML_MSG_CONTACT_NOT_IMPORTED 23
+	'message', // LIB_J2XML_MSG_VIEWLEVEL_IMPORTED 24
+	'notice', // LIB_J2XML_MSG_VIEWLEVEL_NOT_IMPORTED 25
+	'message', // LIB_J2XML_MSG_BUTTON_IMPORTED 26
+	'notice', // LIB_J2XML_MSG_BUTTON_NOT_IMPORTED 27
+	'error', // LIB_J2XML_MSG_UNKNOWN_ERROR 28
+	'warning', // LIB_J2XML_MSG_UNKNOWN_WARNING 29
+	'notice', // LIB_J2XML_MSG_UNKNOWN_NOTICE 30
+	'message', // LIB_J2XML_MSG_UNKNOWN_MESSAGE 31
+	'notice', // LIB_J2XML_MSG_XMLRPC_DISABLED 32
+	'message', // LIB_J2XML_MSG_MENUTYPE_IMPORTED 33
+	'notice', // LIB_J2XML_MSG_MENUTYPE_NOT_IMPORTED 34
+	'message', // LIB_J2XML_MSG_MENU_IMPORTED 35
+	'notice', // LIB_J2XML_MSG_MENU_NOT_IMPORTED 36
+	'notice', // LIB_J2XML_ERROR_COMPONENT_NOT_FOUND 37
+	'message', // LIB_J2XML_MSG_MODULE_IMPORTED 38
+	'notice', // LIB_J2XML_MSG_MODULE_NOT_IMPORTED 39
+	'message', // LIB_J2XML_MSG_FIELD_IMPORTED 40
+	'notice', // LIB_J2XML_MSG_FIELD_NOT_IMPORTED 41
+	'message', // LIB_J2XML_MSG_USERNOTE_IMPORTED 42
+	'notice', // LIB_J2XML_MSG_USERNOTE_NOT_IMPORTED 43
+	'message', // LIB_J2XML_MSG_FIELDGROUP_IMPORTED 44
+	'notice', // LIB_J2XML_MSG_FIELDGROUP_NOT_IMPORTED 45
+	'notice' // LIB_J2XML_MSG_USER_SKIPPED 46
+];
+
+eshiol.j2xml.sendItem = function( options, params ){
+	if( options.cids.length ){
+		var cid = options.cids.shift();
+		var progress = Math.floor( 100 * options.n / options.tot );
+		window.parent.jQuery( '#send-progress-bar' ).css( 'width', progress + '%' ).attr( 'aria-valuenow', options.n );
+		window.parent.jQuery( '#send-progress-text' ).html( Joomla.JText._( 'LIB_J2XML_SENDING' ).replace( '%s', progress + '%' ) );
+		options.n++;
+
+		console.log( 'exporting data from ' + options.export_url);
+		console.log( params );
+
+		Joomla.request( {
+			url: options.export_url + '&cid[]=' + cid,
+			data: Object.keys( params ).map( function( key ){
+				return encodeURIComponent( key ) + '=' + encodeURIComponent( params[key] );
+			} ).join( '&' ),
+			onSuccess: function onSuccess( resp ){
+				console.log( 'export.onSuccess' );
+				console.log( 'sending data via xmlrpc to ' + options.remote_url );
+
+				var r = JSON.parse( resp );
+				p = params;
+				delete p['compression'];
+				console.log( p );
+				jQuery.xmlrpc( {
+					url: options.remote_url,
+					methodName: 'j2xml.importAjax',
+					params: [r.data, JSON.stringify( p )],
+					xhrFields: {
+						withCredentials: true
+					},
+					// beforeSend: function ( xhr ){
+						// Set the headers
+						// xhr.setRequestHeader( 'Authorization', 'Basic ' + btoa( username + ':' + password ) );
+						// xhr.setRequestHeader( 'Authorization', 'Barer ' + token );
+					// },
+					success: function( response, status, jqXHR ){
+						console.log( 'send.onSuccess' );
+						window.parent.jQuery( 'input:checkbox[name=\'checkall-toggle\']' ).prop( 'checked', false );
+						window.parent.jQuery( 'input:checkbox[name=\'cid\[\]\'][value=\'' + cid + '\']' ).prop( 'checked', false );
+						jQuery.each( response, function( index, messages ){
+							messages.forEach( function( item ){
+								console.log( item );
+								msg = new Object();
+								if( item.code in eshiol.j2xml.codes ){
+									t = eshiol.j2xml.codes[item.code];
+								}
+								else{
+									t = 'notice';
+								}
+								msg[t] = [item.message];
+								eshiol.renderMessages( msg, options.message_container );
+							} );
+						} );
+
+						eshiol.j2xml.sendItem( options, params );
+					},
+					error: function( jqXHR, status, error ){
+						console.log( 'send.onError' );
+						eshiol.renderMessages( {'error': [error]}, options.message_container );
+
+						eshiol.j2xml.sendItem( options, params );
+					}
+				});
+			},
+			onError: function onError( xhr ){
+				if( xhr.status > 0 ){
+					Joomla.renderMessages( Joomla.ajaxErrorsMessages( xhr ) );
+				}
+
+				eshiol.j2xml.sendItem( options, params );
+			}
+		} );
+	}
+	else{
+		window.parent.jQuery('#send-progress').remove();
+	}
+}
+
+eshiol.j2xml.send = function ( options ){
+	console.log( 'eshiol.j2xml.send' );
+	options.cids = [];
+	options.tot = 0;
+	options.n = 0;
+	
+	if (typeof Joomla.getOptions !== "undefined") { 
+		var progressBarContainerClass = Joomla.getOptions( "progressBarContainerClass", "progress progress-striped active" );
+		var progressBarClass = Joomla.getOptions( "progressBarClass", "bar bar-success" );		
+	}
+	else {
+		var progressBarContainerClass = "progress progress-striped active";
+		var progressBarClass = "bar bar-success"
+	}
+
+	window.parent.jQuery( '#system-message-container' ).prepend(
+			'<div id="send-progress" class="send-progress">'
+			+ '<div class="' + progressBarContainerClass + '">'
+			+ '<div id="send-progress-bar" class="' + progressBarClass + '" aria-valuenow="0" aria-valuemin="0" aria-valuemax="' + options.tot + '"></div>'
+			+ '</div>'
+			+ '<p class="lead">'
+			+ '<span id="send-progress-text" class="sending-text">'
+			+ Joomla.JText._( 'LIB_J2XML_SENDING' ).replace( '%s', '0%' )
+			+ '</span>'
+			+ '</p>'
+			+ '</div>'
+		);
+
+	var params = {};
+	jQuery( '#adminForm input:not(:radio)[name^=jform], #adminForm input:radio[name^=jform]:checked, #adminForm select[name^=jform]' ).each( function( index ){
+		var input = jQuery( this );
+		var name = input.attr( 'name' ).match(/jform\[(.*)\]/)[1];
+		
+		if( name.substr( 0, 5 ) == 'send_' ){
+			name = name.substr( 5 );
+		}
+		if( ['cid', 'remote_url'].indexOf( name ) == -1 ){
+			params[name] = input.val();
+		}
+	});
+//	['cid', 'remote_url'].forEach(function(element){
+//		delete params[element];
+//	});
+
+	navigator.__defineGetter__( 'userAgent', function(){ return eshiol.j2xml.version } );
+
+	window.parent.jQuery( 'input:checkbox[name=\'cid\[\]\']:checked' ).each( function(){
+		options.cids.push( jQuery( this ).val() );
+		options.tot++;
+	});
+	
+	eshiol.j2xml.sendItem( options, params );
+}
+
+eshiol.XMLToString = function( xmlDom )
+{
+	// console.log( "eshiol.XMLToString" );
+	// console.log( xmlDom );
+	x = ( typeof XMLSerializer !== "undefined" )
+		? ( new window.XMLSerializer() ).serializeToString( xmlDom )
+		: xmlDom.xml;
+	// console.log( x );
+	return x;
+}
+
+if( typeof strstr === "undefined" ){
+	function strstr( haystack, needle, bool ){
+		var pos = 0;
+
+		haystack += "";
+		pos = haystack.indexOf( needle );
+		if( pos == -1 ){
+			return false;
+		} 
+		else{
+			if( bool ){
+				return haystack.substr( 0, pos );
+			}
+			else{
+				return haystack.slice( pos );
+			}
+		}
+	}
 }
