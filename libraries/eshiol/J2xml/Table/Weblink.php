@@ -263,7 +263,7 @@ class Weblink extends Table
 	 * {@inheritdoc}
 	 * @see Table::prepareData()
 	 *
-	 * @since __DEPLOY_VERSION__
+	 * @since 20.5.349
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{

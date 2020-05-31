@@ -1069,7 +1069,7 @@ class Table extends \JTable
 	 *
 	 * @return int the id of the contact if it exists or the default contact id
 	 * 
-	 * @since __DEPLOY_VERSION__
+	 * @since 20.5.349
 	 */
 	public static function getContactId ($contact, $defaultContactId = 0)
 	{
@@ -1112,7 +1112,7 @@ class Table extends \JTable
 	 *
 	 * @return int the id of the weblink if it exists or the default weblink id
 	 *
-	 * @since __DEPLOY_VERSION__
+	 * @since 20.5.349
 	 */
 	public static function getWeblinkId ($weblink, $defaultWeblinkId = 0)
 	{
