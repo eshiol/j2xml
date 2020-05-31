@@ -263,10 +263,10 @@ eshiol.j2xml.send = function ( options ){
 	options.cids = [];
 	options.tot = 0;
 	options.n = 0;
-	
-	if (typeof Joomla.getOptions !== "undefined") { 
+
+	if (typeof Joomla.getOptions !== "undefined") {
 		var progressBarContainerClass = Joomla.getOptions( "progressBarContainerClass", "progress progress-striped active" );
-		var progressBarClass = Joomla.getOptions( "progressBarClass", "bar bar-success" );		
+		var progressBarClass = Joomla.getOptions( "progressBarClass", "bar bar-success" );
 	}
 	else {
 		var progressBarContainerClass = "progress progress-striped active";
@@ -290,7 +290,7 @@ eshiol.j2xml.send = function ( options ){
 	jQuery( '#adminForm input:not(:radio)[name^=jform], #adminForm input:radio[name^=jform]:checked, #adminForm select[name^=jform]' ).each( function( index ){
 		var input = jQuery( this );
 		var name = input.attr( 'name' ).match(/jform\[(.*)\]/)[1];
-		
+
 		if( name.substr( 0, 5 ) == 'send_' ){
 			name = name.substr( 5 );
 		}
@@ -308,7 +308,7 @@ eshiol.j2xml.send = function ( options ){
 		options.cids.push( jQuery( this ).val() );
 		options.tot++;
 	});
-	
+
 	eshiol.j2xml.sendItem( options, params );
 }
 
@@ -331,7 +331,7 @@ if( typeof strstr === "undefined" ){
 		pos = haystack.indexOf( needle );
 		if( pos == -1 ){
 			return false;
-		} 
+		}
 		else{
 			if( bool ){
 				return haystack.substr( 0, pos );
