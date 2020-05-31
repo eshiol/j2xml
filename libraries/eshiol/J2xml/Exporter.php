@@ -159,7 +159,7 @@ class Exporter
 			$document->setMimeEncoding('text/xml', true);
 			\JResponse::setHeader('Content-disposition', 'attachment; filename="j2xml' . $xmlVersionNumber . date('YmdHis') . '.xml"', true);
 		}
-		elseif ($options['gzip'] || $option['compress'])
+		elseif (!empty($options['gzip']) || !empty($options['compress']))
 		{
 			$document->setMimeEncoding('application/gzip', true);
 			\JResponse::setHeader('Content-disposition', 'attachment; filename="j2xml' . $xmlVersionNumber . date('YmdHis') . '.gz"', true);
