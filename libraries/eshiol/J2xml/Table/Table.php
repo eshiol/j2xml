@@ -16,6 +16,7 @@ namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Table
@@ -341,7 +342,7 @@ class Table extends \JTable
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		return $this->_serialize();
 	}
 
@@ -934,5 +935,211 @@ class Table extends \JTable
 		}
 
 		return $menuId;
+	}
+	
+	/**
+	 * Set the associations.
+	 * 
+	 * @param   integer  $id            The primary key value.
+	 * @param   string   $language      The language tag.
+	 * @param   array    $associations  The associated items.
+	 * @param   string   $context       The associations context.
+	 */
+	protected static function setAssociations($id, $language, $associations, $context)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($id, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($language, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(print_r($associations, true), \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($context, \JLog::DEBUG, 'com_j2xml'));
+		
+		if (empty($associations))
+		{
+			return;
+		}
+
+		$db      = \JFactory::getDbo();
+		$version = new \JVersion();
+
+		if ($version->isCompatible('3.2'))
+		{
+			$isEnabled = \JLanguageAssociations::isEnabled();
+		}
+		else
+		{
+			if (\JLanguageMultilang::isEnabled())
+			{
+				$params = new \JRegistry(\JPluginHelper::getPlugin('system', 'languagefilter')->params);
+				
+				$isEnabled  = (boolean) $params->get('item_associations', true);
+			}
+			else
+			{
+				$isEnabled = false;
+			}
+		}
+		
+		if ($isEnabled)
+		{
+			// Unset any invalid associations
+			if ($version->isCompatible('3.4'))
+			{
+				$associations = ArrayHelper::toInteger($associations);
+			}
+			else
+			{
+				\JArrayHelper::toInteger($associations);
+			}
+
+			// Unset any invalid associations
+			foreach ($associations as $tag => $itemId)
+			{
+				if (!$itemId)
+				{
+					unset($associations[$tag]);
+				}
+			}
+
+			// Show a warning if the item isn't assigned to a language but we have associations.
+			if ($associations && $language === '*')
+			{
+				$app->enqueueMessage(
+					\JText::_(strtoupper(strtok($associationsContext, '.')) . '_ERROR_ALL_LANGUAGE_ASSOCIATED'),
+					'warning'
+					);
+			}
+
+			// Get associationskey for edited item
+			$query = $db->getQuery(true)
+				->select($db->quoteName('key'))
+				->from($db->quoteName('#__associations'))
+				->where($db->quoteName('context') . ' = ' . $db->quote($context))
+				->where($db->quoteName('id') . ' = ' . (int) $id);
+			$db->setQuery($query);
+			$old_key = $db->loadResult();
+			
+			// Deleting old associations for the associated items
+			$query = $db->getQuery(true)
+				->delete($db->quoteName('#__associations'))
+				->where($db->quoteName('context') . ' = ' . $db->quote($context));
+			
+			if ($associations)
+			{
+				$query->where('(' . $db->quoteName('id') . ' IN (' . implode(',', $associations) . ') OR '
+						. $db->quoteName('key') . ' = ' . $db->quote($old_key) . ')');
+			}
+			else
+			{
+				$query->where($db->quoteName('key') . ' = ' . $db->quote($old_key));
+			}
+			
+			$db->setQuery($query);
+			$db->execute();
+			
+			// Adding self to the association
+			if ($language !== '*')
+			{
+				$associations[$language] = (int) $id;
+			}
+			
+			if (count($associations) > 1)
+			{
+				// Adding new association for these items
+				$key   = md5(json_encode($associations));
+				$query = $db->getQuery(true)
+					->insert('#__associations');
+				
+				foreach ($associations as $itemId)
+				{
+					$query->values(((int) $itemId) . ',' . $db->quote($context) . ',' . $db->quote($key));
+				}
+				$db->setQuery($query);
+				$db->execute();
+			}
+		}
+	}
+
+	/**
+	 * Get the contact id from the contact path
+	 *
+	 * @param string $contact
+	 *			the path of the contact to search for
+	 * @param int $defaultContactId
+	 *			the id to return if the contact doesn't exist
+	 *
+	 * @return int the id of the contact if it exists or the default contact id
+	 * 
+	 * @since __DEPLOY_VERSION__
+	 */
+	public static function getContactId ($contact, $defaultContactId = 0)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($contact, \JLog::DEBUG, 'com_j2xml'));
+		
+		if (is_numeric($contact))
+		{
+			$contactId = $contact;
+		}
+		else
+		{
+			$db = \JFactory::getDBO();
+			$i = strrpos($contact, '/');
+			$query = $db->getQuery(true)
+				->select($db->quoteName('c.id'))
+				->from($db->quoteName('#__contact_details', 'c'))
+				->join('INNER', $db->quoteName('#__categories', 'cc') . ' ON ' . $db->quoteName('c.catid') . ' = ' . $db->quoteName('cc.id'))
+				->where($db->quoteName('cc.extension') . ' = ' . $db->quote('com_contact'))
+				->where($db->quoteName('c.alias') . ' = ' . $db->quote(substr($contact, $i + 1)))
+				->where($db->quoteName('cc.path') . ' = ' . $db->quote(substr($contact, 0, $i)));
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+			$contactId = $db->setQuery($query)->loadResult();
+			if (! $contactId)
+			{
+				$contactId = $defaultContactId;
+			}
+		}
+
+		return $contactId;
+	}
+
+	/**
+	 * Get the weblink id from the weblink path
+	 *
+	 * @param string $weblink
+	 *			the path of the weblink to search for
+	 * @param int $defaultWeblinkId
+	 *			the id to return if the weblink doesn't exist
+	 *
+	 * @return int the id of the weblink if it exists or the default weblink id
+	 *
+	 * @since __DEPLOY_VERSION__
+	 */
+	public static function getWeblinkId ($weblink, $defaultWeblinkId = 0)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+
+		if (is_numeric($weblink))
+		{
+			$weblinkId = $weblink;
+		}
+		else
+		{
+			$db = \JFactory::getDBO();
+			$i = strrpos($weblink, '/');
+			$query = $db->getQuery(true)
+				->select($db->quoteName('c.id'))
+				->from($db->quoteName('#__weblinks', 'c'))
+				->join('INNER', $db->quoteName('#__categories', 'cc') . ' ON ' . $db->quoteName('c.catid') . ' = ' . $db->quoteName('cc.id'))
+				->where($db->quoteName('cc.extension') . ' = ' . $db->quote('com_weblinks'))
+				->where($db->quoteName('c.alias') . ' = ' . $db->quote(substr($weblink, $i + 1)))
+				->where($db->quoteName('cc.path') . ' = ' . $db->quote(substr($weblink, 0, $i)));
+			$weblinkId = $db->setQuery($query)->loadResult();
+			if (! $weblinkId)
+			{
+				$weblinkId = $defaultWeblinkId;
+			}
+		}
+
+		return $weblinkId;
 	}
 }

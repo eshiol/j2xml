@@ -199,6 +199,6 @@ class Usernote extends \eshiol\J2xml\Table\Table
 			->from($this->_db->quoteName('#__users'))
 			->where($this->_db->quoteName('id') . ' = ' . (int) $this->user_id);
 
-		return parent::_serialize();
+		return parent::toXML($mapKeysToText);
 	}
 }

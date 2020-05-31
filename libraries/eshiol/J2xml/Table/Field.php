@@ -80,7 +80,7 @@ class Field extends Table
 			->where($this->_db->quoteName('c.id') . ' = ' . $this->_db->quoteName('fc.category_id'))
 			->where($this->_db->quoteName('fc.field_id') . ' = ' . (int) $this->id);
 
-		return parent::_serialize();
+		return parent::toXML($mapKeysToText);
 	}
 
 	/**

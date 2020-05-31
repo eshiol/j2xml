@@ -41,13 +41,6 @@ use Joomla\Utilities\ArrayHelper;
  */
 class Content extends Table
 {
-	/**
-	 * The context used for the associations table
-	 *
-	 * @var      string
-	 * @since    20.5.349
-	 */
-	static protected $associationsContext = 'com_content.item';
 
 	/**
 	 * Constructor
@@ -81,7 +74,7 @@ class Content extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$this->_excluded = array_merge($this->_excluded, array(
 				'sectionid',
 				'mask',
@@ -181,8 +174,8 @@ class Content extends Table
 				$this->_db->quoteName('asso1.id') . ' = ' . (int) $this->id,
 				$this->_db->quoteName('asso1.context') . ' = ' . $this->_db->quote('com_content.item'),
 				$this->_db->quoteName('asso2.id') . ' <> ' . (int) $this->id));
-		
-		return parent::_serialize();
+			
+		return parent::toXML($mapKeysToText);
 	}
 
 	/**
@@ -424,104 +417,7 @@ class Content extends Table
 							}
 						}
 
-						if ($version->isCompatible('3.2'))
-						{
-							$isEnabled = \JLanguageAssociations::isEnabled();
-						}
-						else
-						{
-							if (\JLanguageMultilang::isEnabled())
-							{
-								$params = new \JRegistry(\JPluginHelper::getPlugin('system', 'languagefilter')->params);
-								
-								$isEnabled  = (boolean) $params->get('item_associations', true);
-							}
-							else
-							{
-								$isEnabled = false;
-							}
-						}
-
-						if ($isEnabled && !empty($data['associations']))
-						{
-							$associations = $data['associations'];
-
-							// Unset any invalid associations
-							if ($version->isCompatible('3.4'))
-							{
-								$associations = ArrayHelper::toInteger($associations);
-							}
-							else
-							{
-								\JArrayHelper::toInteger($associations);
-							}
-
-							// Unset any invalid associations
-							foreach ($associations as $tag => $id)
-							{
-								if (!$id)
-								{
-									unset($associations[$tag]);
-								}
-							}
-
-							// Show a warning if the item isn't assigned to a language but we have associations.
-							if ($associations && $table->language === '*')
-							{
-								$app->enqueueMessage(
-									\JText::_(strtoupper($this->option) . '_ERROR_ALL_LANGUAGE_ASSOCIATED'),
-									'warning'
-									);
-							}
-
-							// Get associationskey for edited item
-							$query = $db->getQuery(true)
-								->select($db->quoteName('key'))
-								->from($db->quoteName('#__associations'))
-								->where($db->quoteName('context') . ' = ' . $db->quote(self::$associationsContext))
-								->where($db->quoteName('id') . ' = ' . (int) $id);
-							$db->setQuery($query);
-							$old_key = $db->loadResult();
-
-							// Deleting old associations for the associated items
-							$query = $db->getQuery(true)
-								->delete($db->quoteName('#__associations'))
-								->where($db->quoteName('context') . ' = ' . $db->quote(self::$associationsContext));
-
-							if ($associations)
-							{
-								$query->where('(' . $db->quoteName('id') . ' IN (' . implode(',', $associations) . ') OR '
-									. $db->quoteName('key') . ' = ' . $db->quote($old_key) . ')');
-							}
-							else
-							{
-								$query->where($db->quoteName('key') . ' = ' . $db->quote($old_key));
-							}
-
-							$db->setQuery($query);
-							$db->execute();
-
-							// Adding self to the association
-							if ($table->language !== '*')
-							{
-								$associations[$table->language] = (int) $table->id;
-							}
-
-							if (count($associations) > 1)
-							{
-								// Adding new association for these items
-								$key   = md5(json_encode($associations));
-								$query = $db->getQuery(true)
-									->insert('#__associations');
-
-								foreach ($associations as $id)
-								{
-									$query->values(((int) $id) . ',' . $db->quote(self::$associationsContext) . ',' . $db->quote($key));
-								}
-								$db->setQuery($query);
-								$db->execute();
-							}
-						}
+						self::setAssociations($table->id, $table->language, $data['associations'], 'com_content.item');
 
 						// Trigger the onContentAfterSave event.
 						$results = \JFactory::getApplication()->triggerEvent('onContentAfterSave',
@@ -632,6 +528,11 @@ class Content extends Table
 		if (! isset($data['catid']))
 		{
 			$data['catid'] = $params->get('content_category_default');
+		}
+
+		if (empty($data['associations']))
+		{
+			$data['associations'] = array();
 		}
 
 		if (isset($data['associationlist']))

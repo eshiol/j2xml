@@ -68,7 +68,19 @@ class Weblink extends Table
 				->where($this->_db->quoteName('m.content_item_id') . ' = ' . $this->_db->quote((string) $this->id));
 		}
 
-		return parent::_serialize();
+		$query = $this->_db->getQuery(true);
+		$this->_aliases['association'] = (string) $query
+			->select($query->concatenate(array($this->_db->quoteName('cc.path'), $this->_db->quoteName('c.alias')), '/'))
+			->from($this->_db->quoteName('#__associations', 'asso1'))
+			->join('INNER', $this->_db->quoteName('#__associations', 'asso2') . ' ON ' . $this->_db->quoteName('asso1.key') . ' = ' . $this->_db->quoteName('asso2.key'))
+			->join('INNER', $this->_db->quoteName('#__weblinks', 'c') . ' ON ' . $this->_db->quoteName('asso2.id') . ' = ' . $this->_db->quoteName('c.id'))
+			->join('INNER', $this->_db->quoteName('#__categories', 'cc') . ' ON ' . $this->_db->quoteName('c.catid') . ' = ' . $this->_db->quoteName('cc.id'))
+			->where(array(
+				$this->_db->quoteName('asso1.id') . ' = ' . (int) $this->id,
+				$this->_db->quoteName('asso1.context') . ' = ' . $this->_db->quote('com_weblinks.item'),
+				$this->_db->quoteName('asso2.id') . ' <> ' . (int) $this->id));
+		
+		return parent::toXML($mapKeysToText);
 	}
 
 	/**
@@ -102,11 +114,61 @@ class Weblink extends Table
 			return;
 		}
 
+		if ($item->access > 6)
+		{
+			Viewlevel::export($item->access, $xml, $options);
+		}
+		
+		if ($options['categories'] && ($item->catid > 0))
+		{
+			Category::export($item->catid, $xml, $options);
+		}
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
+
+		if ($options['users'])
+		{
+			if ($item->created_by)
+			{
+				User::export($item->created_by, $xml, $options);
+			}
+			if ($item->modified_by)
+			{
+				User::export($item->modified_by, $xml, $options);
+			}
+		}
+
+		if ($options['images'])
+		{
+			$_image = preg_match_all(self::IMAGE_MATCH_STRING, $item->description, $matches, PREG_PATTERN_ORDER);
+			if (count($matches[1]) > 0)
+			{
+				for ($i = 0; $i < count($matches[1]); $i ++)
+				{
+					if ($_image = $matches[1][$i])
+					{
+						Image::export($_image, $xml, $options);
+					}
+				}
+			}
+			
+			if ($imgs = json_decode($item->images))
+			{
+				if (isset($imgs->image_first))
+				{
+					Image::export($imgs->image_first, $xml, $options);
+				}
+				
+				if (isset($imgs->image_second))
+				{
+					Image::export($imgs->image_second, $xml, $options);
+				}
+			}
+		}
 	}
 
 	/**
@@ -143,6 +205,12 @@ class Weblink extends Table
 		$params->set('extension', 'com_weblinks');
 		$params->def('category_default', self::getCategoryId('uncategorised', 'com_weblinks'));
 
+		$import_categories = $params->get('categories');
+		if ($import_categories)
+		{
+			Category::import($xml, $params);
+		}
+
 		foreach ($xml->xpath("//j2xml/weblink[not(title = '')]") as $record)
 		{
 			self::prepareData($record, $data, $params);
@@ -175,6 +243,8 @@ class Weblink extends Table
 				$table->bind($data);
 				if ($table->store())
 				{
+					self::setAssociations($table->id, $table->language, $data['associations'], 'com_weblinks.item');
+
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_WEBLINK_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
 					// Trigger the onContentAfterSave event.
 				}
@@ -185,6 +255,66 @@ class Weblink extends Table
 				}
 				$table = null;
 			}
+		}
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 * @see Table::prepareData()
+	 *
+	 * @since __DEPLOY_VERSION__
+	 */
+	public static function prepareData ($record, &$data, $params)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
+		$db = \JFactory::getDBO();
+		
+		$params->set('extension', 'com_weblinks');
+		parent::prepareData($record, $data, $params);
+		
+		if (empty($data['associations']))
+		{
+			$data['associations'] = array();
+		}
+		
+		if (isset($data['associationlist']))
+		{
+			foreach ($data['associationlist']['association'] as $association)
+			{
+				$id = self::getWeblinkId($association);
+				if ($id)
+				{
+					$tag = $db->setQuery($db->getQuery(true)
+						->select($db->quoteName('language'))
+						->from($db->quoteName('#__weblinks'))
+						->where($db->quoteName('id') . ' = ' . $id))
+						->loadResult();
+					if ($tag !== '*')
+					{
+						$data['associations'][$tag] = $id;
+					}
+				}
+			}
+			unset($data['associationlist']);
+		}
+		elseif (isset($data['association']))
+		{
+			$id = self::getWeblinkId($data['association']);
+			if ($id)
+			{
+				$tag = $db->setQuery($db->getQuery(true)
+					->select($db->quoteName('language'))
+					->from($db->quoteName('#__weblinks'))
+					->where($db->quoteName('id') . ' = ' . $id))
+					->loadResult();
+				if ($tag !== '*')
+				{
+					$data['associations'][$tag] = $id;
+				}
+			}
+			unset($data['association']);
 		}
 	}
 }

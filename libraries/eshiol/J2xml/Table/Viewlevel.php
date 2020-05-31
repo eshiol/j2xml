@@ -94,7 +94,7 @@ class Viewlevel extends Table
 					), $this->rules));
 		}
 
-		return parent::_serialize();
+		return parent::toXML($mapKeysToText);
 	}
 
 	/**

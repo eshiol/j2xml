@@ -76,7 +76,22 @@ class Category extends Table
 				->where($this->_db->quoteName('m.content_item_id') . ' = ' . $this->_db->quote((string) $this->id));
 		}
 
-		return $this->_serialize();
+		$query = $this->_db->getQuery(true);
+		$this->_aliases['association'] = (string) $query
+			->select('CASE WHEN ' .  $this->_db->quoteName('cc1.level') . ' = 1'
+				. ' THEN ' . $this->_db->quoteName('cc1.alias')
+				. ' ELSE ' . $query->concatenate(array($this->_db->quoteName('cc2.path'), $this->_db->quoteName('cc1.alias')), '/')
+				. ' END')
+			->from($this->_db->quoteName('#__associations', 'asso1'))
+			->join('INNER', $this->_db->quoteName('#__associations', 'asso2') . ' ON ' . $this->_db->quoteName('asso1.key') . ' = ' . $this->_db->quoteName('asso2.key'))
+			->join('INNER', $this->_db->quoteName('#__categories', 'cc1') . ' ON ' . $this->_db->quoteName('asso2.id') . ' = ' . $this->_db->quoteName('cc1.id'))
+			->join('INNER', $this->_db->quoteName('#__categories', 'cc2') . ' ON ' . $this->_db->quoteName('cc1.parent_id') . ' = ' . $this->_db->quoteName('cc2.id'))
+			->where(array(
+				$this->_db->quoteName('asso1.id') . ' = ' . (int) $this->id,
+				$this->_db->quoteName('asso1.context') . ' = ' . $this->_db->quote('com_categories.item'),
+				$this->_db->quoteName('asso2.id') . ' <> ' . (int) $this->id));
+
+		return parent::toXML($mapKeysToText);
 	}
 
 	/**
@@ -274,6 +289,8 @@ class Category extends Table
 						// Rebuild the tree path.
 						$table->rebuildPath();
 
+						self::setAssociations($table->id, $table->language, $data['associations'], 'com_categories.item');
+
 						if ($keep_id && ($id > 0) && ($id != $table->id))
 						{
 							\JLog::add(
@@ -432,6 +449,66 @@ class Category extends Table
 			{
 				Tag::export($itemtag->tag_id, $xml, $options);
 			}
+		}
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 * @see Table::prepareData()
+	 *
+	 * @since __DEPLOY_VERSION__
+	 */
+	public static function prepareData ($record, &$data, $params)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
+		$db = \JFactory::getDBO();
+
+		$params->set('extension', 'com_categories');
+		parent::prepareData($record, $data, $params);
+
+		if (empty($data['associations']))
+		{
+			$data['associations'] = array();
+		}
+
+		if (isset($data['associationlist']))
+		{
+			foreach ($data['associationlist']['association'] as $association)
+			{
+				$id = self::getCategoryId($association, $data['extension']);
+				if ($id)
+				{
+					$tag = $db->setQuery($db->getQuery(true)
+						->select($db->quoteName('language'))
+						->from($db->quoteName('#__categories'))
+						->where($db->quoteName('id') . ' = ' . $id))
+						->loadResult();
+					if ($tag !== '*')
+					{
+						$data['associations'][$tag] = $id;
+					}
+				}
+			}
+			unset($data['associationlist']);
+		}
+		elseif (isset($data['association']))
+		{
+			$id = self::getCategoryId($data['association'], $data['extension']);
+			if ($id)
+			{
+				$tag = $db->setQuery($db->getQuery(true)
+					->select($db->quoteName('language'))
+					->from($db->quoteName('#__categories'))
+					->where($db->quoteName('id') . ' = ' . $id))
+					->loadResult();
+				if ($tag !== '*')
+				{
+					$data['associations'][$tag] = $id;
+				}
+			}
+			unset($data['association']);
 		}
 	}
 }

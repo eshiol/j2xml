@@ -109,7 +109,7 @@ class User extends Table
 			->from($this->_db->quoteName('#__user_profiles'))
 			->where($this->_db->quoteName('user_id') . ' = ' . $this->_db->quote($this->id));
 
-		return parent::_serialize();
+		return parent::toXML($mapKeysToText);
 	}
 
 	/**

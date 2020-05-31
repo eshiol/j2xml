@@ -84,7 +84,19 @@ class Contact extends Table
 				->where($this->_db->quoteName('m.content_item_id') . ' = ' . $this->_db->quote((string) $this->id));
 		}
 
-		return parent::_serialize();
+		$query = $this->_db->getQuery(true);
+		$this->_aliases['association'] = (string) $query
+			->select($query->concatenate(array($this->_db->quoteName('cc.path'), $this->_db->quoteName('c.alias')), '/'))
+			->from($this->_db->quoteName('#__associations', 'asso1'))
+			->join('INNER', $this->_db->quoteName('#__associations', 'asso2') . ' ON ' . $this->_db->quoteName('asso1.key') . ' = ' . $this->_db->quoteName('asso2.key'))
+			->join('INNER', $this->_db->quoteName('#__contact_details', 'c') . ' ON ' . $this->_db->quoteName('asso2.id') . ' = ' . $this->_db->quoteName('c.id'))
+			->join('INNER', $this->_db->quoteName('#__categories', 'cc') . ' ON ' . $this->_db->quoteName('c.catid') . ' = ' . $this->_db->quoteName('cc.id'))
+			->where(array(
+				$this->_db->quoteName('asso1.id') . ' = ' . (int) $this->id,
+				$this->_db->quoteName('asso1.context') . ' = ' . $this->_db->quote('com_contact.item'),
+				$this->_db->quoteName('asso2.id') . ' <> ' . (int) $this->id));
+
+		return parent::toXML($mapKeysToText);
 	}
 
 	/**
@@ -181,11 +193,13 @@ class Contact extends Table
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 		
-		$import_users = $params->get('users', 1);
-		if (! $import_users)
+		$import_contacts = $params->get('contacts', 1);
+		if ($import_contacts == 0)
+		{
 			return;
+		}
 
-		$db = \JFactory::getDbo();
+		$db     = \JFactory::getDbo();
 		$keepId = $params->get('keep_user_id', '0');
 
 		$params->set('extension', 'com_contact');
@@ -198,7 +212,8 @@ class Contact extends Table
 		foreach ($xml->xpath("//j2xml/contact[not(alias = '')]") as $record)
 		{
 			self::prepareData($record, $data, $params);
-
+			\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'com_j2xml'));
+			
 			$contactId = $data['id'];
 			unset($data['id']);
 
@@ -217,7 +232,7 @@ class Contact extends Table
 
 			$data['id'] = $db->setQuery($query)->loadResult();
 
-			if (! $data['id'] || ($import_users == 2))
+			if (! $data['id'] || ($import_contacts == 2))
 			{
 				$table = \JTable::getInstance('Contact', 'ContactTable');
 
@@ -235,6 +250,8 @@ class Contact extends Table
 
 				if ($table->store())
 				{
+					self::setAssociations($table->id, $table->language, $data['associations'], 'com_contact.item');
+
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CONTACT_IMPORTED', $table->name), \JLog::INFO, 'lib_j2xml'));
 				}
 				else
@@ -245,6 +262,66 @@ class Contact extends Table
 
 				$table = null;
 			}
+		}
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 * @see Table::prepareData()
+	 *
+	 * @since __DEPLOY_VERSION__
+	 */
+	public static function prepareData ($record, &$data, $params)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		
+		$db = \JFactory::getDBO();
+
+		$params->set('extension', 'com_contact');
+		parent::prepareData($record, $data, $params);
+
+		if (empty($data['associations']))
+		{
+			$data['associations'] = array();
+		}
+
+		if (isset($data['associationlist']))
+		{
+			foreach ($data['associationlist']['association'] as $association)
+			{
+				$id = self::getContactId($association);
+				if ($id)
+				{
+					$tag = $db->setQuery($db->getQuery(true)
+						->select($db->quoteName('language'))
+						->from($db->quoteName('#__contact_details'))
+						->where($db->quoteName('id') . ' = ' . $id))
+						->loadResult();
+					if ($tag !== '*')
+					{
+						$data['associations'][$tag] = $id;
+					}
+				}
+			}
+			unset($data['associationlist']);
+		}
+		elseif (isset($data['association']))
+		{
+			$id = self::getContactId($data['association']);
+			if ($id)
+			{
+				$tag = $db->setQuery($db->getQuery(true)
+					->select($db->quoteName('language'))
+					->from($db->quoteName('#__contact_details'))
+					->where($db->quoteName('id') . ' = ' . $id))
+					->loadResult();
+				if ($tag !== '*')
+				{
+					$data['associations'][$tag] = $id;
+				}
+			}
+			unset($data['association']);
 		}
 	}
 }
