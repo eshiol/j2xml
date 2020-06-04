@@ -238,7 +238,21 @@ eshiol.j2xml.sendItem = function( options, params ){
 					},
 					error: function( jqXHR, status, error ){
 						console.log( 'send.onError' );
-						eshiol.renderMessages( {'error': [error]}, options.message_container );
+
+						msg = new Object();
+						if ( typeof error === 'object' ){
+							if( error.code in eshiol.j2xml.codes ){
+								t = eshiol.j2xml.codes[error.code];
+							}
+							else{
+								t = 'error';
+							}
+							msg[t] = [error.message];
+						}
+						else{
+							msg['error'] = [error];
+						}
+						eshiol.renderMessages( msg, options.message_container );
 
 						eshiol.j2xml.sendItem( options, params );
 					}
