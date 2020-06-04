@@ -19,6 +19,12 @@ language/it-IT/it-IT.lib_j2xmlpro.ini
 language/it-IT/it-IT.lib_j2xmlpro.sys.ini
 libraries/eshiol/J2xmlpro
 
+# it-IT
+administrator/language/it-IT
+
+# sl-SI
+administrator/language/sl-SI
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
