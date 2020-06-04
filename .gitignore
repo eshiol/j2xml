@@ -21,9 +21,11 @@ libraries/eshiol/J2xmlpro
 
 # it-IT
 administrator/language/it-IT
+language/it-IT
 
 # sl-SI
 administrator/language/sl-SI
+language/sl-SI
 
 # Windows image file caches
 Thumbs.db
