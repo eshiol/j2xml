@@ -333,13 +333,28 @@ class Content extends Table
 									->set($db->quoteName('id') . ' = ' . $id)
 									->where($db->quoteName('id') . ' = ' . $table->id);
 								$db->setQuery($query)->execute();
-								$table->id = $id;
 
 								$query = $db->getQuery(true)
 									->update($db->quoteName('#__assets'))
 									->set($db->quoteName('name') . ' = ' . $db->quote('com_content.article.' . $id))
 									->where($db->quoteName('id') . ' = ' . $table->asset_id);
 								$db->setQuery($query)->execute();
+
+								$query = $db->getQuery(true)
+									->update($db->quoteName('#__contentitem_tag_map'))
+									->set($db->quoteName('content_item_id') . ' = ' . $id)
+									->where($db->quoteName('content_item_id') . ' = ' . $table->id)
+									->where($db->quoteName('type_alias') . ' = ' . $db->quote('com_content.article'));
+								$db->setQuery($query)->execute();
+
+								$query = $db->getQuery(true)
+									->update($db->quoteName('#__ucm_content'))
+									->set($db->quoteName('content_item_id') . ' = ' . $id)
+									->where($db->quoteName('content_item_id') . ' = ' . $table->id)
+									->where($db->quoteName('core_type_alias') . ' = ' . $db->quote('com_content.article'));
+								$db->setQuery($query)->execute();
+
+								$table->id = $id;
 
 								if ($id >= $autoincrement)
 								{
