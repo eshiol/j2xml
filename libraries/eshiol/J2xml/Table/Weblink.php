@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -119,7 +119,7 @@ class Weblink extends Table
 			Viewlevel::export($item->access, $xml, $options);
 		}
 		
-		if ($options['categories'] && ($item->catid > 0))
+		if (isset($options['categories']) && $options['categories'] && ($item->catid > 0))
 		{
 			Category::export($item->catid, $xml, $options);
 		}
@@ -130,7 +130,7 @@ class Weblink extends Table
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
 
-		if ($options['users'])
+		if (isset($options['users']) && $options['users'])
 		{
 			if ($item->created_by)
 			{
@@ -142,7 +142,7 @@ class Weblink extends Table
 			}
 		}
 
-		if ($options['images'])
+		if (isset($options['images']) && $options['images'])
 		{
 			$_image = preg_match_all(self::IMAGE_MATCH_STRING, $item->description, $matches, PREG_PATTERN_ORDER);
 			if (count($matches[1]) > 0)

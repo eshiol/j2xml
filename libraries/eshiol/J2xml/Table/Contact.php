@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -136,7 +136,7 @@ class Contact extends Table
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
 
-		if ($options['users'])
+		if (isset($options['users']) && $options['users'])
 		{
 			if ($item->created_by)
 			{
@@ -148,7 +148,7 @@ class Contact extends Table
 			}
 		}
 
-		if ($options['images'])
+		if (isset($options['images']) && $options['images'])
 		{
 			if (isset($item->image))
 			{
@@ -156,20 +156,43 @@ class Contact extends Table
 			}
 		}
 
-		$version = new \JVersion();
-		if ($version->isCompatible('3.1'))
-		{
-			$htags = new \JHelperTags();
-			$itemtags = $htags->getItemTags('com_contact.contact', $id);
-			foreach ($itemtags as $itemtag)
+		if (isset($options['tags']) && $options['tags']) 
+		{ 
+			$version = new \JVersion();
+			if($version->isCompatible('3.1'))
 			{
-				Tag::export($itemtag->tag_id, $xml, $options);
+				$htags = new \JHelperTags();
+				$itemtags = $htags->getItemTags('com_contact.contact', $id);
+				foreach ($itemtags as $itemtag)
+				{
+					Tag::export($itemtag->tag_id, $xml, $options);
+				}
 			}
 		}
 
-		if ($options['categories'] && ($item->catid > 0))
+		if (isset($options['categories']) && $options['categories'] && ($item->catid > 0))
 		{
 			Category::export($item->catid, $xml, $options);
+		}
+
+		// associated contacts
+		$query = $db->getQuery(true)
+			->select($db->quoteName('c.id'))
+			->from($db->quoteName('#__associations', 'asso1'))
+			->join('INNER', $db->quoteName('#__associations', 'asso2') . ' ON ' . $db->quoteName('asso1.key') . ' = ' . $db->quoteName('asso2.key'))
+			->join('INNER', $db->quoteName('#__contact_details', 'c') . ' ON ' . $db->quoteName('asso2.id') . ' = ' . $db->quoteName('c.id'))
+			->join('INNER', $db->quoteName('#__categories', 'cc') . ' ON ' . $db->quoteName('c.catid') . ' = ' . $db->quoteName('cc.id'))
+			->where(array(
+				$db->quoteName('asso1.id') . ' = ' . (int) $id,
+				$db->quoteName('asso1.context') . ' = ' . $db->quote('com_contact.item'),
+				$db->quoteName('asso2.id') . ' <> ' . (int) $id));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		
+		$ids_contact = $db->setQuery($query)->loadColumn();
+		\JLog::add(new \JLogEntry(print_r($ids_contact, true), \JLog::DEBUG, 'lib_j2xml'));
+		foreach ($ids_contact as $id_contact)
+		{
+			Contact::export($id_contact, $xml, $options);
 		}
 	}
 
@@ -193,7 +216,7 @@ class Contact extends Table
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 		
-		$import_contacts = $params->get('contacts', 1);
+		$import_contacts = $params->get('contacts', 0);
 		if ($import_contacts == 0)
 		{
 			return;
