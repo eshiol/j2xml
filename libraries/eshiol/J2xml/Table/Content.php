@@ -697,6 +697,30 @@ class Content extends Table
 					Image::export($imgs->image_intro, $xml, $options);
 				}
 			}
+
+			if ($version->isCompatible('3.7'))
+			{
+				foreach($db->setQuery($db->getQuery(true)
+						->select($db->quoteName('v.value'))
+						->from($db->quoteName('#__fields_values', 'v'))
+						->from($db->quoteName('#__fields', 'f'))
+						->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'))
+						->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
+						->where($db->quoteName('f.type') . ' = ' . $db->quote('editor')))
+						->loadColumn() as $text) {
+					$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text, $matches, PREG_PATTERN_ORDER);
+					if (count($matches[1]) > 0)
+					{
+						for ($i = 0; $i < count($matches[1]); $i ++)
+						{
+							if ($_image = $matches[1][$i])
+							{
+								Image::export($_image, $xml, $options);
+							}
+						}
+					}
+				}
+			}
 		}
 
 		return $xml;
