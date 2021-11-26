@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -364,8 +364,9 @@ class Table extends \JTable
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 		
-		$db = \JFactory::getDbo();
-		$nullDate = $db->getNullDate();
+		$version = new \JVersion();
+		$nullDate = ($version->isCompatible('4') ? null : \JFactory::getDbo()->getNullDate());
+
 		$userid = \JFactory::getUser()->id;
 
 		//$data = self::xml2array($record, $params->get('version') == '12.5.0');
@@ -387,7 +388,7 @@ class Table extends \JTable
 
 		if (isset($data['catid']))
 		{
-			$data['catid'] = self::getCategoryId($data['catid'], $params->get('extension'), $params->get('category_default'));
+			$data['catid'] = self::getCategoryId($data['catid'], $params->get('extension'), $params->get($params->get('extension') . 'category_default'));
 		}
 		if (isset($data['created_by']))
 		{
@@ -409,21 +410,21 @@ class Table extends \JTable
 		{
 			$data['access'] = self::getAccessId($data['access']);
 		}
-		if (isset($data['publish_up']) && ($data['publish_up'] != $nullDate))
+		if (isset($data['publish_up']))
 		{
-			$data['publish_up'] = self::fixdate($data['publish_up']);
+			$data['publish_up'] = self::fixDate($data['publish_up']);
 		}
-		if (isset($data['publish_down']) && ($data['publish_down'] != $nullDate))
+		if (isset($data['publish_down']))
 		{
-			$data['publish_down'] = self::fixdate($data['publish_down']);
+			$data['publish_down'] = self::fixDate($data['publish_down']);
 		}
-		if (isset($data['created']) && ($data['created'] != $nullDate))
+		if (isset($data['created']))
 		{
-			$data['created'] = self::fixdate($data['created']);
+			$data['created'] = self::fixDate($data['created']);
 		}
-		if (isset($data['modified']) && ($data['modified'] != $nullDate))
+		if (isset($data['modified']))
 		{
-			$data['modified'] = self::fixdate($data['modified']);
+			$data['modified'] = self::fixDate($data['modified']);
 		}
 
 		if (($params->get('version') == '15.9.0') || ($params->get('version') == '12.5.0'))
@@ -747,9 +748,19 @@ class Table extends \JTable
 	protected static function fixDate ($date)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
-		$d = new \JDate($date);
-		return (($date == '0000-00-00 00:00:00') || ($date == '1970-01-01 00:00:00')) ? \JFactory::getDbo()->getNullDate() : $d->toSQL(false);
+
+		$version = new \JVersion();
+		if (empty($date) || ($date == '0000-00-00 00:00:00') || ($date == '1970-01-01 00:00:00'))
+		{
+			$date = ($version->isCompatible('4') ? null : \JFactory::getDbo()->getNullDate());
+		}
+		else 
+		{
+			$d = new \JDate($date);
+			$date = $d->toSQL(false);
+		}
+
+		return $date;
 	}
 
 	/**

@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -359,27 +359,8 @@ class User extends Table
 		$params->set('extension', 'com_users');
 		parent::prepareData($record, $data, $params);
 
-		$db      = \JFactory::getDbo();
-		$version = new \JVersion();
-		
-		if (! $version->isCompatible('4'))
-		{
-			// fix null date
-			if (empty($data['lastResetTime']))
-			{
-				$data['lastResetTime'] = $db->getNullDate();
-			}
-			elseif (($data['lastResetTime'] == '0000-00-00 00:00:00') || ($data['lastResetTime'] == '1970-01-01 00:00:00'))
-			{
-				$data['lastResetTime'] = $db->getNullDate();
-			}
-		
-			// fix null date
-			if (($data['lastvisitDate'] == '0000-00-00 00:00:00') || ($data['lastvisitDate'] == '1970-01-01 00:00:00'))
-			{
-				$data['lastvisitDate'] = $db->getNullDate();
-			}
-		}
+		$data['lastResetTime'] = self::fixDate($data['lastResetTime']);
+		$data['lastvisitDate'] = self::fixDate($data['lastvisitDate']);
 
 		// set default user group
 		if (empty($data['grouplist']) && empty($data['group']))
@@ -446,7 +427,7 @@ class User extends Table
 
 		$db = \JFactory::getDbo();
 
-		if ($options['contacts'])
+		if (isset($options['contacts']) && $options['contacts'])
 		{
 			$query = $db->getQuery(true)
 				->select('id')
@@ -461,31 +442,37 @@ class User extends Table
 			}
 		}
 
-		$query = $db->getQuery(true)
-			->select('id')
-			->from('#__user_notes')
-			->where('user_id = ' . $id);
-		$db->setQuery($query);
-
-		$ids_usernote = $db->loadColumn();
-		foreach ($ids_usernote as $id_usernote)
-		{
-			Usernote::export($id_usernote, $xml, $options);
-		}
-
-		$version = new \JVersion();
-		if ($version->isCompatible('3.7'))
+		if (isset($options['usernotes']) && $options['usernotes'])
 		{
 			$query = $db->getQuery(true)
-				->select('DISTINCT field_id')
-				->from('#__fields_values')
-				->where('item_id = ' . $db->quote($id));
+				->select('id')
+				->from('#__user_notes')
+				->where('user_id = ' . $id);
 			$db->setQuery($query);
 
-			$ids_field = $db->loadColumn();
-			foreach ($ids_field as $id_field)
+			$ids_usernote = $db->loadColumn();
+			foreach ($ids_usernote as $id_usernote)
 			{
-				Field::export($id_field, $xml, $options);
+				Usernote::export($id_usernote, $xml, $options);
+			}
+		}
+
+		if (isset($options['fields']) && $options['fields'])
+		{
+			$version = new \JVersion();
+			if ($version->isCompatible('3.7'))
+			{
+				$query = $db->getQuery(true)
+					->select('DISTINCT field_id')
+					->from('#__fields_values')
+					->where('item_id = ' . $db->quote($id));
+				$db->setQuery($query);
+	
+				$ids_field = $db->loadColumn();
+				foreach ($ids_field as $id_field)
+				{
+					Field::export($id_field, $xml, $options);
+				}
 			}
 		}
 	}

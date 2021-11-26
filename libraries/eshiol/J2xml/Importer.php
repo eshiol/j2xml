@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -144,7 +144,7 @@ class Importer
 		$version = new \JVersion();
 		if ($version->isCompatible('3.7'))
 		{
-			$import_fields = $params->get('fields');
+			$import_fields = $params->get('fields', 0);
 			if ($import_fields)
 			{
 				Fieldgroup::import($xml, $params);
@@ -160,7 +160,7 @@ class Importer
 
 		if ($version->isCompatible('3.1'))
 		{
-			$import_tags = $params->get('tags');
+			$import_tags = $params->get('tags', 1);
 			if ($import_tags)
 			{
 				Tag::import($xml, $params);
@@ -173,19 +173,19 @@ class Importer
 			Content::import($xml, $params);
 		}
 
-		$import_images = $params->get('images');
+		$import_images = $params->get('images', 0);
 		if ($import_images)
 		{
 			Image::import($xml, $params);
 		}
 
-		$import_usernotes = $params->get('usernotes');
+		$import_usernotes = $params->get('usernotes', 0);
 		if ($import_usernotes)
 		{
 			Usernote::import($xml, $params);
 		}
 
-		$import_contacts = $params->get('contacts');
+		$import_contacts = $params->get('contacts', 0);
 		if ($import_contacts)
 		{
 			Contact::import($xml, $params);

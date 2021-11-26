@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -22,6 +22,7 @@ use eshiol\J2xml\Table\Table;
 use eshiol\J2xml\Table\Tag;
 use eshiol\J2xml\Table\User;
 use eshiol\J2xml\Table\Viewlevel;
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
 \JLoader::import('eshiol.J2xml.Table.Category');
@@ -236,6 +237,11 @@ class Content extends Table
 		$keep_frontpage = $params->get('keep_frontpage', 0);
 		$keep_rating = $params->get('keep_rating', 0);
 
+		if ($version->isCompatible('4'))
+		{
+			$mvcFactory = Factory::getApplication()->bootComponent('com_content')->getMVCFactory();
+		}
+
 		foreach ($xml->xpath("//j2xml/content[not(name = '')]") as $record)
 		{
 			self::prepareData($record, $data, $params);
@@ -259,7 +265,14 @@ class Content extends Table
 						->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias'])))
 				->loadObject();
 
-			$table = new \JTableContent($db);
+			if ($version->isCompatible('4'))
+			{
+				$table = $mvcFactory->createModel('Article', 'Administrator', ['ignore_request' => true]);
+			}
+			else
+			{
+				$table = new \JTableContent($db);
+			}
 
 			if ((($import_content == 1) && $content) || (($import_content == 3) && $content && $content->modified >= $data['modified']))
 			{
@@ -303,27 +316,43 @@ class Content extends Table
 					$data['id'] = $content->id;
 				}
 
-				$table->bind($data);
-
-				if ($version->isCompatible('3.1'))
+				if ($version->isCompatible('4'))
 				{
-					if (isset($data['tags']))
+					$results = [];
+				}
+				else 
+				{
+					$table->bind($data);
+
+					if ($version->isCompatible('3.1'))
 					{
-						$table->newTags = $data['tags'];
+						if (isset($data['tags']))
+						{
+							$table->newTags = $data['tags'];
+						}
 					}
+
+					// Trigger the onContentBeforeSave event.
+					$results = \JFactory::getApplication()->triggerEvent('onContentBeforeSave',
+							array(
+									$params->get('context', 'com_content.article'),
+									&$table,
+									$isNew
+							));
 				}
 
-				// Trigger the onContentBeforeSave event.
-				$results = \JFactory::getApplication()->triggerEvent('onContentBeforeSave',
-						array(
-								$params->get('context', 'com_content.article'),
-								&$table,
-								$isNew
-						));
 				if (! in_array(false, $results, true))
 				{
-					if ($table->store())
+					if ($version->isCompatible('4') ? $table->save($data) : $table->store())
 					{
+						if ($version->isCompatible('4'))
+						{
+							$item = $table->getItem();
+						}
+						else
+						{
+							$item = $table;
+						}
 						if (($keep_id == 1) && ($id > 1))
 						{
 							try
@@ -331,102 +360,125 @@ class Content extends Table
 								$query = $db->getQuery(true)
 									->update($db->quoteName('#__content'))
 									->set($db->quoteName('id') . ' = ' . $id)
-									->where($db->quoteName('id') . ' = ' . $table->id);
+									->where($db->quoteName('id') . ' = ' . $item->id);
 								$db->setQuery($query)->execute();
-								$table->id = $id;
 
 								$query = $db->getQuery(true)
 									->update($db->quoteName('#__assets'))
 									->set($db->quoteName('name') . ' = ' . $db->quote('com_content.article.' . $id))
-									->where($db->quoteName('id') . ' = ' . $table->asset_id);
+									->where($db->quoteName('id') . ' = ' . $item->asset_id);
 								$db->setQuery($query)->execute();
+
+								$query = $db->getQuery(true)
+									->update($db->quoteName('#__contentitem_tag_map'))
+									->set($db->quoteName('content_item_id') . ' = ' . $id)
+									->where($db->quoteName('content_item_id') . ' = ' . $item->id)
+									->where($db->quoteName('type_alias') . ' = ' . $db->quote('com_content.article'));
+								$db->setQuery($query)->execute();
+
+								$query = $db->getQuery(true)
+									->update($db->quoteName('#__ucm_content'))
+									->set($db->quoteName('content_item_id') . ' = ' . $id)
+									->where($db->quoteName('content_item_id') . ' = ' . $item->id)
+									->where($db->quoteName('core_type_alias') . ' = ' . $db->quote('com_content.article'));
+								$db->setQuery($query)->execute();
+
+								$item->id = $id;
 
 								if ($id >= $autoincrement)
 								{
 									$autoincrement = $id + 1;
 								}
 
-								if ($id != $table->id)
+								if ($id != $item->id)
 								{
 									\JLog::add(
-											new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title, $id, $table->id),
+											new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id),
 													\JLog::INFO, 'lib_j2xml'));
 								}
 								else
 								{
 									\JLog::add(
-											new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $table->title, $id), \JLog::INFO,
+											new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO,
 													'lib_j2xml'));
 								}
 							}
 							catch (\Exception $ex)
 							{
 								\JLog::add(
-										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $table->title, $id, $table->id),
+										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $item->title, $id, $item->id),
 												\JLog::WARNING, 'lib_j2xml'));
 								continue;
 							}
 						}
-						elseif ($id != $table->id)
+						elseif ($id != $item->id)
 						{
 							\JLog::add(
-									new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $table->title, $id, $table->id), \JLog::INFO,
+									new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO,
 											'lib_j2xml'));
 						}
 						else
 						{
-							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $table->title, $id), \JLog::INFO, 'lib_j2xml'));
+							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO, 'lib_j2xml'));
 						}
 
-						if ($keep_frontpage == 0)
-						{
-							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $table->id;
-						}
-						elseif ($data['featured'] == 0)
-						{
-							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $table->id;
-						}
-						else
-						{
-							$query = 'INSERT IGNORE INTO `#__content_frontpage`' . ' SET content_id = ' . $table->id . ',' . ' ordering = ' .
-									 $data['ordering'];
-						}
-						$db->setQuery($query);
-						$db->query();
 
-						if (($keep_rating == 0) || (! isset($data['rating_count'])) || ($data['rating_count'] == 0))
+						if (! $version->isCompatible('4'))
 						{
-							$query = "DELETE FROM `#__content_rating` WHERE `content_id`=" . $table->id;
+							// TODO: add Joomla! 4 compatibility
+							if ($keep_frontpage == 0)
+							{
+								$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
+							}
+							elseif ($data['featured'] == 0)
+							{
+								$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
+							}
+							else
+							{
+								$query = 'INSERT IGNORE INTO `#__content_frontpage`' . ' SET content_id = ' . $item->id . ',' . ' ordering = ' .
+										 $data['ordering'];
+							}
 							$db->setQuery($query);
 							$db->query();
+
+							if (($keep_rating == 0) || (! isset($data['rating_count'])) || ($data['rating_count'] == 0))
+							{
+								$query = "DELETE FROM `#__content_rating` WHERE `content_id`=" . $item->id;
+								$db->setQuery($query);
+								$db->query();
+							}
+							else
+							{
+								$rating = new \stdClass();
+								$rating->content_id = $item->id;
+								$rating->rating_count = $data['rating_count'];
+								$rating->rating_sum = $data['rating_sum'];
+								$rating->lastip = $_SERVER['REMOTE_ADDR'];
+								try
+								{
+									$db->insertObject('#__content_rating', $rating);
+								}
+								catch (\Exception $ex)
+								{
+									$db->updateObject('#__content_rating', $rating, 'content_id');
+								}
+							}
 						}
-						else
+
+						if (! $version->isCompatible('4'))
 						{
-							$rating = new \stdClass();
-							$rating->content_id = $table->id;
-							$rating->rating_count = $data['rating_count'];
-							$rating->rating_sum = $data['rating_sum'];
-							$rating->lastip = $_SERVER['REMOTE_ADDR'];
-							try
-							{
-								$db->insertObject('#__content_rating', $rating);
-							}
-							catch (\Exception $ex)
-							{
-								$db->updateObject('#__content_rating', $rating, 'content_id');
-							}
+							self::setAssociations($item->id, $item->language, $data['associations'], 'com_content.item');
+
+							// Trigger the onContentAfterSave event.
+							$results = \JFactory::getApplication()->triggerEvent('onContentAfterSave',
+									array(
+											$params->get('context', 'com_content.article'),
+											&$table,
+											$isNew,
+											$data
+									));
 						}
-
-						self::setAssociations($table->id, $table->language, $data['associations'], 'com_content.item');
-
-						// Trigger the onContentAfterSave event.
-						$results = \JFactory::getApplication()->triggerEvent('onContentAfterSave',
-								array(
-										$params->get('context', 'com_content.article'),
-										&$table,
-										$isNew,
-										$data
-								));
 					}
 					else
 					{
@@ -620,12 +672,12 @@ class Content extends Table
 			Viewlevel::export($item->access, $xml, $options);
 		}
 
-		if ($options['categories'] && ($item->catid > 0))
+		if (isset($options['categories']) && $options['categories'] && ($item->catid > 0))
 		{
 			Category::export($item->catid, $xml, $options);
 		}
 
-		if ($version->isCompatible('3.1'))
+		if (isset($options['tags']) && $options['tags'] && $version->isCompatible('3.1'))
 		{
 			$htags = new \JHelperTags();
 			$itemtags = $htags->getItemTags('com_content.article', $id);
@@ -635,9 +687,8 @@ class Content extends Table
 			}
 		}
 
-		if ($version->isCompatible('3.7'))
+		if (isset($options['field']) && $options['fields'] && $version->isCompatible('3.7'))
 		{
-
 			$query = $db->getQuery(true)
 				->select('DISTINCT field_id')
 				->from('#__fields_values')
@@ -657,7 +708,7 @@ class Content extends Table
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
 
-		if ($options['users'])
+		if (isset($options['users']) && $options['users'])
 		{
 			if ($item->created_by)
 			{
@@ -669,7 +720,7 @@ class Content extends Table
 			}
 		}
 
-		if ($options['images'])
+		if (isset($options['images']) && $options['images'])
 		{
 			$img = null;
 			$text = $item->introtext . $item->fulltext;
@@ -695,6 +746,30 @@ class Content extends Table
 				if (isset($imgs->image_intro))
 				{
 					Image::export($imgs->image_intro, $xml, $options);
+				}
+			}
+
+			if ($version->isCompatible('3.7'))
+			{
+				foreach($db->setQuery($db->getQuery(true)
+						->select($db->quoteName('v.value'))
+						->from($db->quoteName('#__fields_values', 'v'))
+						->from($db->quoteName('#__fields', 'f'))
+						->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'))
+						->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
+						->where($db->quoteName('f.type') . ' = ' . $db->quote('editor')))
+						->loadColumn() as $text) {
+					$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text, $matches, PREG_PATTERN_ORDER);
+					if (count($matches[1]) > 0)
+					{
+						for ($i = 0; $i < count($matches[1]); $i ++)
+						{
+							if ($_image = $matches[1][$i])
+							{
+								Image::export($_image, $xml, $options);
+							}
+						}
+					}
 				}
 			}
 		}

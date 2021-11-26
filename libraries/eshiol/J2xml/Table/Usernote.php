@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -57,7 +57,7 @@ class Usernote extends \eshiol\J2xml\Table\Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/usernote/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -76,7 +76,7 @@ class Usernote extends \eshiol\J2xml\Table\Table
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
 
-		if ($options['users'])
+		if (isset($options['users']) && $options['users'])
 		{
 			if ($item->created_user_id)
 			{
@@ -88,7 +88,7 @@ class Usernote extends \eshiol\J2xml\Table\Table
 			}
 		}
 
-		if ($options['images'])
+		if (isset($options['images']) && $options['images'])
 		{
 			$img = null;
 			$text = html_entity_decode($item->body);
@@ -105,7 +105,8 @@ class Usernote extends \eshiol\J2xml\Table\Table
 			}
 		}
 
-		if ($options['categories'] && ($item->catid > 0))
+		// if (isset($options['categories']) && $options['categories'] && ($item->catid > 0))
+		if ($item->catid > 0)
 		{
 			Category::export($item->catid, $xml, $options);
 		}
@@ -119,23 +120,27 @@ class Usernote extends \eshiol\J2xml\Table\Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
-		$import_usernotes = $params->get('usernotes', 1);
-		if ($import_usernotes == 0)
-			return;
 
+		$import_usernotes = $params->get('usernotes', 0);
+		if ($import_usernotes == 0)
+		{
+			return;
+		}
+		
 		$params->set('extension', 'com_users');
 		$import_categories = $params->get('categories');
 		if ($import_categories)
 		{
 			Category::import($xml, $params);
 		}
-
+/*
 		$users = json_decode($params->get('imported_users', '[]'), true);
 		foreach ($users as $user_id => $overwrite)
 		{
 			$username = \JFactory::getUser($user_id)->username;
 			$path = "//j2xml/usernote[user_id='{$username}']";
+*/
+			$path = "//j2xml/usernote[user_id!='']";
 			foreach ($xml->xpath($path) as $record)
 			{
 				self::prepareData($record, $data, $params);
@@ -144,15 +149,15 @@ class Usernote extends \eshiol\J2xml\Table\Table
 
 				$table = \JTable::getInstance('Note', 'UsersTable');
 
-				if (! $overwrite)
-				{
+//				if (! $overwrite)
+//				{
 					$table->load(
-							array(
-									'user_id' => $data['user_id'],
-									'catid' => $data['catid'],
-									'subject' => $data['subject']
-							));
-				}
+						array(
+							'user_id' => $data['user_id'],
+							'catid' => $data['catid'],
+							'subject' => $data['subject']
+						));
+//				}
 
 				$table->bind($data);
 				if ($table->store())
@@ -164,7 +169,9 @@ class Usernote extends \eshiol\J2xml\Table\Table
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USERNOTE_NOT_IMPORTED', $data['subject']), \JLog::INFO, 'lib_j2xml'));
 				}
 			}
+/*
 		}
+*/
 	}
 
 	/**

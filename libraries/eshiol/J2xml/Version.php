@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -32,12 +32,12 @@ class Version
 	/**
 	 * @public static int Main Release Level
 	 */
-	public static $RELEASE = '20';
+	public static $RELEASE = '21';
 
 	/**
 	 * @public static int Sub Release Level
 	 */
-	public static $DEV_LEVEL = '5';
+	public static $DEV_LEVEL = '11';
 
 	/**
 	 * @public static string Development Status
@@ -49,7 +49,7 @@ class Version
 	/**
 	 * @public static int build Number
 	 */
-	public static $BUILD = '349';
+	public static $BUILD = '352';
 
 	/**
 	 * @public static string Codename
@@ -59,7 +59,7 @@ class Version
 	/**
 	 * @public static string Copyright Text
 	 */
-	public static $COPYRIGHT = 'Copyright &copy; 2010 - 2020 Helios Ciancio <a href="https://www.eshiol.it" title="eshiol.it"><img src="../media/com_j2xml/images/eshiol.png" alt="eshiol.it" /></a>. All rights reserved.';
+	public static $COPYRIGHT = 'Copyright &copy; 2010 - 2021 Helios Ciancio <a href="https://www.eshiol.it" title="eshiol.it"><img src="../media/com_j2xml/images/eshiol.png" alt="eshiol.it" /></a>. All rights reserved.';
 
 	/**
 	 * @public static string License

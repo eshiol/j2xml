@@ -6,13 +6,15 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License
  * or other free or open source software licenses.
  */
+
+console.log( 'jQuery version: ' + jQuery.fn.jquery );
 
 // Avoid `console` errors in browsers that lack a console.
 ( function(){
@@ -88,44 +90,56 @@ if( typeof( eshiol.removeMessages ) === 'undefined' ){
  * @return	void
  */
 if( typeof( eshiol.renderMessages ) === 'undefined' ){
-	eshiol.renderMessages = function( messages, messageContainer ){
-		if( typeof( messageContainer ) === 'undefined' ){
-			messageContainer = jQuery( '#system-message-container' );
+	eshiol.renderMessages = function( messages, selector ){
+
+		var j2xmlOptions  = Joomla.getOptions('J2XML'),
+			JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
+
+		if(JoomlaVersion == '4'){
+			Joomla.renderMessages( messages, selector, true );
 		}
-
-		jQuery.each( messages, function( type, message ){
-			if( type == 'message' ){
-				type = 'success';
+		else{
+			if( typeof( selector ) === 'undefined' ){
+				messageContainer = jQuery( '#system-message-container' );
+			}
+			else {
+				messageContainer = jQuery( selector );
 			}
 
-			var div = messageContainer.find( 'div.alert.alert-' + type );
-			if( !div[0] ){
-				jQuery( '<button/>', {
-					'class': 'close',
-					'data-dismiss': 'alert',
-					'type': 'button',
-					'html': '&times;'
-				} ).appendTo( messageContainer );
+			jQuery.each( messages, function( type, message ){
+				if( type == 'message' ){
+					type = 'success';
+				}
 
-				div = jQuery( '<div/>', {
-					'class': 'alert alert-' + type
-				} ).appendTo( messageContainer );
+				var div = messageContainer.find( 'div.alert.alert-' + type );
+				if( !div[0] ){
+					jQuery( '<button/>', {
+						'class': 'close',
+						'data-dismiss': 'alert',
+						'type': 'button',
+						'html': '&times;'
+					} ).appendTo( messageContainer );
 
-				jQuery( '<h4/>', {
-					'class' : 'alert-heading',
-					'html': Joomla.JText._( type, type.charAt( 0 ).toUpperCase() + type.slice( 1 ) )
-				} ).appendTo( div );
-			}
-			else{
-				div = div[0];
-			}
+					div = jQuery( '<div/>', {
+						'class': 'alert alert-' + type
+					} ).appendTo( messageContainer );
 
-			jQuery.each( message, function( index, item ){
-				jQuery( '<p/>', {
-					'html': item
-				} ).appendTo( div );
+					jQuery( '<h4/>', {
+						'class' : 'alert-heading',
+						'html': Joomla.JText._( type, type.charAt( 0 ).toUpperCase() + type.slice( 1 ) )
+					} ).appendTo( div );
+				}
+				else{
+					div = div[0];
+				}
+
+				jQuery.each( message, function( index, item ){
+					jQuery( '<p/>', {
+						'html': item
+					} ).appendTo( div );
+				} );
 			} );
-		} );
+		}
 	};
 }
 
@@ -249,8 +263,11 @@ eshiol.j2xml.sendItem = function( options, params ){
 							}
 							msg[t] = [error.message];
 						}
-						else{
+						else if ( error ){
 							msg['error'] = [error];
+						}
+						else{
+							msg['error'] = Joomla.Text._( 'LIB_J2XML_ERROR_UNKNOWN' );
 						}
 						eshiol.renderMessages( msg, options.message_container );
 

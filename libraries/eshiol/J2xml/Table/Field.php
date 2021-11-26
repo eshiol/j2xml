@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -185,7 +185,7 @@ class Field extends Table
 
 		if (isset($data['modified_time']) && ($data['modified_time'] != \JFactory::getDbo()->getNullDate()))
 		{
-			$data['modified_time'] = self::fixdate($data['modified_time']);
+			$data['modified_time'] = self::fixDate($data['modified_time']);
 		}
 	}
 
@@ -231,7 +231,7 @@ class Field extends Table
 			Fieldgroup::export($item->group_id, $xml, $options);
 		}
 
-		if ($options['users'])
+		if (isset($options['users']) && $options['users'])
 		{
 			if ($item->created_user_id)
 			{
@@ -243,7 +243,7 @@ class Field extends Table
 			}
 		}
 
-		if ($options['categories'])
+		if (isset($options['categories']) && $options['categories'])
 		{
 			$query = $db->getQuery(true)
 				->select('category_id')

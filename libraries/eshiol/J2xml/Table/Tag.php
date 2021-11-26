@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -230,17 +230,20 @@ class Tag extends Table
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
 
-		if ($options['users'] && $item->created_user_id)
+		if (isset($options['users']) && $options['users'])
 		{
-			User::export($item->created_user_id, $xml, $options);
+			if ($item->created_user_id)
+			{
+				User::export($item->created_user_id, $xml, $options);
+			}
+	
+			if ($item->modified_user_id)
+			{
+				User::export($item->modified_user_id, $xml, $options);
+			}
 		}
 
-		if ($options['users'] && $item->modified_user_id)
-		{
-			User::export($item->modified_user_id, $xml, $options);
-		}
-
-		if ($options['images'])
+		if (isset($options['images']) && $options['images'])
 		{
 			$text = html_entity_decode($item->description);
 			$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text, $matches, PREG_PATTERN_ORDER);
