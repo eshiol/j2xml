@@ -10,7 +10,7 @@
 	<creationDate>November 2021</creationDate>
 	<copyright><![CDATA[(C) 2010 - 2021 Helios Ciancio. All Rights Reserved.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>3.9.210-alpha.1</version>
+	<version>3.9.211-alpha2</version>
 
 	<url>https://www.eshiol.it</url>
 	<packager>Helios Ciancio</packager>
@@ -19,12 +19,12 @@
 		<server type="extension" priority="2" name="J2XML">https://www.eshiol.it/files/j2xml39/j2xml.xml</server>
 	</updateservers>
 	<files>
-		<folder type="library" id="j2xml">lib_eshiol_j2xml-21.11.352-alpha.1.zip</folder>
-		<folder type="component" id="j2xml">com_j2xml-3.9.210-alpha.1.zip</folder>
-		<!--
-		<folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.9.51.zip</folder>
+		<folder type="library" id="j2xml">lib_eshiol_j2xml-21.11.352-alpha2.zip</folder>
+		<folder type="component" id="j2xml">com_j2xml-3.9.210-alpha2.zip</folder>
+		<folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.9.51-alpha2.zip</folder>
 		<folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc-4.5.1.25.zip</folder>
 		<folder type="plugin" id="basicauth" group="system">plg_system_basicauth-3.9.0.zip</folder>
+		<!--
 		<folder type="file" id="j2xml">cli_j2xml-3.7.23.zip</folder>
 		-->
 	</files>
