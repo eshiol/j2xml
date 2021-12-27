@@ -42,14 +42,14 @@ class Version
 	/**
 	 * @public static string Development Status
 	 */
-	public static $DEV_STATUS = '';
+	public static $DEV_STATUS = 'alpha';
 
 	// dev < alpha = a < beta = b < RC = rc < # <
 	// pl = p
 	/**
 	 * @public static int build Number
 	 */
-	public static $BUILD = '352';
+	public static $BUILD = '353';
 
 	/**
 	 * @public static string Codename

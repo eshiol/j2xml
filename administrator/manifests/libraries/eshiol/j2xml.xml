@@ -2,7 +2,7 @@
 <extension version="3.9" type="library" method="upgrade">
 	<name>J2XML</name>
 	<libraryname>eshiol/J2xml</libraryname>
-	<description>LIB_J2XML_XML_DESCRIPTION</description>
+	<description>J2XML Library. Export/Import Joomla! content.</description>
 	<author>Helios Ciancio</author>
 	<authorEmail>info (at) eshiol (dot) it</authorEmail>
 	<authorUrl>www.eshiol.it</authorUrl>
