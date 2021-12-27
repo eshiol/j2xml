@@ -6,11 +6,11 @@
 	<author>Helios Ciancio</author>
 	<authorEmail>info (at) eshiol (dot) it</authorEmail>
 	<authorUrl>www.eshiol.it</authorUrl>
-	<creationDate>May 2020</creationDate>
-	<copyright><![CDATA[(C) 2010 - 2020 Helios Ciancio. All Rights Reserved.
+	<creationDate>August 2021</creationDate>
+	<copyright><![CDATA[(C) 2010 - 2021 Helios Ciancio. All Rights Reserved.
 	<br/>(C) 1999,2000,2001 Edd Dumbill, Useful Information Company.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>4.4.1.24</version>
+	<version>4.5.1.25</version>
 	<files>
 		<folder>Log</folder>
 		<folder>lib</folder>
