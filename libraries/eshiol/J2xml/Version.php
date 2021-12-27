@@ -37,7 +37,7 @@ class Version
 	/**
 	 * @public static int Sub Release Level
 	 */
-	public static $DEV_LEVEL = '11';
+	public static $DEV_LEVEL = '12';
 
 	/**
 	 * @public static string Development Status
