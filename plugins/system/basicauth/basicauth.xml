@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3" type="plugin" group="system" method="upgrade">
+	<name>System - Basic HTTP authentication</name>
+	<description>This Joomla plugin allows users to login using basic HTTP authentication.</description>
+
+	<author>Helios Ciancio</author>
+	<authorEmail>info (at) eshiol (dot) it</authorEmail>
+	<authorUrl>www.eshiol.it</authorUrl>
+	<creationDate>May 2020</creationDate>
+	<copyright><![CDATA[(C) 2016 - 2020 Helios Ciancio. All Rights Reserved.
+	<br/>Copyright (C) 2011 - 2013 Johan Janssens and Timble CVBA.]]></copyright>
+	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
+	<version>3.9.0</version>
+
+	<updateservers>
+		<server type="extension" priority="2" name="Basic HTTP authentication">https://www.eshiol.it/files/plg_system_basicauth/plg_system_basicauth.xml
+		</server>
+	</updateservers>
+	<files>
+		<filename plugin="basicauth">basicauth.php</filename>
+		<filename>install.mysql.sql</filename>
+		<filename>install.postgresql.sql</filename>
+		<filename>install.sqlsrv.sql</filename>
+	</files>
+	<install>
+		<sql>
+			<file driver="mysql" charset="utf8">install.mysql.sql</file>
+			<file driver="postgresql" charset="utf8">install.postgresql.sql</file>
+			<file driver="sqlsrv" charset="utf8">install.sqlsrv.sql</file>
+		</sql>
+	</install>
+</extension>
