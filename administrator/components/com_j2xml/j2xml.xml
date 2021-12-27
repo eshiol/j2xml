@@ -1,68 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3" type="component" method="upgrade">
-  <name>com_j2xml</name>
-  <creationDate>May 2020</creationDate>
-  <author>Helios Ciancio</author>
-  <authorEmail>info@eshiol.it</authorEmail>
-  <authorUrl>www.eshiol.it</authorUrl>
-  <copyright><![CDATA[(C) 2010 - 2020 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
-  <license>GNU/GPL v3</license>
-  <version>3.7.208</version>
-  <description>COM_J2XML_XML_DESCRIPTION</description>
-  <scriptfile>script.php</scriptfile>
-  <install>
-    <sql>
-      <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
-      <file driver="postgresql" charset="utf8">sql/install.postgresql.utf8.sql
-			</file>
-    </sql>
-  </install>
-  <uninstall>
-    <sql>
-      <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
-      <file driver="postgresql" charset="utf8">sql/install.postgresql.utf8.sql
-			</file>
-    </sql>
-  </uninstall>
-  <update>
-    <schemas>
-      <schemapath type="mysql">sql/updates</schemapath>
-    </schemas>
-  </update>
-  <files folder="site">
-    <filename>j2xml.php</filename>
-    <folder>controllers</folder>
-    <folder>helpers</folder>
-  </files>
-  <administration>
-    <!-- Administration Menu Section -->
-    <menu img="class:j2xml">com_j2xml</menu>
-    <submenu>
-      <menu link="option=com_j2xml&amp;view=cpanel" view="cpanel" img="class:cpanel" alt="J2XML/Control Panel">com_j2xml_menu_cpanel</menu>
-      <menu link="option=com_j2xml&amp;view=websites" view="websites" img="class:websites" alt="J2XML/Web sites">com_j2xml_menu_websites</menu>
-    </submenu>
-    <!-- Administration Main File Copy Section -->
-    <!-- Note the folder attribute: This attribute describes the folder to 
-			copy FROM in the package to install therefore files copied in this section 
-			are copied from /admin/ in the package -->
-    <files folder="admin">
-      <filename>j2xml.php</filename>
-      <filename>config.xml</filename>
-      <filename>controller.php</filename>
-      <folder>controllers</folder>
-      <folder>helpers</folder>
-      <folder>models</folder>
-      <folder>sql</folder>
-      <folder>tables</folder>
-      <folder>views</folder>
-    </files>
-    <languages folder="admin/language">
-      <language tag="en-GB">en-GB/en-GB.com_j2xml.ini</language>
-      <language tag="en-GB">en-GB/en-GB.com_j2xml.sys.ini</language>
-    </languages>
-  </administration>
-  <media destination="com_j2xml" folder="media">
-    <folder>files</folder>
-    <folder>images</folder>
-  </media>
+<extension version="3.0" type="component" method="upgrade">
+	<name>com_j2xml</name>
+	<creationDate>December 2021</creationDate>
+	<author>Helios Ciancio</author>
+	<authorUrl>www.eshiol.it</authorUrl>
+	<authorEmail>info (at) eshiol (dot) it</authorEmail>
+	<copyright><![CDATA[(C) 2010 - 2021 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.
+	]]></copyright>
+	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
+	<version>3.9.210-alpha2</version>
+	<description>COM_J2XML_XML_DESCRIPTION</description>
+	<files folder="site">
+		<filename>j2xml.php</filename>
+		<folder>controllers</folder>
+		<folder>helpers</folder>
+	</files>
+	<administration>
+		<!-- Administration Menu Section -->
+		<menu>com_j2xml</menu>
+		<!-- Administration Main File Copy Section -->
+		<!-- Note the folder attribute: This attribute describes the folder
+			 to copy FROM in the package to install therefore files copied
+			 in this section are copied from /admin/ in the package -->
+		<files folder="admin">
+			<filename>j2xml.php</filename>
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+			<folder>controllers</folder>
+			<folder>models</folder>
+			<folder>views</folder>
+		</files>
+		<languages folder="admin/language">
+			<language tag="en-GB">en-GB/en-GB.com_j2xml.ini</language>
+			<language tag="en-GB">en-GB/en-GB.com_j2xml.sys.ini</language>
+		</languages>
+	</administration>
+	<media destination="com_j2xml" folder="media">
+		<folder>js</folder>
+	</media>
 </extension>

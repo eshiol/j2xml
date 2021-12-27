@@ -1,69 +1,74 @@
 <?php
 /**
- * @package		J2XML
+ * @package		Joomla.Administrator
  * @subpackage	com_j2xml
  *
- * @version		__DEPLOY_VERSION__
- * @since		1.5.3
- *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @link		https://www.eshiol.it
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 
-// No direct access
-defined('_JEXEC') or die();
+// no direct access
+defined('_JEXEC') or die('Restricted access.');
 
-jimport('joomla.application.component.controller');
+JLoader::import('joomla.application.component.controller');
 
 /**
  * J2XML master display controller
+ *
+ * @since 1.5.3
  */
-class J2XMLController extends JControllerLegacy
+class J2xmlController extends JControllerLegacy
 {
 
 	/**
 	 * Method to display a view.
 	 *
 	 * @param
-	 *        	boolean If true, the view output will be cached
+	 *			boolean If true, the view output will be cached
 	 * @param
-	 *        	array An array of safe url parameters and their variable
-	 *        	types, for valid values see {@link JFilterInput::clean()}.
+	 *			array An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
 	 *
 	 * @return JController This object to support chaining.
 	 * @since 1.5
 	 */
-	public function display ($cachable = false, $urlparams = false)
+	public function display($cachable = false, $urlparams = false)
 	{
-		require_once JPATH_COMPONENT . '/helpers/j2xml.php';
-		J2XMLHelper::updateReset();
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
-		$jinput = JFactory::getApplication()->input;
-		$view = $jinput->getCmd('view', '');
-		$layout = $jinput->getCmd('layout', 'default');
-		$id = $jinput->getInt('id');
+		// Get the document object.
+		$document = JFactory::getDocument();
 
-		// Check for edit form.
-		if ($view == 'website' && $layout == 'edit' && ! $this->checkEditId('com_j2xml.edit.website', $id))
+		// Set the default view name and format from the Request.
+		$vName = $this->input->get('view', 'import');
+		$vFormat = $document->getType();
+		$lName = $this->input->get('layout', 'default', 'string');
+
+		// Get and render the view.
+		if ($view = $this->getView($vName, $vFormat))
 		{
-			// Somehow the person just went to the form - we don't allow that.
-			throw new Exception(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
-			$this->setRedirect(JRoute::_('index.php?option=com_j2xml&view=websites', false));
+			$ftp = JClientHelper::setCredentialsFromRequest('ftp');
+			$view->ftp = &$ftp;
 
-			return false;
+			// Get the model for the view.
+			$model = $this->getModel($vName, 'J2xmlModel');
+			$model->getState();
+
+			// Push the model into the view (as default).
+			$view->setModel($model, true);
+			$view->setLayout($lName);
+
+			// Push document object into the view.
+			$view->document = $document;
+
+			$view->display();
 		}
-		elseif ($view == '')
-		{
-			$this->setRedirect(JRoute::_('index.php?option=com_j2xml&view=cpanel', false));
-			return false;
-		}
-		parent::display();
+
 		return $this;
 	}
 }

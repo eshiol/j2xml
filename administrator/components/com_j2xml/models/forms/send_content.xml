@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="content">
+		<field
+			name="send_categories"
+			type="radio"
+			label="COM_J2XML_CONFIG_CATEGORIES_LABEL"
+			description="COM_J2XML_CONFIG_SEND_CATEGORIES_DESC"
+			default="1"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+	</fieldset>
+</form>

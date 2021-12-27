@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset name="export">
+		<field
+			name="cid"
+			type="hidden"
+			/>
+		<field
+			name="export_compression"
+			type="radio"
+			label="COM_J2XML_CONFIG_COMPRESS_LABEL"
+			description="COM_J2XML_CONFIG_COMPRESS_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="export_fields"
+			type="radio"
+			label="COM_J2XML_CONFIG_FIELDS_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_FIELDS_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="export_images"
+			type="radio"
+			label="COM_J2XML_CONFIG_IMAGES_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_IMAGES_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="export_tags"
+			type="radio"
+			label="COM_J2XML_CONFIG_TAGS_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_TAGS_DESC"
+			default="1"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+	</fieldset>
+</form>
