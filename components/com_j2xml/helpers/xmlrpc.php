@@ -388,8 +388,9 @@ class XMLRPCJ2XMLServices
 			'message' => 31
 		);
 
-		$found = false;
-		$msgs = array();
+		$message = htmlentities($message);
+		$found   = false;
+		$msgs    = array();
 
 		foreach (Messages::$messages as $i => $m) 
 		{

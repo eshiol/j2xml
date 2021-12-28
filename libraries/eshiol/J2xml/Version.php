@@ -74,7 +74,7 @@ class Version
 	/**
 	 * @public static string xml file version
 	 */
-	public static $DOCVERSION = '19.2.0';
+	public static $DOCVERSION = '21.12.0';
 
 	/**
 	 * @public static string dtd
