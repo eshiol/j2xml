@@ -210,4 +210,17 @@ class Importer
 
 		return true;
 	}
+
+	/**
+	 * Return true if the file is supported
+	 *
+	 * @param String $version
+	 *
+	 * @return boolean
+	 * @since  21.12.353
+	 */
+	public function isSupported(String $version)
+	{
+		return in_array($version, ["150900", "120500", "211200"]);
+	}
 }

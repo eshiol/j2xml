@@ -200,23 +200,25 @@ class J2xmlModelImport extends JModelForm
 		else
 		{
 			JLog::add(new JLogEntry('Importing...', JLog::DEBUG, 'com_j2xml'));
-			
-			$xmlVersion = $xml['version'];
 
-			if (version_compare($xml['version'], eshiol\J2xml\Version::$DOCVERSION, 'le'))
+			$xmlVersion = $xml['version'];
+			$version = explode(".", $xmlVersion);
+			$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
+
+			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
+			if ($importer->isSupported($xmlVersionNumber))
 			{
 				$params->set('version', (string) $xml['version']);
 
 				$results = JFactory::getApplication()->triggerEvent('onJ2xmlBeforeImport', array('com_j2xml.import', &$xml, $params));
 
-				$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 				$importer->import($xml, $params);
 
 				JInstallerHelper::cleanupInstall($package['packagefile'], $package['extractdir']);
 			}
 			else
 			{
-				JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED'), JLog::ERROR, 'com_j2xml'));
+				JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion), JLog::ERROR, 'com_j2xml'));
 				return false;
 			}
 		}
