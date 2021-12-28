@@ -175,13 +175,9 @@ class plgSystemJ2xml extends JPlugin
 		$option = $input->get('option');
 		$view = $input->get('view', substr($option, 4));
 
-		if (($view == 'articles') || ($option == 'com_content'))
+		if (($option == 'com_content') && (! $view || ($view == 'articles') || ($view == 'featured')))
 		{
 			$view = 'content';
-		}
-		elseif ($view != substr($option, 4))
-		{
-			return true;
 		}
 
 		// Only render if J2XML view exists and J2XML Library is loaded
