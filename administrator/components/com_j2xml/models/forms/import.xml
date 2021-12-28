@@ -19,6 +19,25 @@
 <form>
 	<fieldset name="import">
 		<field
+			name="import_content"
+			type="list"
+			default="2"
+			label="COM_J2XML_CONFIG_CONTENT_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_CONTENT_DESC">
+			<option
+				value="">JGLOBAL_USE_GLOBAL
+			</option>
+			<option
+				value="1">COM_J2XML_YES_IF_NOT_EXISTS
+			</option>
+			<option
+				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
+			</option>
+			<option
+				value="3">COM_J2XML_YES_OVERWRITE_IF_NEWER
+			</option>
+		</field>
+		<field
 			name="import_fields"
 			type="list"
 			default="0"
