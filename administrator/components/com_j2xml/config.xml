@@ -1,547 +1,415 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-@version: __DEPLOY_VERSION__
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  com_j2xml
+ *
+ * @version     __DEPLOY_VERSION__
+ *
+ * @author      Helios Ciancio <info (at) eshiol (dot) it>
+ * @link        https://www.eshiol.it
+ * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * J2XML is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
+ */
 -->
 <config>
-	<fieldset
-		name="export"
-		label="COM_J2XML_CONFIG_EXPORT_HEADER_LABEL"
-		description="COM_J2XML_CONFIG_EXPORT_HEADER_DESC">
+	<fieldset name="export"
+		label="COM_J2XML_CONFIG_EXPORT_HEADER_LABEL">
+		<field
+			name="export_compression"
+			type="radio"
+			label="COM_J2XML_CONFIG_COMPRESS_LABEL"
+			description="COM_J2XML_CONFIG_COMPRESS_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="export_fields"
+			type="radio"
+			label="COM_J2XML_CONFIG_FIELDS_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_FIELDS_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
 		<field
 			name="export_images"
 			type="radio"
-			class="btn-group"
-			default="1"
-			label="COM_J2XML_CONFIG_EXPORT_IMAGES_LABEL"
-			description="COM_J2XML_CONFIG_EXPORT_IMAGES_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
+			label="COM_J2XML_CONFIG_IMAGES_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_IMAGES_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
+		<field
+			name="export_tags"
+			type="radio"
+			label="COM_J2XML_CONFIG_TAGS_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_TAGS_DESC"
+			default="1"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="export_contacts"
+			type="radio"
+			label="COM_J2XML_CONFIG_CONTACTS_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_CONTACTS_DESC"
+			default="1"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+		<field name="spacer1" type="spacer" hr="true" />
 
 		<field
 			name="export_users"
 			type="radio"
-			class="btn-group"
+			label="COM_J2XML_CONFIG_USERS_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_USERS_DESC"
 			default="1"
-			label="COM_J2XML_CONFIG_EXPORT_USERS_LABEL"
-			description="COM_J2XML_CONFIG_EXPORT_USERS_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
-
 		<field
-			name="export_contacts"
+			name="export_password"
 			type="radio"
-			class="btn-group"
-			default="1"
-			label="COM_J2XML_CONFIG_EXPORT_CONTACTS_LABEL"
-			description="COM_J2XML_CONFIG_EXPORT_CONTACTS_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
-
-		<field
-			name="export_gzip"
-			type="radio"
-			class="btn-group"
+			label="COM_J2XML_CONFIG_PASSWORD_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_PASSWORD_DESC"
 			default="0"
-			label="COM_J2XML_CONFIG_EXPORT_GZIP_LABEL"
-			description="COM_J2XML_CONFIG_EXPORT_GZIP_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
+			showon="export_users!:0">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
+		<field
+			name="export_usernotes"
+			type="radio"
+			label="COM_J2XML_CONFIG_USERNOTES_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_USERNOTES_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
+			showon="export_users!:0">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+		<field name="spacer2" type="spacer" hr="true" />
+
+		<field
+			name="export_categories"
+			type="radio"
+			label="COM_J2XML_CONFIG_CATEGORIES_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_CATEGORIES_DESC"
+			default="1"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
 	</fieldset>
 
-	<fieldset
-		name="import"
-		label="COM_J2XML_CONFIG_IMPORT_HEADER_LABEL"
-		description="COM_J2XML_CONFIG_IMPORT_HEADER_DESC">
-
+	<fieldset name="import"
+		label="COM_J2XML_CONFIG_IMPORT_HEADER_LABEL">
 		<field
-			name="import_content"
+			name="import_fields"
 			type="list"
-			default="2"
-			label="COM_J2XML_CONFIG_IMPORT_CONTENT_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_CONTENT_DESC">
-			<option
-				value="1">COM_J2XML_YES_IF_NOT_EXISTS
-			</option>
-			<option
-				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
-			</option>
-			<option
-				value="3">COM_J2XML_YES_OVERWRITE_IF_NEWER
-			</option>
+			default="0"
+			label="COM_J2XML_CONFIG_FIELDS_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_FIELDS_DESC">
+			<option value="0">JNO</option>
+			<option value="1">COM_J2XML_YES_IF_NOT_EXISTS</option>
+			<option	value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS</option>
 		</field>
-
 		<field
 			name="import_images"
-			type="list"
+			type="radio"
+			label="COM_J2XML_CONFIG_IMAGES_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_IMAGES_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="import_tags"
+			type="radio"
+			label="COM_J2XML_CONFIG_TAGS_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_TAGS_DESC"
 			default="1"
-			label="COM_J2XML_CONFIG_IMPORT_IMAGES_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_IMAGES_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">COM_J2XML_YES_IF_NOT_EXISTS
-			</option>
-			<option
-				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
-			</option>
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="import_contacts"
+			type="radio"
+			label="COM_J2XML_CONFIG_CONTACTS_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_CONTACTS_DESC"
+			default="1"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 
-		<field
-			name="import_categories"
-			type="list"
-			default="1"
-			label="COM_J2XML_CONFIG_IMPORT_CATEGORIES_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_CATEGORIES_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">COM_J2XML_YES_IF_NOT_EXISTS
-			</option>
-			<option
-				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
-			</option>
-		</field>
+		<field name="spacer3" type="spacer" hr="true" />
 
 		<field
 			name="import_users"
 			type="list"
 			default="1"
-			label="COM_J2XML_CONFIG_IMPORT_USERS_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_USERS_DESC"
-			>
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">COM_J2XML_YES_IF_NOT_EXISTS
-			</option>
-			<option
-				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
-			</option>
+			label="COM_J2XML_CONFIG_USERS_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_USERS_DESC">
+			<option value="0">JNO</option>
+			<option value="1">COM_J2XML_YES_IF_NOT_EXISTS</option>
+			<option	value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS</option>
 		</field>
-
+		<field
+			name="import_keep_user_id" 
+			type="radio" 
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
+			default="0" 
+			label="COM_J2XML_CONFIG_KEEP_USER_ID_LABEL"
+			description="COM_J2XML_CONFIG_KEEP_USER_ID_DESC"
+			showon="import_users:1,2">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="import_password"
+			type="radio"
+			label="COM_J2XML_CONFIG_PASSWORD_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_PASSWORD_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
+			showon="import_users:1,2">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
 		<field
 			name="import_superusers"
 			type="radio"
 			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
 			default="0"
-			label="COM_J2XML_CONFIG_IMPORT_SUPERUSERS_LABEL"
+			label="COM_J2XML_CONFIG_SUPERUSERS_LABEL"
 			description="COM_J2XML_CONFIG_IMPORT_SUPERUSERS_DESC"
-			showon="import_users:1,2"
-			>
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
+			showon="import_users:1,2">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
-
 		<field
 			name="import_usernotes"
 			type="radio"
-			class="btn-group btn-group-yesno"
-			default="0"
-			label="COM_J2XML_CONFIG_IMPORT_USERNOTES_LABEL"
+			label="COM_J2XML_CONFIG_USERNOTES_LABEL"
 			description="COM_J2XML_CONFIG_IMPORT_USERNOTES_DESC"
-			showon="import_users:1,2"
-			>
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
-
-		<field
-			name="import_contacts"
-			type="list"
-			default="1"
-			label="COM_J2XML_CONFIG_IMPORT_CONTACTS_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_CONTACTS_DESC"
-			>
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">COM_J2XML_YES_IF_NOT_EXISTS
-			</option>
-			<option
-				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
-			</option>
-		</field>
-
-		<field
-			name="import_weblinks"
-			type="list"
-			default="1"
-			label="COM_J2XML_CONFIG_IMPORT_WEBLINKS_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_WEBLINKS_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">COM_J2XML_YES_IF_NOT_EXISTS
-			</option>
-			<option
-				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
-			</option>
-		</field>
-
-		<field
-			name="import_fields"
-			type="list"
-			default="1"
-			label="COM_J2XML_CONFIG_IMPORT_FIELDS_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_FIELDS_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">COM_J2XML_YES_IF_NOT_EXISTS
-			</option>
-			<option
-				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
-			</option>
-		</field>
-
-		<field
-			name="import_tags"
-			type="list"
-			default="1"
-			label="COM_J2XML_CONFIG_IMPORT_TAGS_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_TAGS_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">COM_J2XML_YES_IF_NOT_EXISTS
-			</option>
-			<option
-				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
-			</option>
-		</field>
-	</fieldset>
-
-	<fieldset
-		name="articles"
-		label="COM_J2XML_CONFIG_CONTENT_HEADER_LABEL"
-		description="COM_J2XML_CONFIG_CONTENT_HEADER_DESC">
-		<field
-			name="keep_id"
-			type="radio"
-			class="btn-group"
 			default="0"
-			label="COM_J2XML_CONFIG_KEEP_ID_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_ID_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
+			showon="import_users:1,2">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
 
-		<field
-			name="keep_access"
-			type="list"
-			default="0"
-			label="COM_J2XML_CONFIG_KEEP_ACCESS_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_ACCESS_DESC">
-			<option
-				value="0">COM_J2XML_CONFIG_KEEP_ACCESS_YES
-			</option>
-			<option
-				value="1">COM_J2XML_CONFIG_KEEP_ACCESS_PUBLIC
-			</option>
-			<option
-				value="2">COM_J2XML_CONFIG_KEEP_ACCESS_REGISTERED
-			</option>
-			<option
-				value="3">COM_J2XML_CONFIG_KEEP_ACCESS_SPECIAL
-			</option>
-		</field>
+		<field name="spacer4" type="spacer" hr="true" />
 
 		<field
-			name="keep_state"
-			type="list"
-			default="2"
-			label="COM_J2XML_CONFIG_KEEP_STATE_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_STATE_DESC">
-			<option
-				value="2">COM_J2XML_CONFIG_KEEP_STATE_YES
-			</option>
-			<option
-				value="1">COM_J2XML_CONFIG_KEEP_STATE_PUBLISHED
-			</option>
-			<option
-				value="0">COM_J2XML_CONFIG_KEEP_STATE_UNPUBLISHED
-			</option>
-		</field>
-
-		<field
-			name="keep_author"
-			type="radio"
-			class="btn-group"
-			default="1"
-			label="COM_J2XML_CONFIG_KEEP_AUTHOR_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_AUTHOR_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
-
-		<field
-			name="keep_category"
-			type="list"
-			default="1"
-			label="COM_J2XML_CONFIG_KEEP_CATEGORY_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_CATEGORY_DESC">
-			<option
-				value="1">JYES
-			</option>
-			<option
-				value="2">COM_J2XML_CONFIG_KEEP_CATEGORY_FORCE
-			</option>
-		</field>
-
-		<field
-			name="category"
+			name="com_content_category_default"
 			type="category"
 			extension="com_content"
-			label="COM_J2XML_CONFIG_KEEP_CATEGORY_FORCE_CATEGORY_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_CATEGORY_FORCE_CATEGORY_DESC"
-			showon="keep_category:2"
+			label="COM_J2XML_CONFIG_IMPORT_CONTENT_DEFAULT_CATEGORY_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_CONTENT_DEFAULT_CATEGORY_DESC"
 			/>
-
-		<field
-			name="keep_attribs"
-			type="radio"
-			class="btn-group"
-			default="1"
-			label="COM_J2XML_CONFIG_KEEP_ATTRIBS_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_ATTRIBS_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
-
-		<field
-			name="keep_metadata"
-			type="radio"
-			class="btn-group"
-			default="1"
-			label="COM_J2XML_CONFIG_KEEP_METADATA_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_METADATA_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
-
-		<field
-			name="keep_frontpage"
-			type="radio"
-			class="btn-group"
-			default="1"
-			label="COM_J2XML_CONFIG_KEEP_FRONTPAGE_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_FRONTPAGE_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
-
-		<field
-			name="keep_rating"
-			type="radio"
-			class="btn-group"
-			default="1"
-			label="COM_J2XML_CONFIG_KEEP_RATING_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_RATING_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
-
-		<field
-			name="rebuild_links"
-			type="radio"
-			class="btn-group"
-			default="0"
-			label="COM_J2XML_CONFIG_REBUILD_LINKS_LABEL"
-			description="COM_J2XML_CONFIG_REBUILD_LINKS_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
-
-		<field
-			name="linksourcefile"
-			type="radio"
-			class="btn-group"
-			default="0"
-			label="COM_J2XML_LINKSOURCEFILE_LABEL"
-			description="COM_J2XML_LINKSOURCEFILE_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
 
 	</fieldset>
 
-	<fieldset
-		name="user"
-		label="COM_J2XML_CONFIG_USERS_HEADER_LABEL"
-		description="COM_J2XML_CONFIG_USERS_HEADER_DESC">
-
+	<fieldset name="send"
+		label="COM_J2XML_CONFIG_SEND_HEADER_LABEL">
 		<field
-			name="keep_user_id"
+			name="send_compression"
 			type="radio"
-			class="btn-group"
+			label="COM_J2XML_CONFIG_COMPRESS_LABEL"
+			description="COM_J2XML_CONFIG_COMPRESS_DESC"
 			default="0"
-			label="COM_J2XML_CONFIG_KEEP_ID_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_ID_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
-
-		<field
-			name="keep_user_attribs"
-			type="radio"
-			class="btn-group"
-			default="1"
-			label="COM_J2XML_CONFIG_KEEP_ATTRIBS_LABEL"
-			description="COM_J2XML_CONFIG_KEEP_ATTRIBS_DESC">
-			<option
-				value="0">JNO
-			</option>
-			<option
-				value="1">JYES
-			</option>
-		</field>
-	</fieldset>
-
-	<fieldset
-		name="advanced"
-		label="COM_J2XML_CONFIG_ADVANCED_HEADER_LABEL"
-		description="COM_J2XML_CONFIG_ADVANCED_HEADER_DESC">
-	    <field
-	    	name="root"
-	    	type="hidden"
-	    	default=""
-	    	/>
-
-		<field
-			name="development"
-			type="hidden"
-			default="0"
-			/>
-
-        <field name="debug"
-			type="radio"
 			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="send_fields"
+			type="list"
 			default="0"
+			label="COM_J2XML_CONFIG_FIELDS_LABEL"
+			description="COM_J2XML_CONFIG_SEND_FIELDS_DESC">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JNO</option>
+			<option value="1">COM_J2XML_YES_IF_NOT_EXISTS</option>
+			<option	value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS</option>
+		</field>
+		<field
+			name="send_images"
+			type="list"
+			label="COM_J2XML_CONFIG_IMAGES_LABEL"
+			description="COM_J2XML_CONFIG_SEND_IMAGES_DESC"
+			default="0">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="send_tags"
+			type="list"
+			label="COM_J2XML_CONFIG_TAGS_LABEL"
+			description="COM_J2XML_CONFIG_SEND_TAGS_DESC"
+			default="1">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="send_contacts"
+			type="list"
+			label="COM_J2XML_CONFIG_CONTACTS_LABEL"
+			description="COM_J2XML_CONFIG_SEND_CONTACTS_DESC"
+			default="1">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+		<field
+			name="spacer3"
+			type="spacer"
+			hr="true"
+		/>
+
+		<field
+			name="send_users"
+			type="list"
+			default="1"
+			label="COM_J2XML_CONFIG_USERS_LABEL"
+			description="COM_J2XML_CONFIG_SEND_USERS_DESC">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JNO</option>
+			<option	value="1">COM_J2XML_YES_IF_NOT_EXISTS</option>
+			<option	value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS</option>
+		</field>
+		<field
+			name="send_keep_user_id" 
+			type="list"
+			default="0" 
+			label="COM_J2XML_CONFIG_KEEP_USER_ID_LABEL"
+			description="COM_J2XML_CONFIG_KEEP_USER_ID_DESC"
+			showon="send_users!:0">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field
+			name="send_password"
+			type="list"
+			label="COM_J2XML_CONFIG_PASSWORD_LABEL"
+			description="COM_J2XML_CONFIG_SEND_PASSWORD_DESC"
+			default="0"
+			showon="send_users!:0">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field
+			name="send_superusers"
+			type="list"
+			default="0"
+			label="COM_J2XML_CONFIG_SUPERUSERS_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_SUPERUSERS_DESC"
+			showon="send_users:1,2">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option	value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field
+			name="send_usernotes"
+			type="list"
+			default="0"
+			label="COM_J2XML_CONFIG_USERNOTES_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_USERNOTES_DESC"
+			showon="send_users:1,2">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option	value="1">JYES</option>
+			<option	value="0">JNO</option>
+		</field>
+	</fieldset>
+
+	<fieldset 
+		name="advanced" 
+		label="COM_J2XML_CONFIG_ADVANCED_HEADER_LABEL">
+		<field name="debug"
+			type="radio" 
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
+			default="0" 
 			description="COM_J2XML_DEBUG_SYSTEM_DESC" label="COM_J2XML_DEBUG_SYSTEM_LABEL"
 			>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
-        </field>
-        <field name="log"
-        	type="text"
-        	label="COM_J2XML_DEBUG_FILENAME_LABEL"
-        	description="COM_J2XML_DEBUG_FILENAME_DESC"
-        	default="eshiol.log.php"
-        	showon="debug:1"
-        	/>
+			<option value="1">JYES</option>
+		</field>
 
-        <field name="phpconsole"
-			type="radio"
+		<field name="log"
+			type="text"
+			label="COM_J2XML_DEBUG_FILENAME_LABEL"
+			description="COM_J2XML_DEBUG_FILENAME_DESC"
+			default="eshiol.log.php"
+			showon="debug:1"
+			/>
+
+		<field name="phpconsole"
+			type="radio" 
 			class="btn-group btn-group-yesno"
-			default="0"
-			description="COM_J2XML_DEBUG_PHPCONSOLE_DESC"
+			layout="joomla.form.field.radio.switcher"
+			default="0" 
+			description="COM_J2XML_DEBUG_PHPCONSOLE_DESC" 
 			label="COM_J2XML_DEBUG_PHPCONSOLE_LABEL"
 			>
-			<option value="1">JYES</option>
 			<option value="0">JNO</option>
-        </field>
+			<option value="1">JYES</option>
+		</field>		
 
-		<field
-			name="xmlrpc"
-			type="radio"
+		<field 
+			name="xmlrpc" 
+			type="radio" 
 			class="btn-group btn-group-yesno"
-			default="0"
+			layout="joomla.form.field.radio.switcher"
+			default="0" 
 			label="COM_J2XML_XMLRPC_LABEL"
 			description="COM_J2XML_XMLRPC_DESC">
-			<option
-				value="1">JYES
-			</option>
-			<option
-				value="0">JNO
-			</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
-
-		<field
-			name="ajax"
-			type="radio"
-			class="btn-group btn-group-yesno"
-			default="0"
-			label="COM_J2XML_AJAX_LABEL"
-			description="COM_J2XML_AJAX_DESC">
-			<option
-				value="1">JYES
-			</option>
-			<option
-				value="0">JNO
-			</option>
-		</field>
-
-		<field name="oauth2" type="hidden" />
 	</fieldset>
 </config>

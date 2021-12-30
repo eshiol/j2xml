@@ -15,8 +15,11 @@
 namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
+use eshiol\J2xml\Version;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\Utilities\ArrayHelper;
+
+\JLoader::import('eshiol.J2xml.Version');
 
 /**
  * Table
@@ -307,7 +310,7 @@ class Table extends \JTable
 		}
 		else if ($v != '')
 		{
-			// $v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
+			$v = htmlentities($v, ENT_NOQUOTES | ENT_SUBSTITUTE, "UTF-8");
 			$length = strlen($v);
 			for ($i = 0; $i < $length; $i ++)
 			{
@@ -369,8 +372,7 @@ class Table extends \JTable
 
 		$userid = \JFactory::getUser()->id;
 
-		//$data = self::xml2array($record, $params->get('version') == '12.5.0');
-		$data = self::xml2array($record, version_compare($params->get('version', '19.2.0'), '19.2.0', 'lt'));
+		$data = self::xml2array($record, version_compare($params->get('version', Version::$DOCVERSION), '19.2.0', 'ne'));
 
 		// TODO: fix alias
 		/**
@@ -774,7 +776,7 @@ class Table extends \JTable
 	private static function xml2array ($xmlObject, $htmlEntityDecode = false, $out = null)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (is_object($xmlObject))
 		{
 			if ($a = $xmlObject->attributes())

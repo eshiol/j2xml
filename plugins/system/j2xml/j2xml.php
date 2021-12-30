@@ -4,22 +4,25 @@
  * @subpackage	System.J2xml
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
+ * @link		https://www.eshiol.it
+ * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License
  * or other free or open source software licenses.
  */
-defined('_JEXEC') or die();
 
-jimport('eshiol.core.send');
-jimport('eshiol.core.standard2');
+// no direct access
+defined('_JEXEC') or die('Restricted access.');
+
+JLoader::import('eshiol.J2xml.Exporter');
+JLoader::import('eshiol.J2xml.Sender');
+
+JLoader::register('eshiol\\J2xml\\Helper\\Joomla', __DIR__ . '/src/J2xml/Helper/Joomla.php');
 
 /**
  *
- * @version __DEPLOY_VERSION__
  * @since 1.5.2
  */
 class plgSystemJ2xml extends JPlugin
@@ -29,62 +32,91 @@ class plgSystemJ2xml extends JPlugin
 	 * Load the language file on instantiation.
 	 *
 	 * @var boolean
-	 * @since  3.1
 	 */
 	protected $autoloadLanguage = true;
+
+	/**
+	 * Application object.
+	 *
+	 * @var JApplicationCms
+	 * @since 3.9.0
+	 */
+	protected $app;
 
 	/**
 	 * Constructor
 	 *
 	 * @param object $subject
-	 *        	The object to observe
+	 *			The object to observe
 	 * @param array $config
-	 *        	An array that holds the plugin configuration
+	 *			An array that holds the plugin configuration
 	 */
-	function __construct (&$subject, $config)
+	function __construct(&$subject, $config)
 	{
 		parent::__construct($subject, $config);
 
-		if ($this->params->get('debug') || defined('JDEBUG') && JDEBUG)
-		{
-			JLog::addLogger(array(
-					'text_file' => $this->params->get('log', 'eshiol.log.php'),
-					'extension' => 'plg_system_j2xml_file'
-			), JLog::ALL, array(
-					'plg_system_j2xml'
-			));
-		}
-		if (PHP_SAPI == 'cli')
-		{
-			JLog::addLogger(array(
-				'logger' => 'echo',
-				'extension' => 'plg_system_j2xml'
-			), JLog::ALL & ~ JLog::DEBUG, array(
-				'plg_system_j2xml'
-			));
-		}
-		else
+		$cparams = JComponentHelper::getParams('com_j2xml');
+		if ($this->params->get('debug', $cparams->get('debug', false)) || defined('JDEBUG') && JDEBUG) 
 		{
 			JLog::addLogger(
-				array(
-					'logger' => ($this->params->get('logger') !== null) ? $this->params->get('logger') : 'messagequeue',
-					'extension' => 'plg_system_j2xml'
-				), JLog::ALL & ~ JLog::DEBUG, array(
-					'plg_system_j2xml'
-				));
-			if ($this->params->get('phpconsole') && class_exists('LogLoggerPhpconsole'))
+				array('text_file' => $this->params->get('log', 'eshiol.log.php'), 'extension' => 'plg_system_j2xml_file'),
+				JLog::ALL,
+				array('plg_system_j2xml'));
+		}
+		if (PHP_SAPI == 'cli') 
+		{
+			JLog::addLogger(
+				array('logger' => 'echo', 'extension' => 'plg_system_j2xml'),
+				JLog::ALL & ~ JLog::DEBUG,
+				array('plg_system_j2xml'));
+		} 
+		else 
+		{
+			JLog::addLogger(
+				array('logger' => (null !== $this->params->get('logger')) ? $this->params->get('logger') : 'messagequeue', 'extension' => 'plg_system_j2xml'),
+				JLog::ALL & ~ JLog::DEBUG,
+				array('plg_system_j2xml'));
+			if ($this->params->get('phpconsole', $cparams->get('phpconsole', false)) && class_exists('JLogLoggerPhpconsole'))
 			{
-				JLog::addLogger(array(
-					'logger' => 'phpconsole',
-					'extension' => 'plg_system_j2xml_phpconsole'
-				), JLog::DEBUG, array(
-					'plg_system_j2xml'
-				));
+				JLog::addLogger(
+					array('logger' => 'phpconsole', 'extension' => 'plg_system_j2xml_phpconsole'), 
+					JLog::DEBUG, 
+					array('plg_system_j2xml'));
 			}
 		}
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
 
-		// Joomla! 3.0 compatibility
-		$this->loadLanguage();
+		$version = new JVersion();
+		if (!$version->isCompatible('4')) 
+		{		
+			// overwrite original Joomla
+			$loader = require JPATH_LIBRARIES . '/vendor/autoload.php';
+				
+			// update class maps
+			$classMap = $loader->getClassMap();
+			if ($version->isCompatible('3.8'))
+			{
+				$classMap['Joomla\CMS\Layout\FileLayout'] = __DIR__ . '/src/joomla/src/Layout/FileLayout.php';
+			}
+			else
+			{
+				$classMap['JLayoutFile'] = __DIR__ . '/src/joomla/cms/layout/file.php';
+			}
+			$loader->addClassMap($classMap);
+		}
+
+		// Only render if J2XML is installed and enabled
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true)
+			->select($db->quoteName('enabled'))
+			->from('#__extensions')
+			->where($db->quoteName('name') . ' = ' . $db->quote('com_j2xml'));
+		JLog::add(new JLogEntry($query, JLog::DEBUG, 'plg_system_j2xml'));
+		$is_enabled = $db->loadResult();
+		if (! $is_enabled)
+		{
+			JLog::add(new JLogEntry(JText::sprintf('PLG_SYSTEM_J2XML_MSG_REQUIREMENTS_COM', JText::_('PLG_SYSTEM_J2XML')), JLog::WARNING, 'plg_system_j2xml'));
+		}
 	}
 
 	/**
@@ -92,86 +124,150 @@ class plgSystemJ2xml extends JPlugin
 	 *
 	 * @access public
 	 */
-	public function onAfterDispatch ()
+	public function onAfterDispatch()
 	{
-		$app = JFactory::getApplication();
-		if ($app->getName() != 'administrator')
+		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
+
+		if ($this->app->input->get('format') == 'xmlrpc')
 		{
-			return true;
+			return;
 		}
 
-		$enabled = JComponentHelper::getComponent('com_j2xml', true);
-		if (! $enabled->enabled)
+		// Only render for HTML output.
+		if (JFactory::getDocument()->getType() !== 'html')
 		{
-			return true;
+			return;
 		}
 
-		$jinput = JFactory::getApplication()->input;
-		$option = $jinput->get('option');
-		$view = $jinput->get('view');
-		$extension = $jinput->get('extension');
-
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true)
-			->select($db->quoteName('enabled'))
-			->from($db->quoteName('#__extensions'))
-			->where($db->quoteName('type') . ' = ' . $db->quote('library'));
-		$version = new \JVersion();
-		if ($version->isCompatible('3.9'))
+		// Only render in backend
+		$version = new JVersion();
+		
+		if ($version->isCompatible('3.7'))
 		{
-			$query->where($db->quoteName('element') . ' = ' . $db->quote('eshiol/J2xmlpro'));
+			if (! $this->app->isClient('administrator'))
+			{
+				return;
+			}
 		}
 		else
 		{
-			$query->where($db->quoteName('element') . ' = ' . $db->quote('J2xmlpro'));
+			if (! $this->app->isAdmin())
+			{
+				return;
+			}
 		}
-		$pro = (bool) $db->setQuery($query)->loadResult();
 
-		if (($option == 'com_content') && (! $view || $view == 'articles' || $view == 'featured') ||
-				($option == 'com_users') && (! $view || $view == 'users' || $view == 'levels') || ($option == 'com_weblinks') && (! $view || $view == 'weblinks') ||
-				($option == 'com_categories') && ($extension == 'com_content') && (! $view || $view == 'categories') ||
-				($option == 'com_contact') && (! $view || $view == 'contacts') ||
-				$pro && ($option == 'com_menus') && (! $view || $view == 'menus') ||
-				$pro && ($option == 'com_modules') && (! $view || $view == 'modules') ||
-				($option == 'com_fields') && (! $view || $view == 'fields'))
+		// Only render if J2XML is installed and enabled
+		$db = JFactory::getDbo();
+		$query = $db->getQuery(true)
+			->select($db->quoteName('enabled'))
+			->from('#__extensions')
+			->where($db->quoteName('name') . ' = ' . $db->quote('com_j2xml'));
+		JLog::add(new JLogEntry($query, JLog::DEBUG, 'plg_system_j2xml'));
+
+		$is_enabled = $db->setQuery($query)->loadResult();
+		if (! $is_enabled)
 		{
-			$toolbar = JToolBar::getInstance('toolbar');
+			return;
+		}
 
-			if (($option == 'com_users') && ($view == 'levels'))
+		$input = $this->app->input;
+		$option = $input->get('option');
+		$view = $input->get('view', substr($option, 4));
+
+		if (($option == 'com_content') && (! $view || ($view == 'articles') || ($view == 'featured')))
+		{
+			$view = 'content';
+		}
+
+		// Only render if J2XML view exists and J2XML Library is loaded
+		if (JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/' . $view . '/view.raw.php'))
+		{
+			if (class_exists('eshiol\\J2xml\\Exporter') && method_exists('eshiol\\J2xml\\Exporter', $view))
 			{
-				$control = 'viewlevels';
-			}
-			else
-			{
-				$control = substr($option, 4);
-			}
-			
-			// Backward Joomla! 2.5
-			if (version_compare(JPlatform::RELEASE, '12', 'ge'))
-			{
-				$toolbar->appendButton('Standard2', 'download', 'PLG_SYSTEM_J2XML_BUTTON_EXPORT', "j2xml.{$control}.export", true);
-				$websites = self::getWebsites();
-				if ($n = count($websites))
+				$bar = JToolbar::getInstance('toolbar');
+
+				$version = new JVersion();
+				if ($version->isCompatible('4'))
 				{
-					for ($i = 0; $i < $n; $i ++)
+					$buttonClass = 'button-download btn btn-sm';
+
+					foreach ($bar->getItems() as $button)
 					{
-						$websites[$i]->url = "index.php?option=com_j2xml&task={$control}.send&w_id=" . $websites[$i]->id;
+						if (gettype($button) != 'array')
+						{
+							if ($button->getName() == 'status-group')
+							{
+								$bar = $button->getChildToolbar();
+								$buttonClass = 'button-download dropdown-item';
+								break;
+							}
+						}
 					}
-					$toolbar->appendButton('Send', 'out', 'PLG_SYSTEM_J2XML_BUTTON_SEND', $websites, true);
+					$iconExport = 'icon-download';
+					$iconSend = 'icon-out';
+					$layout = new JLayoutFile('joomla4.toolbar.modal');
 				}
-			}
-			else
-			{
-				$doc = JFactory::getDocument();
-				$toolbar->prependButton('Separator', 'divider');
-				$websites = self::getWebsites();
-				if (count($websites))
+				else
 				{
-					$doc->addStyleDeclaration(".icon-32-j2xml_send{background:url(../media/plg_system_j2xml/images/icon-32-send.png) no-repeat;}");
-					$toolbar->prependButton('Send', 'j2xml_send', 'PLG_SYSTEM_J2XML_BUTTON_SEND', "j2xml.{$control}.send", 'websites');
+					$buttonClass = 'btn btn-small';
+					$iconExport = 'download';
+					$iconSend = 'out';
+					$layout = new JLayoutFile('joomla.toolbar.modal');
 				}
-				$doc->addStyleDeclaration(".icon-32-j2xml_export{background:url(../media/plg_system_j2xml/images/icon-32-export.png) no-repeat;}");
-				$toolbar->prependButton('Standard2', 'j2xml_export', 'PLG_SYSTEM_J2XML_BUTTON_EXPORT', "j2xml.{$control}.export");
+
+				$layout->addIncludePath(JPATH_PLUGINS . '/system/j2xml/layouts');
+				$selector = 'j2xmlExport';
+				$dHtml	= $layout->render(
+					array(
+						'selector' => $selector,
+						'icon'	   => $iconExport,
+						'text'	   => JText::_('JTOOLBAR_EXPORT'),
+						'title'	   => JText::_('PLG_SYSTEM_J2XML_EXPORT_' . strtoupper($view)),
+						'class'	   => $buttonClass,
+						'doTask'   => JRoute::_('index.php?option=com_j2xml&amp;view=export&amp;layout=' . $view . '&amp;format=html&amp;tmpl=component'),
+						'ok'	   => JText::_('JTOOLBAR_EXPORT'),
+						'onclick'  => 'var cids=new Array();jQuery(\'input:checkbox[name=\\\'cid\[\]\\\']:checked\').each( function(){cids.push(jQuery(this).val());});jQuery(\'#' . $selector . 'Modal iframe\').contents().find(\'#jform_cid\').val(cids);'
+				));
+
+				$bar->appendButton('Custom', $dHtml, 'download');
+
+				if ($version->isCompatible('3.9')) 
+				{
+					$lib_xmlrpc = 'eshiol/phpxmlrpc';
+				} 
+				else 
+				{
+					$lib_xmlrpc = 'phpxmlrpc';
+				}
+
+				$query = $db->getQuery(true)
+					->select($db->quoteName('extension_id'))
+					->from($db->quoteName('#__extensions'))
+					->where($db->quoteName('type') . ' = ' . $db->quote('library'))
+					->where($db->quoteName('element') . ' = ' . $db->quote($lib_xmlrpc));
+				JLog::add(new JLogEntry($query, JLog::DEBUG, 'plg_system_j2xml'));
+
+				if ($db->setQuery($query)->loadResult() && JLibraryHelper::isEnabled($lib_xmlrpc))
+				{
+					JText::script('LIB_J2XML_ERROR_UNKNOWN');
+
+					$layout->addIncludePath(JPATH_PLUGINS . '/system/j2xml/layout');
+					$selector = 'j2xmlSend';
+					$dHtml	= $layout->render(
+						array(
+							'selector'       => $selector,
+							'icon'	         => $iconSend,
+							'text'	         => JText::_('PLG_SYSTEM_J2XML_BUTTON_SEND'),
+							'title'	         => JText::_('PLG_SYSTEM_J2XML_SEND_' . strtoupper($view)),
+							'class'	         => $buttonClass,
+							'doTask'         => JRoute::_('index.php?option=com_j2xml&amp;view=send&amp;layout=' . $view . '&amp;format=html&amp;tmpl=component'),
+							'ok'	         => JText::_('PLG_SYSTEM_J2XML_BUTTON_SEND'),
+							'onclick'        => 'var cids=new Array();jQuery(\'input:checkbox[name=\\\'cid\[\]\\\']:checked\').each( function(){cids.push(jQuery(this).val());});jQuery(\'#' . $selector . 'Modal iframe\').contents().find(\'#jform_cid\').val(cids);',
+							'formValidation' => true
+						));
+					$bar->appendButton('Custom', $dHtml, 'send');
+				}
 			}
 		}
 
@@ -181,28 +277,25 @@ class plgSystemJ2xml extends JPlugin
 
 		return true;
 	}
-
+	
 	/**
-	 * Method to return a list of all websites
+	 * Add an assets for debugger.
 	 *
-	 * @return array List of websites (empty array if none).
+	 * @return  void
+	 *
+	 * @since   4.0.0
 	 */
-	private static function getWebsites ()
+	public function onBeforeCompileHead()
 	{
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true)
-			->select('id, title')
-			->from('#__j2xml_websites')
-			->where('state = 1');
-		$db->setQuery($query);
-		try
+		// $version = new JVersion();
+		$version = new Joomla\CMS\Version();
+
+		if ($version->isCompatible( '4' ))
 		{
-			$websites = $db->loadObjectList();
+			// Use our own jQuery and fontawesome instead of the debug bar shipped version
+			$assetManager = $this->app->getDocument()->getWebAssetManager();
+			$assetManager->useScript('core')->useScript('jquery');
 		}
-		catch (Exception $e)
-		{
-			$websites = null;
-		}
-		return $websites;
 	}
+	
 }

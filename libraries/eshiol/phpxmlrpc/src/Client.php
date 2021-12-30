@@ -71,12 +71,12 @@ class Client
      * Name of compression scheme to be used for sending requests.
      * Either null, gzip or deflate.
      */
-
     public $request_compression = '';
 
     /**
      * CURL handle: used for keep-alive connections (PHP 4.3.8 up, see:
      * http://curl.haxx.se/docs/faq.html#7.3).
+     * @internal
      */
     public $xmlrpc_curl_handle = null;
 
@@ -395,7 +395,7 @@ class Client
      */
     public function setCookie($name, $value = '', $path = '', $domain = '', $port = null)
     {
-        $this->cookies[$name]['value'] = urlencode($value);
+        $this->cookies[$name]['value'] = rawurlencode($value);
         if ($path || $domain || $port) {
             $this->cookies[$name]['path'] = $path;
             $this->cookies[$name]['domain'] = $domain;

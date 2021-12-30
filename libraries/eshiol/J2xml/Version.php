@@ -37,19 +37,19 @@ class Version
 	/**
 	 * @public static int Sub Release Level
 	 */
-	public static $DEV_LEVEL = '11';
+	public static $DEV_LEVEL = '12';
 
 	/**
 	 * @public static string Development Status
 	 */
-	public static $DEV_STATUS = '';
+	public static $DEV_STATUS = 'alpha';
 
 	// dev < alpha = a < beta = b < RC = rc < # <
 	// pl = p
 	/**
 	 * @public static int build Number
 	 */
-	public static $BUILD = '352';
+	public static $BUILD = '353';
 
 	/**
 	 * @public static string Codename
@@ -74,7 +74,7 @@ class Version
 	/**
 	 * @public static string xml file version
 	 */
-	public static $DOCVERSION = '19.2.0';
+	public static $DOCVERSION = '21.12.0';
 
 	/**
 	 * @public static string dtd

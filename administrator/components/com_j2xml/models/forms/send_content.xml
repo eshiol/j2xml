@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  com_j2xml
+ *
+ * @version     __DEPLOY_VERSION__
+ *
+ * @author      Helios Ciancio <info (at) eshiol (dot) it>
+ * @link        https://www.eshiol.it
+ * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * J2XML is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
+ */
+-->
+<form>
+	<fieldset name="content">
+		<field
+			name="send_content"
+			type="list"
+			default="2"
+			label="COM_J2XML_CONFIG_IMPORT_CONTENT_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_CONTENT_DESC">
+			<option
+				value="">JGLOBAL_USE_GLOBAL
+			</option>
+			<option
+				value="1">COM_J2XML_YES_IF_NOT_EXISTS
+			</option>
+			<option
+				value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS
+			</option>
+			<option
+				value="3">COM_J2XML_YES_OVERWRITE_IF_NEWER
+			</option>
+		</field>
+		<field
+			name="send_categories"
+			type="radio"
+			label="COM_J2XML_CONFIG_CATEGORIES_LABEL"
+			description="COM_J2XML_CONFIG_SEND_CATEGORIES_DESC"
+			default="1"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+	</fieldset>
+</form>

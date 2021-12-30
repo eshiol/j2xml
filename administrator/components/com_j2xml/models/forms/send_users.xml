@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  com_j2xml
+ *
+ * @version     __DEPLOY_VERSION__
+ *
+ * @author      Helios Ciancio <info (at) eshiol (dot) it>
+ * @link        https://www.eshiol.it
+ * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * J2XML is free software. This version may have been modified pursuant
+ * to the GNU General Public License, and as distributed it includes or
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
+ */
+-->
+<form>
+	<fieldset name="users">
+		<field
+			name="send_users"
+			type="list"
+			default="1"
+			label="COM_J2XML_CONFIG_USERS_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_USERS_DESC">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="1">COM_J2XML_YES_IF_NOT_EXISTS</option>
+			<option	value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS</option>
+		</field>
+		<field
+			name="send_keep_user_id"
+			type="list"
+			default="0"
+			label="COM_J2XML_CONFIG_KEEP_USER_ID_LABEL"
+			description="COM_J2XML_CONFIG_KEEP_USER_ID_DESC">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="send_password"
+			type="list"
+			label="COM_J2XML_CONFIG_PASSWORD_LABEL"
+			description="COM_J2XML_CONFIG_EXPORT_PASSWORD_DESC"
+			default="0">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="send_superusers"
+			type="list"
+			default="0"
+			label="COM_J2XML_CONFIG_SUPERUSERS_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_SUPERUSERS_DESC">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="send_usernotes"
+			type="list"
+			label="COM_J2XML_CONFIG_USERNOTES_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_USERNOTES_DESC"
+			default="0">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="send_contacts"
+			type="list"
+			label="COM_J2XML_CONFIG_CONTACTS_LABEL"
+			description="COM_J2XML_CONFIG_IMPORT_CONTACTS_DESC"
+			default="0">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
+			<option value="0">JNO</option>
+			<option value="1">COM_J2XML_YES_IF_NOT_EXISTS</option>
+			<option value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS</option>
+		</field>
+	</fieldset>
+</form>

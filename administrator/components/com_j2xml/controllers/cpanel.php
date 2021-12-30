@@ -1,16 +1,18 @@
 <?php
 /**
- * @package		J2XML
- * @subpackage	com_j2xml
+ * @package     Joomla.Administrator
+ * @subpackage  com_j2xml
  *
- * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		http://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2020 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * @version     __DEPLOY_VERSION__
+ *
+ * @author      Helios Ciancio <info (at) eshiol (dot) it>
+ * @link        https://www.eshiol.it
+ * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
+ * is derivative of works licensed under the GNU General Public License
+ * or other free or open source software licenses.
  */
 
 // no direct access
@@ -198,10 +200,9 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			$xmlVersion = $xml['version'];
 			$version = explode(".", $xmlVersion);
 			$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
-					$j2xmlVersion = class_exists('eshiol\J2xmlpro\Version') ? eshiol\J2xmlpro\Version::$DOCVERSION : eshiol\J2xml\Version::$DOCVERSION;
-			$version = explode(".", $j2xmlVersion);
-			$j2xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
-			if (($xmlVersionNumber == $j2xmlVersionNumber) || ($xmlVersionNumber == "150900") || ($xmlVersionNumber == "120500"))
+
+			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
+			if ($importer->isSupported($xmlVersionNumber))
 			{
 				$iparams = new \JRegistry();
 				$iparams->set('filename', $filename);
@@ -235,9 +236,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
 				$iparams->set('weblinks', $params->get('import_weblinks', 1));
 
-				$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 				// set_time_limit(120);
-
 				try
 				{
 					$importer->import($xml, $iparams);
