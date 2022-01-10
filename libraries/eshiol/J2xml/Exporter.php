@@ -497,14 +497,13 @@ class Exporter
 		
 		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
-		$dispatcher = \JEventDispatcher::getInstance();
 		// Trigger the onAfterExport event.
-		$dispatcher->trigger('onJ2xmlAfterExport', array(
+		$results = \JFactory::getApplication()->triggerEvent('onJ2xmlAfterExport', array(
 				$this->_option . '.' . __FUNCTION__,
 				&$xml,
 				$params
 		));
-		
+
 		return $xml;
 	}
 	
@@ -544,14 +543,13 @@ class Exporter
 		
 		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
-		$dispatcher = \JEventDispatcher::getInstance();
 		// Trigger the onAfterExport event.
-		$dispatcher->trigger('onJ2xmlAfterExport', array(
+		$results = \JFactory::getApplication()->triggerEvent('onJ2xmlAfterExport', array(
 				$this->_option . '.' . __FUNCTION__,
 				&$xml,
 				$params
 		));
-		
+
 		return $xml;
 	}
 }
