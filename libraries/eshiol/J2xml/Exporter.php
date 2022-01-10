@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -28,16 +28,23 @@ use eshiol\J2xml\Table\Contact;
 use eshiol\J2xml\Table\Content;
 use eshiol\J2xml\Table\Field;
 use eshiol\J2xml\Table\Image;
+use eshiol\J2xml\Table\Menu;
+use eshiol\J2xml\Table\Menutype;
+use eshiol\J2xml\Table\Module;
 use eshiol\J2xml\Table\User;
 use eshiol\J2xml\Table\Usernote;
 use eshiol\J2xml\Table\Viewlevel;
 use eshiol\J2xml\Table\Weblink;
 use eshiol\J2xml\Version;
+
 \JLoader::import('eshiol.J2xml.Table.Category');
 \JLoader::import('eshiol.J2xml.Table.Contact');
 \JLoader::import('eshiol.J2xml.Table.Content');
 \JLoader::import('eshiol.J2xml.Table.Field');
 \JLoader::import('eshiol.J2xml.Table.Image');
+\JLoader::import('eshiol.J2xml.Table.Menu');
+\JLoader::import('eshiol.J2xml.Table.Menutype');
+\JLoader::import('eshiol.J2xml.Table.Module');
 \JLoader::import('eshiol.J2xml.Table.User');
 \JLoader::import('eshiol.J2xml.Table.Usernote');
 \JLoader::import('eshiol.J2xml.Table.Viewlevel');
@@ -451,6 +458,100 @@ class Exporter
 				$params
 		));
 
+		return $xml;
+	}
+
+	/**
+	 * Export menu
+	 *
+	 * @param array $ids
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
+	 * @since __DEPLOY_VERSION__
+	 */
+	function menus ($ids, &$xml, $options)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
+		
+		if (! $xml)
+		{
+			$xml = $this->_root();
+		}
+		
+		if (is_scalar($ids))
+		{
+			$id = $ids;
+			$ids = array();
+			$ids[] = $id;
+		}
+		
+		foreach ($ids as $id)
+		{
+			Menutype::export($id, $xml, $options);
+		}
+		
+		$params = new \JRegistry($options);
+		\JPluginHelper::importPlugin('j2xml');
+		$dispatcher = \JEventDispatcher::getInstance();
+		// Trigger the onAfterExport event.
+		$dispatcher->trigger('onJ2xmlAfterExport', array(
+				$this->_option . '.' . __FUNCTION__,
+				&$xml,
+				$params
+		));
+		
+		return $xml;
+	}
+	
+	/**
+	 * Export modules
+	 *
+	 * @param array $ids
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
+	 * @since __DEPLOY_VERSION__
+	 */
+	function modules ($ids, &$xml, $options)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
+		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
+		
+		if (! $xml)
+		{
+			$xml = $this->_root();
+		}
+		
+		if (is_scalar($ids))
+		{
+			$id = $ids;
+			$ids = array();
+			$ids[] = $id;
+		}
+		
+		foreach ($ids as $id)
+		{
+			Module::export($id, $xml, $options);
+		}
+		
+		$params = new \JRegistry($options);
+		\JPluginHelper::importPlugin('j2xml');
+		$dispatcher = \JEventDispatcher::getInstance();
+		// Trigger the onAfterExport event.
+		$dispatcher->trigger('onJ2xmlAfterExport', array(
+				$this->_option . '.' . __FUNCTION__,
+				&$xml,
+				$params
+		));
+		
 		return $xml;
 	}
 }

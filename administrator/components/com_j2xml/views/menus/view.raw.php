@@ -24,9 +24,9 @@ require_once dirname(__FILE__) . '/../raw.php';
  * J2XML Component Menus View
  *
  * @version __DEPLOY_VERSION__
- * @since 3.6.164
+ * @since __DEPLOY_VERSION__
  */
-class J2XMLViewMenus extends J2XMLView
+class J2xmlViewMenus extends J2XMLView
 {
 }
 ?>
