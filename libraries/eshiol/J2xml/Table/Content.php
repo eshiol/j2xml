@@ -22,8 +22,11 @@ use eshiol\J2xml\Table\Table;
 use eshiol\J2xml\Table\Tag;
 use eshiol\J2xml\Table\User;
 use eshiol\J2xml\Table\Viewlevel;
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Factory;
+use Joomla\Component\Content\Site\Helper\RouteHelper;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\Router\SiteRouter;
 
 \JLoader::import('eshiol.J2xml.Table.Category');
 \JLoader::import('eshiol.J2xml.Table.Field');
@@ -113,16 +116,25 @@ class Content extends Table
 				$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
 			->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
 
-		\JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
-		$config = \JFactory::getConfig();
-		$router = \JRouter::getInstance('site');
-		$router->setMode($config->get('sef', 1));
 		$slug = $this->alias ? ($this->id . ':' . $this->alias) : $this->id;
-		$url = \ContentHelperRoute::getArticleRoute($slug, $this->catid, $this->language);
-		$canonical = str_replace(\JUri::base(true) . '/', \JUri::root(), $router->build($url));
+
+		$version = new \JVersion();
+		if ($version->isCompatible('4'))
+		{
+			// We need to make sure we are always using the site router, even if the language plugin is executed in admin app.
+			$router = CMSApplication::getRouter('site');
+			$url = $router->build(RouteHelper::getArticleRoute($slug, $this->catid, $this->language));
+		}
+		else
+		{
+			\JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
+			$router = \JRouter::getInstance('site', array('mode' => \JFactory::getConfig()->get('sef', 1)));
+			$url = $router->build(\ContentHelperRoute::getArticleRoute($slug, $this->catid, $this->language));
+		}
+
+		$canonical = str_replace(\JUri::base(true) . '/', \JUri::root(), $url);
 		// $this->_aliases['canonical'] = 'SELECT \'' . $canonical . '\' FROM
 		// DUAL';
-		$version = new \JVersion();
 		$serverType = $version->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
 		if ($serverType === 'sqlserver')
 		{
