@@ -470,7 +470,6 @@ class Table extends \JTable
 			}
 		}
 
-		$version = new \JVersion();
 		if ($version->isCompatible('3.1') && isset($data['tag']))
 		{
 			$data['tags'] = (array) self::getTagId($data['tag']);
