@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -147,7 +147,7 @@ class J2XMLViewCpanel extends JViewLegacy
 		}
 
 		$doc->addStyleDeclaration('#toolbar-credit{float:right;}');
-		$toolbar->appendButton('Link', 'credit', 'COM_J2XML_DONATE', 'http://www.eshiol.it/' . Jtext::_('COM_J2XML_DONATE_1'));
+		$toolbar->appendButton('Link', 'credit', 'COM_J2XML_DONATE', 'https://www.eshiol.it/' . Jtext::_('COM_J2XML_DONATE_1'));
 	}
 }
 ?>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="component" method="upgrade">
 	<name>com_j2xml</name>
-	<creationDate>january 2022</creationDate>
+	<creationDate>January 2022</creationDate>
 	<author>Helios Ciancio</author>
 	<authorUrl>www.eshiol.it</authorUrl>
 	<authorEmail>info (at) eshiol (dot) it</authorEmail>
