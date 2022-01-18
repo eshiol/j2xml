@@ -8,7 +8,7 @@
 	<copyright><![CDATA[(C) 2010 - 2022 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.
 	]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>3.9.211-alpha3</version>
+	<version>3.9.212-alpha3</version>
 	<description>COM_J2XML_XML_DESCRIPTION</description>
 	<files folder="site">
 		<filename>j2xml.php</filename>
