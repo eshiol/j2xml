@@ -20,6 +20,8 @@ use eshiol\J2xml\Table\Image;
 use eshiol\J2xml\Table\Table;
 use eshiol\J2xml\Table\Tag;
 use eshiol\J2xml\Table\User;
+use Joomla\Component\Contact\Administrator\Table\ContactTable;
+
 \JLoader::import('eshiol.J2xml.Table.Category');
 \JLoader::import('eshiol.J2xml.Table.Image');
 \JLoader::import('eshiol.J2xml.Table.Table');
@@ -257,7 +259,16 @@ class Contact extends Table
 
 			if (! $data['id'] || ($import_contacts == 2))
 			{
-				$table = \JTable::getInstance('Contact', 'ContactTable');
+				\JLoader::register('ContactTable', JPATH_ADMINISTRATOR . '/components/com_contacts/Table/ContactTable.php');
+				if (class_exists('\Joomla\Component\Contact\Administrator\Table\ContactTable'))
+				{
+					$table = new ContactTable($db);
+				}
+				else
+				{ // backward compatibility
+					\JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_contacts/tables');
+					$table = \JTable::getInstance('Contact', 'ContactTable');
+				}
 
 				if ($data['id'])
 				{
@@ -267,10 +278,9 @@ class Contact extends Table
 				{
 					unset($data['id']);
 				}
-				unset($data['params']);
+				// unset($data['params']);
 
 				$table->bind($data);
-
 				if ($table->store())
 				{
 					self::setAssociations($table->id, $table->language, $data['associations'], 'com_contact.item');
@@ -300,6 +310,7 @@ class Contact extends Table
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 		
 		$db = \JFactory::getDBO();
+		$version = new \JVersion();
 
 		$params->set('extension', 'com_contact');
 		parent::prepareData($record, $data, $params);
@@ -345,6 +356,25 @@ class Contact extends Table
 				}
 			}
 			unset($data['association']);
+		}
+
+		// if user doesn't exist remove the link
+		$data['user_id'] = self::getUserId($data['user_id'], -1);
+		if ($data['user_id'] == -1)
+		{
+			unset($data['user_id']);
+		}
+
+		if ($version->isCompatible('4'))
+		{
+			if (!isset($data['metadesc']))
+			{
+				$data['metadesc'] = '';
+			}
+			if (!isset($data['metadata']))
+			{
+				$data['metadata'] = '<![CDATA[{"robots":"","rights":""}]]>';
+			}
 		}
 	}
 }

@@ -18,7 +18,8 @@ defined('JPATH_PLATFORM') or die();
 use eshiol\J2xml\Table\Category;
 use eshiol\J2xml\Table\Fieldgroup;
 use eshiol\J2xml\Table\Table;
-// use Joomla\Component\Fields\Administrator\Table\FieldTable;
+use Joomla\Component\Fields\Administrator\Table\FieldTable;
+
 \JLoader::import('eshiol.J2xml.Table.Category');
 \JLoader::import('eshiol.J2xml.Table.Fieldgroup');
 \JLoader::import('eshiol.J2xml.Table.Table');
@@ -133,7 +134,7 @@ class Field extends Table
 					$table = new FieldTable($db);
 				}
 				else
-				{ // Joomla! 4
+				{ // backward compatibility
 					\JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fields/tables');
 					$table = \JTable::getInstance('Field', 'FieldsTable');
 				}
