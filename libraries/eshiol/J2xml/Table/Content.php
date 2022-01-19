@@ -23,10 +23,11 @@ use eshiol\J2xml\Table\Tag;
 use eshiol\J2xml\Table\User;
 use eshiol\J2xml\Table\Viewlevel;
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Router\SiteRouter;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
 use Joomla\Utilities\ArrayHelper;
-use Joomla\CMS\Router\SiteRouter;
 
 \JLoader::import('eshiol.J2xml.Table.Category');
 \JLoader::import('eshiol.J2xml.Table.Field');
@@ -699,7 +700,7 @@ class Content extends Table
 			}
 		}
 
-		if (isset($options['field']) && $options['fields'] && $version->isCompatible('3.7'))
+		if (isset($options['fields']) && $options['fields'] && $version->isCompatible('3.7'))
 		{
 			$query = $db->getQuery(true)
 				->select('DISTINCT field_id')
@@ -764,13 +765,42 @@ class Content extends Table
 			if ($version->isCompatible('3.7'))
 			{
 				foreach($db->setQuery($db->getQuery(true)
-						->select($db->quoteName('v.value'))
-						->from($db->quoteName('#__fields_values', 'v'))
-						->from($db->quoteName('#__fields', 'f'))
-						->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'))
-						->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
-						->where($db->quoteName('f.type') . ' = ' . $db->quote('editor')))
-						->loadColumn() as $text) {
+					->select($db->quoteName('v.value'))
+					->from($db->quoteName('#__fields_values', 'v'))
+					->from($db->quoteName('#__fields', 'f'))
+					->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'))
+					->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
+					->where($db->quoteName('f.type') . ' = ' . $db->quote('media')))
+					->loadColumn() as $_image)
+				{
+					Image::export($image, $xml, $options);
+				}
+
+				foreach($db->setQuery($db->getQuery(true)
+					->select($db->quoteName('f.fieldparams'))
+					->select($db->quoteName('v.value'))
+					->from($db->quoteName('#__fields_values', 'v'))
+					->from($db->quoteName('#__fields', 'f'))
+					->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'))
+					->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
+					->where($db->quoteName('f.type') . ' = ' . $db->quote('imagelist')))
+					->loadObjectList() as $field)
+				{
+					$params = json_decode($field->fieldparams);
+					$_image = ComponentHelper::getParams('com_media')->get('image_path', 'images') . '/' . (isset($params->directory) ? $params->directory . '/' : '') . $field->value;
+					Image::export($_image, $xml, $options);
+				}
+
+				foreach($db->setQuery($db->getQuery(true)
+					->select($db->quoteName('v.value'))
+					->from($db->quoteName('#__fields_values', 'v'))
+					->from($db->quoteName('#__fields', 'f'))
+					->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'))
+					->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
+					->where($db->quoteName('f.type') . ' = ' . $db->quote('editor')))
+					->loadColumn() as $text)
+				{	
+					\JLog::add(new \JLogEntry($text, \JLog::DEBUG, 'com_j2xml'));
 					$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text, $matches, PREG_PATTERN_ORDER);
 					if (count($matches[1]) > 0)
 					{

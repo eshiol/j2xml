@@ -46,10 +46,12 @@ class Image
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_images = $params->get('images', 0);
 		if ($import_images == 0)
+		{
 			return;
+		}
 
 		foreach ($xml->img as $image)
 		{
@@ -73,9 +75,13 @@ class Image
 					}
 				}
 				if (\JFile::write($src, base64_decode($data)))
+				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_IMAGE_IMPORTED', $image['src']), \JLog::INFO, 'lib_j2xml'));
+				}
 				else
+				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_IMAGE_NOT_IMPORTED', $image['src']), \JLog::ERROR, 'lib_j2xml'));
+				}
 			}
 		}
 	}
@@ -98,7 +104,8 @@ class Image
 	public static function export ($image, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+		\JLog::add(new \JLogEntry($image, \JLog::DEBUG, 'com_j2xml'));
+
 		if ($xml->xpath("//j2xml/img[@src = '" . htmlentities($image, ENT_QUOTES, "UTF-8") . "']"))
 		{
 			return;
