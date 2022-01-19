@@ -173,17 +173,32 @@ class plgSystemJ2xml extends JPlugin
 
 		$input = $this->app->input;
 		$option = $input->get('option');
-		$view = $input->get('view', substr($option, 4));
-
-		if (($option == 'com_content') && (! $view || ($view == 'articles') || ($view == 'featured')))
+		$contentType = substr($option, 4);
+		
+		$allowedView = $contentType;
+		if (substr($allowedView, -1) != 's')
 		{
-			$view = 'content';
+		    $allowedView .= 's';
 		}
+		$view = $input->get('view', $allowedView);
+
+		if ($contentType == 'content') 
+		{
+		    if (($view != 'contents') && ($view != 'articles') && ($view != 'featured'))
+    		{
+                return true;
+    		}
+    		
+		}
+		elseif ($view != $allowedView)
+        {
+            return true;
+        }
 
 		// Only render if J2XML view exists and J2XML Library is loaded
-		if (JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/' . $view . '/view.raw.php'))
+        if (JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/' . $contentType . '/view.raw.php'))
 		{
-			if (class_exists('eshiol\\J2xml\\Exporter') && method_exists('eshiol\\J2xml\\Exporter', $view))
+		    if (class_exists('eshiol\\J2xml\\Exporter') && method_exists('eshiol\\J2xml\\Exporter', $contentType))
 			{
 				$bar = JToolbar::getInstance('toolbar');
 
@@ -223,9 +238,9 @@ class plgSystemJ2xml extends JPlugin
 						'selector' => $selector,
 						'icon'	   => $iconExport,
 						'text'	   => JText::_('JTOOLBAR_EXPORT'),
-						'title'	   => JText::_('PLG_SYSTEM_J2XML_EXPORT_' . strtoupper($view)),
+						'title'	   => JText::_('PLG_SYSTEM_J2XML_EXPORT_' . strtoupper($contentType)),
 						'class'	   => $buttonClass,
-						'doTask'   => JRoute::_('index.php?option=com_j2xml&amp;view=export&amp;layout=' . $view . '&amp;format=html&amp;tmpl=component'),
+						'doTask'   => JRoute::_('index.php?option=com_j2xml&amp;view=export&amp;layout=' . $contentType . '&amp;format=html&amp;tmpl=component'),
 						'ok'	   => JText::_('JTOOLBAR_EXPORT'),
 						'onclick'  => 'var cids=new Array();jQuery(\'input:checkbox[name=\\\'cid\[\]\\\']:checked\').each( function(){cids.push(jQuery(this).val());});jQuery(\'#' . $selector . 'Modal iframe\').contents().find(\'#jform_cid\').val(cids);'
 				));
@@ -259,9 +274,9 @@ class plgSystemJ2xml extends JPlugin
 							'selector'       => $selector,
 							'icon'	         => $iconSend,
 							'text'	         => JText::_('PLG_SYSTEM_J2XML_BUTTON_SEND'),
-							'title'	         => JText::_('PLG_SYSTEM_J2XML_SEND_' . strtoupper($view)),
+							'title'	         => JText::_('PLG_SYSTEM_J2XML_SEND_' . strtoupper($contentType)),
 							'class'	         => $buttonClass,
-							'doTask'         => JRoute::_('index.php?option=com_j2xml&amp;view=send&amp;layout=' . $view . '&amp;format=html&amp;tmpl=component'),
+							'doTask'         => JRoute::_('index.php?option=com_j2xml&amp;view=send&amp;layout=' . $contentType . '&amp;format=html&amp;tmpl=component'),
 							'ok'	         => JText::_('PLG_SYSTEM_J2XML_BUTTON_SEND'),
 							'onclick'        => 'var cids=new Array();jQuery(\'input:checkbox[name=\\\'cid\[\]\\\']:checked\').each( function(){cids.push(jQuery(this).val());});jQuery(\'#' . $selector . 'Modal iframe\').contents().find(\'#jform_cid\').val(cids);',
 							'formValidation' => true
