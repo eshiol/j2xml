@@ -359,10 +359,13 @@ class Contact extends Table
 		}
 
 		// if user doesn't exist remove the link
-		$data['user_id'] = self::getUserId($data['user_id'], -1);
-		if ($data['user_id'] == -1)
+		if (isset($data['user_id']))
 		{
-			unset($data['user_id']);
+    		$data['user_id'] = self::getUserId($data['user_id'], -1);
+    		if ($data['user_id'] == -1)
+    		{
+    			unset($data['user_id']);
+    		}
 		}
 
 		if ($version->isCompatible('4'))
