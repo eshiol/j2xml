@@ -253,7 +253,7 @@ class Tag extends Table
 				{
 					if ($_image = $matches[1][$i])
 					{
-						Image::export($_image . '1', $xml, $options);
+						Image::export($_image, $xml, $options);
 					}
 				}
 			}
