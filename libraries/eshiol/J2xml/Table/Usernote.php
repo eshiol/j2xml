@@ -105,10 +105,12 @@ class Usernote extends \eshiol\J2xml\Table\Table
 			}
 		}
 
-		// if (isset($options['categories']) && $options['categories'] && ($item->catid > 0))
-		if ($item->catid > 0)
+		if (isset($options['categories']) && $options['categories'])
 		{
-			Category::export($item->catid, $xml, $options);
+			if ($item->catid > 0)
+			{
+				Category::export($item->catid, $xml, $options);
+			}
 		}
 	}
 

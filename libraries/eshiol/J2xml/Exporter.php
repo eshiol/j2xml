@@ -184,7 +184,12 @@ class Exporter
 	/**
 	 * Export content articles, images, section and categories
 	 *
-	 * @return xml string
+	 * @param array $ids
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
 	 * @since 1.5.2.14
 	 */
 	function content ($ids, &$xml, $options)
@@ -223,7 +228,12 @@ class Exporter
 	/**
 	 * Export categories
 	 *
-	 * @return xml string
+	 * @param array $ids
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
 	 * @since 1.5.3beta5.43
 	 */
 	function categories ($ids, &$xml, $options)
@@ -263,7 +273,12 @@ class Exporter
 	/**
 	 * Export users
 	 *
-	 * @return xml string
+	 * @param array $ids
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
 	 * @since 1.5.3beta4.39
 	 */
 	function users ($ids, &$xml, $options)
@@ -303,7 +318,12 @@ class Exporter
 	/**
 	 * Export weblinks
 	 *
-	 * @return xml string
+	 * @param array $ids
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
 	 * @since 1.5.3beta3.38
 	 */
 	function weblinks ($ids, &$xml, $options)
@@ -342,7 +362,12 @@ class Exporter
 	/**
 	 * Export contacts
 	 *
-	 * @return xml string
+	 * @param array $ids
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
 	 * @since 16.12.289
 	 */
 	function contact ($ids, &$xml, $options)
@@ -425,8 +450,13 @@ class Exporter
 	/**
 	 * Export viewlevels
 	 *
-	 * @return xml string
-	 * @since 192.2.323
+	 * @param array $ids
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
+	 * @since 19.2.323
 	 */
 	function viewlevels ($ids, &$xml, $options)
 	{
@@ -548,6 +578,51 @@ class Exporter
 				$this->_option . '.' . __FUNCTION__,
 				&$xml,
 				$params
+		));
+
+		return $xml;
+	}
+
+	/**
+	 * Export user notes
+	 *
+	 * @param array $ids
+	 * @param SimpleXMLElement $xml
+	 * @param array $options
+	 *
+	 * @return SimpleXMLElement
+	 *
+	 * @since __DEPLOY_VERSION__
+	 */
+	function usernotes ($ids, &$xml, $options)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+
+		if (! $xml)
+		{
+			$xml = self::_root();
+		}
+
+		if (is_scalar($ids))
+		{
+			$id = $ids;
+			$ids = array();
+			$ids[] = $id;
+		}
+
+		foreach ($ids as $id)
+		{
+			Usernote::export($id, $xml, $options);
+		}
+
+		$params = new \JRegistry($options);
+		\JPluginHelper::importPlugin('j2xml');
+
+		// Trigger the onAfterExport event.
+		$results = \JFactory::getApplication()->triggerEvent('onJ2xmlAfterExport', array(
+			$this->_option . '.' . __FUNCTION__,
+			&$xml,
+			$params
 		));
 
 		return $xml;

@@ -178,23 +178,34 @@ class plgSystemJ2xml extends JPlugin
 		$allowedView = $contentType;
 		if (substr($allowedView, -1) != 's')
 		{
-		    $allowedView .= 's';
+			$allowedView .= 's';
 		}
 		$view = $input->get('view', $allowedView);
 
-		if ($contentType == 'content') 
+		if ($contentType == 'content')
 		{
-		    if (($view != 'contents') && ($view != 'articles') && ($view != 'featured'))
-    		{
-                return true;
-    		}
-    		
+			if (($view != 'contents') && ($view != 'articles') && ($view != 'featured'))
+			{
+				return true;
+			}
+			
+		}
+		elseif ($contentType == 'users')
+		{
+			if ($view == 'notes')
+			{
+				$contentType = 'usernotes';
+			}
+			elseif ($view != $allowedView)
+			{
+				return true;
+			}
 		}
 		elseif ($view != $allowedView)
-        {
-            return true;
-        }
-
+		{
+			return true;
+		}
+		
 		// Only render if J2XML view exists and J2XML Library is loaded
         if (JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/' . $contentType . '/view.raw.php'))
 		{
