@@ -16,9 +16,11 @@ namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
 use eshiol\J2xml\Table\Table;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Component\Fields\Administrator\Table\GroupTable;
+
 \JLoader::import('eshiol.J2xml.Table.Table');
 
-use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Table
@@ -100,19 +102,19 @@ class Fieldgroup extends Table
 					$table = new GroupTable($db);
 				}
 				else
-				{ // Joomla! 4
+				{ // backward compatibility
 					\JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fields/tables');
 					$table = \JTable::getInstance('Group', 'FieldsTable');
 				}
 
 				$data['id'] = null;
 
-				// TODO: Trigger the onContentBeforeSave event.
+				// @todo Trigger the onContentBeforeSave event.
 				$table->bind($data);
 				if ($table->store())
 				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_FIELDGROUP_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
-					// TODO: Trigger the onContentAfterSave event.
+					// @todo Trigger the onContentAfterSave event.
 				}
 				else
 				{
@@ -172,6 +174,25 @@ class Fieldgroup extends Table
 			{
 				User::export($item->modified_by, $xml, $options);
 			}
+		}
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 * @see Table::prepareData()
+	 *
+	 * @since 22.2.356
+	 */
+	public static function prepareData ($record, &$data, $params)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+
+		parent::prepareData($record, $data, $params);
+
+		if (! isset($data['description']))
+		{
+			$data['description'] = '';
 		}
 	}
 }

@@ -94,6 +94,10 @@ eshiol.j2xml.importerModal = function(){
 		nodes.push( header + eshiol.XMLToString( this ) + footer );
 	} );
 
+	$root.children( 'fieldgroup' ).each( function( index ){
+		console.log( 'fieldgroup: ' + header + eshiol.XMLToString( this ) + footer );
+		nodes.push( header + eshiol.XMLToString( this ) + footer );
+	} );
 	$root.children( 'field' ).each( function( index ){
 		console.log( 'field: ' + header + eshiol.XMLToString( this ) + footer );
 		nodes.push( header + eshiol.XMLToString( this ) + footer );
@@ -105,7 +109,7 @@ eshiol.j2xml.importerModal = function(){
 	} );
 
 	$root.children(  ).each( function( index ){
-		if ( ['base', 'user', 'tag', 'category', 'content', 'field'].indexOf( this.nodeName ) == -1 ){
+		if ( ['base', 'user', 'tag', 'category', 'content', 'fieldgroup', 'field'].indexOf( this.nodeName ) == -1 ){
 			console.log( 'other: ' + header + eshiol.XMLToString( this ) + footer );
 			nodes.push( header + eshiol.XMLToString( this ) + footer );
 		}
