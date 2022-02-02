@@ -149,12 +149,12 @@ class Field extends Table
 					$table->load($data['id']);
 				}
 
-				// TODO: Trigger the onContentBeforeSave event.
+				// @todo Trigger the onContentBeforeSave event.
 				$table->bind($data);
 				if ($table->store())
 				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_FIELD_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
-					// TODO: Trigger the onContentAfterSave event.
+					// @todo Trigger the onContentAfterSave event.
 				}
 				else
 				{

@@ -168,7 +168,7 @@ class Usernote extends \eshiol\J2xml\Table\Table
 				}
 				else
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USERNOTE_NOT_IMPORTED', $data['subject']), \JLog::INFO, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USERNOTE_NOT_IMPORTED', $data['subject'], $table->getError()), \JLog::ERROR, 'lib_j2xml'));
 				}
 			}
 /*

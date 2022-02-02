@@ -318,11 +318,16 @@ class User extends Table
 				}
 				else
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_NOT_IMPORTED', $data['name']), \JLog::ERROR, 'lib_j2xml'));
 					if ($error = $user->getError())
 					{
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_NOT_IMPORTED', $data['name'], $error), \JLog::ERROR, 'lib_j2xml'));
 						\JLog::add(new \JLogEntry($error, \JLog::WARNING, 'lib_j2xml'));
 					}
+					else
+					{
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_NOT_IMPORTED', $data['name'], \JText::_('LIB_J2XML_MSG_UNKNOWN_ERROR')), \JLog::ERROR, 'lib_j2xml'));
+					}
+						
 				}
 			}
 		}

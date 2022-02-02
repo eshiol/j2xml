@@ -165,8 +165,7 @@ class Category extends Table
 
 			if ($data['parent_id'] === false)
 			{
-				\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_NOT_IMPORTED', $data['title']), \JLog::ERROR, 'lib_j2xml'));
-				\JLog::add(new \JLogEntry(\JText::_('JLIB_DATABASE_ERROR_INVALID_PARENT_ID'), \JLog::ERROR, 'lib_j2xml'));
+				\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_NOT_IMPORTED', $data['title'], \JText::_('JLIB_DATABASE_ERROR_INVALID_PARENT_ID')), \JLog::ERROR, 'lib_j2xml'));
 			}
 			else
 			{
@@ -310,8 +309,7 @@ class Category extends Table
 					}
 					else
 					{
-						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_NOT_IMPORTED', $data['title']), \JLog::ERROR, 'lib_j2xml'));
-						\JLog::add(new \JLogEntry($table->getError(), \JLog::ERROR, 'lib_j2xml'));
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CATEGORY_NOT_IMPORTED', $data['title'], $table->getError()), \JLog::ERROR, 'lib_j2xml'));
 					}
 					$table = null;
 				}

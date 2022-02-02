@@ -80,7 +80,7 @@ class Image
 				}
 				else
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_IMAGE_NOT_IMPORTED', $image['src']), \JLog::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_IMAGE_NOT_IMPORTED', $image['src'], \JText::_('LIB_J2XML_MSG_UNKNOWN_ERROR')), \JLog::ERROR, 'lib_j2xml'));
 				}
 			}
 		}

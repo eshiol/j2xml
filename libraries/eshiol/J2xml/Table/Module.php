@@ -18,7 +18,7 @@ defined('JPATH_PLATFORM') or die();
 /**
  * Menu Table class
  *
- * @since __DEPLOY_VERSION__
+ * @since 22.1.355
  */
 class Module extends \eshiol\J2XML\Table\Table
 {
@@ -162,8 +162,7 @@ class Module extends \eshiol\J2XML\Table\Table
 				}
 				else
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MODULE_NOT_IMPORTED', $data['title']), \JLog::ERROR, 'lib_j2xml'));
-					\JLog::add(new \JLogEntry($table->getError(), \JLog::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MODULE_NOT_IMPORTED', $data['title'], $table->getError()), \JLog::ERROR, 'lib_j2xml'));
 				}
 				$table = null;
 			}

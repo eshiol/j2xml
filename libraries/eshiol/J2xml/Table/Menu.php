@@ -18,7 +18,7 @@ defined('JPATH_PLATFORM') or die();
 /**
  * Menu Table class
  *
- * @since __DEPLOY_VERSION__
+ * @since 22.1.355
  */
 class Menu extends \eshiol\J2XML\Table\Table
 {
@@ -186,9 +186,8 @@ class Menu extends \eshiol\J2XML\Table\Table
 
 					if (! $component)
 					{
-						\JLog::add(
-								new \JLogEntry(__LINE__ . \JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title']), \JLog::ERROR, 'lib_j2xml'));
-						$component = - 1;
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], \JText::_('LIB_J2XML_MSG_UNKNOWN_ERROR')), \JLog::ERROR, 'lib_j2xml'));
+						$component = -1;
 					}
 				}
 				else 
@@ -222,14 +221,12 @@ class Menu extends \eshiol\J2XML\Table\Table
 					}
 					else
 					{
-						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title']), \JLog::ERROR, 'lib_j2xml'));
-						\JLog::add(new \JLogEntry($table->getError(), \JLog::ERROR, 'lib_j2xml'));
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $table->getError()), \JLog::ERROR, 'lib_j2xml'));
 					}
 				}
 				else
 				{
-					\JLog::add(
-							new \JLogEntry(\JText::sprintf('LIB_J2XML_ERROR_COMPONENT_NOT_FOUND', $data['component_id']), \JLog::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_ERROR_COMPONENT_NOT_FOUND', $data['component_id']), \JLog::ERROR, 'lib_j2xml'));
 				}
 				$table = null;
 			}

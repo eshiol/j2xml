@@ -289,8 +289,7 @@ class Contact extends Table
 				}
 				else
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CONTACT_NOT_IMPORTED', $data['name']), \JLog::ERROR, 'lib_j2xml'));
-					\JLog::add(new \JLogEntry($table->getError(), \JLog::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_CONTACT_NOT_IMPORTED', $data['name'], $table->getError()), \JLog::ERROR, 'lib_j2xml'));
 				}
 
 				$table = null;
