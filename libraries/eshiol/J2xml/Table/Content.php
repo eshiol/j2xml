@@ -438,7 +438,7 @@ class Content extends Table
 
 						if (! $version->isCompatible('4'))
 						{
-							// TODO: add Joomla! 4 compatibility
+							// @todo add Joomla! 4 compatibility
 							if ($keep_frontpage == 0)
 							{
 								$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
@@ -544,6 +544,11 @@ class Content extends Table
 
 		$params->set('extension', 'com_content');
 		parent::prepareData($record, $data, $params);
+
+		if (empty($data['id']))
+		{
+			$data['id'] = 0;
+		}
 
 		if (empty($data['alias']))
 		{
