@@ -374,7 +374,7 @@ class Table extends \JTable
 
 		$data = self::xml2array($record, version_compare($params->get('version', Version::$DOCVERSION), '19.2.0', 'ne'));
 
-		// TODO: fix alias
+		// @todo fix alias
 		/**
 		if (empty($data['alias']))
 		{

@@ -94,7 +94,7 @@ class Exporter
 		$jlang->load('lib_j2xml', JPATH_SITE, $jlang->getDefault(), true);
 		$jlang->load('lib_j2xml', JPATH_SITE, null, true);
 		
-		// TODO: use query object - postgresql
+		// @todo use query object - postgresql
 		$db->setQuery("CREATE TABLE IF NOT EXISTS `#__j2xml_usergroups` (`id` int(10) unsigned NOT NULL, `parent_id` int(10) unsigned NOT NULL DEFAULT '0', `title` varchar(100) NOT NULL DEFAULT '') ENGINE=InnoDB  DEFAULT CHARSET=utf8;")->execute();
 		$db->setQuery("TRUNCATE TABLE `#__j2xml_usergroups`;")->execute();
 		$db->setQuery("INSERT INTO `#__j2xml_usergroups` " .
@@ -500,7 +500,7 @@ class Exporter
 	 *
 	 * @return SimpleXMLElement
 	 *
-	 * @since __DEPLOY_VERSION__
+	 * @since 22.1.355
 	 */
 	function menus ($ids, &$xml, $options)
 	{
@@ -546,7 +546,7 @@ class Exporter
 	 *
 	 * @return SimpleXMLElement
 	 *
-	 * @since __DEPLOY_VERSION__
+	 * @since 22.1.355
 	 */
 	function modules ($ids, &$xml, $options)
 	{
@@ -592,7 +592,7 @@ class Exporter
 	 *
 	 * @return SimpleXMLElement
 	 *
-	 * @since __DEPLOY_VERSION__
+	 * @since 22.1.355
 	 */
 	function usernotes ($ids, &$xml, $options)
 	{

@@ -23,8 +23,7 @@ require_once dirname(__FILE__) . '/../raw.php';
 /**
  * J2XML Component Modules View
  *
- * @version __DEPLOY_VERSION__
- * @since __DEPLOY_VERSION__
+* @since 3.9.213
  */
 class J2xmlViewModules extends J2XMLView
 {

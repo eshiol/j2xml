@@ -50,7 +50,7 @@ class J2xmlControllerImport extends JControllerLegacy
 		/** @var J2xmlModelImport $model */
 		$model = $this->getModel('import');
 
-		// TODO: Reset the users acl here as well to kill off any missing bits.
+		// @todo Reset the users acl here as well to kill off any missing bits.
 		$result = $model->import();
 
 		$app = JFactory::getApplication();

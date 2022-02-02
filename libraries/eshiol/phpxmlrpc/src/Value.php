@@ -548,7 +548,7 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
                 }
                 return;
             case 1:
-// todo: handle i4 vs int
+// @todo handle i4 vs int
                 reset($this->me);
                 $type = key($this->me);
                 if ($type != $offset) {
@@ -575,7 +575,7 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
             case 2:
                 return isset($this->me['array'][$offset]);
             case 1:
-// todo: handle i4 vs int
+// @todo handle i4 vs int
                 return $offset == $this->scalartyp();
             default:
                 return false;

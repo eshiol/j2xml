@@ -21,7 +21,7 @@ defined('_JEXEC') or die();
 /**
  * User notes controller class.
  *
- * @since __DEPLOY_VERSION__
+* @since 3.9.213
  */
 class J2xmlControllerUsernotes extends JControllerLegacy
 {

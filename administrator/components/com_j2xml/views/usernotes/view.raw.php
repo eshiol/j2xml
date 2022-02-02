@@ -23,7 +23,7 @@ require_once dirname(__FILE__) . '/../raw.php';
 /**
  * J2XML Component User notes RAW View
  *
- * @since __DEPLOY_VERSION__
+* @since 3.9.213
  */
 class J2xmlViewUsernotes extends J2xmlView
 {

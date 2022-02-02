@@ -23,7 +23,7 @@ require_once dirname(__FILE__) . '/json.php';
 /**
  * User notes JSON controller class.
  *
- * @since __DEPLOY_VERSION__
+* @since 3.9.213
  */
 class J2xmlControllerUsernotes extends J2xmlControllerJson
 {
