@@ -207,9 +207,14 @@ class plgSystemJ2xml extends JPlugin
 		}
 		
 		// Only render if J2XML view exists and J2XML Library is loaded
-        if (JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/' . $contentType . '/view.raw.php'))
+        if (! JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/' . $contentType . '/view.raw.php'))
 		{
-		    if (class_exists('eshiol\\J2xml\\Exporter') && method_exists('eshiol\\J2xml\\Exporter', $contentType))
+			return true;
+		}
+		
+		if (JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/export/tmpl/' . $contentType . '.php'))
+		{
+			if (class_exists('eshiol\\J2xml\\Exporter') && method_exists('eshiol\\J2xml\\Exporter', $contentType))
 			{
 				$bar = JToolbar::getInstance('toolbar');
 
@@ -257,7 +262,10 @@ class plgSystemJ2xml extends JPlugin
 				));
 
 				$bar->appendButton('Custom', $dHtml, 'download');
-
+			}
+			
+			if (class_exists('eshiol\\J2xml\\Sender') && method_exists('eshiol\\J2xml\\Sender', $contentType))
+			{
 				if ($version->isCompatible('3.9')) 
 				{
 					$lib_xmlrpc = 'eshiol/phpxmlrpc';
