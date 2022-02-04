@@ -295,25 +295,17 @@ class Content extends Table
 				}
 				elseif ($keep_id)
 				{
-					\JLog::add(
-							new \JLogEntry(
-									\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $content->id,
-											\JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, \JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
 				}
 				else
 				{
-					\JLog::add(
-							new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_EXISTS', $data['title'], $id . '->' . $content->id), \JLog::NOTICE,
-									'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_EXISTS', $data['title'], $id . '->' . $content->id), \JLog::NOTICE, 'lib_j2xml'));
 				}
 				continue;
 			}
 			elseif (($import_content >= 2) && $content && $keep_id && ($id != $content->id))
 			{
-				\JLog::add(
-						new \JLogEntry(
-								\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $content->id,
-										\JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
+				\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, \JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
 				continue;
 			}
 			else
@@ -405,30 +397,22 @@ class Content extends Table
 
 								if ($id != $item->id)
 								{
-									\JLog::add(
-											new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id),
-													\JLog::INFO, 'lib_j2xml'));
+									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO, 'lib_j2xml'));
 								}
 								else
 								{
-									\JLog::add(
-											new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO,
-													'lib_j2xml'));
+									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO, 'lib_j2xml'));
 								}
 							}
 							catch (\Exception $ex)
 							{
-								\JLog::add(
-										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $item->title, $id, $item->id),
-												\JLog::WARNING, 'lib_j2xml'));
+								\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $item->title, $id, $item->id), \JLog::WARNING, 'lib_j2xml'));
 								continue;
 							}
 						}
 						elseif ($id != $item->id)
 						{
-							\JLog::add(
-									new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO,
-											'lib_j2xml'));
+							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO,	'lib_j2xml'));
 						}
 						else
 						{
@@ -495,18 +479,12 @@ class Content extends Table
 					}
 					else
 					{
-						\JLog::add(
-								new \JLogEntry(
-										\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'] . ' (id = ' . $id . ')',
-												$table->getError()), \JLog::ERROR, 'lib_j2xml'));
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $table->getError()), \JLog::ERROR, 'lib_j2xml'));
 					}
 				}
 				else
 				{
-					\JLog::add(
-							new \JLogEntry(
-									\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'] . ' (id = ' . $id . ')', $table->getError()),
-									\JLog::NOTICE, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $table->getError()), \JLog::NOTICE, 'lib_j2xml'));
 				}
 			}
 
