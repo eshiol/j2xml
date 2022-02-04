@@ -135,7 +135,7 @@ JFactory::getDocument()->addScriptDeclaration(
 						console.log('j2xml file version ' + $(root).attr('version'));
 
 						$('#j2xml_filename').val(file.name);
-						$('#j2xml_data').val(btoa(data));
+						$('#j2xml_data').val(btoa(unescape(encodeURIComponent(data))));
 
 						var j2xmlOptions  = Joomla.getOptions('J2XML'),
 					    	JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
@@ -239,7 +239,7 @@ JFactory::getDocument()->addScriptDeclaration(
 						console.log('j2xml file version ' + $(root).attr('version'));
 
 						$('#j2xml_filename').val(file.name);
-						$('#j2xml_data').val(btoa(data));
+						$('#j2xml_data').val(btoa(unescape(encodeURIComponent(data))));
 
 						var j2xmlOptions  = Joomla.getOptions('J2XML'),
 					    	JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
