@@ -55,8 +55,10 @@ JFactory::getDocument()->addScriptDeclaration('
 $token = JSession::getFormToken();
 $return = JFactory::getApplication()->input->getBase64('return');
 
+$document = JFactory::getDocument();
+
 // Drag-drop installation
-JFactory::getDocument()->addScriptDeclaration(
+$document->addScriptDeclaration(
 <<<JS
 	jQuery(document).ready(function($) {
 		if (typeof FormData === 'undefined') {
@@ -266,7 +268,7 @@ JFactory::getDocument()->addScriptDeclaration(
 JS
 );
 
-JFactory::getDocument()->addStyleDeclaration(
+$document->addStyleDeclaration(
 <<<CSS
 	#dragarea {
 		background-color: #fafbfc;
@@ -345,6 +347,11 @@ if ($version->isCompatible('3.7'))
 {
 	$maxSize = JFilesystemHelper::fileUploadMaxSize();
 }
+if ($version->isCompatible('4'))
+{
+	$document->addScriptOptions('progressBarContainerClass', 'progress');
+	$document->addScriptOptions('progressBarClass', 'progress-bar progress-bar-striped progress-bar-animated bg');
+}
 ?>
 <legend><?php echo JText::_('COM_J2XML_PACKAGEIMPORTER_UPLOAD_IMPORT_DATA'); ?></legend>
 
@@ -355,9 +362,9 @@ if ($version->isCompatible('3.7'))
 				<span id="upload-icon" class="icon-upload" aria-hidden="true"></span>
 			</p>
 			<div class="upload-progress">
-				<div class="progress progress-striped active">
-					<div class="bar bar-success"
-						style="width: 0;"
+				<div class="progress<?php echo $version->isCompatible('4') ? '' : ' progress-striped active'; ?>">
+					<div class="<?php echo $version->isCompatible('4') ? 'progress-bar progress-bar-striped progress-bar-animated bg-success' : 'bar bar-success'; ?>"
+						style="width:0"
 						role="progressbar"
 						aria-valuenow="0"
 						aria-valuemin="0"

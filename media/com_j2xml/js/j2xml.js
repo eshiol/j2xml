@@ -49,7 +49,7 @@ if ( typeof( eshiol.j2xml.com_j2xml ) === 'undefined' ){
 	eshiol.j2xml.com_j2xml = {};
 }
 
-eshiol.j2xml.com_j2xml.version = '__DEPLOY_VERSION__';
+eshiol.j2xml.com_j2xml.version = '__DEPLOY_VERSION_';
 
 console.log( 'J2XML v' + eshiol.j2xml.com_j2xml.version );
 
@@ -119,29 +119,30 @@ eshiol.j2xml.importerModal = function(){
 
 	var options = {
 		tot: nodes.length,
-		n: 0
+		info: 0,
+		success: 0,
+		warning: 0,
+		error: 0
 	}
 
 	if ( typeof Joomla.getOptions !== 'undefined' ){
 		var progressBarContainerClass = Joomla.getOptions( 'progressBarContainerClass', 'progress progress-striped active' );
-		var progressBarClass = Joomla.getOptions( 'progressBarClass', 'bar bar-success' );
+		var progressBarClass = Joomla.getOptions( 'progressBarClass', 'bar bar' );
 	}
 	else {
 		var progressBarContainerClass = 'progress progress-striped active';
-		var progressBarClass = 'bar bar-success'
+		var progressBarClass = 'bar bar'
 	}
 
-	jQuery( '#system-message-container' ).prepend(
-		'<div id="import-progress" class="import-progress">'
-		+ '<div class="' + progressBarContainerClass + '">'
-		+ '<div id="import-progress-bar" class="' + progressBarClass + '" aria-valuenow="0" aria-valuemin="0" aria-valuemax="' + options.tot + '"></div>'
+	jQuery( '#import-progress' ).remove();
+	jQuery( '<div id="import-progress" class="import-progress">'
+		+ '<div class="' + progressBarContainerClass + '" style="font-size:1rem;height:1.5rem">'
+		+ '<div id="import-progress-bar-info" class="' + progressBarClass + '-info"></div>'
+		+ '<div id="import-progress-bar-success" class="' + progressBarClass + '-success"></div>'
+		+ '<div id="import-progress-bar-warning" class="' + progressBarClass + '-warning"></div>'
+		+ '<div id="import-progress-bar-error" class="' + progressBarClass + '-error"></div>'
 		+ '</div>'
-		+ '<p class="lead">'
-		+ '<span id="import-progress-text" class="import-text">'
-		+ Joomla.JText._( 'COM_J2XML_IMPORTING' ).replace( '%s', '0%' )
-		+ '</span>'
-		+ '</p>'
-		+ '</div>');
+		+ '</div>').insertAfter( '#system-message-container' );
 
 	eshiol.j2xml.importer( nodes, options );
 }
@@ -155,15 +156,10 @@ eshiol.j2xml.importerModal = function(){
  * @return  {boolean}  true on success.
  */
 eshiol.j2xml.importer = function( nodes, options ){
-	console.log('eshiol.j2xml.importer');
+	console.log( 'eshiol.j2xml.importer' );
 
-	if (nodes.length > 0){
-		var progress = Math.floor( 100 * options.n / options.tot );
-		jQuery( '#import-progress-bar' ).css( 'width', progress + '%' ).attr( 'aria-valuenow', options.n );
-		jQuery( '#import-progress-text' ).html( Joomla.JText._( 'COM_J2XML_IMPORTING' ).replace( '%s', progress + '%' ) );
-		options.n++;
-
-		item = nodes.shift();
+	if ( nodes.length > 0 ){
+		item = nodes.shift( );
 		// Find the token so that it can be sent in the Ajax request as well
 		//var token = Joomla.getOptions('csrf.token', '');
 		var token = jQuery( '#installer-token' ).val();
@@ -184,11 +180,7 @@ eshiol.j2xml.importer = function( nodes, options ){
 			}
 		);
 
-		document.getElementById( 'system-message-container' ).scrollIntoView();
 		JoomlaInstaller.showLoading();
-
-console.log(url);
-console.log(data);
 
 		jQuery.ajax( {
 			url: url,
@@ -202,18 +194,64 @@ console.log(data);
 				console.log( error );
 				JoomlaInstaller.hideLoading();
 				eshiol.renderMessages( {'error': [error.responseText]} );
-				jQuery( '#import-progress' ).remove();
+				//jQuery( '#import-progress' ).remove();
+				jQuery( '#import-progress-bar-info' ).removeClass( 'progress-bar-striped' ).removeClass( 'progress-bar-animated' );
+				jQuery( '#import-progress-bar-success' ).removeClass( 'progress-bar-striped' ).removeClass( 'progress-bar-animated' );
+				jQuery( '#import-progress-bar-error' ).removeClass( 'progress-bar-striped' ).removeClass( 'progress-bar-animated' );
+				jQuery( '#import-progress-bar-warning' ).removeClass( 'progress-bar-striped' ).removeClass( 'progress-bar-animated' );
+				setTimeout( function( ) { jQuery( '#import-progress' ).remove(); }, 10000);
 			}
 		} ).done( function( res ){
 			console.log( 'done' );
 			if( res.messages ){
+				jQuery.each( res.messages, function( type, message ){
+					console.log(type + ' ' + message);
+					if( type == 'notice' ){
+						options.info++;
+						jQuery( '#import-progress-bar-info' ).css( 'width', ( 100 * options.info / options.tot ) + '%' ).text( options.info );
+					}
+					else if( type == 'message' ){
+						options.success++;
+						jQuery( '#import-progress-bar-success' ).css( 'width', ( 100 * options.success / options.tot ) + '%' ).text( options.success );
+					}
+					else if( type == 'error' ){
+						options.error++;
+						jQuery( '#import-progress-bar-error' ).css( 'width', ( 100 * options.error / options.tot ) + '%' ).text( options.error );
+					}
+					else{
+						options.warning++;
+						jQuery( '#import-progress-bar-warning' ).css( 'width', ( 100 * options.warning / options.tot ) + '%' ).text( options.warning );
+					}
+				} );
+
 				eshiol.renderMessages( res.messages );
 			} else if( res.message ){
 				if( res.success ){
+					options.success++;
+					var progress = ( 100 * options.success / options.tot );
+					jQuery( '#import-progress-bar-success' ).css( 'width', progress + '%' ).text( options.success );
+					console.log( '#import-progress-bar-success.width: ' + progress );
 					eshiol.renderMessages( {'message': [res.message]} );
 				}
 				else {
+					options.error++;
+					jQuery( '#import-progress-bar-error' ).css( 'width', ( 100 * options.error / options.tot ) + '%' ).text( options.error );
 					eshiol.renderMessages( {'error': [res.message]} );
+				}
+			}
+			else {
+				options.tot--;
+				jQuery( '#import-progress-bar-info' ).css( 'width', ( 100 * options.info / options.tot ) + '%' );
+				jQuery( '#import-progress-bar-success' ).css( 'width', ( 100 * options.success / options.tot ) + '%' );
+				jQuery( '#import-progress-bar-error' ).css( 'width', ( 100 * options.error / options.tot ) + '%' );
+				jQuery( '#import-progress-bar-warning' ).css( 'width', ( 100 * options.warning / options.tot ) + '%' );
+			}
+
+			elements = document.getElementById( 'system-message-container' ).childNodes;
+			if( typeof( elements ) != 'undefined' && elements != null ){
+				element = elements[elements.length - 2];
+				if( typeof( element ) != 'undefined' && element != null ){
+					element.scrollIntoView();
 				}
 			}
 
@@ -230,6 +268,10 @@ console.log(data);
 		} );
 	}
 	else{
-		jQuery( '#import-progress' ).remove();
+		jQuery( '#import-progress-bar-info' ).removeClass( 'progress-bar-striped' ).removeClass( 'progress-bar-animated' );
+		jQuery( '#import-progress-bar-success' ).removeClass( 'progress-bar-striped' ).removeClass( 'progress-bar-animated' );
+		jQuery( '#import-progress-bar-error' ).removeClass( 'progress-bar-striped' ).removeClass( 'progress-bar-animated' );
+		jQuery( '#import-progress-bar-warning' ).removeClass( 'progress-bar-striped' ).removeClass( 'progress-bar-animated' );
+		setTimeout( function( ) { jQuery( '#import-progress' ).remove(); }, 10000);
 	}
 }
