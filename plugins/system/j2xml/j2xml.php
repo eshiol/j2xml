@@ -262,10 +262,7 @@ class plgSystemJ2xml extends JPlugin
 				));
 
 				$bar->appendButton('Custom', $dHtml, 'download');
-			}
-			
-			if (class_exists('eshiol\\J2xml\\Sender') && method_exists('eshiol\\J2xml\\Sender', $contentType))
-			{
+
 				if ($version->isCompatible('3.9')) 
 				{
 					$lib_xmlrpc = 'eshiol/phpxmlrpc';
