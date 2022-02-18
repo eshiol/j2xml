@@ -37,7 +37,7 @@ class Version
 	/**
 	 * @public static int Sub Release Level
 	 */
-	public static $DEV_LEVEL = '1';
+	public static $DEV_LEVEL = '2';
 
 	/**
 	 * @public static string Development Status
@@ -49,7 +49,7 @@ class Version
 	/**
 	 * @public static int build Number
 	 */
-	public static $BUILD = '356';
+	public static $BUILD = '357';
 
 	/**
 	 * @public static string Codename

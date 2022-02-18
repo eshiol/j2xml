@@ -9,7 +9,7 @@
 	<creationDate>February 2022</creationDate>
 	<copyright><![CDATA[(C) 2010 - 2022 Helios Ciancio. All Rights Reserved.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>22.1.356-alpha5</version>
+	<version>22.2.357-alpha6</version>
 	<scriptfile>script.php</scriptfile>
 	<files>
     	<filename>Exporter.php</filename>
