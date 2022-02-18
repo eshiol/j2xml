@@ -293,7 +293,10 @@ eshiol.j2xml.send = function ( options ){
 	console.log( 'eshiol.j2xml.send' );
 	options.cids = [];
 	options.tot = 0;
-	options.n = 0;
+	options.alert = 0;
+	options.error = 0;
+	options.success = 0;
+	options.warning = 0;
 
 	if (typeof Joomla.getOptions !== "undefined") {
 		var progressBarContainerClass = Joomla.getOptions( "progressBarContainerClass", "progress progress-striped active" );
