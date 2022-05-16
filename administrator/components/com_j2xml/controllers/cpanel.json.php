@@ -4,6 +4,7 @@
  * @subpackage  com_j2xml
  *
  * @version     __DEPLOY_VERSION__
+ * @since       3.6.160
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
@@ -28,9 +29,6 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 
 /**
  * Controller class.
- *
- * @version __DEPLOY_VERSION__
- * @since 3.6.160
  */
 class J2XMLControllerCpanel extends JControllerLegacy
 {

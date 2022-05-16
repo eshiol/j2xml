@@ -4,6 +4,7 @@
  * @subpackage  com_j2xml
  *
  * @version     __DEPLOY_VERSION__
+ * @since       3.7.192
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
@@ -22,9 +23,6 @@ require_once dirname(__FILE__) . '/json.php';
 
 /**
  * Viewlevels controller class.
- *
- * @version __DEPLOY_VERSION__
- * @since 3.7.192
  */
 class J2XMLControllerUsers extends J2XMLControllerJson
 {

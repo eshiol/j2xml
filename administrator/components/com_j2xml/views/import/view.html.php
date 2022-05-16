@@ -75,6 +75,6 @@ class J2xmlViewImport extends J2xmlViewDefault
 		$doc->addStyleDeclaration('#toolbar-credit{float:right;}');
 
 		$toolbar = JToolBar::getInstance('toolbar');
-		$toolbar->appendButton('Popup', 'credit', 'COM_J2XML_DONATE', 'https://www.eshiol.it/' . Jtext::_('COM_J2XML_DONATE_1'), 550, 350);		
+		$toolbar->appendButton('Popup', 'credit', 'COM_J2XML_DONATE', 'https://www.eshiol.it/' . Jtext::_('COM_J2XML_DONATE_1'), 550, 350);
 	}
 }

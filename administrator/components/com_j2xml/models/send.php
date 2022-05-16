@@ -38,20 +38,20 @@ class J2xmlModelSend extends JModelForm
 	 *
 	 * @param array $config
 	 *			An optional associative array of configuration settings.
-	 *			
+	 *
 	 * @see JModelLegacy
 	 * @since 3.9.0
 	 */
 	public function __construct($config = array())
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-		
+
 		$layout = JFactory::getApplication()->input->get('layout', 'default');
-		if ($layout != 'default') 
+		if ($layout != 'default')
 		{
 			$this->_context .= '.' . $layout;
 		}
-		
+
 		parent::__construct($config);
 	}
 
@@ -62,15 +62,15 @@ class J2xmlModelSend extends JModelForm
 	 *			Data for the form.
 	 * @param boolean $loadData
 	 *			True if the form is to load its own data (default case), false if not.
-	 *			
+	 *
 	 * @return JForm|boolean A JForm object on success, false on failure
-	 *		
+	 *
 	 * @since 3.9.0
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-				
+
 		try
 		{
 			$form = $this->loadForm($this->_context, 'send', array(
@@ -82,7 +82,7 @@ class J2xmlModelSend extends JModelForm
 			if ($layout != 'default')
 			{
 				$form->loadFile('send_' . $layout);
-				
+
 				if ($layout != 'users')
 				{
 					$form->loadFile('send_users');
@@ -96,7 +96,7 @@ class J2xmlModelSend extends JModelForm
 				 $form->setFieldAttribute('send_users', 'type', 'hidden');
 				 } */
 			}
-			
+
 			if ($loadData)
 			{
 				// Get the data for the form.
@@ -106,21 +106,21 @@ class J2xmlModelSend extends JModelForm
 			{
 				$data = array();
 			}
-			
+
 			// Allow for additional modification of the form, and events to be triggered.
 			// We pass the data because plugins may require it.
 			$this->preprocessForm($form, $data);
-			
+
 			// Load the data into the form after the plugins have operated.
 			$form->bind($data);
 		}
 		catch (\Exception $e)
 		{
 			$this->setError($e->getMessage());
-			
+
 			return false;
 		}
-		
+
 		return $form;
 	}
 
@@ -128,7 +128,7 @@ class J2xmlModelSend extends JModelForm
 	 * Method to get the data that should be injected in the form.
 	 *
 	 * @return mixed The data for the form.
-	 *		
+	 *
 	 * @since 3.9.0
 	 */
 	protected function loadFormData()
@@ -143,11 +143,11 @@ class J2xmlModelSend extends JModelForm
 		{
 			$jform['send_' . $k] = $v;
 		}
-		
+
 		$params = JComponentHelper::getParams('com_j2xml');
 		$data   = array_merge($params->toArray(), $jform);
 		JLog::add(new JLogEntry('data: ' . print_r($data, true), JLog::DEBUG, 'com_j2xml'));
-		
+
 		$this->preprocessData($this->_context, $data);
 
 		return $data;

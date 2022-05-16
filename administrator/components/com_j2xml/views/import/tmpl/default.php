@@ -18,8 +18,10 @@
 // no direct access
 defined('_JEXEC') or die();
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Session\Session;
 
 $version = new JVersion();
@@ -110,18 +112,18 @@ JFactory::getDocument()->addStyleDeclaration('
 				<?php // $firstTab =  JFactory::getApplication()->triggerEvent('onInstallerViewBeforeFirstTab', array()); ?>
 				<?php // Show installation tabs ?>
 				<?php // $tabs =  JFactory::getApplication()->triggerEvent('onInstallerAddInstallationTab', array()); ?>
-			
-				<?php 
+
+				<?php
 				$tabs = array();
 				$tab            = array();
 				$tab['name']    = 'package';
 				$tab['label']   = JText::_('COM_J2XML_PACKAGEIMPORTER_UPLOAD_DATA_FILE');
-				
+
 				// Render the input
 				ob_start();
 				include __DIR__ . '/default_package.php';
 				$tab['content'] = ob_get_clean();
-				
+
 				$tabs[] = $tab;
 				?>
 
@@ -160,7 +162,7 @@ JFactory::getDocument()->addStyleDeclaration('
 <?php
 JText::script('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED');
 
-$doc = JFactory::getDocument();
+$doc = Factory::getDocument();
 $cparams = JComponentHelper::getParams('com_j2xml');
 $min = $cparams->get('debug', 0) ? '' : '.min';
 
@@ -173,22 +175,21 @@ $doc->addScript("../media/lib_eshiol_j2xml/js/version_compare{$min}.js");
 JLog::add(new JLogEntry("loading ../media/lib_eshiol_j2xml/js/j2xml{$min}.js", JLog::DEBUG, 'com_j2xml'));
 $doc->addScript("../media/lib_eshiol_j2xml/js/j2xml{$min}.js");
 
+JLog::add(new JLogEntry("loading ../media/lib_eshiol_j2xml/js/j2xml{$min}.js", JLog::DEBUG, 'com_j2xml'));
+$doc->addScript("../media/lib_eshiol_j2xml/js/base64{$min}.js");
+
 JLog::add(new JLogEntry("loading ../media/com_j2xml/js/j2xml{$min}.js", JLog::DEBUG, 'com_j2xml'));
 $doc->addScript("../media/com_j2xml/js/j2xml{$min}.js");
 
-foreach (glob(JPATH_ROOT . "/media/plg_j2xml_*/js/j2xml{$min}.js") as $filename)
-{
-	JLog::add(new JLogEntry('loading ' . str_replace(JPATH_ROOT, '..', $filename), JLog::DEBUG, 'com_j2xml'));
-	$doc->addScript(str_replace(JPATH_ROOT, '..', $filename));
-}
+// Trigger the onLoadJS event.
+PluginHelper::importPlugin('j2xml');
+Factory::getApplication()->triggerEvent('onLoadJS');
 
 // Load the import options form
 $selector = 'j2xmlImport';
 
 if ($version->isCompatible('4'))
 {
-	$this->document->addScriptOptions('J2XML', array('Joomla' => 4));
-	
 	echo HTMLHelper::_('bootstrap.renderModal', $selector . 'Modal',
 		array(
 			'title' => Text::_('COM_J2XML_IMPORT'),
@@ -202,7 +203,7 @@ if ($version->isCompatible('4'))
 			'height' => '420px',
 			'width' => '300px',
 			'modalWidth' => '50',
-			'footer' => 
+			'footer' =>
 				'<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-hidden="true">'
 				. Text::_('JTOOLBAR_CANCEL') . '</button>'
 				. '<button type="button" class="btn btn-success" data-bs-dismiss="modal" aria-hidden="true"'
@@ -213,10 +214,7 @@ if ($version->isCompatible('4'))
 }
 elseif ($version->isCompatible('3.4'))
 {
-	$document = JFactory::getDocument();
-	$document->addScriptOptions('J2XML', array('Joomla' => 3));
-
-	echo JHtml::_('bootstrap.renderModal', $selector . 'Modal', 
+	echo JHtml::_('bootstrap.renderModal', $selector . 'Modal',
 		array(
 			'title' => JText::_('COM_J2XML_IMPORT'),
 			'url' => JRoute::_('index.php?option=com_j2xml&amp;view=import&amp;layout=options&amp;tmpl=component'),
@@ -230,12 +228,9 @@ elseif ($version->isCompatible('3.4'))
 				. ' onclick="eshiol.j2xml.importerModal();jQuery(\'#' . $selector . 'Modal iframe\').contents().find(\'#' . $selector . 'OkBtn\').click();">'
 				. JText::_("COM_J2XML_IMPORT") . '</button>'));
 }
-else 
+else
 {
-	$document = JFactory::getDocument();
-	$document->addScriptOptions('J2XML', array('Joomla' => 3));
-
-	echo JHtml::_('bootstrap.renderModal', $selector . 'Modal', 
+	echo JHtml::_('bootstrap.renderModal', $selector . 'Modal',
 		array(
 			'title' => JText::_('COM_J2XML_IMPORT'),
 			'url' => JRoute::_('index.php?option=com_j2xml&amp;view=import&amp;layout=options&amp;tmpl=component'),

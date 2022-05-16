@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       15.3.248
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -19,10 +22,9 @@ use eshiol\J2xml\Table\Table;
 \JLoader::import('eshiol.J2xml.Table.Table');
 
 /**
+ *
  * Viewlevel Table
  *
-
- * @since 15.3.248
  */
 class Weblink extends Table
 {
@@ -38,7 +40,7 @@ class Weblink extends Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__weblinks', 'id', $db);
 	}
 
@@ -51,7 +53,7 @@ class Weblink extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$version = new \JVersion();
 		if ($version->isCompatible('3.1'))
 		{
@@ -79,7 +81,7 @@ class Weblink extends Table
 				$this->_db->quoteName('asso1.id') . ' = ' . (int) $this->id,
 				$this->_db->quoteName('asso1.context') . ' = ' . $this->_db->quote('com_weblinks.item'),
 				$this->_db->quoteName('asso2.id') . ' <> ' . (int) $this->id));
-		
+
 		return parent::toXML($mapKeysToText);
 	}
 
@@ -101,7 +103,7 @@ class Weblink extends Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/weblink/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -118,7 +120,7 @@ class Weblink extends Table
 		{
 			Viewlevel::export($item->access, $xml, $options);
 		}
-		
+
 		if (isset($options['categories']) && $options['categories'] && ($item->catid > 0))
 		{
 			Category::export($item->catid, $xml, $options);
@@ -155,14 +157,14 @@ class Weblink extends Table
 					}
 				}
 			}
-			
+
 			if ($imgs = json_decode($item->images))
 			{
 				if (isset($imgs->image_first))
 				{
 					Image::export($imgs->image_first, $xml, $options);
 				}
-				
+
 				if (isset($imgs->image_second))
 				{
 					Image::export($imgs->image_second, $xml, $options);
@@ -190,7 +192,7 @@ class Weblink extends Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_weblinks = $params->get('weblinks', 1);
 		if ($import_weblinks == 0)
 			return;
@@ -267,17 +269,17 @@ class Weblink extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$db = \JFactory::getDBO();
-		
+
 		$params->set('extension', 'com_weblinks');
 		parent::prepareData($record, $data, $params);
-		
+
 		if (empty($data['associations']))
 		{
 			$data['associations'] = array();
 		}
-		
+
 		if (isset($data['associationlist']))
 		{
 			foreach ($data['associationlist']['association'] as $association)

@@ -125,15 +125,15 @@ class J2xmlModelImport extends JModelForm
 			$data = file_get_contents($package['packagefile']);
 		}
 		JLog::add(new JLogEntry('data: ' . $data, JLog::DEBUG, 'com_j2xml'));
-		
+
 		$jform = JFactory::getApplication()->input->post->get('jform', array(), 'array');
-		
+
 		$fparams = new JRegistry($jform);
 		JLog::add(new JLogEntry('jform: ' . print_r($fparams->toArray(), true), JLog::DEBUG, 'com_j2xml'));
-		
+
 		$cparams = JComponentHelper::getParams('com_j2xml');
 		JLog::add(new JLogEntry('cparams: ' . print_r($cparams->toArray(), true), JLog::DEBUG, 'com_j2xml'));
-		
+
 		$params = new JRegistry();
 		$params->set('categories', $fparams->get('import_categories', $cparams->get('import_categories', 1)));
 		$params->set('contacts', $fparams->get('import_contacts', $cparams->get('import_contacts', 0)));
@@ -158,16 +158,13 @@ class J2xmlModelImport extends JModelForm
 
 		// This event allows a custom import of the data or a customization of the data:
 		JPluginHelper::importPlugin('j2xml');
-		$results = JFactory::getApplication()->triggerEvent('onJ2xmlPrepareData', array('com_j2xml.import', &$data, $params));
-
-		if (in_array(true, $results, true))
-		{
-			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_PLUGIN_ERROR'), JLog::ERROR, 'com_j2xml'));
-			return true;
-		}
-
+	
+		$results = JFactory::getApplication()->triggerEvent('onContentPrepareData', array('com_j2xml.import', &$data, $params));
+	
 		if (in_array(false, $results, true))
 		{
+			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_PLUGIN_ERROR'), JLog::ERROR, 'com_j2xml'));
+
 			if (in_array($installType, array('upload', 'url')))
 			{
 				JInstallerHelper::cleanupInstall($package['packagefile'], $package['extractdir']);
@@ -205,12 +202,14 @@ class J2xmlModelImport extends JModelForm
 			$version = explode(".", $xmlVersion);
 			$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
 
+			$results = JFactory::getApplication()->triggerEvent('onValidateData', array(&$xml, $params));
+		
 			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
-			if ($importer->isSupported($xmlVersionNumber))
+			if ($importer->isSupported($xmlVersionNumber) || in_array(true, $results, true))
 			{
 				$params->set('version', (string) $xml['version']);
 
-				$results = JFactory::getApplication()->triggerEvent('onJ2xmlBeforeImport', array('com_j2xml.import', &$xml, $params));
+				$results = JFactory::getApplication()->triggerEvent('onContentBeforeImport', array('com_j2xml.import', &$xml, $params));
 
 				$importer->import($xml, $params);
 
@@ -477,7 +476,7 @@ class J2xmlModelImport extends JModelForm
 	protected function loadFormData()
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-		
+
 		// Check the session for previously entered form data.
 		$data   = JFactory::getApplication()->getUserState('com_j2xml.import.data', array());
 		JLog::add(new JLogEntry('getUserState(\'com_j2xml.import.data\'): ' . print_r($data, true), JLog::DEBUG, 'com_j2xml'));

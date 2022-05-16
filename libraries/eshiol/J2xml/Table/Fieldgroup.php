@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       19.2.323
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -23,10 +26,9 @@ use Joomla\Component\Fields\Administrator\Table\GroupTable;
 
 
 /**
- * Table
  *
-
- * @since 19.2.323
+ * Fieldgroup Table
+ *
  */
 class Fieldgroup extends Table
 {
@@ -49,7 +51,7 @@ class Fieldgroup extends Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__fields_groups', 'id', $db);
 	}
 
@@ -72,7 +74,7 @@ class Fieldgroup extends Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_fields = $params->get('fields', 0);
 		if ($import_fields == 0)
 			return;
@@ -145,7 +147,7 @@ class Fieldgroup extends Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/fieldgroup/id[text() = '" . $id . "']"))
 		{
 			return;

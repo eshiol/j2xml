@@ -51,7 +51,7 @@ class J2xmlControllerWeblinks extends JControllerLegacy
 	 *			The prefix for the model class name.
 	 * @param array $config
 	 *			Configuration array for model. Optional.
-	 *			
+	 *
 	 * @return JModelLegacy
 	 *
 	 * @since 3.9.0
@@ -72,9 +72,9 @@ class J2xmlControllerWeblinks extends JControllerLegacy
 	 *			If true, the view output will be cached
 	 * @param array $urlparams
 	 *			An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
-	 *			
+	 *
 	 * @return J2xmlControllerUser This object to support chaining.
-	 *		
+	 *
 	 * @since 3.6.161
 	 * @todo This should be done as a view, not here!
 	 */

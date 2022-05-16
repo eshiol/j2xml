@@ -3,6 +3,9 @@
  * @package     Joomla.Plugins
  * @subpackage  System.J2xml
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       3.9
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -73,7 +76,7 @@ echo HtmlHelper::_('bootstrap.renderModal',
 		'footer'	  => '<button class="btn btn-secondary" data-dismiss="modal" type="button"'
 						. ' onclick="window.parent.Joomla.Modal.getCurrent().close();">'
 						. $cancel . '</button>'
-						.'<joomla-toolbar-button' . $validate	
+						.'<joomla-toolbar-button' . $validate
 						. ' onclick="' . $onclick . 'Joomla.iframeButtonClick({iframeSelector: \'#' . $selector . 'Modal\', buttonSelector: \'#' . $selector . 'OkBtn\'})">'
 						. '<button class="btn btn-success" type="button">'
 						. $ok . '</button>'

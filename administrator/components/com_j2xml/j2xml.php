@@ -31,21 +31,24 @@ JLoader::import('joomla.log.log');
 if ($params->get('debug') || defined('JDEBUG') && JDEBUG)
 {
 	JLog::addLogger(
-		array('text_file' => $params->get('log', 'eshiol.log.php'),	'extension' => 'com_j2xml_file'), 
-		JLog::DEBUG | JLog::ERROR, 
+		array('text_file' => $params->get('log', 'eshiol.log.php'),	'extension' => 'com_j2xml_file'),
+		JLog::DEBUG | JLog::ERROR,
 		array('lib_j2xml', 'com_j2xml'));
 }
 JLog::addLogger(
-	array('logger' => 'messagequeue', 'extension' => 'com_j2xml'), 
-	JLog::ALL & ~JLog::DEBUG, 
+	array('logger' => 'messagequeue', 'extension' => 'com_j2xml'),
+	JLog::ALL & ~JLog::DEBUG,
 	array('lib_j2xml', 'com_j2xml'));
 if ($params->get('phpconsole') && class_exists('JLogLoggerPhpconsole'))
 {
 	JLog::addLogger(
-		array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'), 
-		JLog::DEBUG, 
+		array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'),
+		JLog::DEBUG,
 		array('lib_j2xml', 'com_j2xml'));
 }
+
+$version = new JVersion();
+JFactory::getDocument()->addScriptOptions('J2XML', array('Joomla' => ($version->isCompatible('4') ? 4 : 3) ));
 
 // Merge the default translation with the current translation
 $lang = JFactory::getApplication()->getLanguage();

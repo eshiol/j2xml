@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       22.1.355
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -16,9 +19,9 @@ namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
 /**
+ *
  * Menu Table class
  *
- * @since 22.1.355
  */
 class Module extends \eshiol\J2XML\Table\Table
 {
@@ -28,7 +31,7 @@ class Module extends \eshiol\J2XML\Table\Table
 	 *
 	 * @param object $db
 	 *        	Database connector
-	 *        	
+	 *
 	 * @since 17.1.294
 	 */
 	function __construct (&$db)
@@ -48,7 +51,7 @@ class Module extends \eshiol\J2XML\Table\Table
 				 (int) $this->id . " UNION SELECT 'all' FROM `#__modules_menu` mm WHERE mm.moduleid = " . (int) $this->id . " AND mm.menuid = 0";
 		$this->_aliases['menu'] = "SELECT CONCAT(m.menutype, '/', m.path) FROM `#__modules_menu` mm INNER JOIN `#__menu` m ON ABS(mm.menuid) = m.id WHERE mm.moduleid = " .
 				 (int) $this->id;
-		
+
 		return parent::_serialize();
 	}
 
@@ -62,19 +65,19 @@ class Module extends \eshiol\J2XML\Table\Table
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('id: ' . $id, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$db = \JFactory::getDbo();
 		$item = new Module($db);
 		if (! $item->load($id))
 		{
 			return;
 		}
-		
+
 		if ($xml->xpath("//j2xml/module/id[text() = '" . $item->id . "']"))
 		{
 			return;
 		}
-		
+
 		$doc = dom_import_simplexml($xml)->ownerDocument;
 		$fragment = $doc->createDocumentFragment();
 		$fragment->appendXML($item->toXML());
@@ -89,16 +92,16 @@ class Module extends \eshiol\J2XML\Table\Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$db = \JFactory::getDbo();
 		$import_modules = $params->get('modules', '2');
-		
+
 		foreach ($xml->xpath("//j2xml/module[not(title = '')]") as $record)
 		{
 			self::prepareData($record, $data, $params);
-			
+
 			$db = \JFactory::getDbo();
-			
+
 			/* import module */
 			$query = $db->getQuery(true)
 				->select($db->qn('id'))
@@ -108,11 +111,11 @@ class Module extends \eshiol\J2XML\Table\Table
 				->where($db->qn('title') . ' = ' . $db->q($data['title']));
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$module = $db->setQuery($query)->loadObject();
-			
+
 			if (! $module || ($import_modules == 2))
 			{
 				$table = new Module($db);
-				
+
 				if (! $module)
 				{ // new menutype
 					$data['id'] = null;
@@ -123,7 +126,7 @@ class Module extends \eshiol\J2XML\Table\Table
 					$table->load($data['id']);
 				}
 				\JLog::add(new \JLogEntry('bind: ' . print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
-				
+
 				// Trigger the onContentBeforeSave event.
 				$table->bind($data);
 				if ($table->store())
@@ -135,7 +138,7 @@ class Module extends \eshiol\J2XML\Table\Table
 					if (isset($data['menus']))
 					{
 						$query->clear()->insert('#__modules_menu');
-						
+
 						if ($data['menus'] == 'all')
 						{
 							$query->values($table->id . ', 0');

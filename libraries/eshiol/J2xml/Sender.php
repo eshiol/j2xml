@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       1.5.3beta3.38
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -31,8 +34,8 @@ if (file_exists('../phpxmlrpc/lib/xmlrpc.inc'))
 
 /**
  *
-
- * @since 1.5.3beta3.38
+ * Sender
+ *
  */
 class Sender
 {
@@ -98,7 +101,7 @@ class Sender
 	static function send ($xml, $options, $sid)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$app = \JFactory::getApplication();
 		$version = explode(".", Version::$DOCVERSION);
 		$xmlVersionNumber = $version[0] . $version[1] . substr('0' . $version[2], strlen($version[2]) - 1);
@@ -280,7 +283,7 @@ class Sender
 	private static function _xmlrpc_j2xml_send ($remote_url, $xml, $username, $password, $debug = 0)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$debug = 0;
 		$protocol = '';
 		$GLOBALS['xmlrpc_internalencoding'] = 'UTF-8';
@@ -348,7 +351,7 @@ if (! function_exists('http_parse_headers'))
 	function http_parse_headers ($raw_headers)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$headers = array();
 		$key = '';
 

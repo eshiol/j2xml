@@ -49,7 +49,7 @@ class J2xmlControllerUsernotes extends JControllerLegacy
 	 *			The prefix for the model class name.
 	 * @param array $config
 	 *			Configuration array for model. Optional.
-	 *			
+	 *
 	 * @return JModelLegacy
 	 *
 	 * @since 3.9.0
@@ -57,7 +57,7 @@ class J2xmlControllerUsernotes extends JControllerLegacy
 	public function getModel($name = 'Export', $prefix = 'J2xmlModel', $config = array())
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
-		
+
 		return parent::getModel($name, $prefix, array(
 			'ignore_request' => true
 		));
@@ -70,9 +70,9 @@ class J2xmlControllerUsernotes extends JControllerLegacy
 	 *			If true, the view output will be cached
 	 * @param array $urlparams
 	 *			An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
-	 *			
+	 *
 	 * @return J2xmlControllerUser This object to support chaining.
-	 *		
+	 *
 	 * @since 1.5
 	 * @todo This should be done as a view, not here!
 	 */

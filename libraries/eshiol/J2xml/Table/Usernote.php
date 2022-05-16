@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       14.8.240
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -26,10 +29,9 @@ use eshiol\J2xml\Table\User;
 \JLoader::register('UsersTableNote', JPATH_ADMINISTRATOR . '/components/com_users/tables/note.php');
 
 /**
+ *
  * Usernote Table
  *
-
- * @since 14.8.240
  */
 class Usernote extends \eshiol\J2xml\Table\Table
 {
@@ -45,7 +47,7 @@ class Usernote extends \eshiol\J2xml\Table\Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__user_notes', 'id', $db);
 	}
 
@@ -128,7 +130,7 @@ class Usernote extends \eshiol\J2xml\Table\Table
 		{
 			return;
 		}
-		
+
 		$params->set('extension', 'com_users');
 		$import_categories = $params->get('categories');
 		if ($import_categories)
@@ -184,7 +186,7 @@ class Usernote extends \eshiol\J2xml\Table\Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$params->set('extension', 'com_users');
 		parent::prepareData($record, $data, $params);
 
@@ -202,7 +204,7 @@ class Usernote extends \eshiol\J2xml\Table\Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$this->_aliases['user_id'] = (string) $this->_db->getQuery(true)
 			->select($this->_db->quoteName('username'))
 			->from($this->_db->quoteName('#__users'))

@@ -3,6 +3,9 @@
  * @package     Joomla.Plugins
  * @subpackage  System.J2xml
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       3.9
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved

@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       1.5.3.39
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -22,12 +25,13 @@ use Joomla\Utilities\ArrayHelper;
 \JLoader::import('eshiol.J2xml.Version');
 
 /**
+ *
  * Table
  *
- * @since 1.5.3.39
  */
 class Table extends \JTable
 {
+
 	/**
 	 * An array of key names to be not exported
 	 *
@@ -76,7 +80,7 @@ class Table extends \JTable
 	function __construct ($table, $key, &$db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct($table, $key, $db);
 
 		$this->_excluded = array(
@@ -113,7 +117,7 @@ class Table extends \JTable
 	public function load ($keys = null, $reset = true)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($ret = parent::load($keys, $reset))
 		{
 			if (isset($this->created_by))
@@ -194,7 +198,7 @@ class Table extends \JTable
 	protected function _serialize ($tag = true)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		// Initialise variables.
 		$xml = array();
 
@@ -268,7 +272,7 @@ class Table extends \JTable
 	protected function _setValue ($k, $v)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$kOpen = $k;
 		/**
 		if (! is_null($attributes))
@@ -366,7 +370,7 @@ class Table extends \JTable
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$version = new \JVersion();
 		$nullDate = ($version->isCompatible('4') ? null : \JFactory::getDbo()->getNullDate());
 
@@ -501,7 +505,7 @@ class Table extends \JTable
 	public static function getArticleId ($article, $defaultArticleId = 0)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (is_numeric($article))
 		{
 			$articleId = $article;
@@ -540,7 +544,7 @@ class Table extends \JTable
 	public static function getUserId ($username, $defaultUserId = null)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$db = \JFactory::getDBO();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('id'))
@@ -565,7 +569,7 @@ class Table extends \JTable
 	public static function getUsergroupId ($usergroup, $import = true)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (empty($usergroup))
 		{
 			$usergroupId = \JComponentHelper::getParams('com_users')->get('new_usertype');
@@ -629,7 +633,7 @@ class Table extends \JTable
 	public static function getAccessId ($access)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (is_numeric($access))
 		{
 			$accessId = $access;
@@ -665,7 +669,7 @@ class Table extends \JTable
 	public static function getCategoryId ($category, $extension, $defaultCategoryId = 0)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (is_numeric($category))
 		{
 			$categoryId = $category;
@@ -702,7 +706,7 @@ class Table extends \JTable
 	public static function getTagId ($tag)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$db = \JFactory::getDbo();
 
 		try
@@ -755,7 +759,7 @@ class Table extends \JTable
 		{
 			$date = ($version->isCompatible('4') ? null : \JFactory::getDbo()->getNullDate());
 		}
-		else 
+		else
 		{
 			$d = new \JDate($date);
 			$date = $d->toSQL(false);
@@ -896,7 +900,7 @@ class Table extends \JTable
 	public function bind ($array, $ignore = '')
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (isset($array['params']) && is_array($array['params']))
 		{
 			$registry = new \JRegistry($array['params']);
@@ -926,7 +930,7 @@ class Table extends \JTable
 	public static function getMenuId ($menu, $defaultMenuId = 0)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (is_numeric($menu))
 		{
 			$menuId = $menu;
@@ -948,10 +952,10 @@ class Table extends \JTable
 
 		return $menuId;
 	}
-	
+
 	/**
 	 * Set the associations.
-	 * 
+	 *
 	 * @param   integer  $id            The primary key value.
 	 * @param   string   $language      The language tag.
 	 * @param   array    $associations  The associated items.
@@ -964,7 +968,7 @@ class Table extends \JTable
 		\JLog::add(new \JLogEntry($language, \JLog::DEBUG, 'com_j2xml'));
 		\JLog::add(new \JLogEntry(print_r($associations, true), \JLog::DEBUG, 'com_j2xml'));
 		\JLog::add(new \JLogEntry($context, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (empty($associations))
 		{
 			return;
@@ -982,7 +986,7 @@ class Table extends \JTable
 			if (\JLanguageMultilang::isEnabled())
 			{
 				$params = new \JRegistry(\JPluginHelper::getPlugin('system', 'languagefilter')->params);
-				
+
 				$isEnabled  = (boolean) $params->get('item_associations', true);
 			}
 			else
@@ -990,7 +994,7 @@ class Table extends \JTable
 				$isEnabled = false;
 			}
 		}
-		
+
 		if ($isEnabled)
 		{
 			// Unset any invalid associations
@@ -1029,12 +1033,12 @@ class Table extends \JTable
 				->where($db->quoteName('id') . ' = ' . (int) $id);
 			$db->setQuery($query);
 			$old_key = $db->loadResult();
-			
+
 			// Deleting old associations for the associated items
 			$query = $db->getQuery(true)
 				->delete($db->quoteName('#__associations'))
 				->where($db->quoteName('context') . ' = ' . $db->quote($context));
-			
+
 			if ($associations)
 			{
 				$query->where('(' . $db->quoteName('id') . ' IN (' . implode(',', $associations) . ') OR '
@@ -1044,23 +1048,23 @@ class Table extends \JTable
 			{
 				$query->where($db->quoteName('key') . ' = ' . $db->quote($old_key));
 			}
-			
+
 			$db->setQuery($query);
 			$db->execute();
-			
+
 			// Adding self to the association
 			if ($language !== '*')
 			{
 				$associations[$language] = (int) $id;
 			}
-			
+
 			if (count($associations) > 1)
 			{
 				// Adding new association for these items
 				$key   = md5(json_encode($associations));
 				$query = $db->getQuery(true)
 					->insert('#__associations');
-				
+
 				foreach ($associations as $itemId)
 				{
 					$query->values(((int) $itemId) . ',' . $db->quote($context) . ',' . $db->quote($key));
@@ -1080,14 +1084,14 @@ class Table extends \JTable
 	 *			the id to return if the contact doesn't exist
 	 *
 	 * @return int the id of the contact if it exists or the default contact id
-	 * 
+	 *
 	 * @since 20.5.349
 	 */
 	public static function getContactId ($contact, $defaultContactId = 0)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 		\JLog::add(new \JLogEntry($contact, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (is_numeric($contact))
 		{
 			$contactId = $contact;

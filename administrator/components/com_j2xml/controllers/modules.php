@@ -4,6 +4,7 @@
  * @subpackage  com_j2xml
  *
  * @version     __DEPLOY_VERSION__
+ * @since       3.6.165
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
@@ -20,9 +21,6 @@ defined('_JEXEC') or die();
 
 /**
  * Modules controller class.
- *
- * @version __DEPLOY_VERSION__
- * @since 3.6.165
  */
 class J2XMLControllerModules extends JControllerLegacy
 {

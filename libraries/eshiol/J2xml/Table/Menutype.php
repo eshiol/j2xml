@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       22.1.355
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -16,9 +19,9 @@ namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
 /**
- * Menutype Table class
  *
- * @since 22.1.355
+ * Menutype Table
+ *
  */
 class Menutype extends \eshiol\J2XML\Table\Table
 {

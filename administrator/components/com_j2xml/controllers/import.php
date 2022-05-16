@@ -109,7 +109,7 @@ class J2xmlControllerImport extends JControllerLegacy
 		// Save the posted data in the session.
 		$app->setUserState('com_j2xml.import.data', $data);
 		JLog::add(new JLogEntry('setUserState(\'com_j2xml.import.data\'): ' . print_r($data, true), JLog::DEBUG, 'com_j2xml'));
-		
+
 		// Do import
 		$result = $this->import();
 

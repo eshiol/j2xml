@@ -4,6 +4,7 @@
  * @subpackage  com_j2xml
  *
  * @version     __DEPLOY_VERSION__
+ * @since       3.6.164
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
@@ -22,9 +23,6 @@ require_once dirname(__FILE__) . '/json.php';
 
 /**
  * Menus controller class.
- *
- * @version __DEPLOY_VERSION__
- * @since 3.6.164
  */
 class J2XMLControllerMenus extends J2XMLControllerJson
 {

@@ -143,11 +143,11 @@ class J2xmlModelExport extends JModelForm
 		{
 			$jform['export_' . $k] = $v;
 		}
-		
+
 		$params = JComponentHelper::getParams('com_j2xml');
 		$data   = array_merge($params->toArray(), $jform);
 		JLog::add(new JLogEntry('data: ' . print_r($data, true), JLog::DEBUG, 'com_j2xml'));
-		
+
 		$this->preprocessData($this->_context, $data);
 
 		return $data;

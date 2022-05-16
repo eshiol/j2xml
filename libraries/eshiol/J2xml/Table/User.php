@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       1.5.3beta4.39
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -25,10 +28,9 @@ use eshiol\J2xml\Table\Usernote;
 \JLoader::import('eshiol.J2xml.Table.Usernote');
 
 /**
+ *
  * User Table
  *
-
- * @since 1.5.3beta4.39
  */
 class User extends Table
 {
@@ -44,7 +46,7 @@ class User extends Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__users', 'id', $db);
 	}
 
@@ -56,7 +58,7 @@ class User extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$version = new \JVersion();
 		$serverType = $version->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
 
@@ -131,7 +133,7 @@ class User extends Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_users = $params->get('users', 1);
 		$import_superusers = $params->get('superusers', 0);
 		if (! $import_users)
@@ -163,12 +165,12 @@ class User extends Table
 		{
 			$userModel = "\Joomla\Component\Users\Administrator\Model\UserModel";
 		}
-		else 
+		else
 		{
 			\JLoader::register('UsersModelUser', JPATH_ADMINISTRATOR . '/components/com_users/models/user.php');
 			$userModel = "\UsersModelUser";
 		}
-		
+
 		$users = array();
 		foreach ($xml->xpath("//j2xml/user[not(username = '')]") as $record)
 		{
@@ -327,7 +329,7 @@ class User extends Table
 					{
 						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_NOT_IMPORTED', $data['name'], \JText::_('LIB_J2XML_MSG_UNKNOWN_ERROR')), \JLog::ERROR, 'lib_j2xml'));
 					}
-						
+
 				}
 			}
 		}
@@ -360,7 +362,7 @@ class User extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$params->set('extension', 'com_users');
 		parent::prepareData($record, $data, $params);
 
@@ -378,7 +380,7 @@ class User extends Table
 		{
 			$data['otpKey'] = '';
 		}
-		
+
 		if (empty($data['otep']))
 		{
 			$data['otep'] = '';
@@ -403,7 +405,7 @@ class User extends Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/user/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -472,7 +474,7 @@ class User extends Table
 					->from('#__fields_values')
 					->where('item_id = ' . $db->quote($id));
 				$db->setQuery($query);
-	
+
 				$ids_field = $db->loadColumn();
 				foreach ($ids_field as $id_field)
 				{

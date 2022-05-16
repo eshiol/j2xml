@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       1.5.1
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -30,8 +33,6 @@ use eshiol\J2xml\Table\Viewlevel;
  *
  * Category Table
  *
-
- * @since 1.5.1
  */
 class Category extends Table
 {
@@ -47,7 +48,7 @@ class Category extends Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__categories', 'id', $db);
 	}
 
@@ -59,7 +60,7 @@ class Category extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$version = new \JVersion();
 		if ($version->isCompatible('3.1'))
 		{
@@ -127,7 +128,7 @@ class Category extends Table
 		{
 			\JFactory::getApplication()->getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
 		}
-		else 
+		else
 		{
 			\JFactory::getLanguage()->load('com_users', JPATH_ADMINISTRATOR);
 		}
@@ -350,7 +351,7 @@ class Category extends Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/category/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -404,7 +405,7 @@ class Category extends Table
 			{
 				User::export($item->created_user_id, $xml, $options);
 			}
-	
+
 			if ($item->modified_user_id)
 			{
 				User::export($item->modified_user_id, $xml, $options);
@@ -466,7 +467,7 @@ class Category extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$db = \JFactory::getDBO();
 
 		$params->set('extension', 'com_categories');

@@ -70,7 +70,7 @@ class XMLRPCJ2XMLServices
 		$lang->load('lib_j2xml', JPATH_SITE, null, true);
 
 		$params = JComponentHelper::getParams('com_j2xml');
-		if ((int) $params->get('xmlrpc', 0) == 0) 
+		if ((int) $params->get('xmlrpc', 0) == 0)
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_XMLRPC_DISABLED'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
@@ -82,7 +82,7 @@ class XMLRPCJ2XMLServices
 			'username' => $username,
 			'password' => $password
 		), $options);
-		if (true !== $response) 
+		if (true !== $response)
 		{
 			JLog::add(new JLogEntry(JText::_('JGLOBAL_AUTH_NO_USER'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
@@ -125,12 +125,12 @@ class XMLRPCJ2XMLServices
 	public static function importAjax($xml, $options)
 	{
 //		global $xmlrpcerruser, $xmlrpcI4, $xmlrpcInt, $xmlrpcBoolean, $xmlrpcDouble, $xmlrpcString, $xmlrpcDateTime, $xmlrpcBase64, $xmlrpcArray, $xmlrpcStruct, $xmlrpcValue;
-		
+
 		$lang = JFactory::getApplication()->getLanguage();
 		$lang->load('lib_j2xml', JPATH_SITE, null, false, false) ||
 		// Fallback to the library file in the default language
 		$lang->load('lib_j2xml', JPATH_SITE, null, true);
-		
+
 		$user = JFactory::getUser();
 		if (! $user->authorise('core.admin', 'com_j2xml'))
 		{
@@ -142,13 +142,13 @@ class XMLRPCJ2XMLServices
 			// return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'), 28, JText::_('JGLOBAL_AUTH_ACCESS_DENIED'));
 		}
-		
+
 		$data = self::gzdecode($xml);
 		if (! $data)
 		{
 			$data = $xml;
 		}
-		
+
 		libxml_use_internal_errors(true);
 		$xml = simplexml_load_string($data);
 		if (! $xml)
@@ -156,31 +156,31 @@ class XMLRPCJ2XMLServices
 			$data = base64_decode($data);
 			libxml_clear_errors();
 		}
-		
+
 		if (! mb_detect_encoding($data, 'UTF-8'))
 		{
 			$data = mb_convert_encoding($data, 'UTF-8');
 		}
-		
+
 		$data = utf8_encode(trim($data));
-		
+
 		$data = strstr($data, '<?xml version="1.0" ');
-		
+
 		//$data = J2XMLHelper::stripInvalidXml($data);
 		if (! defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
-		
+
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-		
-		if (! $xml) 
+
+		if (! $xml)
 		{
 			$errors = libxml_get_errors();
-			foreach ($errors as $error) 
+			foreach ($errors as $error)
 			{
 				$msg = $error->code . ' - ' . JText::_($error->message);
-				switch ($error->level) 
+				switch ($error->level)
 				{
 					default:
 					case LIBXML_ERR_WARNING:
@@ -199,13 +199,13 @@ class XMLRPCJ2XMLServices
 			}
 			libxml_clear_errors();
 		}
-		
-		$params = new JRegistry($options);
-		
-		JPluginHelper::importPlugin('j2xml');
-		$results = JFactory::getApplication()->triggerEvent('onJ2xmlBeforeImport', array('com_j2xml.xmlrpc', &$xml, $params));
 
-		if (! isset($xml['version'])) 
+		$params = new JRegistry($options);
+
+		JPluginHelper::importPlugin('j2xml');
+		$results = JFactory::getApplication()->triggerEvent('onContentBeforeImport', array('com_j2xml.xmlrpc', &$xml, $params));
+
+		if (! isset($xml['version']))
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
@@ -224,11 +224,11 @@ class XMLRPCJ2XMLServices
 			// set_time_limit(120);
 			$params->set('version', (string) $xml['version']);
 			$params->set('logger', 'xmlrpc');
-			
+
 			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 			$importer->import($xml, $params);
-		} 
-		else 
+		}
+		else
 		{
 			JLog::add(new JLogEntry(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED', $xmlVersion), JLog::ERROR, 'com_j2xml'));
 		}
@@ -240,14 +240,14 @@ class XMLRPCJ2XMLServices
 	static function gzdecode($data, &$filename = '', &$error = '', $maxlength = null)
 	{
 		$len = strlen($data);
-		if ($len < 18 || strcmp(substr($data, 0, 2), "\x1f\x8b")) 
+		if ($len < 18 || strcmp(substr($data, 0, 2), "\x1f\x8b"))
 		{
 			$error = "Not in GZIP format.";
 			return null; // Not GZIP format (See RFC 1952)
 		}
 		$method = ord(substr($data, 2, 1)); // Compression method
 		$flags = ord(substr($data, 3, 1)); // Flags
-		if ($flags & 31 != $flags) 
+		if ($flags & 31 != $flags)
 		{
 			$error = "Reserved bits not allowed.";
 			return null;
@@ -260,16 +260,16 @@ class XMLRPCJ2XMLServices
 		$headerlen = 10;
 		$extralen = 0;
 		$extra = "";
-		if ($flags & 4) 
+		if ($flags & 4)
 		{
 			// 2-byte length prefixed EXTRA data in header
-			if ($len - $headerlen - 2 < 8) 
+			if ($len - $headerlen - 2 < 8)
 			{
 				return false; // invalid
 			}
 			$extralen = unpack("v", substr($data, 8, 2));
 			$extralen = $extralen[1];
-			if ($len - $headerlen - 2 - $extralen < 8) 
+			if ($len - $headerlen - 2 - $extralen < 8)
 			{
 				return false; // invalid
 			}
@@ -278,15 +278,15 @@ class XMLRPCJ2XMLServices
 		}
 		$filenamelen = 0;
 		$filename = "";
-		if ($flags & 8) 
+		if ($flags & 8)
 		{
 			// C-style string
-			if ($len - $headerlen - 1 < 8) 
+			if ($len - $headerlen - 1 < 8)
 			{
 				return false; // invalid
 			}
 			$filenamelen = strpos(substr($data, $headerlen), chr(0));
-			if ($filenamelen === false || $len - $headerlen - $filenamelen - 1 < 8) 
+			if ($filenamelen === false || $len - $headerlen - $filenamelen - 1 < 8)
 			{
 				return false; // invalid
 			}
@@ -295,15 +295,15 @@ class XMLRPCJ2XMLServices
 		}
 		$commentlen = 0;
 		$comment = "";
-		if ($flags & 16) 
+		if ($flags & 16)
 		{
 			// C-style string COMMENT data in header
-			if ($len - $headerlen - 1 < 8) 
+			if ($len - $headerlen - 1 < 8)
 			{
 				return false; // invalid
 			}
 			$commentlen = strpos(substr($data, $headerlen), chr(0));
-			if ($commentlen === false || $len - $headerlen - $commentlen - 1 < 8) 
+			if ($commentlen === false || $len - $headerlen - $commentlen - 1 < 8)
 			{
 				return false; // Invalid header format
 			}
@@ -311,17 +311,17 @@ class XMLRPCJ2XMLServices
 			$headerlen += $commentlen + 1;
 		}
 		$headercrc = "";
-		if ($flags & 2) 
+		if ($flags & 2)
 		{
 			// 2-bytes (lowest order) of CRC32 on header present
-			if ($len - $headerlen - 2 < 8) 
+			if ($len - $headerlen - 2 < 8)
 			{
 				return false; // invalid
 			}
 			$calccrc = crc32(substr($data, 0, $headerlen)) & 0xffff;
 			$headercrc = unpack("v", substr($data, $headerlen, 2));
 			$headercrc = $headercrc[1];
-			if ($headercrc != $calccrc) 
+			if ($headercrc != $calccrc)
 			{
 				$error = "Header checksum failed.";
 				return false; // Bad header CRC
@@ -335,16 +335,16 @@ class XMLRPCJ2XMLServices
 		$isize = $isize[1];
 		// decompression:
 		$bodylen = $len - $headerlen - 8;
-		if ($bodylen < 1) 
+		if ($bodylen < 1)
 		{
 			// IMPLEMENTATION BUG!
 			return null;
 		}
 		$body = substr($data, $headerlen, $bodylen);
 		$data = "";
-		if ($bodylen > 0) 
+		if ($bodylen > 0)
 		{
-			switch ($method) 
+			switch ($method)
 			{
 				case 8:
 					// Currently the only supported compression method:
@@ -359,14 +359,14 @@ class XMLRPCJ2XMLServices
 		$crc = sprintf("%u", crc32($data));
 		$crcOK = $crc == $datacrc;
 		$lenOK = $isize == strlen($data);
-		if (! $lenOK || ! $crcOK) 
+		if (! $lenOK || ! $crcOK)
 		{
 			$error = ($lenOK ? '' : 'Length check FAILED. ') . ($crcOK ? '' : 'Checksum FAILED.');
 			return false;
 		}
 		return $data;
 	}
-	
+
 	/**
 	 * Enqueue a system message.
 	 *
@@ -392,9 +392,9 @@ class XMLRPCJ2XMLServices
 		$found   = false;
 		$msgs    = array();
 
-		foreach (Messages::$messages as $i => $m) 
+		foreach (Messages::$messages as $i => $m)
 		{
-			if ($message == JText::_($m)) 
+			if ($message == JText::_($m))
 			{
 				self::$_messageQueue[] = new xmlrpcval(array(
 					"code" => new xmlrpcval($i, 'int'),
@@ -403,13 +403,13 @@ class XMLRPCJ2XMLServices
 				), "struct");
 				$found = true;
 				break;
-			} 
-			else 
+			}
+			else
 			{
 				$pattern = '/' . str_replace(array('(', ')', '[', ']', '.'), array('\(', '\)', '\[', '\]', '\.'), JText::_($m)) . '/i';
 				$pattern = preg_replace('/%(?:\d+\$)?[+-]?(?:[ 0]|\'.{1})?-?\d*(?:\.\d+)?[bcdeEufFgGosxX]/', '(.+)', $pattern);
 
-				if (preg_match($pattern, $message, $matches)) 
+				if (preg_match($pattern, $message, $matches))
 				{
 					array_shift($matches);
 
@@ -425,7 +425,7 @@ class XMLRPCJ2XMLServices
 					ksort($expected);
 
 					$strings = array();
-					foreach ($expected as $index => $value) 
+					foreach ($expected as $index => $value)
 					{
 						$strings[] = new xmlrpcval($matches[$value], 'string');
 					}

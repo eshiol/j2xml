@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       1.5.1
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -40,9 +43,9 @@ use Joomla\Utilities\ArrayHelper;
 \JLoader::import('joomla.application.router');
 
 /**
- * Content table
  *
- * @since 1.5.1
+ * Content Table
+ *
  */
 class Content extends Table
 {
@@ -52,13 +55,13 @@ class Content extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *			A database connector object
-	 *		
+	 *
 	 * @since 1.5.1
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__content', 'id', $db);
 
 	/**
@@ -188,7 +191,7 @@ class Content extends Table
 				$this->_db->quoteName('asso1.id') . ' = ' . (int) $this->id,
 				$this->_db->quoteName('asso1.context') . ' = ' . $this->_db->quote('com_content.item'),
 				$this->_db->quoteName('asso2.id') . ' <> ' . (int) $this->id));
-			
+
 		return parent::toXML($mapKeysToText);
 	}
 
@@ -203,17 +206,17 @@ class Content extends Table
 	 *			@option int 'content_category_default'
 	 *			@option int 'content_category_forceto'
 	 *			@option string 'context'
-	 *		
+	 *
 	 * @throws
 	 * @return void
 	 * @access public
-	 *		
+	 *
 	 * @since 18.8.301
 	 */
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_content = $params->get('content', 0);
 		if ($import_content == 0)
 		{
@@ -325,7 +328,7 @@ class Content extends Table
 				{
 					$results = [];
 				}
-				else 
+				else
 				{
 					$table->bind($data);
 
@@ -516,7 +519,7 @@ class Content extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$db      = \JFactory::getDBO();
 		$version = new \JVersion();
 
@@ -634,13 +637,13 @@ class Content extends Table
 	 * @throws
 	 * @return void
 	 * @access public
-	 *		
+	 *
 	 * @since 18.8.310
 	 */
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/content/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -782,7 +785,7 @@ class Content extends Table
 					->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
 					->where($db->quoteName('f.type') . ' = ' . $db->quote('editor')))
 					->loadColumn() as $text)
-				{	
+				{
 					\JLog::add(new \JLogEntry($text, \JLog::DEBUG, 'com_j2xml'));
 					$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text, $matches, PREG_PATTERN_ORDER);
 					if (count($matches[1]) > 0)
@@ -810,7 +813,7 @@ class Content extends Table
 	public static function getCategoryId ($category, $extension = 'com_content', $defaultCategoryId = 0)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		return parent::getCategoryId($category, $extension, $defaultCategoryId);
 	}
 }

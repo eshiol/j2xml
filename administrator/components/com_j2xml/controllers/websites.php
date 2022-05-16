@@ -4,6 +4,7 @@
  * @subpackage  com_j2xml
  *
  * @version     __DEPLOY_VERSION__
+ * @since       1.5.3
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
@@ -22,9 +23,6 @@ jimport('joomla.application.component.controlleradmin');
 
 /**
  * Website list controller class.
- *
- * @version __DEPLOY_VERSION__
- * @since 1.5.3
  */
 class J2XMLControllerWebsites extends JControllerAdmin
 {

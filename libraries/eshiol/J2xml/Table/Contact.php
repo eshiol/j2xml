@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       15.9.261
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -29,10 +32,9 @@ use Joomla\Component\Contact\Administrator\Table\ContactTable;
 \JLoader::import('eshiol.J2xml.Table.User');
 
 /**
+ *
  * Contact Table
  *
-
- * @since 15.9.261
  */
 class Contact extends Table
 {
@@ -48,7 +50,7 @@ class Contact extends Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__contact_details', 'id', $db);
 
 		$this->type_alias = 'com_contact.contact';
@@ -63,7 +65,7 @@ class Contact extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		// $this->_aliases['user_id']='SELECT username FROM #__users WHERE id =
 		// '.(int)$this->user_id;
 		$this->_aliases['user_id'] = (string) $this->_db->getQuery(true)
@@ -119,7 +121,7 @@ class Contact extends Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/contact/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -158,8 +160,8 @@ class Contact extends Table
 			}
 		}
 
-		if (isset($options['tags']) && $options['tags']) 
-		{ 
+		if (isset($options['tags']) && $options['tags'])
+		{
 			$version = new \JVersion();
 			if($version->isCompatible('3.1'))
 			{
@@ -189,7 +191,7 @@ class Contact extends Table
 				$db->quoteName('asso1.context') . ' = ' . $db->quote('com_contact.item'),
 				$db->quoteName('asso2.id') . ' <> ' . (int) $id));
 		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		$ids_contact = $db->setQuery($query)->loadColumn();
 		\JLog::add(new \JLogEntry(print_r($ids_contact, true), \JLog::DEBUG, 'lib_j2xml'));
 		foreach ($ids_contact as $id_contact)
@@ -217,7 +219,7 @@ class Contact extends Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_contacts = $params->get('contacts', 0);
 		if ($import_contacts == 0)
 		{
@@ -238,7 +240,7 @@ class Contact extends Table
 		{
 			self::prepareData($record, $data, $params);
 			\JLog::add(new \JLogEntry(print_r($data, true), \JLog::DEBUG, 'com_j2xml'));
-			
+
 			$contactId = $data['id'];
 			unset($data['id']);
 
@@ -307,7 +309,7 @@ class Contact extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$db = \JFactory::getDBO();
 		$version = new \JVersion();
 

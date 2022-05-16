@@ -40,12 +40,12 @@ if ($version->isCompatible('4'))
 else
 {
 	$ui = 'bootstrap';
-	
+
 	JHtml::_($ui . '.tooltip', '.hasTooltip', array(
 			'placement' => 'bottom'
 	));
 	JHtml::_('formbehavior.chosen', 'select');
-	
+
 	JHtml::_('behavior.tabstate');
 	JFactory::getDocument()->addScriptDeclaration(<<<EOL
 		// Select first tab

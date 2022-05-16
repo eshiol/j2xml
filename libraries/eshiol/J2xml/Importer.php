@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       1.6.0
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -57,10 +60,9 @@ use eshiol\J2xml\Version;
 \JLoader::import('joomla.user.helper');
 
 /**
+ *
  * Importer
  *
-
- * @since 1.6.0
  */
 class Importer
 {
@@ -78,7 +80,7 @@ class Importer
 	function __construct ()
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		// Merge the default translation with the current translation
 		$version = new \JVersion();
 		if ($version->isCompatible('3.2'))
@@ -94,14 +96,14 @@ class Importer
 		$jlang->load('lib_j2xml', JPATH_SITE, null, true);
 
 		$db = \JFactory::getDBO();
-		
+
 		$this->_user = \JFactory::getUser();
 		$this->_nullDate = $db->getNullDate();
 		$this->_user_id = $this->_user->get('id');
 		$this->_now = \JFactory::getDate()->format("%Y-%m-%d-%H-%M-%S");
 		$this->_option = (PHP_SAPI != 'cli') ? \JFactory::getApplication()->input->getCmd('option') : 'cli_' .
 				 strtolower(get_class(\JApplicationCli::getInstance()));
-		
+
 		// @todo use query object - postgresql
 		$db->setQuery("CREATE TABLE IF NOT EXISTS `#__j2xml_usergroups` (`id` int(10) unsigned NOT NULL, `parent_id` int(10) unsigned NOT NULL DEFAULT '0', `title` varchar(100) NOT NULL DEFAULT '') ENGINE=InnoDB  DEFAULT CHARSET=utf8;")->execute();
 		$db->setQuery("TRUNCATE TABLE `#__j2xml_usergroups`;")->execute();
@@ -130,17 +132,17 @@ class Importer
 	 *			@option boolean 'import_content' import articles
 	 *			@option int 'default_category'
 	 *			@option int 'content_category'
-	 *		
+	 *
 	 * @throws
 	 * @return boolean
 	 * @access public
-	 *		
+	 *
 	 * @since 1.6.0
 	 */
 	function import ($xml, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_viewlevels = $params->get('viewlevels');
 		if ($import_viewlevels)
 		{
@@ -220,7 +222,7 @@ class Importer
 		{
 			\JPluginHelper::importPlugin('j2xml');
 			// Trigger the onAfterImport event.
-			$results = \JFactory::getApplication()->triggerEvent('onJ2xmlAfterImport', array(
+			$results = \JFactory::getApplication()->triggerEvent('onContentAfterImport', array(
 				'com_j2xml.import',
 				&$xml,
 				$params

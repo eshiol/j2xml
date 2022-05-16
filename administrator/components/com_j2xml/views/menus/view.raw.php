@@ -4,6 +4,7 @@
  * @subpackage  com_j2xml
  *
  * @version     __DEPLOY_VERSION__
+ * @since       3.9.213
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
@@ -22,9 +23,6 @@ require_once dirname(__FILE__) . '/../raw.php';
 
 /**
  * J2XML Component Menus View
- *
- * @version __DEPLOY_VERSION__
-* @since 3.9.213
  */
 class J2xmlViewMenus extends J2XMLView
 {

@@ -4,6 +4,7 @@
  * @subpackage  com_j2xml
  *
  * @version     __DEPLOY_VERSION__
+ * @since       2.5.85
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
@@ -20,9 +21,6 @@ defined('_JEXEC') or die();
 
 /**
  * Content component helper.
- *
- * @version __DEPLOY_VERSION__
- * @since 2.5.85
  */
 class J2XMLHelper
 {

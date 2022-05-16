@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       1.5.3
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -19,7 +22,8 @@ defined('_JEXEC') or die('Restricted access.');
 
 /**
  *
- * @since 1.5.3
+ * Version
+ *
  */
 class Version
 {
@@ -37,7 +41,7 @@ class Version
 	/**
 	 * @public static int Sub Release Level
 	 */
-	public static $DEV_LEVEL = '2';
+	public static $DEV_LEVEL = '5';
 
 	/**
 	 * @public static string Development Status
@@ -49,7 +53,7 @@ class Version
 	/**
 	 * @public static int build Number
 	 */
-	public static $BUILD = '357';
+	public static $BUILD = '359';
 
 	/**
 	 * @public static string Codename

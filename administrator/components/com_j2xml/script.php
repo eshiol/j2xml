@@ -4,6 +4,7 @@
  * @subpackage  com_j2xml
  *
  * @version     __DEPLOY_VERSION__
+ * @since       3.7
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
@@ -20,9 +21,6 @@ defined('_JEXEC') or die();
 
 /**
  * Installation class to perform additional changes during install/uninstall/update
- *
- * @version __DEPLOY_VERSION__
- * @since 3.7
  */
 class Com_J2xmlInstallerScript
 {
@@ -129,10 +127,10 @@ class Com_J2xmlInstallerScript
 	function postflight($type, $parent)
 	{
 		if ($type == 'discover_install') return;
-		
+
 		$version = new \JVersion();
 		if ($version->isCompatible('3.9')) return;
-		
+
 		$db		 = \JFactory::getDbo();
 		$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
@@ -177,7 +175,7 @@ class Com_J2xmlInstallerScript
 		{
 			// If the query fails we will go on
 		}
-		
+
 		$queries = array();
 		if ($serverType === 'mysql')
 		{

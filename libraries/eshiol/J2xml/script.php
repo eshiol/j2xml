@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       18.11.311
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -16,11 +19,10 @@
 defined('_JEXEC') or die('Restricted access.');
 
 /**
+ *
  * Installation class to perform additional changes during
  * install/uninstall/update
  *
-
- * @since 18.11.311
  */
 class eshiolj2xmlInstallerScript
 {

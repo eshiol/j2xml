@@ -4,6 +4,7 @@
  * @subpackage  com_j2xml
  *
  * @version     __DEPLOY_VERSION__
+ * @since       1.5.3
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
@@ -25,9 +26,6 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 
 /**
  * Controller class.
- *
- * @version __DEPLOY_VERSION__
- * @since 1.5.3
  */
 class J2xmlControllerCpanel extends JControllerLegacy
 {
@@ -59,6 +57,8 @@ class J2xmlControllerCpanel extends JControllerLegacy
 
 	function import ()
 	{
+		JLog::add(new JLogEntry(__METHOD__, JLOG::DEBUG, 'com_j2xml'));
+
 		$app = JFactory::getApplication('administrator');
 		if (isset($_SERVER["CONTENT_LENGTH"]))
 		{
@@ -201,8 +201,11 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			$version = explode(".", $xmlVersion);
 			$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
 
+			JPluginHelper::importPlugin('j2xml');
+			$results = JFactory::getApplication()->triggerEvent('onValidateData', array(&$xml, $params));
+
 			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
-			if ($importer->isSupported($xmlVersionNumber))
+			if ($importer->isSupported($xmlVersionNumber) || in_array(true, $results, true))
 			{
 				$iparams = new \JRegistry();
 				$iparams->set('filename', $filename);
@@ -247,6 +250,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 					$this->app->redirect('index.php?option=com_j2xml');
 					return;
 				}
+
 			}
 			else
 			{

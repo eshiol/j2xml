@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       18.8.310
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -19,10 +22,9 @@ defined('JPATH_PLATFORM') or die();
 \JLoader::import('joomla.filesystem.folder');
 
 /**
- * Image table
  *
-
- * @since 18.8.310
+ * Image Table
+ *
  */
 class Image
 {

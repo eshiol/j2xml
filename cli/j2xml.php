@@ -2,7 +2,7 @@
 /**
  * @package     Joomla.Cli
  * @subpackage  J2xml
- * 
+ *
  * @since		2.5
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>

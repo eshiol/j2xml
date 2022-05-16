@@ -36,5 +36,5 @@ class J2xmlControllerContact extends J2xmlControllerJson
 	 * @since 3.1.112
 	 */
 	protected $_context = 'j2xml.contact';
-	
+
 }

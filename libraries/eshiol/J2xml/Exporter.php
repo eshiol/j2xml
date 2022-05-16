@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       1.5.2.14
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -52,9 +55,9 @@ use eshiol\J2xml\Version;
 \JLoader::import('eshiol.J2xml.Version');
 
 /**
+ *
  * Exporter
  *
- * @since 1.5.2.14
  */
 class Exporter
 {
@@ -75,7 +78,7 @@ class Exporter
 	function __construct ()
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$this->_option = (PHP_SAPI != 'cli') ? \JFactory::getApplication()->input->getCmd('option') : 'cli_' .
 				 strtolower(get_class(\JApplicationCli::getInstance()));
 		$db = \JFactory::getDbo();
@@ -93,12 +96,12 @@ class Exporter
 		$jlang->load('lib_j2xml', JPATH_SITE, 'en-GB', true);
 		$jlang->load('lib_j2xml', JPATH_SITE, $jlang->getDefault(), true);
 		$jlang->load('lib_j2xml', JPATH_SITE, null, true);
-		
+
 		// @todo use query object - postgresql
 		$db->setQuery("CREATE TABLE IF NOT EXISTS `#__j2xml_usergroups` (`id` int(10) unsigned NOT NULL, `parent_id` int(10) unsigned NOT NULL DEFAULT '0', `title` varchar(100) NOT NULL DEFAULT '') ENGINE=InnoDB  DEFAULT CHARSET=utf8;")->execute();
 		$db->setQuery("TRUNCATE TABLE `#__j2xml_usergroups`;")->execute();
 		$db->setQuery("INSERT INTO `#__j2xml_usergroups` " .
-			"SELECT `id`,`parent_id`,CONCAT('[\"',REPLACE(`title`,'\"','\\\"'),'\"]') " . 
+			"SELECT `id`,`parent_id`,CONCAT('[\"',REPLACE(`title`,'\"','\\\"'),'\"]') " .
 			"FROM `#__usergroups`;")->execute();
 		do {
 			$db->setQuery("UPDATE `#__j2xml_usergroups` j " .
@@ -109,7 +112,7 @@ class Exporter
 			$n = $db->setQuery("SELECT COUNT(*) " .
 				"FROM `#__j2xml_usergroups` " .
 				"WHERE `parent_id` > 0;")->loadResult();
-		} while ($n > 0);		
+		} while ($n > 0);
 	}
 
 	/**
@@ -121,7 +124,7 @@ class Exporter
 	protected function _root ()
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$data = '<?xml version="1.0" encoding="UTF-8" ?>';
 		// $data .= Version::$DOCTYPE;
 		$data .= '<j2xml version="' . Version::$DOCVERSION . '"/>';
@@ -133,7 +136,7 @@ class Exporter
 	function export ($xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($options['debug'] > 0)
 		{
 			$app = \JFactory::getApplication();
@@ -158,7 +161,7 @@ class Exporter
 
 		// modify the MIME type
 		$document = \JFactory::getDocument();
-		
+
 		// Verify that the server supports gzip compression before we attempt to gzip encode the data.
 		// @codeCoverageIgnoreStart
 		if (!\extension_loaded('zlib') || ini_get('zlib.output_compression'))
@@ -195,7 +198,7 @@ class Exporter
 	function content ($ids, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (! $xml)
 		{
 			$xml = self::_root();
@@ -239,7 +242,7 @@ class Exporter
 	function categories ($ids, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (! $xml)
 		{
 			$xml = self::_root();
@@ -284,7 +287,7 @@ class Exporter
 	function users ($ids, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (! $xml)
 		{
 			$xml = self::_root();
@@ -329,7 +332,7 @@ class Exporter
 	function weblinks ($ids, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (! $xml)
 		{
 			$xml = self::_root();
@@ -373,7 +376,7 @@ class Exporter
 	function contact ($ids, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (! $xml)
 		{
 			$xml = self::_root();
@@ -417,7 +420,7 @@ class Exporter
 	function fields ($ids, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (! $xml)
 		{
 			$xml = self::_root();
@@ -461,7 +464,7 @@ class Exporter
 	function viewlevels ($ids, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if (! $xml)
 		{
 			$xml = self::_root();
@@ -507,24 +510,24 @@ class Exporter
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if (! $xml)
 		{
 			$xml = $this->_root();
 		}
-		
+
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-		
+
 		foreach ($ids as $id)
 		{
 			Menutype::export($id, $xml, $options);
 		}
-		
+
 		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		// Trigger the onAfterExport event.
@@ -536,7 +539,7 @@ class Exporter
 
 		return $xml;
 	}
-	
+
 	/**
 	 * Export modules
 	 *
@@ -553,24 +556,24 @@ class Exporter
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
-		
+
 		if (! $xml)
 		{
 			$xml = $this->_root();
 		}
-		
+
 		if (is_scalar($ids))
 		{
 			$id = $ids;
 			$ids = array();
 			$ids[] = $id;
 		}
-		
+
 		foreach ($ids as $id)
 		{
 			Module::export($id, $xml, $options);
 		}
-		
+
 		$params = new \JRegistry($options);
 		\JPluginHelper::importPlugin('j2xml');
 		// Trigger the onAfterExport event.

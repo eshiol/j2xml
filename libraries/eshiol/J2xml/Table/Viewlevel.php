@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       15.3.248
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -19,10 +22,9 @@ use eshiol\J2xml\Table\Table;
 \JLoader::import('eshiol.J2xml.Table.Table');
 
 /**
+ *
  * Viewlevel Table
  *
-
- * @since 15.3.248
  */
 class Viewlevel extends Table
 {
@@ -38,7 +40,7 @@ class Viewlevel extends Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__viewlevels', 'id', $db);
 	}
 
@@ -50,7 +52,7 @@ class Viewlevel extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$this->_excluded = array_merge($this->_excluded, array(
 				'rules'
 		));
@@ -116,7 +118,7 @@ class Viewlevel extends Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_viewlevels = 2; // $params->get('viewlevels', 1);
 		if ($import_viewlevels == 0)
 			return;
@@ -236,7 +238,7 @@ class Viewlevel extends Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/viewlevel/id[text() = '" . $id . "']"))
 		{
 			return;

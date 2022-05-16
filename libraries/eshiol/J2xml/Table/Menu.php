@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       21.1.355
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -16,9 +19,9 @@ namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
 /**
- * Menu Table class
  *
- * @since 22.1.355
+ * Menu Table
+ *
  */
 class Menu extends \eshiol\J2XML\Table\Table
 {
@@ -190,7 +193,7 @@ class Menu extends \eshiol\J2XML\Table\Table
 						$component = -1;
 					}
 				}
-				else 
+				else
 				{
 					$component = 0;
 				}
@@ -209,9 +212,9 @@ class Menu extends \eshiol\J2XML\Table\Table
 							$data['link'] = 'index.php?' . http_build_query($args);
 						}
 					}
-					
+
 					\JLog::add(new \JLogEntry('data: ' . print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
-					
+
 					// Trigger the onContentBeforeSave event.
 					$table->bind($data);
 					if ($table->store())
