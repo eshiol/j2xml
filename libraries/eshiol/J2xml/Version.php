@@ -1,12 +1,15 @@
 <?php
 /**
- * @package		Joomla.Libraries
- * @subpackage	eshiol.J2XML
+ * @package     Joomla.Libraries
+ * @subpackage  eshiol.J2XML
  *
- * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * @version     __DEPLOY_VERSION__
+ * @since       1.5.3
+ *
+ * @author      Helios Ciancio <info (at) eshiol (dot) it>
+ * @link        https://www.eshiol.it
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License
@@ -19,7 +22,8 @@ defined('_JEXEC') or die('Restricted access.');
 
 /**
  *
- * @since 1.5.3
+ * Version
+ *
  */
 class Version
 {
@@ -32,12 +36,12 @@ class Version
 	/**
 	 * @public static int Main Release Level
 	 */
-	public static $RELEASE = '21';
+	public static $RELEASE = '22';
 
 	/**
 	 * @public static int Sub Release Level
 	 */
-	public static $DEV_LEVEL = '12';
+	public static $DEV_LEVEL = '5';
 
 	/**
 	 * @public static string Development Status
@@ -49,7 +53,7 @@ class Version
 	/**
 	 * @public static int build Number
 	 */
-	public static $BUILD = '353';
+	public static $BUILD = '359';
 
 	/**
 	 * @public static string Codename
@@ -59,7 +63,7 @@ class Version
 	/**
 	 * @public static string Copyright Text
 	 */
-	public static $COPYRIGHT = 'Copyright &copy; 2010 - 2021 Helios Ciancio <a href="https://www.eshiol.it" title="eshiol.it"><img src="../media/com_j2xml/images/eshiol.png" alt="eshiol.it" /></a>. All rights reserved.';
+	public static $COPYRIGHT = 'Copyright &copy; 2010 - 2022 Helios Ciancio <a href="https://www.eshiol.it" title="eshiol.it"><img src="../media/com_j2xml/images/eshiol.png" alt="eshiol.it" /></a>. All rights reserved.';
 
 	/**
 	 * @public static string License

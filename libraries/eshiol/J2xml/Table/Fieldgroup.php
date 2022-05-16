@@ -1,12 +1,15 @@
 <?php
 /**
- * @package		Joomla.Libraries
- * @subpackage	eshiol.J2XML
+ * @package     Joomla.Libraries
+ * @subpackage  eshiol.J2XML
  *
- * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * @version     __DEPLOY_VERSION__
+ * @since       19.2.323
+ *
+ * @author      Helios Ciancio <info (at) eshiol (dot) it>
+ * @link        https://www.eshiol.it
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License
@@ -16,15 +19,16 @@ namespace eshiol\J2xml\Table;
 defined('JPATH_PLATFORM') or die();
 
 use eshiol\J2xml\Table\Table;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Component\Fields\Administrator\Table\GroupTable;
+
 \JLoader::import('eshiol.J2xml.Table.Table');
 
-use Joomla\CMS\Component\ComponentHelper;
 
 /**
- * Table
  *
-
- * @since 19.2.323
+ * Fieldgroup Table
+ *
  */
 class Fieldgroup extends Table
 {
@@ -47,7 +51,7 @@ class Fieldgroup extends Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__fields_groups', 'id', $db);
 	}
 
@@ -70,7 +74,7 @@ class Fieldgroup extends Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_fields = $params->get('fields', 0);
 		if ($import_fields == 0)
 			return;
@@ -100,19 +104,19 @@ class Fieldgroup extends Table
 					$table = new GroupTable($db);
 				}
 				else
-				{ // Joomla! 4
+				{ // backward compatibility
 					\JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fields/tables');
 					$table = \JTable::getInstance('Group', 'FieldsTable');
 				}
 
 				$data['id'] = null;
 
-				// TODO: Trigger the onContentBeforeSave event.
+				// @todo Trigger the onContentBeforeSave event.
 				$table->bind($data);
 				if ($table->store())
 				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_FIELDGROUP_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
-					// TODO: Trigger the onContentAfterSave event.
+					// @todo Trigger the onContentAfterSave event.
 				}
 				else
 				{
@@ -143,7 +147,7 @@ class Fieldgroup extends Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/fieldgroup/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -172,6 +176,25 @@ class Fieldgroup extends Table
 			{
 				User::export($item->modified_by, $xml, $options);
 			}
+		}
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 * @see Table::prepareData()
+	 *
+	 * @since 22.2.356
+	 */
+	public static function prepareData ($record, &$data, $params)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+
+		parent::prepareData($record, $data, $params);
+
+		if (! isset($data['description']))
+		{
+			$data['description'] = '';
 		}
 	}
 }

@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -152,7 +152,7 @@ foreach ($files as $file)
 							<tr>
 								<td colspan="2">
 					<?php echo JText::_('Copyright'); ?>
-					<a href='http://www.eshiol.it' target='_blank'>
+					<a href='https://www.eshiol.it' target='_blank'>
 					<?php echo str_replace("(C)", "&copy", $xml->copyright); ?>
 					<img src='../media/com_j2xml/images/eshiol.png' alt='eshiol.it'
 										title='eshiol.it' border='0'>
@@ -234,7 +234,7 @@ foreach ($files as $file)
 								<tr>
 									<td colspan="2">
 					<?php echo JText::_('Copyright'); ?>
-					<a href='http://www.eshiol.it' target='_blank'>
+					<a href='https://www.eshiol.it' target='_blank'>
 					<?php echo str_replace("(C)", "&copy", $xml->copyright); ?>
 					<img src='../media/com_j2xml/images/eshiol.png' alt='eshiol.it'
 											title='eshiol.it' border='0'>

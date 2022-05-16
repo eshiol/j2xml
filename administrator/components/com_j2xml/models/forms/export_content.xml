@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -18,16 +18,5 @@
 -->
 <form>
 	<fieldset name="content">
-		<field
-			name="export_categories"
-			type="radio"
-			label="COM_J2XML_CONFIG_CATEGORIES_LABEL"
-			description="COM_J2XML_CONFIG_EXPORT_CATEGORIES_DESC"
-			default="1"
-			class="btn-group btn-group-yesno"
-			layout="joomla.form.field.radio.switcher">
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
-		</field>
 	</fieldset>
 </form>

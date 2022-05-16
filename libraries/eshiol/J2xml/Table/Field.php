@@ -1,12 +1,15 @@
 <?php
 /**
- * @package		Joomla.Libraries
- * @subpackage	eshiol.J2XML
+ * @package     Joomla.Libraries
+ * @subpackage  eshiol.J2XML
  *
- * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * @version     __DEPLOY_VERSION__
+ * @since       17.6.299
+ *
+ * @author      Helios Ciancio <info (at) eshiol (dot) it>
+ * @link        https://www.eshiol.it
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License
@@ -18,16 +21,16 @@ defined('JPATH_PLATFORM') or die();
 use eshiol\J2xml\Table\Category;
 use eshiol\J2xml\Table\Fieldgroup;
 use eshiol\J2xml\Table\Table;
-// use Joomla\Component\Fields\Administrator\Table\FieldTable;
+use Joomla\Component\Fields\Administrator\Table\FieldTable;
+
 \JLoader::import('eshiol.J2xml.Table.Category');
 \JLoader::import('eshiol.J2xml.Table.Fieldgroup');
 \JLoader::import('eshiol.J2xml.Table.Table');
 
 /**
- * Field table
  *
-
- * @since 17.6.299
+ * Field Table
+ *
  */
 class Field extends Table
 {
@@ -43,7 +46,7 @@ class Field extends Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__fields', 'id', $db);
 	}
 
@@ -55,7 +58,7 @@ class Field extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$this->_excluded = array_merge($this->_excluded, array(
 				'group_id'
 		));
@@ -102,7 +105,7 @@ class Field extends Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_fields = $params->get('fields', 0);
 		if ($import_fields == 0)
 			return;
@@ -133,7 +136,7 @@ class Field extends Table
 					$table = new FieldTable($db);
 				}
 				else
-				{ // Joomla! 4
+				{ // backward compatibility
 					\JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fields/tables');
 					$table = \JTable::getInstance('Field', 'FieldsTable');
 				}
@@ -148,12 +151,12 @@ class Field extends Table
 					$table->load($data['id']);
 				}
 
-				// TODO: Trigger the onContentBeforeSave event.
+				// @todo Trigger the onContentBeforeSave event.
 				$table->bind($data);
 				if ($table->store())
 				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_FIELD_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
-					// TODO: Trigger the onContentAfterSave event.
+					// @todo Trigger the onContentAfterSave event.
 				}
 				else
 				{
@@ -174,7 +177,7 @@ class Field extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$params->set('extension', 'com_fields');
 		parent::prepareData($record, $data, $params);
 
@@ -207,7 +210,7 @@ class Field extends Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/field/id[text() = '" . $id . "']"))
 		{
 			return;

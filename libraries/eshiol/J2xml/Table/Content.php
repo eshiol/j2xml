@@ -1,12 +1,15 @@
 <?php
 /**
- * @package		Joomla.Libraries
- * @subpackage	eshiol.J2XML
+ * @package     Joomla.Libraries
+ * @subpackage  eshiol.J2XML
  *
- * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * @version     __DEPLOY_VERSION__
+ * @since       1.5.1
+ *
+ * @author      Helios Ciancio <info (at) eshiol (dot) it>
+ * @link        https://www.eshiol.it
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License
@@ -22,7 +25,11 @@ use eshiol\J2xml\Table\Table;
 use eshiol\J2xml\Table\Tag;
 use eshiol\J2xml\Table\User;
 use eshiol\J2xml\Table\Viewlevel;
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Router\SiteRouter;
+use Joomla\Component\Content\Site\Helper\RouteHelper;
 use Joomla\Utilities\ArrayHelper;
 
 \JLoader::import('eshiol.J2xml.Table.Category');
@@ -36,9 +43,9 @@ use Joomla\Utilities\ArrayHelper;
 \JLoader::import('joomla.application.router');
 
 /**
- * Content table
  *
- * @since 1.5.1
+ * Content Table
+ *
  */
 class Content extends Table
 {
@@ -48,13 +55,13 @@ class Content extends Table
 	 *
 	 * @param \JDatabaseDriver $db
 	 *			A database connector object
-	 *		
+	 *
 	 * @since 1.5.1
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__content', 'id', $db);
 
 	/**
@@ -113,16 +120,25 @@ class Content extends Table
 				$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
 			->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
 
-		\JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
-		$config = \JFactory::getConfig();
-		$router = \JRouter::getInstance('site');
-		$router->setMode($config->get('sef', 1));
 		$slug = $this->alias ? ($this->id . ':' . $this->alias) : $this->id;
-		$url = \ContentHelperRoute::getArticleRoute($slug, $this->catid, $this->language);
-		$canonical = str_replace(\JUri::base(true) . '/', \JUri::root(), $router->build($url));
+
+		$version = new \JVersion();
+		if ($version->isCompatible('4'))
+		{
+			// We need to make sure we are always using the site router, even if the language plugin is executed in admin app.
+			$router = CMSApplication::getRouter('site');
+			$url = $router->build(RouteHelper::getArticleRoute($slug, $this->catid, $this->language));
+		}
+		else
+		{
+			\JLoader::register('ContentHelperRoute', JPATH_SITE . '/components/com_content/helpers/route.php');
+			$router = \JRouter::getInstance('site', array('mode' => \JFactory::getConfig()->get('sef', 1)));
+			$url = $router->build(\ContentHelperRoute::getArticleRoute($slug, $this->catid, $this->language));
+		}
+
+		$canonical = str_replace(\JUri::base(true) . '/', \JUri::root(), $url);
 		// $this->_aliases['canonical'] = 'SELECT \'' . $canonical . '\' FROM
 		// DUAL';
-		$version = new \JVersion();
 		$serverType = $version->isCompatible('3.5') ? $this->_db->getServerType() : 'mysql';
 		if ($serverType === 'sqlserver')
 		{
@@ -175,7 +191,7 @@ class Content extends Table
 				$this->_db->quoteName('asso1.id') . ' = ' . (int) $this->id,
 				$this->_db->quoteName('asso1.context') . ' = ' . $this->_db->quote('com_content.item'),
 				$this->_db->quoteName('asso2.id') . ' <> ' . (int) $this->id));
-			
+
 		return parent::toXML($mapKeysToText);
 	}
 
@@ -190,17 +206,17 @@ class Content extends Table
 	 *			@option int 'content_category_default'
 	 *			@option int 'content_category_forceto'
 	 *			@option string 'context'
-	 *		
+	 *
 	 * @throws
 	 * @return void
 	 * @access public
-	 *		
+	 *
 	 * @since 18.8.301
 	 */
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_content = $params->get('content', 0);
 		if ($import_content == 0)
 		{
@@ -282,25 +298,17 @@ class Content extends Table
 				}
 				elseif ($keep_id)
 				{
-					\JLog::add(
-							new \JLogEntry(
-									\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $content->id,
-											\JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, \JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
 				}
 				else
 				{
-					\JLog::add(
-							new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_EXISTS', $data['title'], $id . '->' . $content->id), \JLog::NOTICE,
-									'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_EXISTS', $data['title'], $id . '->' . $content->id), \JLog::NOTICE, 'lib_j2xml'));
 				}
 				continue;
 			}
 			elseif (($import_content >= 2) && $content && $keep_id && ($id != $content->id))
 			{
-				\JLog::add(
-						new \JLogEntry(
-								\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $content->id,
-										\JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
+				\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, \JText::_('JLIB_DATABASE_ERROR_ARTICLE_UNIQUE_ALIAS')), \JLog::ERROR, 'lib_j2xml'));
 				continue;
 			}
 			else
@@ -320,7 +328,7 @@ class Content extends Table
 				{
 					$results = [];
 				}
-				else 
+				else
 				{
 					$table->bind($data);
 
@@ -392,30 +400,22 @@ class Content extends Table
 
 								if ($id != $item->id)
 								{
-									\JLog::add(
-											new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id),
-													\JLog::INFO, 'lib_j2xml'));
+									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO, 'lib_j2xml'));
 								}
 								else
 								{
-									\JLog::add(
-											new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO,
-													'lib_j2xml'));
+									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO, 'lib_j2xml'));
 								}
 							}
 							catch (\Exception $ex)
 							{
-								\JLog::add(
-										new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $item->title, $id, $item->id),
-												\JLog::WARNING, 'lib_j2xml'));
+								\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $item->title, $id, $item->id), \JLog::WARNING, 'lib_j2xml'));
 								continue;
 							}
 						}
 						elseif ($id != $item->id)
 						{
-							\JLog::add(
-									new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO,
-											'lib_j2xml'));
+							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO,	'lib_j2xml'));
 						}
 						else
 						{
@@ -425,7 +425,7 @@ class Content extends Table
 
 						if (! $version->isCompatible('4'))
 						{
-							// TODO: add Joomla! 4 compatibility
+							// @todo add Joomla! 4 compatibility
 							if ($keep_frontpage == 0)
 							{
 								$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
@@ -482,18 +482,12 @@ class Content extends Table
 					}
 					else
 					{
-						\JLog::add(
-								new \JLogEntry(
-										\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'] . ' (id = ' . $id . ')',
-												$table->getError()), \JLog::ERROR, 'lib_j2xml'));
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $table->getError()), \JLog::ERROR, 'lib_j2xml'));
 					}
 				}
 				else
 				{
-					\JLog::add(
-							new \JLogEntry(
-									\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'] . ' (id = ' . $id . ')', $table->getError()),
-									\JLog::NOTICE, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $table->getError()), \JLog::NOTICE, 'lib_j2xml'));
 				}
 			}
 
@@ -525,12 +519,17 @@ class Content extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$db      = \JFactory::getDBO();
 		$version = new \JVersion();
 
 		$params->set('extension', 'com_content');
 		parent::prepareData($record, $data, $params);
+
+		if (empty($data['id']))
+		{
+			$data['id'] = 0;
+		}
 
 		if (empty($data['alias']))
 		{
@@ -638,13 +637,13 @@ class Content extends Table
 	 * @throws
 	 * @return void
 	 * @access public
-	 *		
+	 *
 	 * @since 18.8.310
 	 */
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/content/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -687,7 +686,7 @@ class Content extends Table
 			}
 		}
 
-		if (isset($options['field']) && $options['fields'] && $version->isCompatible('3.7'))
+		if (isset($options['fields']) && $options['fields'] && $version->isCompatible('3.7'))
 		{
 			$query = $db->getQuery(true)
 				->select('DISTINCT field_id')
@@ -752,13 +751,42 @@ class Content extends Table
 			if ($version->isCompatible('3.7'))
 			{
 				foreach($db->setQuery($db->getQuery(true)
-						->select($db->quoteName('v.value'))
-						->from($db->quoteName('#__fields_values', 'v'))
-						->from($db->quoteName('#__fields', 'f'))
-						->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'))
-						->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
-						->where($db->quoteName('f.type') . ' = ' . $db->quote('editor')))
-						->loadColumn() as $text) {
+					->select($db->quoteName('v.value'))
+					->from($db->quoteName('#__fields_values', 'v'))
+					->from($db->quoteName('#__fields', 'f'))
+					->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'))
+					->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
+					->where($db->quoteName('f.type') . ' = ' . $db->quote('media')))
+					->loadColumn() as $_image)
+				{
+					Image::export($image, $xml, $options);
+				}
+
+				foreach($db->setQuery($db->getQuery(true)
+					->select($db->quoteName('f.fieldparams'))
+					->select($db->quoteName('v.value'))
+					->from($db->quoteName('#__fields_values', 'v'))
+					->from($db->quoteName('#__fields', 'f'))
+					->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'))
+					->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
+					->where($db->quoteName('f.type') . ' = ' . $db->quote('imagelist')))
+					->loadObjectList() as $field)
+				{
+					$params = json_decode($field->fieldparams);
+					$_image = ComponentHelper::getParams('com_media')->get('image_path', 'images') . '/' . (isset($params->directory) ? $params->directory . '/' : '') . $field->value;
+					Image::export($_image, $xml, $options);
+				}
+
+				foreach($db->setQuery($db->getQuery(true)
+					->select($db->quoteName('v.value'))
+					->from($db->quoteName('#__fields_values', 'v'))
+					->from($db->quoteName('#__fields', 'f'))
+					->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'))
+					->where($db->quoteName('v.item_id') . ' = ' . $db->quote((string) $id))
+					->where($db->quoteName('f.type') . ' = ' . $db->quote('editor')))
+					->loadColumn() as $text)
+				{
+					\JLog::add(new \JLogEntry($text, \JLog::DEBUG, 'com_j2xml'));
 					$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text, $matches, PREG_PATTERN_ORDER);
 					if (count($matches[1]) > 0)
 					{
@@ -785,7 +813,7 @@ class Content extends Table
 	public static function getCategoryId ($category, $extension = 'com_content', $defaultCategoryId = 0)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		return parent::getCategoryId($category, $extension, $defaultCategoryId);
 	}
 }

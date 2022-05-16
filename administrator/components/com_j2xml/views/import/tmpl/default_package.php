@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -17,6 +17,8 @@
 
 // no direct access
 defined('_JEXEC') or die();
+
+use Joomla\CMS\Component\ComponentHelper;
 
 JHtml::_('bootstrap.tooltip');
 
@@ -37,7 +39,7 @@ JFactory::getDocument()->addScriptDeclaration('
 	{
 		var form = document.getElementById("adminForm");
 
-		// do field validation 
+		// do field validation
 		if (form.install_package.value == "")
 		{
 			alert("' . JText::_('COM_J2XML_PACKAGEIMPORTER_NO_PACKAGE', true) . '");
@@ -52,11 +54,15 @@ JFactory::getDocument()->addScriptDeclaration('
 ');
 
 // Drag and Drop installation scripts
-$token = JSession::getFormToken();
-$return = JFactory::getApplication()->input->getBase64('return');
+$token    = JSession::getFormToken();
+$return   = JFactory::getApplication()->input->getBase64('return');
+
+$document = JFactory::getDocument();
+$params   = ComponentHelper::getParams('com_j2xml');
+$document->addScriptOptions('J2XML', array('HaltOnError' => (bool) $params->get('haltonerror', 1)));
 
 // Drag-drop installation
-JFactory::getDocument()->addScriptDeclaration(
+$document->addScriptDeclaration(
 <<<JS
 	jQuery(document).ready(function($) {
 		if (typeof FormData === 'undefined') {
@@ -127,30 +133,35 @@ JFactory::getDocument()->addScriptDeclaration(
 					if (root.nodeName != "j2xml") {
 						console.log('file not supported');
 						Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
-					} else if (versionCompare($(root).attr('version'), '15.9.0') < 0) {
-						console.log('j2xml file version ' + $(root).attr('version') + ' not supported');
-						Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED').replace('%s', $(root).attr('version'))]});
-						return false;
 					} else {
-						console.log('j2xml file version ' + $(root).attr('version'));
+						validated = false;
+						eshiol.j2xml.validate.forEach(function(fn) {
+							validated = validated || fn(data);
+						});
+						if (validated) {
+							console.log('j2xml file version ' + $(root).attr('version'));
 
-						$('#j2xml_filename').val(file.name);
-						$('#j2xml_data').val(btoa(data));
+							$('#j2xml_filename').val(file.name);
+							$('#j2xml_data').val(btoa(unescape(encodeURIComponent(data))));
 
-						var j2xmlOptions  = Joomla.getOptions('J2XML'),
-					    	JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
+							var j2xmlOptions  = Joomla.getOptions('J2XML'),
+						    	JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
 
-					    if  (JoomlaVersion == '4') {
-							var el = document.getElementById('j2xmlImportModal')
-							var modal = bootstrap.Modal.getInstance(el) // Returns a Bootstrap modal instance
-							modal.show();
-	    				}
-	    				else {
-							$('#j2xmlImportModal').modal();
+						    if  (JoomlaVersion == '4') {
+								var el = document.getElementById('j2xmlImportModal')
+								var modal = bootstrap.Modal.getInstance(el) // Returns a Bootstrap modal instance
+								modal.show();
+		    				} else {
+								$('#j2xmlImportModal').modal();
+							}
+
+							fileInput.val('');
+							return false;
+						} else {
+							console.log('j2xml file version ' + $(root).attr('version') + ' not supported');
+							Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED').replace('%s', $(root).attr('version'))]});
+							return false;
 						}
-
-						fileInput.val('');
-						return false;
 					}
 				} catch(e) {
 					console.log(e);
@@ -231,30 +242,35 @@ JFactory::getDocument()->addScriptDeclaration(
 					if (root.nodeName != "j2xml") {
 						console.log(Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'));
 						Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
-					} else if (versionCompare($(root).attr('version'), '15.9.0') < 0) {
-						console.log(Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED').replace('%s', $(root).attr('version')));
-						Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED').replace('%s', $(root).attr('version'))]});
-						return false;
 					} else {
-						console.log('j2xml file version ' + $(root).attr('version'));
+						validated = false;
+						eshiol.j2xml.validate.forEach(function(fn) {
+							validated = validated && fn(data);
+						});
+						if (validated) {
+							console.log('j2xml file version ' + $(root).attr('version'));
 
-						$('#j2xml_filename').val(file.name);
-						$('#j2xml_data').val(btoa(data));
+							$('#j2xml_filename').val(file.name);
+							$('#j2xml_data').val(btoa(unescape(encodeURIComponent(data))));
 
-						var j2xmlOptions  = Joomla.getOptions('J2XML'),
-					    	JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
+							var j2xmlOptions  = Joomla.getOptions('J2XML'),
+						    	JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
 
-					    if  (JoomlaVersion == '4') {
-							var el = document.getElementById('j2xmlImportModal')
-							var modal = bootstrap.Modal.getInstance(el) // Returns a Bootstrap modal instance
-							modal.show();
-	    				}
-	    				else {
-							$('#j2xmlImportModal').modal();
+						    if  (JoomlaVersion == '4') {
+								var el = document.getElementById('j2xmlImportModal')
+								var modal = bootstrap.Modal.getInstance(el) // Returns a Bootstrap modal instance
+								modal.show();
+		    				} else {
+								$('#j2xmlImportModal').modal();
+							}
+
+							fileInput.val('');
+							return false;
+						} else {
+							console.log(Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED').replace('%s', $(root).attr('version')));
+							Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED').replace('%s', $(root).attr('version'))]});
+							return false;
 						}
-
-						fileInput.val('');
-						return false;
 					}
 				} catch(e) {
 					console.log(e);
@@ -266,7 +282,7 @@ JFactory::getDocument()->addScriptDeclaration(
 JS
 );
 
-JFactory::getDocument()->addStyleDeclaration(
+$document->addStyleDeclaration(
 <<<CSS
 	#dragarea {
 		background-color: #fafbfc;
@@ -345,6 +361,12 @@ if ($version->isCompatible('3.7'))
 {
 	$maxSize = JFilesystemHelper::fileUploadMaxSize();
 }
+if ($version->isCompatible('4'))
+{
+	$document->addScriptOptions('progressBarContainerClass', 'progress');
+	$document->addScriptOptions('progressBarClass', 'progress-bar progress-bar-striped progress-bar-animated bg');
+	$document->addScriptOptions('progressBarErrorClass', 'progress-bar progress-bar-striped progress-bar-animated bg-error');
+}
 ?>
 <legend><?php echo JText::_('COM_J2XML_PACKAGEIMPORTER_UPLOAD_IMPORT_DATA'); ?></legend>
 
@@ -355,9 +377,9 @@ if ($version->isCompatible('3.7'))
 				<span id="upload-icon" class="icon-upload" aria-hidden="true"></span>
 			</p>
 			<div class="upload-progress">
-				<div class="progress progress-striped active">
-					<div class="bar bar-success"
-						style="width: 0;"
+				<div class="progress<?php echo $version->isCompatible('4') ? '' : ' progress-striped active'; ?>">
+					<div class="<?php echo $version->isCompatible('4') ? 'progress-bar progress-bar-striped progress-bar-animated bg-success' : 'bar bar-success'; ?>"
+						style="width:0"
 						role="progressbar"
 						aria-valuenow="0"
 						aria-valuemin="0"

@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -50,7 +50,7 @@ class J2xmlControllerImport extends JControllerLegacy
 		/** @var J2xmlModelImport $model */
 		$model = $this->getModel('import');
 
-		// TODO: Reset the users acl here as well to kill off any missing bits.
+		// @todo Reset the users acl here as well to kill off any missing bits.
 		$result = $model->import();
 
 		$app = JFactory::getApplication();
@@ -109,7 +109,7 @@ class J2xmlControllerImport extends JControllerLegacy
 		// Save the posted data in the session.
 		$app->setUserState('com_j2xml.import.data', $data);
 		JLog::add(new JLogEntry('setUserState(\'com_j2xml.import.data\'): ' . print_r($data, true), JLog::DEBUG, 'com_j2xml'));
-		
+
 		// Do import
 		$result = $this->import();
 

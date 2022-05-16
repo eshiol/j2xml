@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -51,7 +51,7 @@ class J2xmlControllerContact extends JControllerLegacy
 	 *			The prefix for the model class name.
 	 * @param array $config
 	 *			Configuration array for model. Optional.
-	 *			
+	 *
 	 * @return JModelLegacy
 	 *
 	 * @since 3.9.0
@@ -72,9 +72,9 @@ class J2xmlControllerContact extends JControllerLegacy
 	 *			If true, the view output will be cached
 	 * @param array $urlparams
 	 *			An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
-	 *			
+	 *
 	 * @return J2xmlControllerUser This object to support chaining.
-	 *		
+	 *
 	 * @since 3.6.161
 	 * @todo This should be done as a view, not here!
 	 */

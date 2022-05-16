@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -132,7 +132,6 @@ JText::script('LIB_J2XML_MSG_XMLRPC_DISABLED');
 				window.top.setTimeout('window.parent.jQuery(\'#j2xmlSendModal\').modal(\'hide\')', 700);
 
 				eshiol.j2xml.send({
-					message_container: window.parent.jQuery('#system-message-container'),
 					export_url: 'index.php?option=com_j2xml&task=contact.export&format=json&<?php echo JSession::getFormToken(); ?>=1',
 					remote_url: jQuery('#jform_remote_url').val().replace(/\/?$/, '/') + 'index.php?option=com_j2xml&task=services.import&format=xmlrpc',
 					compression: jQuery('#jform_compression').val(),

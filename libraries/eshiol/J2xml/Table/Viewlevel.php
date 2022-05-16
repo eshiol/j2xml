@@ -1,12 +1,15 @@
 <?php
 /**
- * @package		Joomla.Libraries
- * @subpackage	eshiol.J2XML
+ * @package     Joomla.Libraries
+ * @subpackage  eshiol.J2XML
  *
- * @author		Helios Ciancio <info (at) eshiol (dot) it>
- * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
- * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
+ * @version     __DEPLOY_VERSION__
+ * @since       15.3.248
+ *
+ * @author      Helios Ciancio <info (at) eshiol (dot) it>
+ * @link        https://www.eshiol.it
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
  * is derivative of works licensed under the GNU General Public License
@@ -19,10 +22,9 @@ use eshiol\J2xml\Table\Table;
 \JLoader::import('eshiol.J2xml.Table.Table');
 
 /**
+ *
  * Viewlevel Table
  *
-
- * @since 15.3.248
  */
 class Viewlevel extends Table
 {
@@ -38,7 +40,7 @@ class Viewlevel extends Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__viewlevels', 'id', $db);
 	}
 
@@ -50,7 +52,7 @@ class Viewlevel extends Table
 	function toXML ($mapKeysToText = false)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$this->_excluded = array_merge($this->_excluded, array(
 				'rules'
 		));
@@ -116,7 +118,7 @@ class Viewlevel extends Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_viewlevels = 2; // $params->get('viewlevels', 1);
 		if ($import_viewlevels == 0)
 			return;
@@ -210,8 +212,7 @@ class Viewlevel extends Table
 				}
 				else
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_VIEWLEVEL_NOT_IMPORTED', $data['title']), \JLog::ERROR, 'lib_j2xml'));
-					\JLog::add(new \JLogEntry($table->getError(), \JLog::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_VIEWLEVEL_NOT_IMPORTED', $data['title'], $table->getError()), \JLog::ERROR, 'lib_j2xml'));
 				}
 
 				$table = null;
@@ -237,7 +238,7 @@ class Viewlevel extends Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/viewlevel/id[text() = '" . $id . "']"))
 		{
 			return;

@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -31,21 +31,24 @@ JLoader::import('joomla.log.log');
 if ($params->get('debug') || defined('JDEBUG') && JDEBUG)
 {
 	JLog::addLogger(
-		array('text_file' => $params->get('log', 'eshiol.log.php'),	'extension' => 'com_j2xml_file'), 
-		JLog::DEBUG | JLog::ERROR, 
+		array('text_file' => $params->get('log', 'eshiol.log.php'),	'extension' => 'com_j2xml_file'),
+		JLog::DEBUG | JLog::ERROR,
 		array('lib_j2xml', 'com_j2xml'));
 }
 JLog::addLogger(
-	array('logger' => 'messagequeue', 'extension' => 'com_j2xml'), 
-	JLog::ALL & ~JLog::DEBUG, 
+	array('logger' => 'messagequeue', 'extension' => 'com_j2xml'),
+	JLog::ALL & ~JLog::DEBUG,
 	array('lib_j2xml', 'com_j2xml'));
 if ($params->get('phpconsole') && class_exists('JLogLoggerPhpconsole'))
 {
 	JLog::addLogger(
-		array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'), 
-		JLog::DEBUG, 
+		array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'),
+		JLog::DEBUG,
 		array('lib_j2xml', 'com_j2xml'));
 }
+
+$version = new JVersion();
+JFactory::getDocument()->addScriptOptions('J2XML', array('Joomla' => ($version->isCompatible('4') ? 4 : 3) ));
 
 // Merge the default translation with the current translation
 $lang = JFactory::getApplication()->getLanguage();

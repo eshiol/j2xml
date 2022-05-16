@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -23,10 +23,9 @@ require_once dirname(__FILE__) . '/../raw.php';
 /**
  * J2XML Component Modules View
  *
- * @version __DEPLOY_VERSION__
- * @since 3.6.165
+* @since 3.9.213
  */
-class J2XMLViewModules extends J2XMLView
+class J2xmlViewModules extends J2XMLView
 {
 }
 ?>

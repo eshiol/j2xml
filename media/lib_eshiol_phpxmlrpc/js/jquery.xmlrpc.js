@@ -2,6 +2,7 @@
  * @package		Joomla.Libraries
  * @subpackage	eshiol.Phpxmlrpc
  *
+ * @version     __DEPLOY_VERSION__
  * @since		4.4.1.24
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>

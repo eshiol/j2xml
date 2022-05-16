@@ -2,13 +2,13 @@
 <!--
 /**
  * @package     Joomla.Administrator
- * @subpackage  com_j2xml
+ * @subpackage  Components.J2xml
  *
  * @version     __DEPLOY_VERSION__
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -188,11 +188,11 @@
 			<option	value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS</option>
 		</field>
 		<field
-			name="import_keep_user_id" 
-			type="radio" 
+			name="import_keep_user_id"
+			type="radio"
 			class="btn-group btn-group-yesno"
 			layout="joomla.form.field.radio.switcher"
-			default="0" 
+			default="0"
 			label="COM_J2XML_CONFIG_KEEP_USER_ID_LABEL"
 			description="COM_J2XML_CONFIG_KEEP_USER_ID_DESC"
 			showon="import_users:1,2">
@@ -321,9 +321,9 @@
 			<option	value="2">COM_J2XML_YES_OVERWRITE_IF_EXISTS</option>
 		</field>
 		<field
-			name="send_keep_user_id" 
+			name="send_keep_user_id"
 			type="list"
-			default="0" 
+			default="0"
 			label="COM_J2XML_CONFIG_KEEP_USER_ID_LABEL"
 			description="COM_J2XML_CONFIG_KEEP_USER_ID_DESC"
 			showon="send_users!:0">
@@ -366,14 +366,14 @@
 		</field>
 	</fieldset>
 
-	<fieldset 
-		name="advanced" 
+	<fieldset
+		name="advanced"
 		label="COM_J2XML_CONFIG_ADVANCED_HEADER_LABEL">
 		<field name="debug"
-			type="radio" 
+			type="radio"
 			class="btn-group btn-group-yesno"
 			layout="joomla.form.field.radio.switcher"
-			default="0" 
+			default="0"
 			description="COM_J2XML_DEBUG_SYSTEM_DESC" label="COM_J2XML_DEBUG_SYSTEM_LABEL"
 			>
 			<option value="0">JNO</option>
@@ -389,25 +389,49 @@
 			/>
 
 		<field name="phpconsole"
-			type="radio" 
+			type="radio"
 			class="btn-group btn-group-yesno"
 			layout="joomla.form.field.radio.switcher"
-			default="0" 
-			description="COM_J2XML_DEBUG_PHPCONSOLE_DESC" 
+			default="0"
+			description="COM_J2XML_DEBUG_PHPCONSOLE_DESC"
 			label="COM_J2XML_DEBUG_PHPCONSOLE_LABEL"
 			>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
-		</field>		
+		</field>
 
-		<field 
-			name="xmlrpc" 
-			type="radio" 
+		<field name="ajax"
+			type="radio"
 			class="btn-group btn-group-yesno"
 			layout="joomla.form.field.radio.switcher"
-			default="0" 
+			default="1"
+			description="COM_J2XML_AJAX_DESC"
+			label="COM_J2XML_AJAX_LABEL"
+			>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+		<field
+			name="xmlrpc"
+			type="radio"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
+			default="0"
 			label="COM_J2XML_XMLRPC_LABEL"
 			description="COM_J2XML_XMLRPC_DESC">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+		<field
+			name="haltonerror"
+			type="radio"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
+			default="1"
+			label="COM_J2XML_HALTONERROR_LABEL"
+			description="COM_J2XML_HALTONERROR_DESC">
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
