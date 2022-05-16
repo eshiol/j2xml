@@ -28,36 +28,43 @@ if ($params->get('debug') || defined('JDEBUG') && JDEBUG)
 {
 	JLog::addLogger(
 		array('text_file' => $params->get('log', 'eshiol.log.php'), 'extension' => 'com_j2xml_file'),
-		JLog::DEBUG, 
+		JLog::DEBUG,
 		array('lib_j2xml', 'com_j2xml'));
 }
 
-$headers = getallheaders();
+$headers   = getallheaders();
 JLog::add(new JLogEntry('headers: ' . print_r($headers, true), JLog::DEBUG, 'com_j2xml'));
 JLog::add(new JLogEntry('$_SERVER: ' . print_r($_SERVER, true), JLog::DEBUG, 'com_j2xml'));
 
-// header('X-Powered-By: J2XML/' . class_exists('eshiol\J2xmlpro\Version') ? \eshiol\J2xmlpro\Version::getShortVersion() : \eshiol\J2xml\Version::getShortVersion());
+$app       = JFactory::getApplication();
 
-// respond to preflights
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS')
-{
-	// return only the headers and not the content
-	// only allow CORS if we're doing a GET or POST
-//	if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']) && ($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] == 'GET' || $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] == 'POST'))
-//	{
-		header('Access-Control-Allow-Origin: ' . $headers['Origin']);
-		header('Access-Control-Allow-Credentials: true');
-		header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Authorization');
-//	}
-	exit;
-}
+$poweredBy = 'J2XML/' . (class_exists('eshiol\J2xmlpro\Version') ? \eshiol\J2xmlpro\Version::getShortVersion() : \eshiol\J2xml\Version::getShortVersion());
+header('X-Powered-By: ' . $poweredBy);
 
-if (isset($headers['Origin']))
+$jversion  = new JVersion();
+$forceCORS = $app->get('cors', !$jversion->isCompatible('4'));
+if ($forceCORS)
 {
-	header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-	header('Access-Control-Allow-Origin: ' . $headers['Origin']);
+	/**
+	 * Enable CORS (Cross-origin resource sharing)
+	 * Obtain allowed CORS origin from Global Settings.
+	 * Set to * (=all) if not set.
+	 */
+	$allowedOrigin = $app->get('cors_allow_origin', '*');
+	$allowedOrigin = $allowedOrigin != '*' ? $allowedOrigin : $headers['Origin'];
+
+	$allowedHeaders = $app->get('cors_allow_headers', 'Content-Type,X-Joomla-Token');
+
+	header('Access-Control-Allow-Origin: ' . $allowedOrigin);
 	header('Access-Control-Allow-Credentials: true');
-	header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Authorization');
+
+	// respond to preflights
+	if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS')
+	{
+		header('Access-Control-Allow-Headers: ' . $allowedHeaders);
+
+		exit;
+	}
 }
 
 $jinput = JFactory::getApplication()->input;
@@ -116,13 +123,13 @@ else
 	{
 		JLog::addLogger(
 			array('logger' => 'messagequeue', 'extension' => 'com_j2xml'),
-			JLog::ALL & ~ JLog::DEBUG, 
+			JLog::ALL & ~ JLog::DEBUG,
 			array('lib_j2xml', 'com_j2xml'));
 		if ($params->get('phpconsole') && class_exists('JLogLoggerPhpconsole'))
 		{
 			JLog::addLogger(
 				array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'),
-				JLog::DEBUG, 
+				JLog::DEBUG,
 				array('lib_j2xml', 'com_j2xml'));
 		}
 	}

@@ -132,7 +132,6 @@ JText::script('LIB_J2XML_MSG_XMLRPC_DISABLED');
 				window.top.setTimeout('window.parent.jQuery(\'#j2xmlSendModal\').modal(\'hide\')', 700);
 
 				eshiol.j2xml.send({
-					message_container: window.parent.jQuery('#system-message-container'),
 					export_url: 'index.php?option=com_j2xml&task=users.export&format=json&<?php echo JSession::getFormToken(); ?>=1',
 					remote_url: jQuery('#jform_remote_url').val().replace(/\/?$/, '/') + 'index.php?option=com_j2xml&task=services.import&format=xmlrpc',
 					compression: jQuery('#jform_compression').val(),

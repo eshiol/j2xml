@@ -2,6 +2,7 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
  * @since		16.11.288
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
@@ -55,6 +56,32 @@ if( typeof( eshiol.j2xml.convert ) === 'undefined' ){
 	eshiol.j2xml.convert = [];
 }
 
+if( typeof( eshiol.j2xml.validate ) === 'undefined' ){
+	eshiol.j2xml.validate = [];
+}
+
+/**
+ *
+ * @param {} data
+ * @return  {}
+ */
+eshiol.j2xml.validate.push(function(data)
+{
+	console.log('eshiol.j2xml.library.validate');
+
+	try {
+	   	xmlDoc = jQuery.parseXML(data);
+		xml = jQuery(xmlDoc);
+		root = xml.find(":root")[0];
+
+		console.log('eshiol.j2xml.library.validated: ' + ((root.nodeName == "j2xml") && (versionCompare(jQuery(root).attr('version'), '15.9.0') >= 0)));
+
+		return ((root.nodeName == "j2xml") && (versionCompare(jQuery(root).attr('version'), '15.9.0') >= 0));
+	} catch (e) {
+		return false;
+	}
+});
+
 eshiol.j2xml.version = '__DEPLOY_VERSION__';
 
 console.log( 'J2XML Library v' + eshiol.j2xml.version );
@@ -83,6 +110,34 @@ if( typeof( eshiol.removeMessages ) === 'undefined' ){
 }
 
 /**
+ * @copyright  (C) 2020 Open Source Matters, Inc. <https://www.joomla.org>
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ */
+/**
+ * Returns the container of the Messages
+ *
+ * @param {string|HTMLElement}  container  The container
+ *
+ * @returns {HTMLElement}
+ */
+const getMessageContainer = container => {
+  let messageContainer;
+
+  if (container instanceof HTMLElement) {
+    return container;
+  }
+
+  if (typeof container === 'undefined' || container && container === '#system-message-container') {
+    messageContainer = document.getElementById('system-message-container');
+  } else {
+    messageContainer = document.querySelector(container);
+  }
+
+  return messageContainer;
+};
+
+
+/**
  * Render messages sent via JSON
  *
  * @param	object	messages			JavaScript object containing the messages to render
@@ -96,7 +151,48 @@ if( typeof( eshiol.renderMessages ) === 'undefined' ){
 			JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
 
 		if(JoomlaVersion == '4'){
-			Joomla.renderMessages( messages, selector, true );
+			var messageContainer;
+			if ( typeof( selector ) === 'undefined' ){
+				messageContainer = getMessageContainer( selector );
+			} else {
+				messageContainer = selector;
+			}
+
+			[].slice.call( Object.keys( messages ) ).forEach( type => {
+				let alertClass = type; // Array of messages of this type
+
+				const typeMessages = messages[type];
+				const messagesBox = document.createElement( 'joomla-alert' );
+
+				if( ['success', 'info', 'danger', 'warning'].indexOf( type ) < 0 ){
+					alertClass = type === 'notice' ? 'info' : type;
+					alertClass = type === 'message' ? 'success' : alertClass;
+					alertClass = type === 'error' ? 'danger' : alertClass;
+					alertClass = type === 'warning' ? 'warning' : alertClass;
+				}
+
+				messagesBox.setAttribute( 'type', alertClass );
+				messagesBox.setAttribute( 'close-text', Joomla.Text._( 'JCLOSE' ) );
+				messagesBox.setAttribute( 'dismiss', true );
+
+				const title = Joomla.Text._( type ); // Skip titles with untranslated strings
+
+				if( typeof title !== 'undefined' ){
+					const titleWrapper = document.createElement( 'div' );
+					titleWrapper.className = 'alert-heading';
+					titleWrapper.innerHTML = Joomla.sanitizeHtml( `<span class="${type}"></span><span class="visually-hidden">${Joomla.Text._( type ) ? Joomla.Text._( type ) : type}</span>` );
+					messagesBox.appendChild( titleWrapper );
+				} // Add messages to the message box
+
+				const messageWrapper = document.createElement( 'div' );
+				messageWrapper.className = 'alert-wrapper';
+				typeMessages.forEach( typeMessage => {
+					messageWrapper.innerHTML += Joomla.sanitizeHtml( `<div class="alert-message">${typeMessage}</div>` );
+				});
+				messagesBox.appendChild( messageWrapper );
+				messageContainer.appendChild( messagesBox );
+			});
+
 		}
 		else{
 			if( typeof( selector ) === 'undefined' ){
@@ -196,6 +292,9 @@ eshiol.j2xml.codes = [
 eshiol.j2xml.sendItem = function( options, params ){
 	if( options.cids.length ){
 		var cid = options.cids.shift();
+		if( isNaN( options.n ) ){
+			options.n = 0;
+		}
 		var progress = Math.floor( 100 * options.n / options.tot );
 		window.parent.jQuery( '#send-progress-bar' ).css( 'width', progress + '%' ).attr( 'aria-valuenow', options.n );
 		window.parent.jQuery( '#send-progress-text' ).html( Joomla.JText._( 'LIB_J2XML_SENDING' ).replace( '%s', progress + '%' ) );
@@ -244,7 +343,7 @@ eshiol.j2xml.sendItem = function( options, params ){
 									t = 'notice';
 								}
 								msg[t] = [item.message];
-								eshiol.renderMessages( msg, options.message_container );
+								eshiol.renderMessages( msg, window.parent.document.getElementById( 'system-message-container' ) );
 							} );
 						} );
 
@@ -269,7 +368,7 @@ eshiol.j2xml.sendItem = function( options, params ){
 						else{
 							msg['error'] = Joomla.Text._( 'LIB_J2XML_ERROR_UNKNOWN' );
 						}
-						eshiol.renderMessages( msg, options.message_container );
+						eshiol.renderMessages( msg, window.parent.document.getElementById( 'system-message-container' ) );
 
 						eshiol.j2xml.sendItem( options, params );
 					}

@@ -3,6 +3,9 @@
  * @package     Joomla.Plugins
  * @subpackage  System.J2xml
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       1.5
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -23,7 +26,6 @@ JLoader::register('eshiol\\J2xml\\Helper\\Joomla', __DIR__ . '/src/J2xml/Helper/
 
 /**
  *
- * @since 1.5.2
  */
 class plgSystemJ2xml extends JPlugin
 {
@@ -56,21 +58,21 @@ class plgSystemJ2xml extends JPlugin
 		parent::__construct($subject, $config);
 
 		$cparams = JComponentHelper::getParams('com_j2xml');
-		if ($this->params->get('debug', $cparams->get('debug', false)) || defined('JDEBUG') && JDEBUG) 
+		if ($this->params->get('debug', $cparams->get('debug', false)) || defined('JDEBUG') && JDEBUG)
 		{
 			JLog::addLogger(
 				array('text_file' => $this->params->get('log', 'eshiol.log.php'), 'extension' => 'plg_system_j2xml_file'),
 				JLog::ALL,
 				array('plg_system_j2xml'));
 		}
-		if (PHP_SAPI == 'cli') 
+		if (PHP_SAPI == 'cli')
 		{
 			JLog::addLogger(
 				array('logger' => 'echo', 'extension' => 'plg_system_j2xml'),
 				JLog::ALL & ~ JLog::DEBUG,
 				array('plg_system_j2xml'));
-		} 
-		else 
+		}
+		else
 		{
 			JLog::addLogger(
 				array('logger' => (null !== $this->params->get('logger')) ? $this->params->get('logger') : 'messagequeue', 'extension' => 'plg_system_j2xml'),
@@ -79,19 +81,20 @@ class plgSystemJ2xml extends JPlugin
 			if ($this->params->get('phpconsole', $cparams->get('phpconsole', false)) && class_exists('JLogLoggerPhpconsole'))
 			{
 				JLog::addLogger(
-					array('logger' => 'phpconsole', 'extension' => 'plg_system_j2xml_phpconsole'), 
-					JLog::DEBUG, 
+					array('logger' => 'phpconsole', 'extension' => 'plg_system_j2xml_phpconsole'),
+					JLog::DEBUG,
 					array('plg_system_j2xml'));
 			}
 		}
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
 
 		$version = new JVersion();
-		if (!$version->isCompatible('4')) 
-		{		
+
+		if (!$version->isCompatible('4'))
+		{
 			// overwrite original Joomla
 			$loader = require JPATH_LIBRARIES . '/vendor/autoload.php';
-				
+
 			// update class maps
 			$classMap = $loader->getClassMap();
 			if ($version->isCompatible('3.8'))
@@ -103,6 +106,22 @@ class plgSystemJ2xml extends JPlugin
 				$classMap['JLayoutFile'] = __DIR__ . '/src/joomla/cms/layout/file.php';
 			}
 			$loader->addClassMap($classMap);
+		}
+
+		// Only render in backend
+		if ($version->isCompatible('3.7'))
+		{
+			if (! $this->app->isClient('administrator'))
+			{
+				return;
+			}
+		}
+		else
+		{
+			if (! $this->app->isAdmin())
+			{
+				return;
+			}
 		}
 
 		// Only render if J2XML is installed and enabled
@@ -141,7 +160,7 @@ class plgSystemJ2xml extends JPlugin
 
 		// Only render in backend
 		$version = new JVersion();
-		
+
 		if ($version->isCompatible('3.7'))
 		{
 			if (! $this->app->isClient('administrator'))
@@ -174,7 +193,7 @@ class plgSystemJ2xml extends JPlugin
 		$input = $this->app->input;
 		$option = $input->get('option');
 		$contentType = substr($option, 4);
-		
+
 		$allowedView = $contentType;
 		if (substr($allowedView, -1) != 's')
 		{
@@ -188,7 +207,7 @@ class plgSystemJ2xml extends JPlugin
 			{
 				return true;
 			}
-			
+
 		}
 		elseif ($contentType == 'users')
 		{
@@ -205,13 +224,13 @@ class plgSystemJ2xml extends JPlugin
 		{
 			return true;
 		}
-		
+
 		// Only render if J2XML view exists and J2XML Library is loaded
         if (! JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/' . $contentType . '/view.raw.php'))
 		{
 			return true;
 		}
-		
+
 		if (JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/export/tmpl/' . $contentType . '.php'))
 		{
 			if (class_exists('eshiol\\J2xml\\Exporter') && method_exists('eshiol\\J2xml\\Exporter', $contentType))
@@ -263,11 +282,11 @@ class plgSystemJ2xml extends JPlugin
 
 				$bar->appendButton('Custom', $dHtml, 'download');
 
-				if ($version->isCompatible('3.9')) 
+				if ($version->isCompatible('3.9'))
 				{
 					$lib_xmlrpc = 'eshiol/phpxmlrpc';
-				} 
-				else 
+				}
+				else
 				{
 					$lib_xmlrpc = 'phpxmlrpc';
 				}
@@ -308,7 +327,7 @@ class plgSystemJ2xml extends JPlugin
 
 		return true;
 	}
-	
+
 	/**
 	 * Add an assets for debugger.
 	 *
@@ -328,5 +347,5 @@ class plgSystemJ2xml extends JPlugin
 			$assetManager->useScript('core')->useScript('jquery');
 		}
 	}
-	
+
 }

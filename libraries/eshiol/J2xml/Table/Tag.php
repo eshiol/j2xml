@@ -3,6 +3,9 @@
  * @package     Joomla.Libraries
  * @subpackage  eshiol.J2XML
  *
+ * @version     __DEPLOY_VERSION__
+ * @since       14.8.240
+ *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
  * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
@@ -24,10 +27,9 @@ use Joomla\Component\Tags\Administrator\Table\TagTable;
 \JLoader::import('eshiol.J2xml.Table.User');
 
 /**
- * Tag table
  *
-
- * @since 14.8.240
+ * Tag Table
+ *
  */
 class Tag extends Table
 {
@@ -43,7 +45,7 @@ class Tag extends Table
 	public function __construct (\JDatabaseDriver $db)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		parent::__construct('#__tags', 'id', $db);
 	}
 
@@ -66,7 +68,7 @@ class Tag extends Table
 	public static function import ($xml, &$params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$import_tags = $params->get('tags', 0);
 		if ($import_tags == 0)
 			return;
@@ -157,7 +159,7 @@ class Tag extends Table
 	public static function convertPathsToIds ($tags)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($tags)
 		{
 			// Remove duplicates
@@ -206,7 +208,7 @@ class Tag extends Table
 	public static function export ($id, &$xml, $options)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		if ($xml->xpath("//j2xml/tag/id[text() = '" . $id . "']"))
 		{
 			return;
@@ -236,7 +238,7 @@ class Tag extends Table
 			{
 				User::export($item->created_user_id, $xml, $options);
 			}
-	
+
 			if ($item->modified_user_id)
 			{
 				User::export($item->modified_user_id, $xml, $options);
@@ -284,7 +286,7 @@ class Tag extends Table
 	public static function prepareData ($record, &$data, $params)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
-		
+
 		$params->set('extension', 'com_tags');
 		parent::prepareData($record, $data, $params);
 
@@ -295,8 +297,24 @@ class Tag extends Table
 		}
 
 		if (! isset($data['metakey']))
+		{
 			$data['metakey'] = '';
+		}
 		if (! isset($data['metadesc']))
+		{
 			$data['metadesc'] = '';
+		}
+		if (! isset($data['description']))
+		{
+			$data['description'] = '';
+		}
+		if (! isset($data['images']))
+		{
+			$data['images'] = '{}';
+		}
+		if (! isset($data['urls']))
+		{
+			$data['urls'] = '{}';
+		}
 	}
 }
