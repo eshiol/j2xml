@@ -58,7 +58,7 @@ class J2xmlControllerImport extends JControllerLegacy
 
 		if (!$redirect_url)
 		{
-			$redirect_url = base64_decode($app->input->get('return'));
+			$redirect_url = base64_decode($app->input->get('return', ''));
 		}
 
 		// Don't redirect to an external URL.
