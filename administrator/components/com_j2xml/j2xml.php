@@ -39,13 +39,6 @@ JLog::addLogger(
 	array('logger' => 'messagequeue', 'extension' => 'com_j2xml'),
 	JLog::ALL & ~JLog::DEBUG,
 	array('lib_j2xml', 'com_j2xml'));
-if ($params->get('phpconsole') && class_exists('JLogLoggerPhpconsole'))
-{
-	JLog::addLogger(
-		array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'),
-		JLog::DEBUG,
-		array('lib_j2xml', 'com_j2xml'));
-}
 
 $version = new JVersion();
 JFactory::getDocument()->addScriptOptions('J2XML', array('Joomla' => ($version->isCompatible('4') ? 4 : 3) ));

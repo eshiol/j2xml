@@ -125,13 +125,6 @@ else
 			array('logger' => 'messagequeue', 'extension' => 'com_j2xml'),
 			JLog::ALL & ~ JLog::DEBUG,
 			array('lib_j2xml', 'com_j2xml'));
-		if ($params->get('phpconsole') && class_exists('JLogLoggerPhpconsole'))
-		{
-			JLog::addLogger(
-				array('logger' => 'phpconsole', 'extension' => 'com_j2xml_phpconsole'),
-				JLog::DEBUG,
-				array('lib_j2xml', 'com_j2xml'));
-		}
 	}
 	$controllerPath .= '.php';
 	// Set the name for the controller and instantiate it

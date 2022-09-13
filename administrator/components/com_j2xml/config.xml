@@ -388,18 +388,6 @@
 			showon="debug:1"
 			/>
 
-		<field name="phpconsole"
-			type="radio"
-			class="btn-group btn-group-yesno"
-			layout="joomla.form.field.radio.switcher"
-			default="0"
-			description="COM_J2XML_DEBUG_PHPCONSOLE_DESC"
-			label="COM_J2XML_DEBUG_PHPCONSOLE_LABEL"
-			>
-			<option value="0">JNO</option>
-			<option value="1">JYES</option>
-		</field>
-
 		<field name="ajax"
 			type="radio"
 			class="btn-group btn-group-yesno"
