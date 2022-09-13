@@ -56,7 +56,7 @@ $lang->load('lib_j2xml', JPATH_SITE, null, true) || $lang->load('lib_j2xml', JPA
 
 $jinput = JFactory::getApplication()->input;
 $controllerClass = 'J2xmlController';
-$task = $jinput->getCmd('task');
+$task = $jinput->getCmd('task', '');
 
 if (strpos($task, '.') === false)
 {
