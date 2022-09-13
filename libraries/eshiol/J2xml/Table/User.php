@@ -396,6 +396,10 @@ class User extends Table
 		{
 			$data['authProvider'] = '';
 		}
+		if (empty($data['activation']))
+		{
+			$data['activation'] = '';
+		}
 	}
 
 	/**
