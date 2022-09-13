@@ -370,7 +370,10 @@ class User extends Table
 		{
 			$data['lastResetTime'] = self::fixDate($data['lastResetTime']);
 		}
-		$data['lastvisitDate'] = self::fixDate($data['lastvisitDate']);
+		if (!empty($data['lastvisitDate']))
+		{
+			$data['lastvisitDate'] = self::fixDate($data['lastvisitDate']);
+		}
 
 		// set default user group
 		if (empty($data['grouplist']) && empty($data['group']))
