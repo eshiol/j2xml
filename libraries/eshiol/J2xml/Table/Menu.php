@@ -202,17 +202,19 @@ class Menu extends \eshiol\J2XML\Table\Table
 				{
 					$data['component_id'] = $component;
 
-					$args = array();
-					parse_str(parse_url($data['link'], PHP_URL_QUERY), $args);
-					if (isset($args['option']) && ($args['option'] == 'com_content'))
+					if (isset($data['link']) && $data['link'])
 					{
-						if (isset($args['view']) && ($args['view'] == 'article'))
+						$args = array();
+						parse_str(parse_url($data['link'], PHP_URL_QUERY), $args);
+						if (isset($args['option']) && ($args['option'] == 'com_content'))
 						{
-							$args['id'] = self::getArticleId($data['article_id']);
-							$data['link'] = 'index.php?' . http_build_query($args);
+							if (isset($args['view']) && ($args['view'] == 'article'))
+							{
+								$args['id'] = self::getArticleId($data['article_id']);
+								$data['link'] = 'index.php?' . http_build_query($args);
+							}
 						}
 					}
-
 					\JLog::add(new \JLogEntry('data: ' . print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
 
 					// Trigger the onContentBeforeSave event.
@@ -260,5 +262,14 @@ class Menu extends \eshiol\J2XML\Table\Table
 			$data['parent_id'] = self::getMenuId($data['menutype'] . '/' . substr($path, 0, $i));
 		}
 		$data['level'] = substr_count($path , '/') + 1;
+
+		$version = new \JVersion();
+		if ($version->isCompatible('4'))
+		{
+			if (!isset($data['link']))
+			{
+				$data['link'] = '';
+			}
+		}
 	}
 }
