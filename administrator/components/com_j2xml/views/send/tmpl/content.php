@@ -70,8 +70,8 @@ EOL
 $params = JComponentHelper::getParams('com_j2xml');
 $min = ($params->get('debug', 0) ? '' : '.min');
 $doc = JFactory::getDocument();
-$doc->addScript("../media/lib_eshiol_phpxmlrpc/js/jquery.xmlrpc{$min}.js");
-$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml{$min}.js");
+$doc->addScript("../media/lib_eshiol_phpxmlrpc/js/jquery.xmlrpc{$min}.js", array('version'=>'auto'));
+$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml{$min}.js", array('version'=>'auto'));
 
 JText::script('COM_J2XML_SEND_ERROR');
 JText::script('COM_J2XML_SEND_ERROR_REMOTEURL_IS_REQUIRED');

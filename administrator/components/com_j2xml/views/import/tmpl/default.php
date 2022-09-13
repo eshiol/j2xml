@@ -167,19 +167,19 @@ $cparams = JComponentHelper::getParams('com_j2xml');
 $min = $cparams->get('debug', 0) ? '' : '.min';
 
 JLog::add(new JLogEntry("loading ../media/lib_eshiol_j2xml/js/pako_inflate{$min}.js", JLog::DEBUG, 'com_j2xml'));
-$doc->addScript("../media/lib_eshiol_j2xml/js/pako_inflate{$min}.js");
+$doc->addScript("../media/lib_eshiol_j2xml/js/pako_inflate{$min}.js", array('version'=>'auto'));
 
 JLog::add(new JLogEntry("loading ../media/lib_eshiol_j2xml/js/version_compare{$min}.js", JLog::DEBUG, 'com_j2xml'));
-$doc->addScript("../media/lib_eshiol_j2xml/js/version_compare{$min}.js");
+$doc->addScript("../media/lib_eshiol_j2xml/js/version_compare{$min}.js", array('version'=>'auto'));
 
 JLog::add(new JLogEntry("loading ../media/lib_eshiol_j2xml/js/j2xml{$min}.js", JLog::DEBUG, 'com_j2xml'));
-$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml{$min}.js");
+$doc->addScript("../media/lib_eshiol_j2xml/js/j2xml{$min}.js", array('version'=>'auto'));
 
 JLog::add(new JLogEntry("loading ../media/lib_eshiol_j2xml/js/j2xml{$min}.js", JLog::DEBUG, 'com_j2xml'));
-$doc->addScript("../media/lib_eshiol_j2xml/js/base64{$min}.js");
+$doc->addScript("../media/lib_eshiol_j2xml/js/base64{$min}.js", array('version'=>'auto'));
 
 JLog::add(new JLogEntry("loading ../media/com_j2xml/js/j2xml{$min}.js", JLog::DEBUG, 'com_j2xml'));
-$doc->addScript("../media/com_j2xml/js/j2xml{$min}.js");
+$doc->addScript("../media/com_j2xml/js/j2xml{$min}.js", array('version'=>'auto'));
 
 // Trigger the onLoadJS event.
 PluginHelper::importPlugin('j2xml');
