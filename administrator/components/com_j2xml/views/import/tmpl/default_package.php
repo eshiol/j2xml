@@ -245,7 +245,7 @@ $document->addScriptDeclaration(
 					} else {
 						validated = false;
 						eshiol.j2xml.validate.forEach(function(fn) {
-							validated = validated && fn(data);
+							validated = validated || fn(data);
 						});
 						if (validated) {
 							console.log('j2xml file version ' + $(root).attr('version'));
