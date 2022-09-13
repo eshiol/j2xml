@@ -78,13 +78,6 @@ class plgSystemJ2xml extends JPlugin
 				array('logger' => (null !== $this->params->get('logger')) ? $this->params->get('logger') : 'messagequeue', 'extension' => 'plg_system_j2xml'),
 				JLog::ALL & ~ JLog::DEBUG,
 				array('plg_system_j2xml'));
-			if ($this->params->get('phpconsole', $cparams->get('phpconsole', false)) && class_exists('JLogLoggerPhpconsole'))
-			{
-				JLog::addLogger(
-					array('logger' => 'phpconsole', 'extension' => 'plg_system_j2xml_phpconsole'),
-					JLog::DEBUG,
-					array('plg_system_j2xml'));
-			}
 		}
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'plg_system_j2xml'));
 

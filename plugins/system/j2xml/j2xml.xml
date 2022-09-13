@@ -40,12 +40,6 @@
 				<field name="log" type="text" label="PLG_SYSTEM_J2XML_DEBUG_FILENAME_LABEL"
 					description="PLG_SYSTEM_J2XML_DEBUG_FILENAME_DESC" default="eshiol.log.php"
 					showon="debug:1" />
-				<field name="phpconsole" type="list" default="" filter="integer"
-					description="PLG_SYSTEM_J2XML_DEBUG_PHPCONSOLE_DESC" label="PLG_SYSTEM_J2XML_DEBUG_PHPCONSOLE_LABEL">
-					<option value="">JGLOBAL_USE_GLOBAL</option>
-					<option value="1">JYES</option>
-					<option value="0">JNO</option>
-				</field>
 			</fieldset>
 		</fields>
 	</config>
