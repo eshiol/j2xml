@@ -103,9 +103,9 @@ class J2XMLViewCpanel extends JViewLegacy
 			jimport('eshiol.core.file');
 
 			$min = ($this->params->get('debug', 0) ? '' : '.min');
-			$doc->addScript("../media/lib_eshiol_core/js/encryption{$min}.js");
-			$doc->addScript("../media/lib_eshiol_core/js/core{$min}.js");
-			$doc->addScript("../media/lib_eshiol_core/js/version_compare{$min}.js");
+			$doc->addScript("../media/lib_eshiol_core/js/encryption{$min}.js", array('version'=>'auto'));
+			$doc->addScript("../media/lib_eshiol_core/js/core{$min}.js", array('version'=>'auto'));
+			$doc->addScript("../media/lib_eshiol_core/js/version_compare{$min}.js", array('version'=>'auto'));
 
 			$db = JFactory::getDbo();
 			$query = $db->getQuery(true)
@@ -122,7 +122,7 @@ class J2XMLViewCpanel extends JViewLegacy
 				$query->where($db->quoteName('element') . ' = ' . $db->quote('J2xmlpro'));
 			}
 			$pro = ((bool) $db->setQuery($query)->loadResult()) ? 'pro' : '';
-			$doc->addScript("../media/lib_eshiol_j2xml{$pro}/js/j2xml{$min}.js");
+			$doc->addScript("../media/lib_eshiol_j2xml{$pro}/js/j2xml{$min}.js", array('version'=>'auto'));
 
 			$toolbar = JToolBar::getInstance('toolbar');
 			$toolbar->appendButton('File', 'j2xml', 'COM_J2XML_BUTTON_OPEN', 'COM_J2XML_BUTTON_IMPORT', 'j2xml.cpanel.import', 600, 400, null,
