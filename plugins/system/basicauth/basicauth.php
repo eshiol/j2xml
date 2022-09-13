@@ -5,7 +5,7 @@
  *
  * @author		Helios Ciancio <info (at) eshiol (dot) it>
  * @link		https://www.eshiol.it
- * @copyright	Copyright (C) 2020 - 2021 Helios Ciancio. All Rights Reserved
+ * @copyright	Copyright (C) 2020 - 2022 Helios Ciancio. All Rights Reserved
  * @copyright	Copyright (C) 2011 - 2013 Johan Janssens and Timble CVBA.
  * @license		http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * Basic HTTP authentication for Joomla is free software. This version may have
@@ -47,11 +47,11 @@ class plgSystemBasicauth extends JPlugin
 		// See if the client has sent authorization headers
 		if (strpos(PHP_SAPI, 'cgi') !== false)
 		{
-			$authorization = $input->server->get('REDIRECT_HTTP_AUTHORIZATION', null, 'string');
+			$authorization = $input->server->get('REDIRECT_HTTP_AUTHORIZATION', '', 'string');
 		}
 		else
 		{
-			$authorization = $input->server->get('HTTP_AUTHORIZATION', null, 'string');
+			$authorization = $input->server->get('HTTP_AUTHORIZATION', '', 'string');
 		}
 
 		// If basic authorization is available, store the username and password in the $_SERVER globals
