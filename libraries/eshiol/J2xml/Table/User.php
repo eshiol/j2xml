@@ -389,6 +389,10 @@ class User extends Table
 			$data['otep'] = '';
 		}
 
+		if (empty($data['authProvider']))
+		{
+			$data['authProvider'] = '';
+		}
 	}
 
 	/**
