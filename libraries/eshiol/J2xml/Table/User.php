@@ -366,7 +366,10 @@ class User extends Table
 		$params->set('extension', 'com_users');
 		parent::prepareData($record, $data, $params);
 
-		$data['lastResetTime'] = self::fixDate($data['lastResetTime']);
+		if (!empty($data['lastResetTime']))
+		{
+			$data['lastResetTime'] = self::fixDate($data['lastResetTime']);
+		}
 		$data['lastvisitDate'] = self::fixDate($data['lastvisitDate']);
 
 		// set default user group
@@ -385,6 +388,7 @@ class User extends Table
 		{
 			$data['otep'] = '';
 		}
+
 	}
 
 	/**
