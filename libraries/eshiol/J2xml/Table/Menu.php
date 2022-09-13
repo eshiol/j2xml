@@ -266,6 +266,10 @@ class Menu extends \eshiol\J2XML\Table\Table
 		$version = new \JVersion();
 		if ($version->isCompatible('4'))
 		{
+			if (!isset($data['img']))
+			{
+				$data['img'] = '';
+			}
 			if (!isset($data['link']))
 			{
 				$data['link'] = '';
