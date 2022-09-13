@@ -121,10 +121,10 @@ class plgSystemJ2xml extends JPlugin
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true)
 			->select($db->quoteName('enabled'))
-			->from('#__extensions')
+			->from($db->quoteName('#__extensions'))
 			->where($db->quoteName('name') . ' = ' . $db->quote('com_j2xml'));
 		JLog::add(new JLogEntry($query, JLog::DEBUG, 'plg_system_j2xml'));
-		$is_enabled = $db->loadResult();
+		$is_enabled = $db->setQuery($query)->loadResult();
 		if (! $is_enabled)
 		{
 			JLog::add(new JLogEntry(JText::sprintf('PLG_SYSTEM_J2XML_MSG_REQUIREMENTS_COM', JText::_('PLG_SYSTEM_J2XML')), JLog::WARNING, 'plg_system_j2xml'));
