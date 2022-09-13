@@ -230,7 +230,7 @@ class Contact extends Table
 		$keepId = $params->get('keep_user_id', '0');
 
 		$params->set('extension', 'com_contact');
-		$import_categories = $params->get('categories');
+		$params->def('contact_category_default', self::getCategoryId('uncategorised', 'com_contact'));
 		if ($import_categories)
 		{
 			Category::import($xml, $params);
@@ -280,7 +280,10 @@ class Contact extends Table
 				{
 					unset($data['id']);
 				}
-				// unset($data['params']);
+				if (! isset($data['params']))
+				{
+					$data['params'] = '';
+				}
 
 				$table->bind($data);
 				if ($table->store())
@@ -371,6 +374,10 @@ class Contact extends Table
 
 		if ($version->isCompatible('4'))
 		{
+			if (!isset($data['catid']))
+			{
+				$data['catid'] = $params->get('contact_category_default');
+			}
 			if (!isset($data['metadesc']))
 			{
 				$data['metadesc'] = '';

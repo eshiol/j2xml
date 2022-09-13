@@ -658,25 +658,22 @@ class Table extends \JTable
 	/**
 	 * Get the category id from the category path
 	 *
-	 * @param string $category
-	 *			the path of the category to search for
+	 * @param mixed $category
+	 *          string: the path of the category to search for
+	 *          int: the id of the category
+	 * @param string $extension
 	 * @param int $defaultCategoryId
-	 *			the id to return if the category doesn't exist
+	 *          the id to return if the category doesn't exist
 	 *
-	 * @return int the id of the category if it exists or the default category
-	 *		 id
+	 * @return int the id of the category if it exists or the default category id
 	 */
 	public static function getCategoryId ($category, $extension, $defaultCategoryId = 0)
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (is_numeric($category))
+		$db = \JFactory::getDBO();
+		if (! is_numeric($category))
 		{
-			$categoryId = $category;
-		}
-		else
-		{
-			$db = \JFactory::getDBO();
 			$query = $db->getQuery(true)
 				->select($db->quoteName('id'))
 				->from($db->quoteName('#__categories'))
@@ -684,9 +681,34 @@ class Table extends \JTable
 				->where($db->quoteName('extension') . ' = ' . $db->quote($extension));
 			$categoryId = $db->setQuery($query)->loadResult();
 		}
+		else
+		{
+			$query = $db->getQuery(true)
+				->select($db->quoteName('id'))
+				->from($db->quoteName('#__categories'))
+				->where($db->quoteName('id') . ' = ' . $category)
+				->where($db->quoteName('extension') . ' = ' . $db->quote($extension));
+			$categoryId = $db->setQuery($query)->loadResult();
+		}
 		if (! $categoryId)
 		{
-			$categoryId = $defaultCategoryId;
+			if ($defaultCategoryId)
+			{
+				$query = $db->getQuery(true)
+					->select($db->quoteName('id'))
+					->from($db->quoteName('#__categories'))
+					->where($db->quoteName('id') . ' = ' . $defaultCategoryId)
+					->where($db->quoteName('extension') . ' = ' . $db->quote($extension));
+				$categoryId = $db->setQuery($query)->loadResult();
+			}
+			if (! $categoryId)
+			{
+				$query = $db->getQuery(true)
+					->select('MIN(' . $db->quoteName('id') . ')')
+					->from($db->quoteName('#__categories'))
+					->where($db->quoteName('extension') . ' = ' . $db->quote($extension));
+				$categoryId = $db->setQuery($query)->loadResult();
+			}
 		}
 
 		return $categoryId;
