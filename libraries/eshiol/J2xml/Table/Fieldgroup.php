@@ -196,5 +196,11 @@ class Fieldgroup extends Table
 		{
 			$data['description'] = '';
 		}
+		if (empty($data['modified']))
+		{
+			// From 4.0.0-2019-09-25.sql
+			$data['modified'] = $data['created'];
+			$data['modified_by'] = $data['created_by'];
+		}
 	}
 }
