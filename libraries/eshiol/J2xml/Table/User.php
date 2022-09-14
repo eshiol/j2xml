@@ -96,13 +96,63 @@ class User extends Table
 			// $this->_aliases['field'] = 'SELECT f.name, v.value FROM
 			// #__fields_values v, #__fields f WHERE f.id = v.field_id AND
 			// v.item_id = '. (int)$this->id;
-			$this->_aliases['field'] = (string) $this->_db->getQuery(true)
+			$query = $this->_db->getQuery(true)
 				->select($this->_db->quoteName('f.name'))
 				->select($this->_db->quoteName('v.value'))
 				->from($this->_db->quoteName('#__fields_values', 'v'))
 				->from($this->_db->quoteName('#__fields', 'f'))
 				->where($this->_db->quoteName('f.id') . ' = ' . $this->_db->quoteName('v.field_id'))
 				->where($this->_db->quoteName('v.item_id') . ' = ' . $this->_db->quote((string) $this->id));
+			if ($version->isCompatible('4'))
+			{
+				$query->where($this->_db->quoteName('f.type') . ' <> ' . $this->_db->quote('subform'));
+			}
+			$this->_aliases['field'] = (string) $query;
+
+			if ($version->isCompatible('4'))
+			{
+				$query = $this->_db->getQuery(true)
+					->select($this->_db->quoteName('f.id'))
+					->select($this->_db->quoteName('f.name'))
+					->from($this->_db->quoteName('#__fields', 'f'));
+				$fields = array();
+				foreach ($this->_db->setQuery($query)->loadObjectList() as $field)
+				{
+					$fields['field' . $field->id] = $field->name;
+				}
+
+				$query = $this->_db->getQuery(true)
+					->select($this->_db->quoteName('f.name'))
+					->select($this->_db->quoteName('v.value'))
+					->from($this->_db->quoteName('#__fields_values', 'v'))
+					->from($this->_db->quoteName('#__fields', 'f'))
+					->where($this->_db->quoteName('f.type') . ' = ' . $this->_db->quote('subform'))
+					->where($this->_db->quoteName('f.id') . ' = ' . $this->_db->quoteName('v.field_id'))
+					->where($this->_db->quoteName('v.item_id') . ' = ' . $this->_db->quote((string) $this->id));
+				$fieldValues = $this->_db->setQuery($query)->loadObjectList();
+				foreach ($fieldValues as $field)
+				{
+					$subformValue = json_decode($field->value, true);
+					foreach ($subformValue as $rowId => $row)
+					{
+						foreach ($row as $fieldId => $fieldValue)
+						{
+							unset($subformValue[$rowId][$fieldId]);
+							$subformValue[$rowId][$fields[$fieldId]] = $fieldValue;
+						}
+					}
+					$subformValue = json_encode($subformValue, true);
+
+					$query = $this->_db->getQuery(true)
+						->select($this->_db->quote($field->name))
+						->select($this->_db->quote($subformValue));
+					if ($serverType === 'sqlserver')
+					{
+						$query->from($this->_db->quoteName('DUAL'));
+					}
+					$this->_aliases['field'] .= ' UNION ' . (string) $query;
+				}
+			}
 		}
 
 		// $this->_aliases['profile'] = 'SELECT profile_key name, profile_value
@@ -494,22 +544,40 @@ class User extends Table
 			}
 		}
 
-		if (isset($options['fields']) && $options['fields'])
+		if (isset($options['fields']) && $options['fields'] && $version->isCompatible('3.7'))
 		{
-			$version = new \JVersion();
-			if ($version->isCompatible('3.7'))
+			if ($version->isCompatible('4'))
 			{
+				// load subform fields
 				$query = $db->getQuery(true)
-					->select('DISTINCT field_id')
-					->from('#__fields_values')
-					->where('item_id = ' . $db->quote($id));
-				$db->setQuery($query);
-
-				$ids_field = $db->loadColumn();
-				foreach ($ids_field as $id_field)
+					->select($db->quoteName('v.value'))
+					->from($db->quoteName('#__fields_values', 'v'))
+					->from($db->quoteName('#__fields', 'f'))
+					->where($db->quoteName('f.type') . ' = ' . $db->quote('subform'))
+					->where($db->quoteName('f.id') . ' = ' . $db->quoteName('v.field_id'));
+				$subformValues = $db->setQuery($query)->loadColumn();
+				foreach ($subformValues as $subformValue)
 				{
-					Field::export($id_field, $xml, $options);
+					foreach (json_decode($subformValue, true) as $row)
+					{
+						foreach ($row as $fieldId => $fieldValue)
+						{
+							Field::export(substr($fieldId, 5), $xml, $options);
+						}
+					}
 				}
+			}
+
+			$query = $db->getQuery(true)
+				->select('DISTINCT field_id')
+				->from('#__fields_values')
+				->where('item_id = ' . $db->quote($id));
+			$db->setQuery($query);
+
+			$ids_field = $db->loadColumn();
+			foreach ($ids_field as $id_field)
+			{
+				Field::export($id_field, $xml, $options);
 			}
 		}
 	}
