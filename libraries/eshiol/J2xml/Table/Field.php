@@ -83,6 +83,30 @@ class Field extends Table
 			->where($this->_db->quoteName('c.id') . ' = ' . $this->_db->quoteName('fc.category_id'))
 			->where($this->_db->quoteName('fc.field_id') . ' = ' . (int) $this->id);
 
+		$version = new \JVersion();
+		if (($this->type == 'subform') && $version->isCompatible('4'))
+		{
+			$query = $this->_db->getQuery(true)
+				->select($this->_db->quoteName('id'))
+				->select($this->_db->quoteName('name'))
+				->from($this->_db->quoteName('#__fields'));
+			$fields = array();
+			foreach ($this->_db->setQuery($query)->loadObjectList() as $field)
+			{
+				$fields[$field->id] = $field->name;
+			}
+
+			$fieldparams = json_decode($this->fieldparams, true);
+			array_walk_recursive($fieldparams, function(&$value, $key, $fields)
+			{
+				if (($key == "customfield") && isset($fields[$value]))
+				{
+					$value = $fields[$value];
+				}
+			}, $fields);
+			$this->fieldparams = json_encode($fieldparams, true);
+		}
+
 		return parent::toXML($mapKeysToText);
 	}
 
@@ -189,6 +213,32 @@ class Field extends Table
 		if (isset($data['modified_time']) && ($data['modified_time'] != \JFactory::getDbo()->getNullDate()))
 		{
 			$data['modified_time'] = self::fixDate($data['modified_time']);
+		}
+
+		$db = \JFactory::getDBO();
+		$version = new \JVersion();
+		if (($data['type'] == 'subform') && $version->isCompatible('4'))
+		{
+			$query = $db->getQuery(true)
+				->select($db->quoteName('id'))
+				->select($db->quoteName('name'))
+				->from($db->quoteName('#__fields'))
+				->where($db->quoteName('context') . ' = ' . $db->quote($data['context']));
+			$fields = array();
+			foreach ($db->setQuery($query)->loadObjectList() as $field)
+			{
+				$fields[$field->name] = $field->id;
+			}
+
+			$fieldparams = json_decode($data['fieldparams'], true);
+			array_walk_recursive($fieldparams, function(&$value, $key, $fields)
+			{
+				if (($key == "customfield") && isset($fields[$value]))
+				{
+					$value = $fields[$value];
+				}
+			}, $fields);
+			$data['fieldparams'] = json_encode($fieldparams, true);
 		}
 	}
 
