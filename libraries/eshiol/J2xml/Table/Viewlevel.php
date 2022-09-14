@@ -119,9 +119,11 @@ class Viewlevel extends Table
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		$import_viewlevels = 2; // $params->get('viewlevels', 1);
+		$import_viewlevels = $params->get('viewlevels', 1);
 		if ($import_viewlevels == 0)
+		{
 			return;
+		}
 
 		$db = \JFactory::getDbo();
 		foreach ($xml->xpath("//j2xml/viewlevel[not(title = '')]") as $record)

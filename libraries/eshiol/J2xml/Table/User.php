@@ -22,10 +22,12 @@ use eshiol\J2xml\Table\Contact;
 use eshiol\J2xml\Table\Field;
 use eshiol\J2xml\Table\Table;
 use eshiol\J2xml\Table\Usernote;
+use eshiol\J2xml\Table\Viewlevel;
 \JLoader::import('eshiol.J2xml.Table.Contact');
 \JLoader::import('eshiol.J2xml.Table.Field');
 \JLoader::import('eshiol.J2xml.Table.Table');
 \JLoader::import('eshiol.J2xml.Table.Usernote');
+\JLoader::import('eshiol.J2xml.Table.Viewlevel');
 
 /**
  *
@@ -448,6 +450,19 @@ class User extends Table
 		$doc->documentElement->appendChild($fragment);
 
 		$db = \JFactory::getDbo();
+
+		$query = $db->getQuery(true)
+			->select($db->quoteName('l.id'))
+			->from($db->quoteName('#__viewlevels', 'l'))
+			->join('', $db->quoteName('#__user_usergroup_map', 'm'))
+			->where($db->quoteName('m.user_id') . ' = ' . $id)
+			->where('FIND_IN_SET(' . $db->quoteName('m.group_id') . ', REPLACE(REPLACE(l.rules, "]", ""), "[", ""))');
+		$ids_viewlevel = $db->setQuery($query)->loadColumn();
+
+		foreach ($ids_viewlevel as $id_viewlevel)
+		{
+			Viewlevel::export($id_viewlevel, $xml, $options);
+		}
 
 		if (isset($options['contacts']) && $options['contacts'])
 		{
