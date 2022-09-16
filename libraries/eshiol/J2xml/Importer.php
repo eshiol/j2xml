@@ -81,8 +81,10 @@ class Importer
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
+		$db         = \JFactory::getDbo();
+		$version    = new \JVersion();
+
 		// Merge the default translation with the current translation
-		$version = new \JVersion();
 		if ($version->isCompatible('3.2'))
 		{
 			$jlang = \JFactory::getApplication()->getLanguage();
@@ -95,31 +97,45 @@ class Importer
 		$jlang->load('lib_j2xml', JPATH_SITE, $jlang->getDefault(), true);
 		$jlang->load('lib_j2xml', JPATH_SITE, null, true);
 
-		$db = \JFactory::getDBO();
-
-		$this->_user = \JFactory::getUser();
+		$this->_user     = \JFactory::getUser();
 		$this->_nullDate = $db->getNullDate();
-		$this->_user_id = $this->_user->get('id');
-		$this->_now = \JFactory::getDate()->format("%Y-%m-%d-%H-%M-%S");
-		$this->_option = (PHP_SAPI != 'cli') ? \JFactory::getApplication()->input->getCmd('option') : 'cli_' .
+		$this->_user_id  = $this->_user->get('id');
+		$this->_now      = \JFactory::getDate()->format("%Y-%m-%d-%H-%M-%S");
+		$this->_option   = (PHP_SAPI != 'cli') ? \JFactory::getApplication()->input->getCmd('option') : 'cli_' .
 				 strtolower(get_class(\JApplicationCli::getInstance()));
 
-		// @todo use query object - postgresql
-		$db->setQuery("CREATE TABLE IF NOT EXISTS `#__j2xml_usergroups` (`id` int(10) unsigned NOT NULL, `parent_id` int(10) unsigned NOT NULL DEFAULT '0', `title` varchar(100) NOT NULL DEFAULT '') ENGINE=InnoDB  DEFAULT CHARSET=utf8;")->execute();
-		$db->setQuery("TRUNCATE TABLE `#__j2xml_usergroups`;")->execute();
-		$db->setQuery("INSERT INTO `#__j2xml_usergroups` " .
-			"SELECT `id`,`parent_id`,CONCAT('[\"',REPLACE(`title`,'\"','\\\"'),'\"]') " .
-			"FROM `#__usergroups`;")->execute();
-		do {
-			$db->setQuery("UPDATE `#__j2xml_usergroups` j " .
-				"INNER JOIN `#__usergroups` g " .
-				"ON j.parent_id = g.id " .
-				"SET j.parent_id = g.parent_id," .
-				"j.title = CONCAT('[\"',REPLACE(`g`.`title`,'\"','\\\"'), '\",', SUBSTR(`j`.`title`,2));")->execute();
-			$n = $db->setQuery("SELECT COUNT(*) " .
-				"FROM `#__j2xml_usergroups` " .
-			"WHERE `parent_id` > 0;")->loadResult();
-		} while ($n > 0);
+		try {
+			$db->truncateTable("#__j2xml_usergroups");
+
+			$query = $db->getQuery(true)
+			//	->insert($db->quoteName("#__j2xml_usergroups"))
+				->select($db->quoteName("id"))
+				->select($db->quoteName("parent_id"))
+				->select("CONCAT('[\"',REPLACE(" . $db->quoteName("title") . ",'\"','\\\"'),'\"]')")
+				->from($db->quoteName("#__usergroups"));
+			$query = "INSERT INTO " . $db->quoteName("#__j2xml_usergroups") . $query;
+			$db->setQuery($query)->execute();
+
+			do {
+				$query = $db->getQuery(true)
+					->update($db->quoteName("#__j2xml_usergroups", "j"))
+					->join("INNER", $db->quoteName("#__usergroups", "g"), $db->quoteName("j.parent_id") . " = " . $db->quoteName("g.id"))
+					->set($db->quoteName("j.parent_id") . " = " . $db->quoteName("g.parent_id"))
+					->set($db->quoteName("j.title") . " = CONCAT('[\"',REPLACE(" . $db->quoteName("g.title") . ",'\"','\\\"'), '\",', SUBSTR(" . $db->quoteName("j.title") . ",2))");
+				$db->setQuery($query)->execute();
+
+				$query = $db->getQuery(true)
+					->select("COUNT(*)")
+					->from($db->quoteName("#__j2xml_usergroups"))
+					->where($db->quoteName("parent_id") . " > 0");
+				$n = $db->setQuery($query)->loadResult();
+			} while ($n > 0);
+		}
+		catch (\JDatabaseExceptionExecuting $e)
+		{
+			// If the query fails we will go on
+		}
+		
 	}
 
 	/**
