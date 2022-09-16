@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="component" method="upgrade">
 	<name>com_j2xml</name>
-	<creationDate>May 2022</creationDate>
+	<creationDate>16 September 2022</creationDate>
 	<author>Helios Ciancio</author>
 	<authorUrl>www.eshiol.it</authorUrl>
 	<authorEmail>info (at) eshiol (dot) it</authorEmail>
 	<copyright><![CDATA[(C) 2010 - 2022 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.
 	]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>3.9.217-beta1</version>
+	<version>3.9.220-beta3</version>
 	<description>COM_J2XML_XML_DESCRIPTION</description>
+	<install>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+			<file driver="postgresql" charset="utf8">sql/install.postgresql.utf8.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+			<file driver="postgresql" charset="utf8">sql/uninstall.postgresql.utf8.sql</file>
+		</sql>
+	</uninstall>
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql</schemapath>
+			<schemapath type="postgresql">sql/updates/postgresql</schemapath>
+		</schemas>
+	</update>
 	<files folder="site">
 		<filename>j2xml.php</filename>
 		<folder>controllers</folder>
@@ -29,6 +47,7 @@
 			<filename>controller.php</filename>
 			<folder>controllers</folder>
 			<folder>models</folder>
+			<folder>sql</folder>
 			<folder>views</folder>
 		</files>
 		<languages folder="admin/language">
