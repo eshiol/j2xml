@@ -7,10 +7,10 @@
 	<author>Helios Ciancio</author>
 	<authorEmail>info (at) eshiol (dot) it</authorEmail>
 	<authorUrl>www.eshiol.it</authorUrl>
-	<creationDate>May 2022</creationDate>
+	<creationDate>16 September 2022</creationDate>
 	<copyright><![CDATA[(C) 2010 - 2022 Helios Ciancio. All Rights Reserved.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>3.9.217-beta1</version>
+	<version>3.9.220-beta3</version>
 
 	<url>https://www.eshiol.it</url>
 	<packager>Helios Ciancio</packager>
@@ -19,11 +19,11 @@
 		<server type="extension" priority="2" name="J2XML">https://www.eshiol.it/files/j2xml39/j2xml.xml</server>
 	</updateservers>
 	<files>
-		<folder type="library" id="j2xml">lib_eshiol_J2xml-22.5.359-beta1.zip</folder>
-		<folder type="component" id="j2xml">com_j2xml-3.9.217-beta1.zip</folder>
-		<folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.9.58-beta1.zip</folder>
+		<folder type="library" id="j2xml">lib_eshiol_J2xml-22.5.370-beta3.zip</folder>
+		<folder type="component" id="j2xml">com_j2xml-3.9.220-beta3.zip</folder>
+		<folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.9.62-beta3.zip</folder>
 		<folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc-4.5.1.25.zip</folder>
-		<folder type="plugin" id="basicauth" group="system">plg_system_basicauth-3.9.0.zip</folder>
+		<folder type="plugin" id="basicauth" group="system">plg_system_basicauth-3.9.2-beta3.zip</folder>
 		<!--
 		<folder type="file" id="j2xml">cli_j2xml-3.7.23.zip</folder>
 		-->

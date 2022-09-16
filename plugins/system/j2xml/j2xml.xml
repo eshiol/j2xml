@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3" type="plugin" group="system" method="upgrade">
+<extension type="plugin" group="system" method="upgrade">
 	<name>plg_system_j2xml</name>
 	<description>PLG_SYSTEM_J2XML_XML_DESCRIPTION</description>
 	<author>Helios Ciancio</author>
 	<authorEmail>info (at) eshiol (dot) it</authorEmail>
 	<authorUrl>www.eshiol.it</authorUrl>
-	<creationDate>May 2022</creationDate>
+	<creationDate>16 September 2022</creationDate>
 	<copyright><![CDATA[(C) 2010 - 2022 Helios Ciancio. All Rights Reserved.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>3.9.58-beta1</version>
+	<version>3.9.62-beta3</version>
 	<files>
 		<filename plugin="j2xml">j2xml.php</filename>
 		<filename>install.mysql.sql</filename>
 		<filename>install.postgresql.sql</filename>
-		<filename>install.sqlsrv.sql</filename>
 		<folder>layouts</folder>
 		<folder>src</folder>
 	</files>
@@ -21,7 +20,6 @@
 		<sql>
 			<file driver="mysql" charset="utf8">install.mysql.sql</file>
 			<file driver="postgresql" charset="utf8">install.postgresql.sql</file>
-			<file driver="sqlsrv" charset="utf8">install.sqlsrv.sql</file>
 		</sql>
 	</install>
 	<languages folder="language">
