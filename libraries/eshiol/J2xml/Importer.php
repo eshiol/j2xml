@@ -83,6 +83,7 @@ class Importer
 
 		$db         = \JFactory::getDbo();
 		$version    = new \JVersion();
+		$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
 
 		// Merge the default translation with the current translation
 		if ($version->isCompatible('3.2'))
@@ -105,6 +106,26 @@ class Importer
 				 strtolower(get_class(\JApplicationCli::getInstance()));
 
 		try {
+			$query = "CREATE TABLE IF NOT EXISTS " . $db->quoteName("#__j2xml_usergroups");
+			if ($serverType == 'postgresql')
+			{
+				$query .= " (" .
+					$db->quoteName("id") . " serial NOT NULL," .
+					$db->quoteName("parent_id") . " bigint DEFAULT 0 NOT NULL," .
+					$db->quoteName("title") . " varchar(100) DEFAULT '' NOT NULL," .
+					"PRIMARY KEY (" . $db->quoteName("id") . "));";
+				$db->setQuery($query)->execute();
+			}
+			else
+			{
+				$query .= " (" .
+					$db->quoteName("id") . " int(10) unsigned NOT NULL," .
+					$db->quoteName("parent_id") . " int(10) unsigned NOT NULL DEFAULT '0'," .
+					$db->quoteName("title") . " varchar(100) NOT NULL DEFAULT ''," .
+					"PRIMARY KEY (" . $db->quoteName("id") . ")) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE = utf8mb4_unicode_ci;";
+			}
+			$db->setQuery($query)->execute();
+
 			$db->truncateTable("#__j2xml_usergroups");
 
 			$query = $db->getQuery(true)
