@@ -544,6 +544,7 @@ class User extends Table
 			}
 		}
 
+		$version = new \JVersion();
 		if (isset($options['fields']) && $options['fields'] && $version->isCompatible('3.7'))
 		{
 			if ($version->isCompatible('4'))
