@@ -353,7 +353,24 @@ eshiol.j2xml.sendItem = function( options, params ){
 						console.log( 'send.onError' );
 
 						msg = new Object();
-						if ( typeof error === 'object' ){
+						if( jqXHR.status === 0 ){
+							msg['error'] = [Joomla.Text._( 'LIB_J2XML_ERROR_STATUS0' )];
+						/*} else if( jqXHR.status == 404 ){
+							// 404 page error
+							msg['error'] = ['Requested page not found. [404]'];
+						} else if( jqXHR.status == 500 ){
+							// 500 Internal Server error
+							msg['error'] = ['Internal Server Error [500].'];
+						} else if( status === 'parsererror' ){
+							// Requested JSON parse
+							msg['error'] = ['Requested JSON parse failed.'];
+						} else if( status === 'timeout' ){
+							// Time out error
+							msg['error'] = ['Time out error.'];
+						} else if( status === 'abort' ){
+							// request aborte
+							msg['error'] = ['Ajax request aborted.'];
+						*/} else if( typeof error === 'object' ){
 							if( error.code in eshiol.j2xml.codes ){
 								t = eshiol.j2xml.codes[error.code];
 							}
@@ -361,12 +378,8 @@ eshiol.j2xml.sendItem = function( options, params ){
 								t = 'error';
 							}
 							msg[t] = [error.message];
-						}
-						else if ( error ){
-							msg['error'] = [error];
-						}
-						else{
-							msg['error'] = Joomla.Text._( 'LIB_J2XML_ERROR_UNKNOWN' );
+						} else {
+							msg['error'] = [Joomla.Text._( 'LIB_J2XML_ERROR_UNKNOWN' )];
 						}
 						eshiol.renderMessages( msg, window.parent.document.getElementById( 'system-message-container' ) );
 
@@ -375,6 +388,7 @@ eshiol.j2xml.sendItem = function( options, params ){
 				});
 			},
 			onError: function onError( xhr ){
+				console.log( 'onError' );
 				if( xhr.status > 0 ){
 					Joomla.renderMessages( Joomla.ajaxErrorsMessages( xhr ) );
 				}

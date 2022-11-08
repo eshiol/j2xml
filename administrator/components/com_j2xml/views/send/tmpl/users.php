@@ -77,6 +77,8 @@ JText::script('COM_J2XML_SEND_ERROR');
 JText::script('COM_J2XML_SEND_ERROR_REMOTEURL_IS_REQUIRED');
 JText::script('LIB_J2XML_SENDING');
 JText::script('LIB_J2XML_MSG_XMLRPC_DISABLED');
+JText::script('LIB_J2XML_ERROR_UNKNOWN');
+JText::script('LIB_J2XML_ERROR_STATUS0');
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_j2xml'); ?>"
