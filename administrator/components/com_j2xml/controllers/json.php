@@ -99,4 +99,4 @@ class J2xmlControllerJson extends JControllerLegacy
 
 		echo new JResponseJson($data);
 	}
-}
+}

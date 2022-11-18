@@ -3,7 +3,7 @@
  * @package     Joomla.Administrator
  * @subpackage  com_j2xml
  *
- * @version     __DEPLO_VERSION__
+ * @version     __DEPLOY_VERSION__
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
