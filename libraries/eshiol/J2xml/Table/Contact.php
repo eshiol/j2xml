@@ -229,10 +229,11 @@ class Contact extends Table
 		$db     = \JFactory::getDbo();
 		$keepId = $params->get('keep_user_id', '0');
 
-		$params->set('extension', 'com_contact');
-		$params->def('contact_category_default', self::getCategoryId('uncategorised', 'com_contact'));
+		$import_categories = $params->get('categories', 0);
 		if ($import_categories)
 		{
+		$params->set('extension', 'com_contact');
+		$params->def('contact_category_default', self::getCategoryId('uncategorised', 'com_contact'));
 			Category::import($xml, $params);
 		}
 
