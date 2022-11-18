@@ -673,6 +673,14 @@ class Content extends Table
 			}
 			unset($data['association']);
 		}
+
+		if ($version->isCompatible('4'))
+		{
+			if (! isset($data['introtext']))
+			{
+				$data['introtext'] = '';
+			}
+		}
 	}
 
 	/**
