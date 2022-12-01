@@ -405,6 +405,9 @@ class Content extends Table
 					{
 						if ($version->isCompatible('4'))
 						{
+							// fix hits
+							$table->save($data);
+
 							$item = $table->getItem();
 						}
 						else
