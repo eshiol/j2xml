@@ -116,7 +116,8 @@ $document->addScriptDeclaration(
 					console.log('xml');
 					var data = this.result;
 				}
-				data = strstr(data, '<?xml version="1.0" ');
+				tmp = strstr(data, '<?xml version="1.0" ');
+				data = (tmp !== false ? tmp : data);
 				console.log(data);
 
 				eshiol.j2xml.convert.forEach(function(fn) {
@@ -131,7 +132,7 @@ $document->addScriptDeclaration(
 					root = xml.find(":root")[0];
 
 					if (root.nodeName != "j2xml") {
-						console.log('file not supported');
+						console.log(Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'));
 						Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
 					} else {
 						validated = false;
@@ -165,6 +166,8 @@ $document->addScriptDeclaration(
 					}
 				} catch(e) {
 					console.log(e);
+					Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
+					return false;
 				}
 			};
 			reader.readAsText(file, 'UTF-8');
@@ -225,7 +228,8 @@ $document->addScriptDeclaration(
 					console.log('xml');
 					var data = this.result;
 				}
-				data = strstr(data, '<?xml version="1.0" ');
+				tmp = strstr(data, '<?xml version="1.0" ');
+				data = (tmp !== false ? tmp : data);
 				console.log(data);
 
 				eshiol.j2xml.convert.forEach(function(fn) {
@@ -274,6 +278,8 @@ $document->addScriptDeclaration(
 					}
 				} catch(e) {
 					console.log(e);
+					Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
+					return false;
 				}
 			};
 			reader.readAsText(file, 'UTF-8');
