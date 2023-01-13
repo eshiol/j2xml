@@ -16,11 +16,11 @@
 	<packager>Helios Ciancio</packager>
 	<packagerurl>https://www.eshiol.it/</packagerurl>
 	<files>
-		<folder type="library" id="j2xml">lib_eshiol_J2xml-22.12.373-beta5.zip</folder>
-		<folder type="component" id="j2xml">com_j2xml-3.9.222-beta5.zip</folder>
-		<folder type="plugin" id="j2xml" group="system">plg_system_j2xml-3.9.62-beta3.zip</folder>
-		<folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc-4.5.1.25.zip</folder>
-		<folder type="plugin" id="basicauth" group="system">plg_system_basicauth-3.9.3-beta5.zip</folder>
+		<folder type="library" id="j2xml">lib_eshiol_J2xml.zip</folder>
+		<folder type="component" id="j2xml">com_j2xml.zip</folder>
+		<folder type="plugin" id="j2xml" group="system">plg_system_j2xml.zip</folder>
+		<folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc.zip</folder>
+		<folder type="plugin" id="basicauth" group="system">plg_system_basicauth.zip</folder>
 		<!--
 		<folder type="file" id="j2xml">cli_j2xml-3.7.23.zip</folder>
 		-->
