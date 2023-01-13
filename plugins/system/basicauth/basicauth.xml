@@ -6,11 +6,11 @@
 	<author>Helios Ciancio</author>
 	<authorEmail>info (at) eshiol (dot) it</authorEmail>
 	<authorUrl>www.eshiol.it</authorUrl>
-	<creationDate>02 December 2022</creationDate>
+	<creationDate>__DEPLOY_DATE__</creationDate>
 	<copyright><![CDATA[(C) 2016 - 2023 Helios Ciancio. All Rights Reserved.
 	<br/>Copyright (C) 2011 - 2013 Johan Janssens and Timble CVBA.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>3.9.3-beta5</version>
+	<version>__DEPLOY_VERSION__</version>
 
 	<files>
 		<filename plugin="basicauth">basicauth.php</filename>
