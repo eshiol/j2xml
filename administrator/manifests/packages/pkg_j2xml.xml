@@ -22,7 +22,7 @@
 		<folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc.zip</folder>
 		<folder type="plugin" id="basicauth" group="system">plg_system_basicauth.zip</folder>
 		<!--
-		<folder type="file" id="j2xml">cli_j2xml-3.7.23.zip</folder>
+		<folder type="file" id="j2xml">cli_j2xml.zip</folder>
 		-->
 	</files>
 </extension>

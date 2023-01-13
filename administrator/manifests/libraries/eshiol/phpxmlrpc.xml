@@ -10,7 +10,7 @@
 	<copyright><![CDATA[(C) 2010 - 2023 Helios Ciancio. All Rights Reserved.
 	<br/>(C) 1999,2000,2001 Edd Dumbill, Useful Information Company.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	__DEPLOY_VERSION__</version>
+	<version>__DEPLOY_VERSION__</version>
 	<files>
 		<folder>Log</folder>
 		<folder>lib</folder>
