@@ -28,7 +28,7 @@ if ($params->get('debug') || defined('JDEBUG') && JDEBUG)
 {
 	JLog::addLogger(
 		array('text_file' => $params->get('log', 'eshiol.log.php'), 'extension' => 'com_j2xml_file'),
-		JLog::DEBUG,
+		JLog::ALL,
 		array('lib_j2xml', 'com_j2xml'));
 }
 
@@ -88,34 +88,27 @@ else
 	$format = $jinput->getCmd('format');
 	if ($format == 'xmlrpc')
 	{
-		if (function_exists('xmlrpc_set_type'))
+		$jversion = new JVersion();
+		if ($jversion->isCompatible('3.9'))
 		{
-			$jversion = new JVersion();
-			if ($jversion->isCompatible('3.9'))
-			{
-				$lib_xmlrpc = 'eshiol/phpxmlrpc';
-			}
-			else
-			{
-				$lib_xmlrpc = 'phpxmlrpc';
-			}
-
-			if (JLibraryHelper::isEnabled($lib_xmlrpc) && $params->get('xmlrpc'))
-			{
-				require_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/Log/Logger/XmlrpcLogger.php';
-				JLog::addLogger(
-					array('logger' => 'xmlrpc', 'extension' => 'com_j2xml', 'service' => 'XMLRPCJ2XMLServices'),
-					JLog::ALL & ~ JLog::DEBUG,
-					array('lib_j2xml', 'com_j2xml'));
-			}
-			else
-			{
-				JFactory::getApplication()->enqueueMessage(JText::_('LIB_J2XML_MSG_XMLRPC_DISABLED'), 'error');
-			}
+			$lib_xmlrpc = 'eshiol/phpxmlrpc';
 		}
 		else
 		{
-			JFactory::getApplication()->enqueueMessage(JText::_('LIB_J2XML_MSG_XMLRPC_ERROR'), 'error');
+			$lib_xmlrpc = 'phpxmlrpc';
+		}
+
+		if (JLibraryHelper::isEnabled($lib_xmlrpc) && $params->get('xmlrpc'))
+		{
+			require_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/Log/Logger/XmlrpcLogger.php';
+			JLog::addLogger(
+				array('logger' => 'xmlrpc', 'extension' => 'com_j2xml', 'service' => 'XMLRPCJ2XMLServices'),
+				JLog::ALL & ~ JLog::DEBUG,
+				array('lib_j2xml', 'com_j2xml'));
+		}
+		else
+		{
+			JFactory::getApplication()->enqueueMessage(JText::_('LIB_J2XML_MSG_XMLRPC_DISABLED'), 'error');
 		}
 		$controllerPath .= '.' . strtolower($format);
 	}

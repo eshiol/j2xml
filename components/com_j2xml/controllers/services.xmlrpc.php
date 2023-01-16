@@ -37,24 +37,18 @@ class J2xmlControllerServices extends JControllerLegacy
 
 		$params = JComponentHelper::getParams('com_j2xml');
 
-		if (! function_exists('xmlrpc_set_type'))
+		$jversion = new JVersion();
+		if ($jversion->isCompatible('3.9'))
 		{
-			echo '<?xml version="1.0"?><methodResponse><fault><value><struct><member><name>faultCode</name><value><int>15</int></value></member><member><name>faultString</name><value><string>' . JText::_('LIB_J2XML_MSG_XMLRPC_ERROR') . '</string></value></member></struct></value></fault></methodResponse>';
-			exit();
+			$lib_xmlrpc = 'eshiol/phpxmlrpc';
 		} else {
-			$jversion = new JVersion();
-			if ($jversion->isCompatible('3.9'))
-			{
-				$lib_xmlrpc = 'eshiol/phpxmlrpc';
-			} else {
-				$lib_xmlrpc = 'phpxmlrpc';
-			}
+			$lib_xmlrpc = 'phpxmlrpc';
+		}
 
-			if (! JLibraryHelper::isEnabled($lib_xmlrpc) || ! $params->get('xmlrpc'))
-			{
-				echo '<?xml version="1.0"?><methodResponse><fault><value><struct><member><name>faultCode</name><value><int>32</int></value></member><member><name>faultString</name><value><string>' . JText::_('LIB_J2XML_MSG_XMLRPC_DISABLED') . '</string></value></member></struct></value></fault></methodResponse>';
-				exit();
-			}
+		if (! JLibraryHelper::isEnabled($lib_xmlrpc) || ! $params->get('xmlrpc'))
+		{
+			echo '<?xml version="1.0"?><methodResponse><fault><value><struct><member><name>faultCode</name><value><int>32</int></value></member><member><name>faultString</name><value><string>' . JText::_('LIB_J2XML_MSG_XMLRPC_DISABLED') . '</string></value></member></struct></value></fault></methodResponse>';
+			exit();
 		}
 
 		$xmlrpcServer = new xmlrpc_server(array(

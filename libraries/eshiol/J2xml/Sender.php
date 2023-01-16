@@ -139,37 +139,27 @@ class Sender
 		$server['remote_url'] .= 'index.php?option=com_j2xml&task=services.import&format=xmlrpc';
 
 		$headers = false;
-		if (! function_exists('xmlrpc_set_type'))
-		{
-			$headers = false;
-			// $app->enqueueMessage(\JText::_('LIB_J2XML_MSG_XMLRPC_ERROR'),
-			// 'error');
-			// return;
-		}
-		else
-		{
-			$objData = $data;
-			xmlrpc_set_type($objData, 'base64');
-			$request = xmlrpc_encode_request('j2xml.import', array(
-				$objData,
-				$server['username'],
-				$server['password']
-			));
-			$context = stream_context_create(
-				array(
+		$objData = $data;
+		xmlrpc_set_type($objData, 'base64');
+		$request = xmlrpc_encode_request('j2xml.import', array(
+			$objData,
+			$server['username'],
+			$server['password']
+		));
+		$context = stream_context_create(
+			array(
+				'http' => array(
+					'method' => "POST",
+					'header' => "Content-Type: text/xml",
+					'user_agent' => Version::$PRODUCT . ' ' . Version::getFullVersion(),
+					'content' => $request,
 					'http' => array(
-						'method' => "POST",
-						'header' => "Content-Type: text/xml",
-						'user_agent' => Version::$PRODUCT . ' ' . Version::getFullVersion(),
-						'content' => $request,
-						'http' => array(
-							'header' => 'Accept-Charset: UTF-8, *;q=0'
-						)
+						'header' => 'Accept-Charset: UTF-8, *;q=0'
 					)
-				));
+				)
+			));
 
-			$headers = @get_headers($server['remote_url']);
-		}
+		$headers = @get_headers($server['remote_url']);
 
 		if ($headers === false)
 		{
