@@ -24,6 +24,6 @@ require_once dirname(__FILE__) . '/json.php';
 /**
  * Viewlevels controller class.
  */
-class J2XMLControllerUsers extends J2XMLControllerJson
+class J2xmlControllerUsers extends J2xmlControllerJson
 {
 }

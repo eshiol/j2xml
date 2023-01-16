@@ -22,7 +22,7 @@ defined('_JEXEC') or die();
 /**
  * Content component helper.
  */
-class J2XMLHelper
+class J2xmlHelper
 {
 
 	public static $extension = 'com_j2xml';

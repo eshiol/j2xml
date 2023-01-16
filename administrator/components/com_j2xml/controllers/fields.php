@@ -22,7 +22,7 @@ defined('_JEXEC') or die();
 /**
  * Content controller class.
  */
-class J2XMLControllerFields extends JControllerLegacy
+class J2xmlControllerFields extends JControllerLegacy
 {
 
 	function __construct ($default = array())

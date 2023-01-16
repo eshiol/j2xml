@@ -24,7 +24,7 @@ require_once dirname(__FILE__) . '/../raw.php';
 /**
  * J2XML Component Fields View
  */
-class J2XMLViewFields extends J2XMLView
+class J2xmlViewFields extends J2xmlView
 {
 }
 ?>

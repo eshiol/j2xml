@@ -22,7 +22,7 @@ defined('_JEXEC') or die();
 /**
  * Menus controller class.
  */
-class J2XMLControllerMenus extends JControllerLegacy
+class J2xmlControllerMenus extends JControllerLegacy
 {
 
 	function __construct ($default = array())

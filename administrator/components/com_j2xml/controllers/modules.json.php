@@ -24,6 +24,6 @@ require_once dirname(__FILE__) . '/json.php';
 /**
  * Modules controller class.
  */
-class J2XMLControllerModules extends J2XMLControllerJson
+class J2xmlControllerModules extends J2xmlControllerJson
 {
 }

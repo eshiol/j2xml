@@ -25,7 +25,7 @@ require_once JPATH_SITE . '/components/com_j2xml/controllers/services.xmlrpc.php
  * @version __DEPLOY_VERSION__
  * @since 2.5
  */
-class J2XMLControllerCpanel extends J2XMLControllerServices
+class J2xmlControllerCpanel extends J2xmlControllerServices
 {
 }
 ?>

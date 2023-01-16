@@ -30,7 +30,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_j2xml/helpers/j2xml.php';
 /**
  * Controller class.
  */
-class J2XMLControllerCpanel extends JControllerLegacy
+class J2xmlControllerCpanel extends JControllerLegacy
 {
 
 	/**

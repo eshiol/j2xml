@@ -25,7 +25,7 @@ require_once dirname(__FILE__) . '/../raw.php';
  *
 * @since 3.9.213
  */
-class J2xmlViewModules extends J2XMLView
+class J2xmlViewModules extends J2xmlView
 {
 }
 ?>

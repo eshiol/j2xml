@@ -24,7 +24,7 @@ jimport('joomla.application.component.controlleradmin');
 /**
  * Website list controller class.
  */
-class J2XMLControllerWebsites extends JControllerAdmin
+class J2xmlControllerWebsites extends JControllerAdmin
 {
 
 	/**

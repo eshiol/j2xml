@@ -26,7 +26,7 @@ jimport('joomla.html.html.tabs');
 /**
  *
  */
-class J2XMLViewCpanel extends JViewLegacy
+class J2xmlViewCpanel extends JViewLegacy
 {
 
 	function display ($tpl = null)

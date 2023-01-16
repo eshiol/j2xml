@@ -22,7 +22,7 @@ defined('_JEXEC') or die();
 /**
  * Viewlevel controller class.
  */
-class J2XMLControllerViewlevels extends JControllerLegacy
+class J2xmlControllerViewlevels extends JControllerLegacy
 {
 
 	function __construct ($default = array())

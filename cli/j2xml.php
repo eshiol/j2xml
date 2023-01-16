@@ -87,7 +87,7 @@ jimport('eshiol.J2xml.messages');
  * @package  Joomla.CLI
  * @since    2.5
  */
-class J2XMLCli extends JApplicationCli
+class J2xmlCli extends JApplicationCli
 {
 	private static $codes = array('message'=>'i','notice'=>'!','error'=>'x');
 
