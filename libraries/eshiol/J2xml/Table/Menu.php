@@ -116,6 +116,17 @@ class Menu extends \eshiol\J2XML\Table\Table
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
 
+		if (isset($options['images']) && $options['images'])
+		{
+			if ($imgs = json_decode($item->params))
+			{
+				if (isset($imgs->menu_image))
+				{
+					Image::export($imgs->menu_image, $xml, $options);
+				}
+			}
+		}
+
 		/* export children */
 		$query = $db->getQuery(true)
 			->select($db->quoteName('id'))
