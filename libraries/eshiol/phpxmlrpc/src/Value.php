@@ -37,23 +37,62 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
         "null" => 1,
     );
 
+    protected static $logger;
+    protected static $charsetEncoder;
+
     /// @todo: do these need to be public?
     /** @var Value[]|mixed */
     public $me = array();
     /**
-     * @var int $mytype
+     * @var int
      * @internal
      */
     public $mytype = 0;
-    /** @var string|null $_php_class */
+    /** @var string|null */
     public $_php_class = null;
+
+    public function getLogger()
+    {
+        if (self::$logger === null) {
+            self::$logger = Logger::instance();
+        }
+        return self::$logger;
+    }
+
+    /**
+     * @param $logger
+     * @return void
+     */
+    public static function setLogger($logger)
+    {
+        self::$logger = $logger;
+    }
+
+    public function getCharsetEncoder()
+    {
+        if (self::$charsetEncoder === null) {
+            self::$charsetEncoder = Charset::instance();
+        }
+        return self::$charsetEncoder;
+    }
+
+    /**
+     * @param $charsetEncoder
+     * @return void
+     *
+     * @todo this should be a static method
+     */
+    public function setCharsetEncoder($charsetEncoder)
+    {
+        self::$charsetEncoder = $charsetEncoder;
+    }
 
     /**
      * Build an xmlrpc value.
      *
      * When no value or type is passed in, the value is left uninitialized, and the value can be added later.
      *
-     * @param mixed $val if passing in an array, all array elements should be PhpXmlRpc\Value themselves
+     * @param Value[]|mixed $val if passing in an array, all array elements should be PhpXmlRpc\Value themselves
      * @param string $type any valid xmlrpc type name (lowercase): i4, int, boolean, string, double, dateTime.iso8601,
      *                     base64, array, struct, null.
      *                     If null, 'string' is assumed.
@@ -90,7 +129,7 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
                     $this->me['struct'] = $val;
                     break;
                 default:
-                    Logger::instance()->errorLog("XML-RPC: " . __METHOD__ . ": not a known type ($type)");
+                    $this->getLogger()->errorLog("XML-RPC: " . __METHOD__ . ": not a known type ($type)");
             }
         }
     }
@@ -100,11 +139,10 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
      *
      * If the xmlrpc value is an array, the php value is added as its last element.
      * If the xmlrpc value is empty (uninitialized), this method makes it a scalar value, and sets that value.
-     * Fails if the xmlrpc value is not an array and already initialized.
+     * Fails if the xmlrpc value is not an array (i.e. a struct or a scalar) and already initialized.
      *
      * @param mixed $val
      * @param string $type allowed values: i4, i8, int, boolean, string, double, dateTime.iso8601, base64, null.
-     *
      * @return int 1 or 0 on failure
      */
     public function addScalar($val, $type = 'string')
@@ -115,13 +153,13 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
         }
 
         if ($typeOf !== 1) {
-            Logger::instance()->errorLog("XML-RPC: " . __METHOD__ . ": not a scalar type ($type)");
+            $this->getLogger()->errorLog("XML-RPC: " . __METHOD__ . ": not a scalar type ($type)");
             return 0;
         }
 
         // coerce booleans into correct values
-        // NB: we should either do it for datetimes, integers, i8 and doubles, too,
-        // or just plain remove this check, implemented on booleans only...
+        /// @todo we should either do it for datetimes, integers, i8 and doubles, too,
+        ///       or just plain remove this check, implemented on booleans only...
         if ($type == static::$xmlrpcBoolean) {
             if (strcasecmp($val, 'true') == 0 || $val == 1 || ($val == true && strcasecmp($val, 'false'))) {
                 $val = true;
@@ -132,10 +170,10 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
         switch ($this->mytype) {
             case 1:
-                Logger::instance()->errorLog('XML-RPC: ' . __METHOD__ . ': scalar xmlrpc value can have only one value');
+                $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': scalar xmlrpc value can have only one value');
                 return 0;
             case 3:
-                Logger::instance()->errorLog('XML-RPC: ' . __METHOD__ . ': cannot add anonymous scalar to struct xmlrpc value');
+                $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': cannot add anonymous scalar to struct xmlrpc value');
                 return 0;
             case 2:
                 // we're adding a scalar value to an array here
@@ -159,7 +197,6 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
      * Fails otherwise.
      *
      * @param Value[] $values
-     *
      * @return int 1 or 0 on failure
      *
      * @todo add some checking for $values to be an array of xmlrpc values?
@@ -177,7 +214,7 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
             return 1;
         } else {
-            Logger::instance()->errorLog('XML-RPC: ' . __METHOD__ . ': already initialized as a [' . $this->kindOf() . ']');
+            $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': already initialized as a [' . $this->kindOf() . ']');
             return 0;
         }
     }
@@ -190,7 +227,6 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
      * Fails otherwise.
      *
      * @param Value[] $values
-     *
      * @return int 1 or 0 on failure
      *
      * @todo add some checking for $values to be an array?
@@ -208,7 +244,7 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
             return 1;
         } else {
-            Logger::instance()->errorLog('XML-RPC: ' . __METHOD__ . ': already initialized as a [' . $this->kindOf() . ']');
+            $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': already initialized as a [' . $this->kindOf() . ']');
             return 0;
         }
     }
@@ -232,6 +268,12 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
         }
     }
 
+    /**
+     * @param string $typ
+     * @param Value[]|mixed $val
+     * @param string $charsetEncoding
+     * @return string
+     */
     protected function serializedata($typ, $val, $charsetEncoding = '')
     {
         $rs = '';
@@ -244,38 +286,39 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
             case 1:
                 switch ($typ) {
                     case static::$xmlrpcBase64:
-                        $rs .= "<${typ}>" . base64_encode($val) . "</${typ}>";
+                        $rs .= "<{$typ}>" . base64_encode($val) . "</{$typ}>";
                         break;
                     case static::$xmlrpcBoolean:
-                        $rs .= "<${typ}>" . ($val ? '1' : '0') . "</${typ}>";
+                        $rs .= "<{$typ}>" . ($val ? '1' : '0') . "</{$typ}>";
                         break;
                     case static::$xmlrpcString:
                         // Do NOT use htmlentities, since it will produce named html entities, which are invalid xml
-                        $rs .= "<${typ}>" . Charset::instance()->encodeEntities($val, PhpXmlRpc::$xmlrpc_internalencoding, $charsetEncoding) . "</${typ}>";
+                        $rs .= "<{$typ}>" . $this->getCharsetEncoder()->encodeEntities($val, PhpXmlRpc::$xmlrpc_internalencoding, $charsetEncoding) . "</{$typ}>";
                         break;
                     case static::$xmlrpcInt:
                     case static::$xmlrpcI4:
                     case static::$xmlrpcI8:
-                        $rs .= "<${typ}>" . (int)$val . "</${typ}>";
+                        $rs .= "<{$typ}>" . (int)$val . "</{$typ}>";
                         break;
                     case static::$xmlrpcDouble:
                         // avoid using standard conversion of float to string because it is locale-dependent,
                         // and also because the xmlrpc spec forbids exponential notation.
-                        // sprintf('%F') could be most likely ok but it fails eg. on 2e-14.
+                        // sprintf('%F') could be most likely ok, but it fails eg. on 2e-14.
                         // The code below tries its best at keeping max precision while avoiding exp notation,
                         // but there is of course no limit in the number of decimal places to be used...
-                        $rs .= "<${typ}>" . preg_replace('/\\.?0+$/', '', number_format((double)$val, PhpXmlRpc::$xmlpc_double_precision, '.', '')) . "</${typ}>";
+                        $rs .= "<{$typ}>" . preg_replace('/\\.?0+$/', '', number_format((double)$val, PhpXmlRpc::$xmlpc_double_precision, '.', '')) . "</{$typ}>";
                         break;
                     case static::$xmlrpcDateTime:
                         if (is_string($val)) {
-                            $rs .= "<${typ}>${val}</${typ}>";
-                        } elseif (is_a($val, 'DateTime')) {
-                            $rs .= "<${typ}>" . $val->format('Ymd\TH:i:s') . "</${typ}>";
+                            $rs .= "<{$typ}>{$val}</{$typ}>";
+                        // DateTimeInterface is not present in php 5.4...
+                        } elseif (is_a($val, 'DateTimeInterface') || is_a($val, 'DateTime')) {
+                            $rs .= "<{$typ}>" . $val->format('Ymd\TH:i:s') . "</{$typ}>";
                         } elseif (is_int($val)) {
-                            $rs .= "<${typ}>" . strftime("%Y%m%dT%H:%M:%S", $val) . "</${typ}>";
+                            $rs .= "<{$typ}>" . date('Ymd\TH:i:s', $val) . "</{$typ}>";
                         } else {
-                            // not really a good idea here: but what shall we output anyway? left for backward compat...
-                            $rs .= "<${typ}>${val}</${typ}>";
+                            // not really a good idea here: but what should we output anyway? left for backward compat...
+                            $rs .= "<{$typ}>{$val}</{$typ}>";
                         }
                         break;
                     case static::$xmlrpcNull:
@@ -288,7 +331,7 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
                     default:
                         // no standard type value should arrive here, but provide a possibility
                         // for xmlrpc values of unknown type...
-                        $rs .= "<${typ}>${val}</${typ}>";
+                        $rs .= "<{$typ}>{$val}</{$typ}>";
                 }
                 break;
             case 3:
@@ -298,7 +341,7 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
                 } else {
                     $rs .= "<struct>\n";
                 }
-                $charsetEncoder = Charset::instance();
+                $charsetEncoder = $this->getCharsetEncoder();
                 /** @var Value $val2 */
                 foreach ($val as $key2 => $val2) {
                     $rs .= '<member><name>' . $charsetEncoder->encodeEntities($key2, PhpXmlRpc::$xmlrpc_internalencoding, $charsetEncoding) . "</name>\n";
@@ -329,7 +372,6 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
      * Returns the xml representation of the value. XML prologue not included.
      *
      * @param string $charsetEncoding the charset to be used for serialization. if null, US-ASCII is assumed
-     *
      * @return string
      */
     public function serialize($charsetEncoding = '')
@@ -346,7 +388,6 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
      * Works only on xmlrpc values of type struct.
      *
      * @param string $key the name of the struct member to be looked up
-     *
      * @return boolean
      *
      * @deprecated use array access, e.g. isset($val[$key])
@@ -363,7 +404,6 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
      * Will raise a php warning if struct member of given name does not exist.
      *
      * @param string $key the name of the struct member to be looked up
-     *
      * @return Value
      *
      * @deprecated use array access, e.g. $val[$key]
@@ -377,6 +417,8 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * Reset internal pointer for xmlrpc values of type struct.
+     * @return void
+     *
      * @deprecated iterate directly over the object using foreach instead
      */
     public function structreset()
@@ -483,6 +525,7 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
      *
      * @return integer
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         switch ($this->mytype) {
@@ -499,9 +542,11 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * Implements the IteratorAggregate interface
+     * @internal required to be public to implement an Interface
      *
      * @return \ArrayIterator
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         switch ($this->mytype) {
@@ -518,10 +563,14 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * @internal required to be public to implement an Interface
+     *
      * @param mixed $offset
      * @param mixed $value
+     * @return void
+     *
      * @throws \Exception
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         switch ($this->mytype) {
@@ -557,16 +606,18 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
                 $this->me[$type] = $value;
                 return;
             default:
-                // it would be nice to allow empty values to be be turned into non-empty ones this way, but we miss info to do so
+                // it would be nice to allow empty values to be turned into non-empty ones this way, but we miss info to do so
                 throw new \Exception("XML-RPC Value is of type 'undef' and its value can not be set using array index");
         }
     }
 
     /**
      * @internal required to be public to implement an Interface
+     *
      * @param mixed $offset
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         switch ($this->mytype) {
@@ -584,9 +635,13 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * @internal required to be public to implement an Interface
+     *
      * @param mixed $offset
+     * @return void
+     *
      * @throws \Exception
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         switch ($this->mytype) {
@@ -606,10 +661,12 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * @internal required to be public to implement an Interface
+     *
      * @param mixed $offset
      * @return mixed|Value|null
      * @throws \Exception
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         switch ($this->mytype) {

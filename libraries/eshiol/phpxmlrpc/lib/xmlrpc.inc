@@ -41,7 +41,11 @@
  * This file is only used to insure backwards compatibility
  * with the API of the library <= rev. 3
  *
- * If it is included, the library will work without any further autoloading
+ * If it is included, the library will work without any further autoloading.
+ *
+ * NB: including this file will also alter the library configuration setting the
+ * expected charset encoding used by the app to ISO-8859-1. Please see the
+ * file api_changes_v4.md for how to change this if required.
  *****************************************************************************/
 
 include_once(__DIR__.'/../src/Client.php');
@@ -50,6 +54,8 @@ include_once(__DIR__.'/../src/PhpXmlRpc.php');
 include_once(__DIR__.'/../src/Request.php');
 include_once(__DIR__.'/../src/Response.php');
 include_once(__DIR__.'/../src/Value.php');
+include_once(__DIR__.'/../src/Exception/PhpXmlrpcException.php');
+include_once(__DIR__.'/../src/Exception/HttpException.php');
 include_once(__DIR__.'/../src/Helper/Charset.php');
 include_once(__DIR__.'/../src/Helper/Date.php');
 include_once(__DIR__.'/../src/Helper/Http.php');

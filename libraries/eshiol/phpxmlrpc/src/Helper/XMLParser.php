@@ -8,6 +8,13 @@ use PhpXmlRpc\Value;
 /**
  * Deals with parsing the XML.
  * @see http://xmlrpc.com/spec.md
+ *
+ * @todo implement an interface to allow for alternative implementations
+ *       - make access to $_xh protected, return more high-level data structures
+ *       - add parseRequest, parseResponse, parseValue methods
+ * @todo if iconv() or mb_string() are available, we could allow to convert the received xml to a custom charset encoding
+ *       while parsing, which is faster than doing it later by going over the rebuilt data structure
+ * @todo allow usage of a custom Logger via the DIC(ish) pattern we use in other classes
  */
 class XMLParser
 {
@@ -20,26 +27,28 @@ class XMLParser
     const ACCEPT_VALUE = 4;
     const ACCEPT_FAULT = 8;
 
-    // Used to store state during parsing.
+    // Used to store state during parsing and to pass parsing results to callers.
     // Quick explanation of components:
     //  private:
-    //   ac - used to accumulate values
-    //   stack - array with genealogy of xml elements names used to validate nesting of xmlrpc elements
-    //   valuestack - array used for parsing arrays and structs
-    //   lv - used to indicate "looking for a value": implements the logic to allow values with no types to be strings
+    //    ac - used to accumulate values
+    //    stack - array with genealogy of xml elements names used to validate nesting of xmlrpc elements
+    //    valuestack - array used for parsing arrays and structs
+    //    lv - used to indicate "looking for a value": implements the logic to allow values with no types to be strings
     //  public:
-    //   isf - used to indicate an xml parsing fault (3), invalid xmlrpc fault (2) or xmlrpc response fault (1)
-    //   isf_reason - used for storing xmlrpc response fault string
-    //   method - used to store method name
-    //   params - used to store parameters in method calls
-    //   pt - used to store the type of each received parameter. Useful if parameters are automatically decoded to php values
-    //   rt  - 'methodcall', 'methodresponse', 'value' or 'fault' (the last one used only in EPI emulation mode)
+    //    isf - used to indicate an xml parsing fault (3), invalid xmlrpc fault (2) or xmlrpc response fault (1)
+    //    isf_reason - used for storing xmlrpc response fault string
+    //    value - used to store the value in responses
+    //    method - used to store method name in requests
+    //    params - used to store parameters in requests
+    //    pt - used to store the type of each received parameter. Useful if parameters are automatically decoded to php values
+    //    rt  - 'methodcall', 'methodresponse', 'value' or 'fault' (the last one used only in EPI emulation mode)
     public $_xh = array(
         'ac' => '',
         'stack' => array(),
         'valuestack' => array(),
         'isf' => 0,
         'isf_reason' => '',
+        'value' => null,
         'method' => false,
         'params' => array(),
         'pt' => array(),
@@ -89,9 +98,10 @@ class XMLParser
      * @param string $data
      * @param string $returnType
      * @param int $accept a bit-combination of self::ACCEPT_REQUEST, self::ACCEPT_RESPONSE, self::ACCEPT_VALUE
-     * @return string
+     * @param array $options passed to the xml parser, in addition to the options received in the constructor
+     * @return void
      */
-    public function parse($data, $returnType = self::RETURN_XMLRPCVALS, $accept = 3)
+    public function parse($data, $returnType = self::RETURN_XMLRPCVALS, $accept = 3, $options = array())
     {
         $this->_xh = array(
             'ac' => '',
@@ -99,6 +109,7 @@ class XMLParser
             'valuestack' => array(),
             'isf' => 0,
             'isf_reason' => '',
+            'value' => null,
             'method' => false, // so we can check later if we got a methodname or not
             'params' => array(),
             'pt' => array(),
@@ -114,9 +125,13 @@ class XMLParser
             return;
         }
 
-        $parser = xml_parser_create();
+        // NB: we use '' instead of null to force charset detection from the xml declaration
+        $parser = xml_parser_create('');
 
         foreach ($this->parsing_options as $key => $val) {
+            xml_parser_set_option($parser, $key, $val);
+        }
+        foreach ($options as $key => $val) {
             xml_parser_set_option($parser, $key, $val);
         }
         // always set this, in case someone tries to disable it via options...
@@ -124,7 +139,7 @@ class XMLParser
 
         xml_set_object($parser, $this);
 
-        switch($returnType) {
+        switch ($returnType) {
             case self::RETURN_PHP:
                 xml_set_element_handler($parser, 'xmlrpc_se', 'xmlrpc_ee_fast');
                 break;
@@ -161,10 +176,12 @@ class XMLParser
     /**
      * xml parser handler function for opening element tags.
      * @internal
+     *
      * @param resource $parser
      * @param string $name
      * @param $attrs
      * @param bool $acceptSingleVals DEPRECATED use the $accept parameter instead
+     * @return void
      */
     public function xmlrpc_se($parser, $name, $attrs, $acceptSingleVals = false)
     {
@@ -222,7 +239,7 @@ class XMLParser
 
                         return;
                     }
-                // fall through voluntarily
+                    // fall through voluntarily
                 case 'I4':
                 case 'INT':
                 case 'STRING':
@@ -303,7 +320,7 @@ class XMLParser
                         $this->_xh['ac'] = ''; // reset the accumulator
                         break;
                     }
-                // we do not support the <NIL/> extension, so
+                // if here, we do not support the <NIL/> extension, so
                 // drop through intentionally
                 default:
                     // INVALID ELEMENT: RAISE ISF so that it is later recognized!!!
@@ -329,6 +346,7 @@ class XMLParser
      * @param resource $parser
      * @param $name
      * @param $attrs
+     * @return void
      */
     public function xmlrpc_se_any($parser, $name, $attrs)
     {
@@ -338,9 +356,11 @@ class XMLParser
     /**
      * xml parser handler function for close element tags.
      * @internal
+     *
      * @param resource $parser
      * @param string $name
      * @param int $rebuildXmlrpcvals >1 for rebuilding xmlrpcvals, 0 for rebuilding php values, -1 for xmlrpc-extension compatibility
+     * @return void
      */
     public function xmlrpc_ee($parser, $name, $rebuildXmlrpcvals = 1)
     {
@@ -525,8 +545,10 @@ class XMLParser
     /**
      * Used in decoding xmlrpc requests/responses without rebuilding xmlrpc Values.
      * @internal
+     *
      * @param resource $parser
      * @param string $name
+     * @return void
      */
     public function xmlrpc_ee_fast($parser, $name)
     {
@@ -536,8 +558,10 @@ class XMLParser
     /**
      * Used in decoding xmlrpc requests/responses while building xmlrpc-extension Values (plain php for all but base64 and datetime).
      * @internal
+     *
      * @param resource $parser
      * @param string $name
+     * @return void
      */
     public function xmlrpc_ee_epi($parser, $name)
     {
@@ -547,8 +571,10 @@ class XMLParser
     /**
      * xml parser handler function for character data.
      * @internal
+     *
      * @param resource $parser
      * @param string $data
+     * @return void
      */
     public function xmlrpc_cd($parser, $data)
     {
@@ -563,11 +589,13 @@ class XMLParser
     }
 
     /**
-     * xml parser handler function for 'other stuff', ie. not char data or
-     * element start/end tag. In fact it only gets called on unknown entities...
+     * xml parser handler function for 'other stuff', ie. not char data or element start/end tag.
+     * In fact it only gets called on unknown entities...
      * @internal
+     *
      * @param $parser
      * @param string data
+     * @return void
      */
     public function xmlrpc_dh($parser, $data)
     {
@@ -585,7 +613,7 @@ class XMLParser
      * xml charset encoding guessing helper function.
      * Tries to determine the charset encoding of an XML chunk received over HTTP.
      * NB: according to the spec (RFC 3023), if text/xml content-type is received over HTTP without a content-type,
-     * we SHOULD assume it is strictly US-ASCII. But we try to be more tolerant of non conforming (legacy?) clients/servers,
+     * we SHOULD assume it is strictly US-ASCII. But we try to be more tolerant of non-conforming (legacy?) clients/servers,
      * which will be most probably using UTF-8 anyway...
      * In order of importance checks:
      * 1. http headers
@@ -640,6 +668,9 @@ class XMLParser
         }
 
         // 3 - test if encoding is specified in the xml declaration
+        /// @todo this regexp will fail if $xmlChunk uses UTF-32/UCS-4, and most likely UTF-16/UCS-2 as well. In that
+        ///       case we leave the guesswork up to mbstring - which seems to be able to detect it, starting with php 5.6.
+        ///       For lower versions, we could attempt usage of mb_ereg...
         // Details:
         // SPACE:         (#x20 | #x9 | #xD | #xA)+ === [ \x9\xD\xA]+
         // EQ:            SPACE?=SPACE? === [ \x9\xD\xA]*=[ \x9\xD\xA]*
@@ -650,6 +681,7 @@ class XMLParser
         }
 
         // 4 - if mbstring is available, let it do the guesswork
+        /// @todo replace with function_exists
         if (extension_loaded('mbstring')) {
             if ($encodingPrefs == null && PhpXmlRpc::$xmlrpc_detectencodings != null) {
                 $encodingPrefs = PhpXmlRpc::$xmlrpc_detectencodings;
@@ -676,7 +708,7 @@ class XMLParser
     }
 
     /**
-     * Helper function: checks if an xml chunk as a charset declaration (BOM or in the xml declaration)
+     * Helper function: checks if an xml chunk has a charset declaration (BOM or in the xml declaration).
      *
      * @param string $xmlChunk
      * @return bool
