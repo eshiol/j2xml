@@ -501,7 +501,7 @@ class User extends Table
 
 		$db = \JFactory::getDbo();
 
-		$query = $db->getQuery(true)
+		/*$query = $db->getQuery(true)
 			->select($db->quoteName('l.id'))
 			->from($db->quoteName('#__viewlevels', 'l'))
 			->join('', $db->quoteName('#__user_usergroup_map', 'm'))
@@ -512,7 +512,7 @@ class User extends Table
 		foreach ($ids_viewlevel as $id_viewlevel)
 		{
 			Viewlevel::export($id_viewlevel, $xml, $options);
-		}
+		}*/
 
 		if (isset($options['contacts']) && $options['contacts'])
 		{
