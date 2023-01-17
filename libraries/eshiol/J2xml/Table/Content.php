@@ -866,7 +866,7 @@ class Content extends Table
 					->where($db->quoteName('f.type') . ' = ' . $db->quote('media')))
 					->loadColumn() as $_image)
 				{
-					Image::export($image, $xml, $options);
+					Image::export($_image, $xml, $options);
 				}
 
 				foreach($db->setQuery($db->getQuery(true)
