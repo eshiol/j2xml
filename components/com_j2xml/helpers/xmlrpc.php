@@ -107,6 +107,7 @@ class XMLRPCJ2XMLServices
 		$params->set('users', $cparams->get('users', 1));
 		$params->set('viewlevels', $cparams->get('viewlevels', 1));
 		$params->set('weblinks', $cparams->get('weblinks'));
+		$params->set('keep_data', $cparams->get('keep_data'));
 
 		$options = $params->toString();
 		return self::importAjax($xml, $params->toString());

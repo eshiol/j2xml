@@ -238,6 +238,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$iparams->set('users', $params->get('import_users', 1));
 				$iparams->set('viewlevels', $params->get('import_viewlevels', 1));
 				$iparams->set('weblinks', $params->get('import_weblinks', 1));
+				$iparams->set('keep_data', $params->get('keep_data', 0));
 
 				// set_time_limit(120);
 				try

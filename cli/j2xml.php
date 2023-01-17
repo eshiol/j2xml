@@ -229,6 +229,8 @@ class J2xmlCli extends JApplicationCli
 					$iparams->set('content_category_forceto', $params->get('category'));
 				}
 
+				$iparams->set('keep_data', $params->get('keep_data'));
+
 				$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 				$importer->import($xml, $iparams);
 			}

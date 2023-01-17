@@ -302,6 +302,7 @@ class Content extends Table
 
 		$keep_frontpage = $params->get('keep_frontpage', 0);
 		$keep_rating = $params->get('keep_rating', 0);
+		$keep_data = $params->get('keep_data', 0);
 
 		if ($version->isCompatible('4'))
 		{
@@ -413,6 +414,29 @@ class Content extends Table
 						else
 						{
 							$item = $table;
+						}
+						if ($keep_data == 1)
+						{
+							$sets = [];
+							if (isset($data['modified']))
+							{
+								$sets[] = $db->quoteName('modified') . ' = ' . $db->quote($data['modified']);
+							}
+							if (isset($data['modified_by']))
+							{
+								$sets[] = $db->quoteName('modified_by') . ' = ' . $data['modified_by'];
+							}
+							if (count($sets))
+							{
+								$query = $db->getQuery(true)
+									->update($db->quoteName('#__content'))
+									->where($db->quoteName('id') . ' = ' . $item->id);
+								foreach ($sets as $set)
+								{
+									$query->set($set);
+								}
+								$db->setQuery($query)->execute();		
+							}
 						}
 						if (($keep_id == 1) && ($id > 1))
 						{

@@ -180,5 +180,16 @@
 			showon="import_categories:0[AND]keep_category:1"
 			/>
 
+		<field
+			name="import_keep_data"
+			type="radio"
+			label="COM_J2XML_CONFIG_KEEP_DATA_LABEL"
+			description="COM_J2XML_CONFIG_KEEP_DATA_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
 	</fieldset>
 </form>

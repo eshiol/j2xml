@@ -153,6 +153,7 @@ class J2xmlModelImport extends JModelForm
 		$params->set('users', $fparams->get('import_users', $cparams->get('import_users', 1)));
 		$params->set('viewlevels', $fparams->get('import_viewlevels', $cparams->get('import_viewlevels', 1)));
 		$params->set('weblinks', $fparams->get('import_weblinks', $cparams->get('import_weblinks', 0)));
+		$params->set('keep_data', $fparams->get('import_keep_data', $cparams->get('import_keep_data', 0)));
 
 		JLog::add(new JLogEntry('params: ' . print_r($params->toArray(), true), JLog::DEBUG, 'com_j2xml'));
 

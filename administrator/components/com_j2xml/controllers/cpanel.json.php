@@ -147,6 +147,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$iparams->set('weblinks', $params->get('import_weblinks'));
 				$iparams->set('keep_frontpage', $params->get('keep_frontpage'));
 				$iparams->set('keep_rating', $params->get('keep_rating'));
+				$iparams->set('keep_data', $params->get('keep_data', 0));
 
 				if ($params->get('keep_category', 1) == 2)
 				{
