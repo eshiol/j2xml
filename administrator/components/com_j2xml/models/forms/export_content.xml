@@ -18,5 +18,6 @@
 -->
 <form>
 	<fieldset name="content">
+		<field name="note1" type="note" description="COM_J2XML_CONFIG_EXPORT_CONTENT_DESC" />
 	</fieldset>
 </form>
