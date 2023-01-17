@@ -22,8 +22,8 @@
 			name="send_content"
 			type="list"
 			default="2"
-			label="COM_J2XML_CONFIG_IMPORT_CONTENT_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_CONTENT_DESC">
+			label="COM_J2XML_CONFIG_CONTENT_LABEL"
+			description="COM_J2XML_CONFIG_SEND_CONTENT_DESC">
 			<option
 				value="">JGLOBAL_USE_GLOBAL
 			</option>
