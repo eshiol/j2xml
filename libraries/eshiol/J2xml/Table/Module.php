@@ -154,11 +154,22 @@ class Module extends \eshiol\J2XML\Table\Table
 							{
 								foreach ($data['menulist']['menu'] as $v)
 								{
-									$query->values($table->id . ', ' . ($include * parent::getMenuId($v)));
+									if ($m = parent::getMenuId($v))
+									{
+										$query->values($table->id . ', ' . ($include * $m));
+									}
 								}
 							}
 						}
-						$db->setQuery($query)->execute();
+						try
+						{
+							\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));	
+							$db->setQuery($query)->execute();
+						}
+						catch(\Exception $ex)
+						{
+							\JLog::add(new \JLogEntry($query, \JLog::ERROR, 'lib_j2xml'));
+						}
 					}
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MODULE_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
 					// Trigger the onContentAfterSave event.

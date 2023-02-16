@@ -224,12 +224,20 @@ class Menu extends \eshiol\J2XML\Table\Table
 							{
 								if (isset($args['view']) && ($args['view'] == 'article'))
 								{
+									if (empty($data['article_id']))
+									{
+										$error = \JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_FOUND', 0);
+										\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $error), \JLog::ERROR, 'lib_j2xml'));
+										continue;
+
+									}
+
 									$args['id'] = self::getArticleId($data['article_id']);
 									if ($args['id'] == 0)
 									{
 										$error = \JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_FOUND', $data['article_id']);
 										\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $error), \JLog::ERROR, 'lib_j2xml'));
-											continue;
+										continue;
 									}
 									$data['link'] = 'index.php?' . http_build_query($args);
 								}

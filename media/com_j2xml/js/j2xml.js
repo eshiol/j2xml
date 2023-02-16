@@ -108,8 +108,23 @@ eshiol.j2xml.importerModal = function(){
 		nodes.push( header + eshiol.XMLToString( this ) + footer );
 	} );
 
+	$root.children( 'menutype' ).each( function( index ){
+		console.log( 'menutype: ' + header + eshiol.XMLToString( this ) + footer );
+		nodes.push( header + eshiol.XMLToString( this ) + footer );
+	} );
+
+	$root.children( 'menu' ).each( function( index ){
+		console.log( 'menu: ' + header + eshiol.XMLToString( this ) + footer );
+		nodes.push( header + eshiol.XMLToString( this ) + footer );
+	} );
+
+	$root.children( 'module' ).each( function( index ){
+		console.log( 'module: ' + header + eshiol.XMLToString( this ) + footer );
+		nodes.push( header + eshiol.XMLToString( this ) + footer );
+	} );
+
 	$root.children(  ).each( function( index ){
-		if ( ['base', 'user', 'tag', 'category', 'content', 'fieldgroup', 'field'].indexOf( this.nodeName ) == -1 ){
+		if ( ['base', 'user', 'tag', 'category', 'content', 'fieldgroup', 'field', 'menutype', 'menu', 'module'].indexOf( this.nodeName ) == -1 ){
 			console.log( 'other: ' + header + eshiol.XMLToString( this ) + footer );
 			nodes.push( header + eshiol.XMLToString( this ) + footer );
 		}
