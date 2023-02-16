@@ -186,9 +186,13 @@ if( typeof( eshiol.renderMessages ) === 'undefined' ){
 
 				const messageWrapper = document.createElement( 'div' );
 				messageWrapper.className = 'alert-wrapper';
-				typeMessages.forEach( typeMessage => {
-					messageWrapper.innerHTML += Joomla.sanitizeHtml( `<div class="alert-message">${typeMessage}</div>` );
-				});
+                if( typeof( messages[type] ) === 'string' ){
+                    messageWrapper.innerHTML += Joomla.sanitizeHtml( `<div class="alert-message">${messages[type]}</div>` );
+                } else {
+                    typeMessages.forEach( typeMessage => {
+                        messageWrapper.innerHTML += Joomla.sanitizeHtml( `<div class="alert-message">${typeMessage}</div>` );
+                    });
+                }
 				messagesBox.appendChild( messageWrapper );
 				messageContainer.appendChild( messagesBox );
 			});
@@ -350,8 +354,6 @@ eshiol.j2xml.sendItem = function( options, params ){
 						eshiol.j2xml.sendItem( options, params );
 					},
 					error: function( jqXHR, status, error ){
-						console.log( 'send.onError' );
-
 						msg = new Object();
 						if ( typeof error === 'object' ){
 							if( error.code in eshiol.j2xml.codes ){
@@ -366,7 +368,7 @@ eshiol.j2xml.sendItem = function( options, params ){
 							msg['error'] = [error];
 						}
 						else{
-							msg['error'] = Joomla.Text._( 'LIB_J2XML_ERROR_UNKNOWN' );
+							msg['error'] = [Joomla.Text._( 'LIB_J2XML_ERROR_UNKNOWN' ).replace('%s', window.location.origin)];
 						}
 						eshiol.renderMessages( msg, window.parent.document.getElementById( 'system-message-container' ) );
 
@@ -474,4 +476,17 @@ if( typeof strstr === "undefined" ){
 			}
 		}
 	}
+}
+
+eshiol.download = function ( filename, text ){
+	var element = document.createElement( 'a' );
+	element.setAttribute( 'href', 'data:text/plain;charset=utf-8,' + encodeURIComponent( text ) );
+	element.setAttribute( 'download', filename );
+
+	element.style.display = 'none';
+	document.body.appendChild(element);
+
+	element.click();
+
+	document.body.removeChild( element );
 }
