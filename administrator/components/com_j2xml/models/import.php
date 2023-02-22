@@ -159,9 +159,9 @@ class J2xmlModelImport extends JModelForm
 
 		// This event allows a custom import of the data or a customization of the data:
 		JPluginHelper::importPlugin('j2xml');
-	
+
 		$results = JFactory::getApplication()->triggerEvent('onContentPrepareData', array('com_j2xml.import', &$data, $params));
-	
+
 		if (in_array(false, $results, true))
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_PLUGIN_ERROR'), JLog::ERROR, 'com_j2xml'));
@@ -204,7 +204,7 @@ class J2xmlModelImport extends JModelForm
 			$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
 
 			$results = JFactory::getApplication()->triggerEvent('onValidateData', array(&$xml, $params));
-		
+
 			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 			if ($importer->isSupported($xmlVersionNumber) || in_array(true, $results, true))
 			{

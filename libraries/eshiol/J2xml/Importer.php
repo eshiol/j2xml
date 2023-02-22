@@ -156,7 +156,7 @@ class Importer
 		{
 			// If the query fails we will go on
 		}
-		
+
 	}
 
 	/**

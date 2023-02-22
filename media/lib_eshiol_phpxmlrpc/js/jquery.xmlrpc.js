@@ -437,9 +437,9 @@
 
 	/**
 	 * Cross-browser xml parsing
-	 * 
+	 *
 	 * fix empty lines at the beginning of the xml
-	 */ 
+	 */
 	xmlrpc.parseXML = function( data ) {
 		data = data.trim();
 		var xml, tmp;

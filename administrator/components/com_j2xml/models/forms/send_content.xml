@@ -50,12 +50,10 @@
 		</field>
 		<field
 			name="send_keep_data"
-			type="radio"
+			type="list"
 			label="COM_J2XML_CONFIG_KEEP_DATA_LABEL"
 			description="COM_J2XML_CONFIG_KEEP_DATA_DESC"
-			default="0"
-			class="btn-group btn-group-yesno"
-			layout="joomla.form.field.radio.switcher">
+			default="">
 			<option value="">JGLOBAL_USE_GLOBAL</option>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>

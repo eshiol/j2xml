@@ -48,9 +48,9 @@ class Module extends \eshiol\J2XML\Table\Table
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		$this->_aliases['menus'] = "SELECT DISTINCT IF(SIGN(mm.menuid) > 0, 'include', 'exclude') FROM `#__modules_menu` mm INNER JOIN `#__menu` m ON ABS(mm.menuid) = m.id WHERE mm.moduleid = " .
-				 (int) $this->id . " UNION SELECT 'all' FROM `#__modules_menu` mm WHERE mm.moduleid = " . (int) $this->id . " AND mm.menuid = 0";
+			 (int) $this->id . " UNION SELECT 'all' FROM `#__modules_menu` mm WHERE mm.moduleid = " . (int) $this->id . " AND mm.menuid = 0";
 		$this->_aliases['menu'] = "SELECT CONCAT(m.menutype, '/', m.path) FROM `#__modules_menu` mm INNER JOIN `#__menu` m ON ABS(mm.menuid) = m.id WHERE mm.moduleid = " .
-				 (int) $this->id;
+			 (int) $this->id;
 
 		return parent::_serialize();
 	}
@@ -163,7 +163,7 @@ class Module extends \eshiol\J2XML\Table\Table
 						}
 						try
 						{
-							\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));	
+							\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 							$db->setQuery($query)->execute();
 						}
 						catch(\Exception $ex)

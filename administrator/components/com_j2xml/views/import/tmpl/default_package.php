@@ -166,7 +166,7 @@ $document->addScriptDeclaration(
 					}
 				} catch(e) {
 					console.log(e);
-					Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
+					Joomla.renderMessages({'error': [e.message.split('\\n').join('<br />')]});
 					return false;
 				}
 			};

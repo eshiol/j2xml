@@ -132,6 +132,17 @@
 	<fieldset name="import"
 		label="COM_J2XML_CONFIG_IMPORT_HEADER_LABEL">
 		<field
+			name="import_keep_id"
+			type="radio"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
+			default="0"
+			label="COM_J2XML_CONFIG_KEEP_ID_LABEL"
+			description="COM_J2XML_CONFIG_KEEP_ID_DESC">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
 			name="import_fields"
 			type="list"
 			default="0"

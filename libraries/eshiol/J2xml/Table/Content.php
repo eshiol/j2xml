@@ -29,6 +29,7 @@ use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\SiteRouter;
+use Joomla\CMS\Version;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
 use Joomla\Utilities\ArrayHelper;
 
@@ -290,19 +291,10 @@ class Content extends Table
 			Category::import($xml, $params);
 		}
 
-		$keep_id = $params->get('keep_id', 0);
-		if ($keep_id)
-		{
-			$autoincrement = 0;
-			$maxid = $db->setQuery($db->getQuery(true)
-				->select('MAX(' . $db->quoteName('id') . ')')
-				->from($db->quoteName('#__content')))
-				->loadResult();
-		}
-
+		$keep_id        = $params->get('keep_id', 0);
 		$keep_frontpage = $params->get('keep_frontpage', 0);
-		$keep_rating = $params->get('keep_rating', 0);
-		$keep_data = $params->get('keep_data', 0);
+		$keep_rating    = $params->get('keep_rating', 0);
+		$keep_data      = $params->get('keep_data', 0);
 
 		if ($version->isCompatible('4'))
 		{
@@ -320,16 +312,16 @@ class Content extends Table
 			}
 
 			$content = $db->setQuery(
-					$query = $db->getQuery(true)
-						->select(
-							array(
-									$db->quoteName('id'),
-									$db->quoteName('title'),
-									'GREATEST(' . $db->quoteName('created') . ',' . $db->quoteName('modified') . ') ' . $db->quoteName('modified')
-							))
-						->from($db->quoteName('#__content'))
-						->where($db->quoteName('catid') . ' = ' . $db->quote($data['catid']))
-						->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias'])))
+				$query = $db->getQuery(true)
+					->select(
+						array(
+							$db->quoteName('id'),
+							$db->quoteName('title'),
+							'GREATEST(' . $db->quoteName('created') . ',' . $db->quoteName('modified') . ') ' . $db->quoteName('modified')
+						))
+					->from($db->quoteName('#__content'))
+					->where($db->quoteName('catid') . ' = ' . $db->quote($data['catid']))
+					->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias'])))
 				->loadObject();
 
 			if ($version->isCompatible('4'))
@@ -393,11 +385,11 @@ class Content extends Table
 
 					// Trigger the onContentBeforeSave event.
 					$results = \JFactory::getApplication()->triggerEvent('onContentBeforeSave',
-							array(
-									$params->get('context', 'com_content.article'),
-									&$table,
-									$isNew
-							));
+						array(
+							$params->get('context', 'com_content.article'),
+							&$table,
+							$isNew
+						));
 				}
 
 				if (! in_array(false, $results, true))
@@ -435,45 +427,16 @@ class Content extends Table
 								{
 									$query->set($set);
 								}
-								$db->setQuery($query)->execute();		
+								$db->setQuery($query)->execute();	
 							}
 						}
 						if (($keep_id == 1) && ($id > 1))
 						{
 							try
 							{
-								$query = $db->getQuery(true)
-									->update($db->quoteName('#__content'))
-									->set($db->quoteName('id') . ' = ' . $id)
-									->where($db->quoteName('id') . ' = ' . $item->id);
-								$db->setQuery($query)->execute();
-
-								$query = $db->getQuery(true)
-									->update($db->quoteName('#__assets'))
-									->set($db->quoteName('name') . ' = ' . $db->quote('com_content.article.' . $id))
-									->where($db->quoteName('id') . ' = ' . $item->asset_id);
-								$db->setQuery($query)->execute();
-
-								$query = $db->getQuery(true)
-									->update($db->quoteName('#__contentitem_tag_map'))
-									->set($db->quoteName('content_item_id') . ' = ' . $id)
-									->where($db->quoteName('content_item_id') . ' = ' . $item->id)
-									->where($db->quoteName('type_alias') . ' = ' . $db->quote('com_content.article'));
-								$db->setQuery($query)->execute();
-
-								$query = $db->getQuery(true)
-									->update($db->quoteName('#__ucm_content'))
-									->set($db->quoteName('content_item_id') . ' = ' . $id)
-									->where($db->quoteName('content_item_id') . ' = ' . $item->id)
-									->where($db->quoteName('core_type_alias') . ' = ' . $db->quote('com_content.article'));
-								$db->setQuery($query)->execute();
+								self::changeId($item->id, $id);
 
 								$item->id = $id;
-
-								if ($id >= $autoincrement)
-								{
-									$autoincrement = $id + 1;
-								}
 
 								if ($id != $item->id)
 								{
@@ -549,12 +512,12 @@ class Content extends Table
 
 							// Trigger the onContentAfterSave event.
 							$results = \JFactory::getApplication()->triggerEvent('onContentAfterSave',
-									array(
-											$params->get('context', 'com_content.article'),
-											&$table,
-											$isNew,
-											$data
-									));
+								array(
+									$params->get('context', 'com_content.article'),
+									&$table,
+									$isNew,
+									$data
+								));
 						}
 					}
 					else
@@ -566,22 +529,6 @@ class Content extends Table
 				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $table->getError()), \JLog::NOTICE, 'lib_j2xml'));
 				}
-			}
-
-			if ($keep_id && ($autoincrement > $maxid))
-			{
-				$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
-
-				if ($serverType === 'postgresql')
-				{
-					$query = 'ALTER SEQUENCE ' . $db->quoteName('#__content_id_seq') . ' RESTART WITH ' . $autoincrement;
-				}
-				else
-				{
-					$query = 'ALTER TABLE ' . $db->quoteName('#__content') . ' AUTO_INCREMENT = ' . $autoincrement;
-				}
-				$db->setQuery($query)->execute();
-				$maxid = $autoincrement;
 			}
 		}
 	}
@@ -746,9 +693,9 @@ class Content extends Table
 		\JPluginHelper::importPlugin('j2xml');
 
 		$results = \JFactory::getApplication()->triggerEvent('onJ2xmlBeforeExportContent', array(
-				'lib_j2xml.article',
-				&$item,
-				$params
+			'lib_j2xml.article',
+			&$item,
+			$params
 		));
 
 		if ($item->access > 6)
@@ -922,5 +869,232 @@ class Content extends Table
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
 		return parent::getCategoryId($category, $extension, $defaultCategoryId);
+	}
+
+	/**
+	 * Change the content ID
+	 *
+	 * @since 23.2.378
+	 */
+	public static function changeId($id, $newid)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__ . '(' . $id . ', ' . $newid . ')', \JLog::DEBUG, 'com_j2xml'));
+
+		if ($id == $newid)
+		{
+			return;
+		}
+
+		$db      = Factory::getDbo();
+		$version = new Version();
+		$context = 'com_content.article';
+
+		// Check id
+		$query = $db->getQuery(true)
+			->select($db->quoteName('title'))
+			->from($db->quoteName('#__content'))
+			->where($db->quoteName('id') . ' = ' . $id);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		$title = $db->setQuery($query)->loadResult();
+		if (!$title)
+		{
+			throw new \Exception(\JText::sprintf('com_j2xml_ARTICLE_NOT_FOUND', $id));
+		}
+
+		// Check new id
+		$query = $db->getQuery(true)
+			->select($db->quoteName('title'))
+			->from($db->quoteName('#__content'))
+			->where($db->quoteName('id') . ' = ' . $newid);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		if ($db->setQuery($query)->loadObject())
+		{
+			throw new \Exception(\JText::sprintf('com_j2xml_ARTICLE_UNIQUE_ID', $newid));
+		}
+
+		// Content
+		$query = $db->getQuery(true)
+			->select('MAX(' . $db->quoteName('id') . ')')
+			->from($db->quoteName('#__content'));
+		$maxid = (int) $db->setQuery($query)->loadResult();
+		if ($newid > $maxid)
+		{
+			$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+
+			if ($serverType === 'postgresql')
+			{
+				$query = 'ALTER SEQUENCE ' . $db->quoteName('#__content_id_seq') . ' RESTART WITH ' . ($newid + 1);
+			}
+			else
+			{
+				$query = 'ALTER TABLE ' . $db->quoteName('#__content') . ' AUTO_INCREMENT = ' . ($newid + 1);
+			}
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+			$db->setQuery($query)->execute();
+		}
+
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__content'))
+			->set($db->quoteName('id') . ' = ' . $newid)
+			->where($db->quoteName('id') . ' = ' . $id);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Asset
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__assets'))
+			->set($db->quoteName('name') . ' = ' . $db->quote($context . '.' . $newid))
+			->where($db->quoteName('name') . ' = ' . $db->quote($context . '.' . $id));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Workflow
+		if ($version->isCompatible('4'))
+		{
+			$query = $db->getQuery(true)
+				->update($db->quoteName('#__workflow_associations'))
+				->set($db->quoteName('item_id') . ' = ' . $newid)
+				->where($db->quoteName('item_id') . ' = ' . $id)
+				->where($db->quoteName('extension') . ' = ' . $db->quote($context));
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+			$db->setQuery($query)->execute();
+		}
+
+		// Tag
+		$query = $db->getQuery(true)
+			->select($db->quoteName('type_id'))
+			->from($db->quoteName('#__content_types'))
+			->where($db->quoteName('type_alias') . ' = ' . $db->quote($context));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		$contentTypeId = $db->setQuery($query)->LoadResult();
+
+		$ucm_id = $db->getQuery(true)
+			->select($db->quoteName('ucm_id'))
+			->from($db->quoteName('#__ucm_base'))
+			->where($db->quoteName('ucm_item_id') . ' = ' . $id)
+			->where($db->quoteName('ucm_type_id') . ' = ' . $contentTypeId);
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__ucm_content'))
+			->set($db->quoteName('core_content_item_id') . ' = ' . $newid)
+			->where($db->quoteName('core_content_id') . ' = (' . $ucm_id . ')')
+			->where($db->quoteName('core_type_id') . ' = ' . $contentTypeId);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		$db->setQuery($query)->execute();
+
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__ucm_base'))
+			->set($db->quoteName('ucm_item_id') . ' = ' . $newid)
+			->where($db->quoteName('ucm_item_id') . ' = ' . $id)
+			->where($db->quoteName('ucm_type_id') . ' = ' . $contentTypeId);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Field
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__fields_values'))
+			->set($db->quoteName('item_id') . ' = ' . $newid)
+			->where($db->quoteName('item_id') . ' = ' . $id);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// History
+		if ($version->isCompatible('4'))
+		{
+			$query = $db->getQuery(true)
+				->update($db->quoteName('#__history'))
+				->set($db->quoteName('item_id') . ' = ' . $db->quote($context . '.' . $newid))
+				->set($db->quoteName('version_data') . ' = REPLACE(' . $db->quoteName('version_data') . ', "{\"id\":' . $newid . ',", "{\"id\":' . $id . ',")')
+				->set($db->quoteName('sha1_hash') . ' = SHA1(REPLACE(' . $db->quoteName('version_data') . ', "{\"id\":' . $newid . ',", "{\"id\":' . $id . ',"))')
+				->where($db->quoteName('item_id') . ' = ' . $db->quote($context . '.' . $id));
+		}
+		else
+		{
+			$query = $db->getQuery(true)
+				->update($db->quoteName('#__ucm_history'))
+				->set($db->quoteName('ucm_item_id') . ' = ' . $newid)
+				->set($db->quoteName('version_data') . ' = REPLACE(' . $db->quoteName('version_data') . ', "{\"id\":' . $newid . ',", "{\"id\":' . $id . ',")')
+				->set($db->quoteName('sha1_hash') . ' = SHA1(REPLACE(' . $db->quoteName('version_data') . ', "{\"id\":' . $newid . ',", "{\"id\":' . $id . ',"))')
+				->where($db->quoteName('ucm_item_id') . ' = ' . $id)
+				->where($db->quoteName('ucm_type_id') . ' = ' . $contentTypeId);
+		}
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Menu
+		$contextPart = explode('.', $context);
+		$option      = $contextPart[0];
+		$view        = $contextPart[1];
+		$query = $db->getQuery(true)
+			->select($db->quoteName('extension_id'))
+			->from($db->quoteName('#__extensions'))
+			->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+			->where($db->quoteName('element') . ' = ' . $db->quote($option));
+		$componentId = $db->setQuery($query)->loadResult();
+
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__menu'))
+			->set($db->quoteName('link') . ' = ' . $db->quote('index.php?option=' . $option . '&view=' . $view . '&id=' . $newid))
+			->where($db->quoteName('link') . ' = ' . $db->quote('index.php?option=' . $option . '&view=' . $view . '&id=' . $id))
+			->where($db->quoteName('component_id') . ' = ' . $componentId);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Language association Joomla 3.2
+		if ($version->isCompatible('4'))
+		{
+			if (\JLanguageAssociations::isEnabled())
+			{
+				$contextLanguage = 'com_content.item';
+
+				$query = $db->getQuery(true)
+					->select($db->quoteName('key'))
+					->from($db->quoteName('#__associations'))
+					->where($db->quoteName('id') . ' = ' . (int) $id)
+					->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
+				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+
+				$key = $db->setQuery($query)->loadResult();
+				\JLog::add(new \JLogEntry($key, \JLog::DEBUG, 'com_j2xml'));
+
+				if ($key)
+				{
+					// update id
+					$query = $db->getQuery(true)
+						->update($db->quoteName('#__associations'))
+						->set($db->quoteName('id') . ' = ' . $newid)
+						->where($db->quoteName('id') . ' = ' . $id)
+						->where($db->quoteName('key') . ' = ' . $db->quote($key))
+						->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
+					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+					$db->setQuery($query)->execute();
+
+					// update key
+					$query = $db->getQuery(true)
+						->select($db->quoteName('c.id'))
+						->select($db->quoteName('c.language'))
+						->from($db->quoteName('#__associations', 'a'))
+						->join('INNER', $db->quoteName('#__content', 'c') . ' ON (' . $db->quoteName('c.id') . ' = ' . $db->quoteName('a.id') . ')')
+						->where($db->quoteName('key') . ' = ' . $db->quote($key))
+						->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
+					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+					$rows = $db->setQuery($query)->loadObjectList();
+					$associations = array();
+					foreach ($rows as $row)
+					{
+						$associations[$row->language] = (int) $row->id;
+					}
+					\JLog::add(new \JLogEntry(json_encode($associations), \JLog::DEBUG, 'com_j2xml'));
+					$newkey   = md5(json_encode($associations));
+
+					$query = $db->getQuery(true)
+						->update($db->quoteName('#__associations'))
+						->set($db->quoteName('key') . ' = ' . $db->quote($newkey))
+						->where($db->quoteName('key') . ' = ' . $db->quote($key))
+						->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
+					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+					$db->setQuery($query)->execute();
+				}
+			}
+		}
 	}
 }
