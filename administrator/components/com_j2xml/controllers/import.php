@@ -111,7 +111,10 @@ class J2xmlControllerImport extends JControllerLegacy
 		JLog::add(new JLogEntry('setUserState(\'com_j2xml.import.data\'): ' . print_r($data, true), JLog::DEBUG, 'com_j2xml'));
 
 		// Do import
+		// hide error messages
+		ob_start();
 		$result = $this->import();
+		ob_end_clean();
 
 		// Get redirect URL
 		$redirect = $this->redirect;
