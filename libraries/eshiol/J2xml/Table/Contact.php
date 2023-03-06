@@ -129,7 +129,7 @@ class Contact extends Table
 
 		$db = \JFactory::getDbo();
 		$item = new Contact($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -233,7 +233,7 @@ class Contact extends Table
 		if ($import_categories)
 		{
 		$params->set('extension', 'com_contact');
-		$params->def('contact_category_default', self::getCategoryId('uncategorised', 'com_contact'));
+		$params->def('com_contact_category_default', self::getCategoryId('uncategorised', 'com_contact'));
 			Category::import($xml, $params);
 		}
 
@@ -260,7 +260,7 @@ class Contact extends Table
 
 			$data['id'] = $db->setQuery($query)->loadResult();
 
-			if (! $data['id'] || ($import_contacts == 2))
+			if (!$data['id'] || ($import_contacts == 2))
 			{
 				\JLoader::register('ContactTable', JPATH_ADMINISTRATOR . '/components/com_contacts/Table/ContactTable.php');
 				if (class_exists('\Joomla\Component\Contact\Administrator\Table\ContactTable'))
@@ -281,7 +281,7 @@ class Contact extends Table
 				{
 					unset($data['id']);
 				}
-				if (! isset($data['params']))
+				if (!isset($data['params']))
 				{
 					$data['params'] = '';
 				}
@@ -377,7 +377,7 @@ class Contact extends Table
 		{
 			if (!isset($data['catid']))
 			{
-				$data['catid'] = $params->get('contact_category_default');
+				$data['catid'] = $params->get('com_contact_category_default');
 			}
 			if (!isset($data['metadesc']))
 			{

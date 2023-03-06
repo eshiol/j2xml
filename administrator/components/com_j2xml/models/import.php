@@ -121,7 +121,7 @@ class J2xmlModelImport extends JModelForm
 
 		JLog::add(new JLogEntry('package: ' . print_r($package, true), JLog::DEBUG, 'com_j2xml'));
 
-		if (! ($data = implode(gzfile($package['packagefile'])))) {
+		if (!($data = implode(gzfile($package['packagefile'])))) {
 			$data = file_get_contents($package['packagefile']);
 		}
 		JLog::add(new JLogEntry('data: ' . $data, JLog::DEBUG, 'com_j2xml'));
@@ -141,9 +141,9 @@ class J2xmlModelImport extends JModelForm
 		$params->set('fields', $fparams->get('import_fields', $cparams->get('import_fields', 0)));
 		$params->set('images', $fparams->get('import_images', $cparams->get('import_images', 0)));
 		$params->set('keep_category', $fparams->get('import_keep_category', $cparams->get('import_keep_category', 1)));
-		if ($params->get('import_keep_category') == 2)
+		if ($params->get('keep_category') == 2)
 		{
-			$params->set('content_category_forceto', $fparams->get('import_category', $cparams->get('import_category')));
+			$params->set('content_category_forceto', $fparams->get('import_content_category_forceto', $cparams->get('com_content_category_default')));
 		}
 		$params->set('keep_id', $fparams->get('import_keep_id', $cparams->get('import_keep_id', 0)));
 		$params->set('keep_user_id', $fparams->get('import_keep_user_id', $cparams->get('import_keep_user_id', 0)));
@@ -175,13 +175,13 @@ class J2xmlModelImport extends JModelForm
 		}
 
 		$data = strstr($data, '<?xml version="1.0" ');
-		if (! defined('LIBXML_PARSEHUGE'))
+		if (!defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
 
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-		if (! $xml)
+		if (!$xml)
 		{
 			return;
 		}
@@ -190,7 +190,7 @@ class J2xmlModelImport extends JModelForm
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLog::ERROR, 'com_j2xml'));
 			return false;
 		}
-		elseif (! isset($xml['version']))
+		elseif (!isset($xml['version']))
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLog::ERROR, 'com_j2xml'));
 			return false;

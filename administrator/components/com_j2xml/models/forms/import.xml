@@ -164,7 +164,7 @@
 			<option value="1">JYES</option>
 		</field>
 		<field
-			name="keep_category"
+			name="import_keep_category"
 			type="list"
 			default="1"
 			label="COM_J2XML_CONFIG_KEEP_CATEGORY_LABEL"
@@ -173,12 +173,12 @@
 			<option value="2">COM_J2XML_CONFIG_KEEP_CATEGORY_FORCE</option>
 		</field>
 		<field
-			name="content_category_forceto"
+			name="import_content_category_forceto"
 			type="category"
 			extension="com_content"
 			label="COM_J2XML_CONFIG_CATEGORY_FORCETO_LABEL"
 			description="COM_J2XML_CONFIG_CONTENT_CATEGORY_FORCETO_DESC"
-			showon="keep_category:2"/>
+			showon="import_keep_category:2" />
 
 		<field
 			name="com_content_category_default"
@@ -186,7 +186,8 @@
 			extension="com_content"
 			label="COM_J2XML_CONFIG_IMPORT_CONTENT_DEFAULT_CATEGORY_LABEL"
 			description="COM_J2XML_CONFIG_IMPORT_CONTENT_DEFAULT_CATEGORY_DESC"
-			showon="import_categories:0[AND]keep_category:1"/>
+			showon="import_categories:0[AND]import_keep_category:1" />
+
 		<field
 			name="import_keep_data"
 			type="radio"

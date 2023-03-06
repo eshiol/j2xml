@@ -254,7 +254,7 @@ class Content extends Table
 	 * @param \JRegistry $params
 	 *			@option int 'content' 0: No (default); 1: Yes, if not exists;
 	 *			2: Yes, overwrite if exists
-	 *			@option int 'content_category_default'
+	 *			@option int 'com_content_category_default'
 	 *			@option int 'content_category_forceto'
 	 *			@option string 'context'
 	 *
@@ -274,7 +274,7 @@ class Content extends Table
 			return;
 		}
 
-		$params->def('content_category_default', self::getCategoryId('uncategorised', 'com_content'));
+		//$params->def('content_category_default', self::getCategoryId('uncategorised', 'com_content'));
 		$force_to = $params->get('content_category_forceto');
 		$context = $params->get('context', 'com_content.article');
 		$db = \JFactory::getDBO();
@@ -356,7 +356,7 @@ class Content extends Table
 			}
 			else
 			{
-				if (! $content)
+				if (!$content)
 				{ // new article
 					$isNew = true;
 					$data['id'] = null;
@@ -392,7 +392,7 @@ class Content extends Table
 						));
 				}
 
-				if (! in_array(false, $results, true))
+				if (!in_array(false, $results, true))
 				{
 					if ($version->isCompatible('4') ? $table->save($data) : $table->store())
 					{
@@ -463,7 +463,7 @@ class Content extends Table
 						}
 
 
-						if (! $version->isCompatible('4'))
+						if (!$version->isCompatible('4'))
 						{
 							// @todo add Joomla! 4 compatibility
 							if ($keep_frontpage == 0)
@@ -482,7 +482,7 @@ class Content extends Table
 							$db->setQuery($query);
 							$db->query();
 
-							if (($keep_rating == 0) || (! isset($data['rating_count'])) || ($data['rating_count'] == 0))
+							if (($keep_rating == 0) || (!isset($data['rating_count'])) || ($data['rating_count'] == 0))
 							{
 								$query = "DELETE FROM `#__content_rating` WHERE `content_id`=" . $item->id;
 								$db->setQuery($query);
@@ -506,7 +506,7 @@ class Content extends Table
 							}
 						}
 
-						if (! $version->isCompatible('4'))
+						if (!$version->isCompatible('4'))
 						{
 							self::setAssociations($item->id, $item->language, $data['associations'], 'com_content.item');
 
@@ -555,29 +555,32 @@ class Content extends Table
 			$data['id'] = 0;
 		}
 
-		if (empty($data['alias']))
+		if (empty($data['alias']) || (trim($data['alias']) == ''))
 		{
-			$data['alias'] = $data['title'];
-			$data['alias'] = str_replace(' ', '-', $data['alias']);
+			$data['alias'] = htmlspecialchars_decode($data['title'], ENT_QUOTES);	
+		}
+		$data['alias'] = \JFilterOutput::stringURLSafe($data['alias']);
+		if (trim(str_replace('-', '', $data['alias'])) == '') {
+			$data['alias'] = \JFactory::getDate()->format('Y-m-d-H-i-s');
 		}
 
-		if (! isset($data['fulltext']))
+		if (!isset($data['fulltext']))
 		{
 			$data['fulltext'] = '';
 		}
-		if (! isset($data['metakey']))
+		if (!isset($data['metakey']))
 		{
 			$data['metakey'] = '';
 		}
-		if (! isset($data['metadesc']))
+		if (!isset($data['metadesc']))
 		{
 			$data['metadesc'] = '';
 		}
-		if (! isset($data['created_by']))
+		if (!isset($data['created_by']))
 		{
 			$data['created_by'] = \JFactory::getUser()->id;
 		}
-		if (! isset($data['language']))
+		if (!isset($data['language']))
 		{
 			$data['language'] = '*';
 		}
@@ -595,14 +598,14 @@ class Content extends Table
 		{
 			$data['ordering'] = 0;
 		}
-		elseif (! isset($data['ordering']))
+		elseif (!isset($data['ordering']))
 		{
 			$data['ordering'] = $data['featured'];
 		}
 
-		if (! isset($data['catid']))
+		if (!isset($data['catid']))
 		{
-			$data['catid'] = $params->get('content_category_default');
+			$data['catid'] = $params->get('com_content_category_default');
 		}
 
 		if (empty($data['associations']))
@@ -650,7 +653,7 @@ class Content extends Table
 
 		if ($version->isCompatible('4'))
 		{
-			if (! isset($data['introtext']))
+			if (!isset($data['introtext']))
 			{
 				$data['introtext'] = '';
 			}
@@ -684,7 +687,7 @@ class Content extends Table
 		$version = new \JVersion();
 		$db = \JFactory::getDbo();
 		$item = new Content($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
