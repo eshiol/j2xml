@@ -70,13 +70,13 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		$data = strstr($data, '<?xml version="1.0" ');
 
 		$data = J2XMLHelper::stripInvalidXml($data);
-		if (! defined('LIBXML_PARSEHUGE'))
+		if (!defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$errors = libxml_get_errors();
 			foreach ($errors as $error)
@@ -99,7 +99,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			libxml_clear_errors();
 		}
 
-		if (! $xml)
+		if (!$xml)
 		{
 			echo new \JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true,
 					$ignoreMessages = false);
@@ -112,7 +112,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				&$xml
 		));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			echo new \JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true,
 					$ignoreMessages = false);
@@ -121,7 +121,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		}
 		elseif (strtoupper($xml->getName()) == 'J2XML')
 		{
-			if (! isset($xml['version']))
+			if (!isset($xml['version']))
 			{
 				$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), 'error');
 			}
@@ -170,7 +170,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			}
 		}
 /**
-		if (! $xml)
+		if (!$xml)
 		{
 			echo new \JResponseJson($response = null, $message = JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), $error = true,
 					$ignoreMessages = false);

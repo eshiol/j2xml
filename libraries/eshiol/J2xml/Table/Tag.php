@@ -115,9 +115,9 @@ class Tag extends Table
 				$table = \JTable::getInstance('Tag', 'TagsTable');
 			}
 
-			if (! $tag || ($import_tags == 2))
+			if (!$tag || ($import_tags == 2))
 			{
-				if (! $tag)
+				if (!$tag)
 				{ // new tag
 					$isNew = true;
 					$data['id'] = null;
@@ -216,7 +216,7 @@ class Tag extends Table
 
 		$db = \JFactory::getDbo();
 		$item = new Tag($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -296,23 +296,23 @@ class Tag extends Table
 			$data['alias'] = str_replace(' ', '-', $data['alias']);
 		}
 
-		if (! isset($data['metakey']))
+		if (!isset($data['metakey']))
 		{
 			$data['metakey'] = '';
 		}
-		if (! isset($data['metadesc']))
+		if (!isset($data['metadesc']))
 		{
 			$data['metadesc'] = '';
 		}
-		if (! isset($data['description']))
+		if (!isset($data['description']))
 		{
 			$data['description'] = '';
 		}
-		if (! isset($data['images']))
+		if (!isset($data['images']))
 		{
 			$data['images'] = '{}';
 		}
-		if (! isset($data['urls']))
+		if (!isset($data['urls']))
 		{
 			$data['urls'] = '{}';
 		}

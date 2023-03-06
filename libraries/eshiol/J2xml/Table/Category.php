@@ -120,7 +120,7 @@ class Category extends Table
 			return;
 
 		$extension = $params->get('extension');
-		if (! $extension)
+		if (!$extension)
 			return;
 
 		$version = new \JVersion();
@@ -187,11 +187,11 @@ class Category extends Table
 				$category = $db->loadObject();
 
 				$table = new \JTableCategory($db);
-				if (! $category || ($import_categories == 2))
+				if (!$category || ($import_categories == 2))
 				{
 					// $table = JTable::getInstance('category');
 
-					if (! $category && ($keep_id == 1))
+					if (!$category && ($keep_id == 1))
 					{
 						$query = $db->getQuery(true)
 							->select(array(
@@ -205,7 +205,7 @@ class Category extends Table
 						$category = $db->loadObject();
 					}
 
-					if (! $category) // new category
+					if (!$category) // new category
 					{
 						$data['id'] = null;
 						/*
@@ -260,7 +260,7 @@ class Category extends Table
 
 					if ($table->store())
 					{
-						if (! $category && ($keep_id == 1) && ($id > 1))
+						if (!$category && ($keep_id == 1) && ($id > 1))
 						{
 							try
 							{
@@ -359,7 +359,7 @@ class Category extends Table
 
 		$db = \JFactory::getDbo();
 		$item = new Category($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}

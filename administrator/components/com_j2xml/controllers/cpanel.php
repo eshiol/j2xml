@@ -87,7 +87,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				// Retrieve file details from uploaded file, sent from upload
 				// form:
 				$file = $this->input->files->get('j2xml_local', null, 'array');
-				if (! isset($file))
+				if (!isset($file))
 				{
 					$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'), 'error');
 					return false;
@@ -102,7 +102,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$extn = end($x);
 				break;
 			case 2:
-				if (! ($filename = $this->input->get('j2xml_url', null, 'URL')))
+				if (!($filename = $this->input->get('j2xml_url', null, 'URL')))
 				{
 					$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'), 'error');
 					return false;
@@ -127,7 +127,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				$app->enqueueMessage(JText::_('COM_J2XML_MSG_UPLOAD_ERROR'), 'error');
 				return false;
 		}
-		if (! ($data = implode(gzfile($filename))))
+		if (!($data = implode(gzfile($filename))))
 		{
 			$contextOptions = array(
 				'ssl' => array(
@@ -150,13 +150,13 @@ class J2xmlControllerCpanel extends JControllerLegacy
 		$data = strstr($data, '<?xml version="1.0" ');
 
 		$data = J2XMLHelper::stripInvalidXml($data);
-		if (! defined('LIBXML_PARSEHUGE'))
+		if (!defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$errors = libxml_get_errors();
 			foreach ($errors as $error)
@@ -180,7 +180,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 			$this->setRedirect('index.php?option=com_j2xml');
 		}
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), 'error');
 			return false;
@@ -191,7 +191,7 @@ class J2xmlControllerCpanel extends JControllerLegacy
 				&$xml
 		));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$app->enqueueMessage(JText::sprintf('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), 'error');
 		}

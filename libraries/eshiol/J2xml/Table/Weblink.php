@@ -111,7 +111,7 @@ class Weblink extends Table
 
 		$db = \JFactory::getDbo();
 		$item = new Weblink($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -201,7 +201,7 @@ class Weblink extends Table
 
 		// Check if component is installed
 		$db->setQuery("SELECT enabled FROM #__extensions WHERE name = 'com_weblinks'");
-		if (! $db->loadResult())
+		if (!$db->loadResult())
 			return;
 
 		$params->set('extension', 'com_weblinks');
@@ -228,10 +228,10 @@ class Weblink extends Table
 				->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias']));
 			$item = $db->setQuery($query)->loadObject();
 
-			if (! $item || ($import_weblinks))
+			if (!$item || ($import_weblinks))
 			{
 				$table = new \eshiol\J2xml\Table\Weblink($db);
-				if (! $item)
+				if (!$item)
 				{
 					$data['id'] = null;
 				}

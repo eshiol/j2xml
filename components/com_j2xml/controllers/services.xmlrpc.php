@@ -45,7 +45,7 @@ class J2xmlControllerServices extends JControllerLegacy
 			$lib_xmlrpc = 'phpxmlrpc';
 		}
 
-		if (! JLibraryHelper::isEnabled($lib_xmlrpc) || ! $params->get('xmlrpc'))
+		if (!JLibraryHelper::isEnabled($lib_xmlrpc) || !$params->get('xmlrpc'))
 		{
 			echo '<?xml version="1.0"?><methodResponse><fault><value><struct><member><name>faultCode</name><value><int>32</int></value></member><member><name>faultString</name><value><string>' . JText::_('LIB_J2XML_MSG_XMLRPC_DISABLED') . '</string></value></member></struct></value></fault></methodResponse>';
 			exit();

@@ -141,10 +141,10 @@ class Viewlevel extends Table
 				->where($db->quoteName('title') . ' = ' . $db->quote($data['title']));
 			$item = $db->setQuery($query)->loadObject();
 
-			if (! $item || ($import_viewlevels == 2))
+			if (!$item || ($import_viewlevels == 2))
 			{
 				$table = new \eshiol\J2xml\Table\Viewlevel($db);
-				if (! $item)
+				if (!$item)
 				{
 					$data['id'] = null;
 				}
@@ -248,7 +248,7 @@ class Viewlevel extends Table
 
 		$db = \JFactory::getDbo();
 		$item = new Viewlevel($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}

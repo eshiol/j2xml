@@ -68,7 +68,7 @@ class J2xmlControllerJson extends JControllerLegacy
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
-		if (! JSession::checkToken('request')) {
+		if (!JSession::checkToken('request')) {
 			// Check for a valid token. If invalid, send a 403 with the error message.
 			JLog::add(new JLogEntry(JText::_('JINVALID_TOKEN'), JLog::WARNING, 'com_j2xml'));
 			echo new JResponseJson();

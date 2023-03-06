@@ -89,7 +89,7 @@ class Menu extends \eshiol\J2XML\Table\Table
 
 		$db = \JFactory::getDbo();
 		$item = new Menu($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -174,11 +174,11 @@ class Menu extends \eshiol\J2XML\Table\Table
 			$menu = $db->loadObject();
 
 			$import_menus = 2;
-			if (! $menu || ($import_menus == 2))
+			if (!$menu || ($import_menus == 2))
 			{
 				$table = new Menu($db);
 
-				if (! $menu)
+				if (!$menu)
 				{ // new menu
 					$data['id'] = null;
 				}
@@ -198,7 +198,7 @@ class Menu extends \eshiol\J2XML\Table\Table
 					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 					$component = $db->setQuery($query)->loadResult();
 
-					if (! $component)
+					if (!$component)
 					{
 						$error = \JText::sprintf('LIB_J2XML_ERROR_COMPONENT_NOT_FOUND', $data['component_id']);
 						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $error), \JLog::WARNING, 'lib_j2xml'));
@@ -251,7 +251,7 @@ class Menu extends \eshiol\J2XML\Table\Table
 									->where($db->quoteName('element') . ' = ' . $db->quote($args['option']));
 								\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 								$component = $db->setQuery($query)->loadResult();
-								if (! $component)
+								if (!$component)
 								{
 									$error = \JText::sprintf('LIB_J2XML_ERROR_COMPONENT_NOT_FOUND', $args['option']);
 									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $error), \JLog::WARNING, 'lib_j2xml'));

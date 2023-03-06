@@ -66,7 +66,7 @@ class J2xmlViewCpanel extends JViewLegacy
 
 		$lang = JFactory::getLanguage();
 
-		if (! class_exists('JPlatform') || version_compare(JPlatform::RELEASE, '12', 'lt'))
+		if (!class_exists('JPlatform') || version_compare(JPlatform::RELEASE, '12', 'lt'))
 		{
 			?>
 <div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">

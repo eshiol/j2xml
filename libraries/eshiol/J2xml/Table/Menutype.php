@@ -57,7 +57,7 @@ class Menutype extends \eshiol\J2XML\Table\Table
 
 		$db = \JFactory::getDbo();
 		$item = new Menutype($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -139,11 +139,11 @@ class Menutype extends \eshiol\J2XML\Table\Table
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$menutype = $db->setQuery($query)->loadResult();
 
-			if (! $menutype || ($import_menus == 2))
+			if (!$menutype || ($import_menus == 2))
 			{
 				$table = new MenuType($db);
 
-				if (! $menutype)
+				if (!$menutype)
 				{ // new menutype
 					$data['id'] = null;
 				}

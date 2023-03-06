@@ -254,9 +254,7 @@
 			type="category"
 			extension="com_content"
 			label="COM_J2XML_CONFIG_IMPORT_CONTENT_DEFAULT_CATEGORY_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_CONTENT_DEFAULT_CATEGORY_DESC"
-			/>
-
+			description="COM_J2XML_CONFIG_IMPORT_CONTENT_DEFAULT_CATEGORY_DESC" />
 	</fieldset>
 
 	<fieldset name="send"

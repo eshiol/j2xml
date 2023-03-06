@@ -96,7 +96,7 @@ class Fieldgroup extends Table
 				->where($db->quoteName('title') . ' = ' . $db->quote($data['title']));
 			$fieldgroup = $db->setQuery($query)->loadObject();
 
-			if (! $fieldgroup )
+			if (!$fieldgroup )
 			{
 				\JLoader::register('GroupTable', JPATH_ADMINISTRATOR . '/components/com_fields/Table/GroupTable.php');
 				if (class_exists('\Joomla\Component\Fields\Administrator\Table\GroupTable'))
@@ -155,7 +155,7 @@ class Fieldgroup extends Table
 
 		$db = \JFactory::getDbo();
 		$item = new Fieldgroup($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -192,7 +192,7 @@ class Fieldgroup extends Table
 
 		parent::prepareData($record, $data, $params);
 
-		if (! isset($data['description']))
+		if (!isset($data['description']))
 		{
 			$data['description'] = '';
 		}

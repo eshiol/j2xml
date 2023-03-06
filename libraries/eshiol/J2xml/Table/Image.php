@@ -59,11 +59,11 @@ class Image
 		{
 			$src = JPATH_SITE . '/' . urldecode(html_entity_decode($image['src'], ENT_QUOTES, 'UTF-8'));
 			$data = $image;
-			if (! \JFile::exists($src) || ($import_images == 2))
+			if (!\JFile::exists($src) || ($import_images == 2))
 			{
 				// many thx to Stefanos Tzigiannis
 				$folder = dirname($src);
-				if (! \JFolder::exists($folder))
+				if (!\JFolder::exists($folder))
 				{
 					if (\JFolder::create($folder))
 					{

@@ -67,7 +67,7 @@ class Usernote extends \eshiol\J2xml\Table\Table
 
 		$db = \JFactory::getDbo();
 		$item = new Usernote($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -153,7 +153,7 @@ class Usernote extends \eshiol\J2xml\Table\Table
 
 				$table = \JTable::getInstance('Note', 'UsersTable');
 
-//				if (! $overwrite)
+//				if (!$overwrite)
 //				{
 					$table->load(
 						array(

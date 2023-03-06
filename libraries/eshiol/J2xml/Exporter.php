@@ -215,7 +215,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -259,7 +259,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -304,7 +304,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -349,7 +349,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -393,7 +393,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -437,7 +437,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -481,7 +481,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -527,7 +527,7 @@ class Exporter
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = $this->_root();
 		}
@@ -573,7 +573,7 @@ class Exporter
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = $this->_root();
 		}
@@ -617,7 +617,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}

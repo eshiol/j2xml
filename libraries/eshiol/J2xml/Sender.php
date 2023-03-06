@@ -120,7 +120,7 @@ class Sender
 		$db = \JFactory::getDBO();
 		$query = 'SELECT `title`, `remote_url`, `username`, `password` ' . 'FROM `#__j2xml_websites` WHERE `state`= 1 AND `id` = ' . $sid;
 		$db->setQuery($query);
-		if (! ($server = $db->loadAssoc()))
+		if (!($server = $db->loadAssoc()))
 		{
 			return;
 		}
@@ -179,7 +179,7 @@ class Sender
 					//$string = $msg->structmem('string')->scalarval();
 					$matches = $msg->structmem('strings');
 
-					if (! isset(Messages::$messages[$code]))
+					if (!isset(Messages::$messages[$code]))
 					{
 						$app->enqueueMessage($server['title'] . ': ' . $msg->structmem('message')
 							->scalarval(), 'notice');
@@ -238,7 +238,7 @@ class Sender
 					{
 						foreach ($response as $msg)
 						{
-							if (! isset(Messages::$messages[$msg['code']]))
+							if (!isset(Messages::$messages[$msg['code']]))
 							{
 								$app->enqueueMessage($server['title'] . ': ' . $msg['message'], 'notice');
 							}
@@ -301,7 +301,7 @@ class Sender
 
 		$res = $client->send($msg, 0);
 
-		if (! $res->faultcode())
+		if (!$res->faultcode())
 		{
 			return $res;
 		}
@@ -309,7 +309,7 @@ class Sender
 		if ($res->faultString() == "Didn't receive 200 OK from remote server. (HTTP/1.1 301 Foun)")
 		{
 			$res = $client->send($msg, 0, $protocol = 'http11');
-			if (! $res->faultcode())
+			if (!$res->faultcode())
 			{
 				return $res;
 			}
@@ -319,7 +319,7 @@ class Sender
 			$headers = http_parse_headers($res->raw_data);
 			$url = $headers['Location'];
 			$parse = parse_url($url);
-			if (! isset($parse['host']))
+			if (!isset($parse['host']))
 			{
 				$parse = parse_url($remote_url);
 				$url = $parse['scheme'] . '://' . $parse['host'] . $url;
@@ -335,7 +335,7 @@ class Sender
 	}
 }
 
-if (! function_exists('http_parse_headers'))
+if (!function_exists('http_parse_headers'))
 {
 
 	function http_parse_headers ($raw_headers)
@@ -351,7 +351,7 @@ if (! function_exists('http_parse_headers'))
 
 			if (isset($h[1]))
 			{
-				if (! isset($headers[$h[0]]))
+				if (!isset($headers[$h[0]]))
 					$headers[$h[0]] = trim($h[1]);
 				elseif (is_array($headers[$h[0]]))
 				{
@@ -373,7 +373,7 @@ if (! function_exists('http_parse_headers'))
 			{
 				if (substr($h[0], 0, 1) == "\t")
 					$headers[$key] .= "\r\n\t" . trim($h[0]);
-				elseif (! $key)
+				elseif (!$key)
 					$headers[0] = trim($h[0]);
 				trim($h[0]);
 			}

@@ -22,7 +22,7 @@
 	];
 	console = window.console = window.console || {};
 	methods.forEach( function( method ){
-		if ( ! console[method] ){
+		if ( !console[method] ){
 			console[method] = function (){};
 		}
 	} );

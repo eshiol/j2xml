@@ -188,7 +188,7 @@ class User extends Table
 
 		$import_users = $params->get('users', 1);
 		$import_superusers = $params->get('superusers', 0);
-		if (! $import_users)
+		if (!$import_users)
 			return;
 
 		$keepId = $params->get('keep_user_id', '0');
@@ -243,7 +243,7 @@ class User extends Table
 				unset($data['grouplist']);
 			}
 
-			if (! $import_superusers && isset($data['groups']) && in_array(8, $data['groups']))
+			if (!$import_superusers && isset($data['groups']) && in_array(8, $data['groups']))
 			{
 				\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_SKIPPED', $data['name']), \JLog::NOTICE, 'lib_j2xml'));
 				continue;
@@ -273,7 +273,7 @@ class User extends Table
 						->where($db->quoteName('username') . ' = ' . $db->quote($data['username'])))
 				->loadResult();
 
-			if (! $data['id'] || ($import_users == 2))
+			if (!$data['id'] || ($import_users == 2))
 			{
 				$user = new $userModel();
 				$result = $user->save($data);
@@ -287,7 +287,7 @@ class User extends Table
 
 				if ($id)
 				{
-					$users[$id] = ! (bool) $data['id'];
+					$users[$id] = !(bool) $data['id'];
 
 					if ($error = $user->getError())
 					{
@@ -481,7 +481,7 @@ class User extends Table
 		$db = \JFactory::getDbo();
 
 		$item = new User($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}

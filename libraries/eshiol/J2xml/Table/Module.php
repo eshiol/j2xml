@@ -68,7 +68,7 @@ class Module extends \eshiol\J2XML\Table\Table
 
 		$db = \JFactory::getDbo();
 		$item = new Module($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -112,11 +112,11 @@ class Module extends \eshiol\J2XML\Table\Table
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$module = $db->setQuery($query)->loadObject();
 
-			if (! $module || ($import_modules == 2))
+			if (!$module || ($import_modules == 2))
 			{
 				$table = new Module($db);
 
-				if (! $module)
+				if (!$module)
 				{ // new menutype
 					$data['id'] = null;
 				}
