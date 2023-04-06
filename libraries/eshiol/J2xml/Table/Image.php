@@ -108,6 +108,9 @@ class Image
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 		\JLog::add(new \JLogEntry($image, \JLog::DEBUG, 'com_j2xml'));
 
+		// Joomla 4
+		$image = strtok($image, '#');
+
 		if ($xml->xpath("//j2xml/img[@src = '" . htmlentities($image, ENT_QUOTES, "UTF-8") . "']"))
 		{
 			return;
