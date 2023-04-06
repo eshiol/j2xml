@@ -316,5 +316,14 @@ class Tag extends Table
 		{
 			$data['urls'] = '{}';
 		}
+
+		if (!isset($data['params']))
+		{
+			$data['params'] = '{"tag_layout":"","tag_link_class":""}';
+		}
+		if (!isset($data['metadata']))
+		{
+			$data['metadata'] = '{"author":"","robots":""}';
+		}
 	}
 }
