@@ -91,6 +91,8 @@ class Content extends Table
 				'ordering'
 		));
 
+		$version = new \JVersion();
+
 		// $this->_aliases['featured'] = 'SELECT IFNULL(f.ordering,0) FROM
 		// #__content_frontpage f RIGHT JOIN #__content a ON f.content_id = a.id
 		// WHERE a.id = ' . (int)$this->id;
@@ -100,6 +102,23 @@ class Content extends Table
 			->join('RIGHT',
 				$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
 			->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
+
+		if ($version->isCompatible('4'))
+		{
+			$this->_aliases['featured_up'] = (string) $this->_db->getQuery(true)
+				->select($this->_db->quoteName('f.featured_up'))
+				->from($this->_db->quoteName('#__content_frontpage', 'f'))
+				->join('RIGHT',
+					$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
+				->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
+
+			$this->_aliases['featured_down'] = (string) $this->_db->getQuery(true)
+				->select($this->_db->quoteName('f.featured_down'))
+				->from($this->_db->quoteName('#__content_frontpage', 'f'))
+				->join('RIGHT',
+					$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
+				->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
+		}
 
 		// $this->_aliases['rating_sum'] = 'SELECT IFNULL(rating_sum,0) FROM
 		// #__content_rating f RIGHT JOIN #__content a ON f.content_id = a.id
@@ -123,7 +142,6 @@ class Content extends Table
 
 		$slug = $this->alias ? ($this->id . ':' . $this->alias) : $this->id;
 
-		$version = new \JVersion();
 		if ($version->isCompatible('4'))
 		{
 			// We need to make sure we are always using the site router, even if the language plugin is executed in admin app.
@@ -292,7 +310,7 @@ class Content extends Table
 		}
 
 		$keep_id        = $params->get('keep_id', 0);
-		$keep_frontpage = $params->get('keep_frontpage', 0);
+		$keep_frontpage = $params->get('keep_data', 0);
 		$keep_rating    = $params->get('keep_rating', 0);
 		$keep_data      = $params->get('keep_data', 0);
 
@@ -462,26 +480,28 @@ class Content extends Table
 							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO, 'lib_j2xml'));
 						}
 
+						if ($keep_frontpage == 0)
+						{
+							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
+						}
+						elseif ($data['featured'] == 0)
+						{
+							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
+						}
+						else
+						{
+							$query = 'INSERT IGNORE INTO `#__content_frontpage`' . ' SET content_id = ' . $item->id 
+								. ',' . ' ordering = ' . $data['ordering'];
+							if ($version->isCompatible('4'))
+							{
+								$query .= ',' . ' featured_up = ' . $data['featured_up']
+									. ',' . ' featured_down = ' . $data['featured_down'];
+							}
+						}
+						$db->setQuery($query)->execute();
 
 						if (!$version->isCompatible('4'))
 						{
-							// @todo add Joomla! 4 compatibility
-							if ($keep_frontpage == 0)
-							{
-								$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
-							}
-							elseif ($data['featured'] == 0)
-							{
-								$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
-							}
-							else
-							{
-								$query = 'INSERT IGNORE INTO `#__content_frontpage`' . ' SET content_id = ' . $item->id . ',' . ' ordering = ' .
-										 $data['ordering'];
-							}
-							$db->setQuery($query);
-							$db->query();
-
 							if (($keep_rating == 0) || (!isset($data['rating_count'])) || ($data['rating_count'] == 0))
 							{
 								$query = "DELETE FROM `#__content_rating` WHERE `content_id`=" . $item->id;
@@ -1110,6 +1130,14 @@ class Content extends Table
 				->where($db->quoteName('type_alias') . ' = ' . $db->quote($context));
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$db->setQuery($query)->execute();
-		}	
+		}
+
+		// Frontpage
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__content_frontpage'))
+			->set($db->quoteName('content_id') . ' = ' . $newid)
+			->where($db->quoteName('content_id') . ' = ' . $id);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
 	}
 }
