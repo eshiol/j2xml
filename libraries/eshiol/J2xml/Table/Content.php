@@ -61,7 +61,7 @@ class Content extends Table
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		parent::__construct('#__content', 'id', $db);
 
@@ -82,7 +82,7 @@ class Content extends Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		$this->_excluded = array_merge($this->_excluded, array(
 				'sectionid',
@@ -266,7 +266,7 @@ class Content extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		$import_content = $params->get('content', 0);
 		if ($import_content == 0)
@@ -542,7 +542,7 @@ class Content extends Table
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		$db      = \JFactory::getDBO();
 		$version = new \JVersion();
@@ -677,7 +677,7 @@ class Content extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		if ($xml->xpath("//j2xml/content/id[text() = '" . $id . "']"))
 		{
@@ -843,7 +843,7 @@ class Content extends Table
 					->where($db->quoteName('f.type') . ' = ' . $db->quote('editor')))
 					->loadColumn() as $text)
 				{
-					\JLog::add(new \JLogEntry($text, \JLog::DEBUG, 'com_j2xml'));
+					\JLog::add(new \JLogEntry($text, \JLog::DEBUG, 'lib_j2xml'));
 					$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text, $matches, PREG_PATTERN_ORDER);
 					if (count($matches[1]) > 0)
 					{
@@ -869,7 +869,7 @@ class Content extends Table
 	 */
 	public static function getCategoryId ($category, $extension = 'com_content', $defaultCategoryId = 0)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		return parent::getCategoryId($category, $extension, $defaultCategoryId);
 	}
@@ -881,7 +881,7 @@ class Content extends Table
 	 */
 	public static function changeId($id, $newid)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__ . '(' . $id . ', ' . $newid . ')', \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__ . '(' . $id . ', ' . $newid . ')', \JLog::DEBUG, 'lib_j2xml'));
 
 		if ($id == $newid)
 		{
@@ -897,7 +897,7 @@ class Content extends Table
 			->select($db->quoteName('title'))
 			->from($db->quoteName('#__content'))
 			->where($db->quoteName('id') . ' = ' . $id);
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$title = $db->setQuery($query)->loadResult();
 		if (!$title)
 		{
@@ -909,7 +909,7 @@ class Content extends Table
 			->select($db->quoteName('title'))
 			->from($db->quoteName('#__content'))
 			->where($db->quoteName('id') . ' = ' . $newid);
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		if ($db->setQuery($query)->loadObject())
 		{
 			throw new \Exception(\JText::sprintf('com_j2xml_ARTICLE_UNIQUE_ID', $newid));
@@ -932,7 +932,7 @@ class Content extends Table
 			{
 				$query = 'ALTER TABLE ' . $db->quoteName('#__content') . ' AUTO_INCREMENT = ' . ($newid + 1);
 			}
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$db->setQuery($query)->execute();
 		}
 
@@ -940,7 +940,7 @@ class Content extends Table
 			->update($db->quoteName('#__content'))
 			->set($db->quoteName('id') . ' = ' . $newid)
 			->where($db->quoteName('id') . ' = ' . $id);
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$db->setQuery($query)->execute();
 
 		// Asset
@@ -948,7 +948,7 @@ class Content extends Table
 			->update($db->quoteName('#__assets'))
 			->set($db->quoteName('name') . ' = ' . $db->quote($context . '.' . $newid))
 			->where($db->quoteName('name') . ' = ' . $db->quote($context . '.' . $id));
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$db->setQuery($query)->execute();
 
 		// Workflow
@@ -959,7 +959,7 @@ class Content extends Table
 				->set($db->quoteName('item_id') . ' = ' . $newid)
 				->where($db->quoteName('item_id') . ' = ' . $id)
 				->where($db->quoteName('extension') . ' = ' . $db->quote($context));
-			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$db->setQuery($query)->execute();
 		}
 
@@ -968,7 +968,7 @@ class Content extends Table
 			->select($db->quoteName('type_id'))
 			->from($db->quoteName('#__content_types'))
 			->where($db->quoteName('type_alias') . ' = ' . $db->quote($context));
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$contentTypeId = $db->setQuery($query)->LoadResult();
 
 		$ucm_id = $db->getQuery(true)
@@ -981,7 +981,7 @@ class Content extends Table
 			->set($db->quoteName('core_content_item_id') . ' = ' . $newid)
 			->where($db->quoteName('core_content_id') . ' = (' . $ucm_id . ')')
 			->where($db->quoteName('core_type_id') . ' = ' . $contentTypeId);
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$db->setQuery($query)->execute();
 
 		$query = $db->getQuery(true)
@@ -989,7 +989,7 @@ class Content extends Table
 			->set($db->quoteName('ucm_item_id') . ' = ' . $newid)
 			->where($db->quoteName('ucm_item_id') . ' = ' . $id)
 			->where($db->quoteName('ucm_type_id') . ' = ' . $contentTypeId);
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$db->setQuery($query)->execute();
 
 		// Field
@@ -997,7 +997,7 @@ class Content extends Table
 			->update($db->quoteName('#__fields_values'))
 			->set($db->quoteName('item_id') . ' = ' . $newid)
 			->where($db->quoteName('item_id') . ' = ' . $id);
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$db->setQuery($query)->execute();
 
 		// History
@@ -1020,7 +1020,7 @@ class Content extends Table
 				->where($db->quoteName('ucm_item_id') . ' = ' . $id)
 				->where($db->quoteName('ucm_type_id') . ' = ' . $contentTypeId);
 		}
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$db->setQuery($query)->execute();
 
 		// Menu
@@ -1039,7 +1039,7 @@ class Content extends Table
 			->set($db->quoteName('link') . ' = ' . $db->quote('index.php?option=' . $option . '&view=' . $view . '&id=' . $newid))
 			->where($db->quoteName('link') . ' = ' . $db->quote('index.php?option=' . $option . '&view=' . $view . '&id=' . $id))
 			->where($db->quoteName('component_id') . ' = ' . $componentId);
-		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$db->setQuery($query)->execute();
 
 		// Language association Joomla 3.2
@@ -1054,10 +1054,10 @@ class Content extends Table
 					->from($db->quoteName('#__associations'))
 					->where($db->quoteName('id') . ' = ' . (int) $id)
 					->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
-				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 
 				$key = $db->setQuery($query)->loadResult();
-				\JLog::add(new \JLogEntry($key, \JLog::DEBUG, 'com_j2xml'));
+				\JLog::add(new \JLogEntry($key, \JLog::DEBUG, 'lib_j2xml'));
 
 				if ($key)
 				{
@@ -1068,7 +1068,7 @@ class Content extends Table
 						->where($db->quoteName('id') . ' = ' . $id)
 						->where($db->quoteName('key') . ' = ' . $db->quote($key))
 						->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
-					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 					$db->setQuery($query)->execute();
 
 					// update key
@@ -1079,14 +1079,14 @@ class Content extends Table
 						->join('INNER', $db->quoteName('#__content', 'c') . ' ON (' . $db->quoteName('c.id') . ' = ' . $db->quoteName('a.id') . ')')
 						->where($db->quoteName('key') . ' = ' . $db->quote($key))
 						->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
-					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 					$rows = $db->setQuery($query)->loadObjectList();
 					$associations = array();
 					foreach ($rows as $row)
 					{
 						$associations[$row->language] = (int) $row->id;
 					}
-					\JLog::add(new \JLogEntry(json_encode($associations), \JLog::DEBUG, 'com_j2xml'));
+					\JLog::add(new \JLogEntry(json_encode($associations), \JLog::DEBUG, 'lib_j2xml'));
 					$newkey   = md5(json_encode($associations));
 
 					$query = $db->getQuery(true)
@@ -1094,10 +1094,22 @@ class Content extends Table
 						->set($db->quoteName('key') . ' = ' . $db->quote($newkey))
 						->where($db->quoteName('key') . ' = ' . $db->quote($key))
 						->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
-					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
+					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 					$db->setQuery($query)->execute();
 				}
 			}
 		}
+
+		// Tags Joomla 3.1
+		if ($version->isCompatible('3.1'))
+		{
+			$query = $db->getQuery(true)
+				->update($db->quoteName('#__contentitem_tag_map'))
+				->set($db->quoteName('content_item_id') . ' = ' . $newid)
+				->where($db->quoteName('content_item_id') . ' = ' . $id)
+				->where($db->quoteName('type_alias') . ' = ' . $db->quote($context));
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+			$db->setQuery($query)->execute();
+		}	
 	}
 }

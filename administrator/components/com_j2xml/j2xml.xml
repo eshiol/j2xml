@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="3.0" type="component" method="upgrade">
+<extension version="3.0" type="component" method="install">
 	<name>com_j2xml</name>
 	<creationDate>__DEPLOY_DATE__</creationDate>
 	<author>Helios Ciancio</author>
