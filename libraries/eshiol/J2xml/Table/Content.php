@@ -463,8 +463,14 @@ class Content extends Table
 								. ',' . ' ordering = ' . $data['ordering'];
 							if ($version->isCompatible('4'))
 							{
-								$query .= ',' . ' featured_up = ' . $data['featured_up']
-									. ',' . ' featured_down = ' . $data['featured_down'];
+								if (!is_null($data['featured_up']))
+								{
+									$query .= ',' . ' featured_up = ' . $db->quote($data['featured_up']);
+								}
+								if (!is_null($data['featured_down']))
+								{
+									$query .= ',' . ' featured_down = ' . $db->quote($data['featured_down']);
+								}
 							}
 						}
 						$db->setQuery($query)->execute();
