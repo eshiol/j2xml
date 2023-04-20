@@ -311,7 +311,7 @@ class Content extends Table
 
 		$keep_id        = $params->get('keep_id', 0);
 		$keep_frontpage = $params->get('keep_data', 0);
-		$keep_rating    = $params->get('keep_rating', 0);
+		$keep_rating    = $params->get('keep_data', 0);
 		$keep_data      = $params->get('keep_data', 0);
 
 		if ($version->isCompatible('4'))
@@ -448,37 +448,6 @@ class Content extends Table
 								$db->setQuery($query)->execute();	
 							}
 						}
-						if (($keep_id == 1) && ($id > 1))
-						{
-							try
-							{
-								self::changeId($item->id, $id);
-
-								$item->id = $id;
-
-								if ($id != $item->id)
-								{
-									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO, 'lib_j2xml'));
-								}
-								else
-								{
-									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO, 'lib_j2xml'));
-								}
-							}
-							catch (\Exception $ex)
-							{
-								\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $item->title, $id, $item->id), \JLog::WARNING, 'lib_j2xml'));
-								continue;
-							}
-						}
-						elseif ($id != $item->id)
-						{
-							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO,	'lib_j2xml'));
-						}
-						else
-						{
-							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO, 'lib_j2xml'));
-						}
 
 						if ($keep_frontpage == 0)
 						{
@@ -500,29 +469,25 @@ class Content extends Table
 						}
 						$db->setQuery($query)->execute();
 
-						if (!$version->isCompatible('4'))
+						if (($keep_rating == 0) || (!isset($data['rating_count'])) || ($data['rating_count'] == 0))
 						{
-							if (($keep_rating == 0) || (!isset($data['rating_count'])) || ($data['rating_count'] == 0))
+							$query = "DELETE FROM `#__content_rating` WHERE `content_id`=" . $item->id;
+							$db->setQuery($query)->execute();
+						}
+						else
+						{
+							$rating = new \stdClass();
+							$rating->content_id = $item->id;
+							$rating->rating_count = $data['rating_count'];
+							$rating->rating_sum = $data['rating_sum'];
+							$rating->lastip = $_SERVER['REMOTE_ADDR'];
+							try
 							{
-								$query = "DELETE FROM `#__content_rating` WHERE `content_id`=" . $item->id;
-								$db->setQuery($query);
-								$db->query();
+								$db->insertObject('#__content_rating', $rating);
 							}
-							else
+							catch (\Exception $ex)
 							{
-								$rating = new \stdClass();
-								$rating->content_id = $item->id;
-								$rating->rating_count = $data['rating_count'];
-								$rating->rating_sum = $data['rating_sum'];
-								$rating->lastip = $_SERVER['REMOTE_ADDR'];
-								try
-								{
-									$db->insertObject('#__content_rating', $rating);
-								}
-								catch (\Exception $ex)
-								{
-									$db->updateObject('#__content_rating', $rating, 'content_id');
-								}
+								$db->updateObject('#__content_rating', $rating, 'content_id');
 							}
 						}
 
@@ -538,6 +503,30 @@ class Content extends Table
 									$isNew,
 									$data
 								));
+						}
+
+						if (($keep_id == 1) && ($id > 1))
+						{
+							try
+							{
+								self::changeId($item->id, $id);
+
+								$item->id = $id;
+							}
+							catch (\Exception $ex)
+							{
+								\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_ID_PRESENT', $item->title, $id, $item->id), \JLog::WARNING, 'lib_j2xml'));
+								continue;
+							}
+						}
+
+						if ($id != $item->id)
+						{
+							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO,	'lib_j2xml'));
+						}
+						else
+						{
+							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO, 'lib_j2xml'));
 						}
 					}
 					else
@@ -1135,6 +1124,14 @@ class Content extends Table
 		// Frontpage
 		$query = $db->getQuery(true)
 			->update($db->quoteName('#__content_frontpage'))
+			->set($db->quoteName('content_id') . ' = ' . $newid)
+			->where($db->quoteName('content_id') . ' = ' . $id);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Rating
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__content_rating'))
 			->set($db->quoteName('content_id') . ' = ' . $newid)
 			->where($db->quoteName('content_id') . ' = ' . $id);
 		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
