@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<extension type="package" method="install">
+<extension type="package" method="upgrade">
 	<name>J2XML 3.9</name>
 	<packagename>j2xml</packagename>
 	<description><![CDATA[J2XML 3.9 the ultimate solution to share content for Joomla! 3.x & 4.x]]></description>
