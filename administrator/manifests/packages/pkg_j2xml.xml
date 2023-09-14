@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<extension type="package" method="install">
+<extension type="package" method="upgrade">
 	<name>J2XML 3.9</name>
 	<packagename>j2xml</packagename>
 	<description><![CDATA[J2XML 3.9 the ultimate solution to share content for Joomla! 3.x & 4.x]]></description>
@@ -16,8 +16,8 @@
 	<packager>Helios Ciancio</packager>
 	<packagerurl>https://www.eshiol.it/</packagerurl>
 	<files>
-		<folder type="library" id="j2xml">lib_eshiol_J2xml.zip</folder>
 		<folder type="component" id="j2xml">com_j2xml.zip</folder>
+		<folder type="library" id="j2xml">lib_eshiol_J2xml.zip</folder>
 		<folder type="plugin" id="j2xml" group="system">plg_system_j2xml.zip</folder>
 		<folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc.zip</folder>
 		<folder type="plugin" id="basicauth" group="system">plg_system_basicauth.zip</folder>
