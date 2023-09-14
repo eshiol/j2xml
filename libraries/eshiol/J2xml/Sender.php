@@ -26,7 +26,7 @@ use eshiol\J2xml\Version;
 \JLoader::import('eshiol.J2xml.Messages');
 \JLoader::import('eshiol.J2xml.Version');
 
-if (file_exists('../phpxmlrpc/lib/xmlrpc.inc'))
+if (file_exists(JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpc.inc'))
 {
 	include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpc.inc';
 	include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpcs.inc';
