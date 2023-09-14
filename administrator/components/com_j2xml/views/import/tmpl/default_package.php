@@ -120,6 +120,15 @@ $document->addScriptDeclaration(
 				data = (tmp !== false ? tmp : data);
 				console.log(data);
 
+				validated = false;
+				eshiol.j2xml.validate.forEach(function(fn) {
+					validated = validated || fn(data);
+				});
+				if (!validated) {
+					Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
+					return false;
+				}
+
 				eshiol.j2xml.convert.forEach(function(fn) {
 					data = fn(data);
 				});
@@ -135,38 +144,30 @@ $document->addScriptDeclaration(
 						console.log(Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'));
 						Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
 					} else {
-						validated = false;
-						eshiol.j2xml.validate.forEach(function(fn) {
-							validated = validated || fn(data);
-						});
-						if (validated) {
-							console.log('j2xml file version ' + $(root).attr('version'));
-
-							$('#j2xml_filename').val(file.name);
-							$('#j2xml_data').val(btoa(unescape(encodeURIComponent(data))));
-
-							var j2xmlOptions  = Joomla.getOptions('J2XML'),
-						    	JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
-
-						    if  (JoomlaVersion == '4') {
-								var el = document.getElementById('j2xmlImportModal')
-								var modal = bootstrap.Modal.getInstance(el) // Returns a Bootstrap modal instance
-								modal.show();
-		    				} else {
-								$('#j2xmlImportModal').modal();
-							}
-
-							fileInput.val('');
-							return false;
-						} else {
-							console.log('j2xml file version ' + $(root).attr('version') + ' not supported');
-							Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED').replace('%s', $(root).attr('version'))]});
-							return false;
-						}
+						console.log('j2xml file version ' + $(root).attr('version'));
 					}
 				} catch(e) {
+					/*
 					console.log(e);
 					Joomla.renderMessages({'error': [e.message.split('\\n').join('<br />')]});
+					return false;
+					*/
+				} finally {
+					$('#j2xml_filename').val(file.name);
+					$('#j2xml_data').val(btoa(unescape(encodeURIComponent(data))));
+
+					var j2xmlOptions  = Joomla.getOptions('J2XML'),
+						JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
+
+					if  (JoomlaVersion == '4') {
+						var el = document.getElementById('j2xmlImportModal')
+						var modal = bootstrap.Modal.getInstance(el) // Returns a Bootstrap modal instance
+						modal.show();
+					} else {
+						$('#j2xmlImportModal').modal();
+					}
+
+					fileInput.val('');
 					return false;
 				}
 			};
@@ -232,6 +233,15 @@ $document->addScriptDeclaration(
 				data = (tmp !== false ? tmp : data);
 				console.log(data);
 
+				validated = false;
+				eshiol.j2xml.validate.forEach(function(fn) {
+					validated = validated || fn(data);
+				});
+				if (!validated) {
+					Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
+					return false;
+				}
+
 				eshiol.j2xml.convert.forEach(function(fn) {
 					data = fn(data);
 				});
@@ -247,38 +257,30 @@ $document->addScriptDeclaration(
 						console.log(Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'));
 						Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
 					} else {
-						validated = false;
-						eshiol.j2xml.validate.forEach(function(fn) {
-							validated = validated || fn(data);
-						});
-						if (validated) {
-							console.log('j2xml file version ' + $(root).attr('version'));
-
-							$('#j2xml_filename').val(file.name);
-							$('#j2xml_data').val(btoa(unescape(encodeURIComponent(data))));
-
-							var j2xmlOptions  = Joomla.getOptions('J2XML'),
-						    	JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
-
-						    if  (JoomlaVersion == '4') {
-								var el = document.getElementById('j2xmlImportModal')
-								var modal = bootstrap.Modal.getInstance(el) // Returns a Bootstrap modal instance
-								modal.show();
-		    				} else {
-								$('#j2xmlImportModal').modal();
-							}
-
-							fileInput.val('');
-							return false;
-						} else {
-							console.log(Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED').replace('%s', $(root).attr('version')));
-							Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_NOT_SUPPORTED').replace('%s', $(root).attr('version'))]});
-							return false;
-						}
+						console.log('j2xml file version ' + $(root).attr('version'));
 					}
 				} catch(e) {
+					/*
 					console.log(e);
 					Joomla.renderMessages({'error': [Joomla.JText._('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN')]});
+					return false;
+					*/
+				} finally {
+					$('#j2xml_filename').val(file.name);
+					$('#j2xml_data').val(btoa(unescape(encodeURIComponent(data))));
+
+					var j2xmlOptions  = Joomla.getOptions('J2XML'),
+						JoomlaVersion = j2xmlOptions && j2xmlOptions.Joomla ? j2xmlOptions.Joomla : '3';
+
+					if  (JoomlaVersion == '4') {
+						var el = document.getElementById('j2xmlImportModal')
+						var modal = bootstrap.Modal.getInstance(el) // Returns a Bootstrap modal instance
+						modal.show();
+					} else {
+						$('#j2xmlImportModal').modal();
+					}
+
+					fileInput.val('');
 					return false;
 				}
 			};
