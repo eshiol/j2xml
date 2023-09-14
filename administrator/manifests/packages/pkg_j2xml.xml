@@ -16,8 +16,8 @@
 	<packager>Helios Ciancio</packager>
 	<packagerurl>https://www.eshiol.it/</packagerurl>
 	<files>
-		<folder type="library" id="j2xml">lib_eshiol_J2xml.zip</folder>
 		<folder type="component" id="j2xml">com_j2xml.zip</folder>
+		<folder type="library" id="j2xml">lib_eshiol_J2xml.zip</folder>
 		<folder type="plugin" id="j2xml" group="system">plg_system_j2xml.zip</folder>
 		<folder type="library" id="phpxmlrpc">lib_eshiol_phpxmlrpc.zip</folder>
 		<folder type="plugin" id="basicauth" group="system">plg_system_basicauth.zip</folder>

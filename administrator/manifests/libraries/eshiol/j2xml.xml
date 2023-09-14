@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="library" method="install">
+<extension type="library" method="upgrade">
 	<name>J2XML</name>
 	<libraryname>eshiol/J2xml</libraryname>
 	<description>J2XML Library. Export/Import Joomla! content.</description>
