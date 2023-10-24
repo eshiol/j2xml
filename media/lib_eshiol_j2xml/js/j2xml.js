@@ -109,10 +109,7 @@ if( typeof( eshiol.removeMessages ) === 'undefined' ){
 	};
 }
 
-/**
- * @copyright  (C) 2020 Open Source Matters, Inc. <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
- */
+
 /**
  * Returns the container of the Messages
  *
@@ -363,6 +360,13 @@ eshiol.j2xml.sendItem = function( options, params ){
 								t = 'error';
 							}
 							msg[t] = [error.message];
+
+							if( error.code == 32 ){ // XMLRPC protocol disabled
+								eshiol.renderMessages( msg, window.parent.document.getElementById( 'system-message-container' ) );
+								window.parent.jQuery('#send-progress').remove();
+
+								return;
+							}
 						}
 						else if ( error ){
 							msg['error'] = [error];
