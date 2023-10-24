@@ -62,8 +62,6 @@ class XMLRPCJ2XMLServices
 	 */
 	public static function import($xml, $username = '', $password = '')
 	{
-//		global $xmlrpcerruser, $xmlrpcI4, $xmlrpcInt, $xmlrpcBoolean, $xmlrpcDouble, $xmlrpcString, $xmlrpcDateTime, $xmlrpcBase64, $xmlrpcArray, $xmlrpcStruct, $xmlrpcValue;
-
 		$lang = JFactory::getApplication()->getLanguage();
 		$lang->load('lib_j2xml', JPATH_SITE, null, false, false) ||
 		// Fallback to the library file in the default language
@@ -125,8 +123,6 @@ class XMLRPCJ2XMLServices
 	 */
 	public static function importAjax($xml, $options)
 	{
-//		global $xmlrpcerruser, $xmlrpcI4, $xmlrpcInt, $xmlrpcBoolean, $xmlrpcDouble, $xmlrpcString, $xmlrpcDateTime, $xmlrpcBase64, $xmlrpcArray, $xmlrpcStruct, $xmlrpcValue;
-
 		$lang = JFactory::getApplication()->getLanguage();
 		$lang->load('lib_j2xml', JPATH_SITE, null, false, false) ||
 		// Fallback to the library file in the default language
@@ -158,16 +154,8 @@ class XMLRPCJ2XMLServices
 			libxml_clear_errors();
 		}
 
-		if (!mb_detect_encoding($data, 'UTF-8'))
-		{
-			$data = mb_convert_encoding($data, 'UTF-8');
-		}
-
-		$data = utf8_encode(trim($data));
-
 		$data = strstr($data, '<?xml version="1.0" ');
 
-		//$data = J2XMLHelper::stripInvalidXml($data);
 		if (!defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
