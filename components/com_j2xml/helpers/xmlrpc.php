@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -107,6 +107,7 @@ class XMLRPCJ2XMLServices
 		$params->set('users', $cparams->get('users', 1));
 		$params->set('viewlevels', $cparams->get('viewlevels', 1));
 		$params->set('weblinks', $cparams->get('weblinks'));
+		$params->set('keep_data', $cparams->get('keep_data'));
 
 		$options = $params->toString();
 		return self::importAjax($xml, $params->toString());
@@ -132,7 +133,7 @@ class XMLRPCJ2XMLServices
 		$lang->load('lib_j2xml', JPATH_SITE, null, true);
 
 		$user = JFactory::getUser();
-		if (! $user->authorise('core.admin', 'com_j2xml'))
+		if (!$user->authorise('core.admin', 'com_j2xml'))
 		{
 			if ($user->guest)
 			{
@@ -144,20 +145,20 @@ class XMLRPCJ2XMLServices
 		}
 
 		$data = self::gzdecode($xml);
-		if (! $data)
+		if (!$data)
 		{
 			$data = $xml;
 		}
 
 		libxml_use_internal_errors(true);
 		$xml = simplexml_load_string($data);
-		if (! $xml)
+		if (!$xml)
 		{
 			$data = base64_decode($data);
 			libxml_clear_errors();
 		}
 
-		if (! mb_detect_encoding($data, 'UTF-8'))
+		if (!mb_detect_encoding($data, 'UTF-8'))
 		{
 			$data = mb_convert_encoding($data, 'UTF-8');
 		}
@@ -167,14 +168,14 @@ class XMLRPCJ2XMLServices
 		$data = strstr($data, '<?xml version="1.0" ');
 
 		//$data = J2XMLHelper::stripInvalidXml($data);
-		if (! defined('LIBXML_PARSEHUGE'))
+		if (!defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
 
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$errors = libxml_get_errors();
 			foreach ($errors as $error)
@@ -205,7 +206,7 @@ class XMLRPCJ2XMLServices
 		JPluginHelper::importPlugin('j2xml');
 		$results = JFactory::getApplication()->triggerEvent('onContentBeforeImport', array('com_j2xml.xmlrpc', &$xml, $params));
 
-		if (! isset($xml['version']))
+		if (!isset($xml['version']))
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLog::ERROR, 'com_j2xml'));
 			return new xmlrpcresp(new xmlrpcval(self::$_messageQueue, 'array'));
@@ -359,7 +360,7 @@ class XMLRPCJ2XMLServices
 		$crc = sprintf("%u", crc32($data));
 		$crcOK = $crc == $datacrc;
 		$lenOK = $isize == strlen($data);
-		if (! $lenOK || ! $crcOK)
+		if (!$lenOK || !$crcOK)
 		{
 			$error = ($lenOK ? '' : 'Length check FAILED. ') . ($crcOK ? '' : 'Checksum FAILED.');
 			return false;
@@ -440,7 +441,7 @@ class XMLRPCJ2XMLServices
 				}
 			}
 		}
-		if (! $found)
+		if (!$found)
 		{
 			self::$_messageQueue[] = new xmlrpcval(array(
 				"code" => new xmlrpcval(isset($codes[$priority]) ? $codes[$priority] : 28, 'int'),

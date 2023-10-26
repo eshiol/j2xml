@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -215,7 +215,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -259,7 +259,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -304,7 +304,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -349,7 +349,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -393,7 +393,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -437,7 +437,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -481,7 +481,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}
@@ -527,7 +527,7 @@ class Exporter
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = $this->_root();
 		}
@@ -573,7 +573,7 @@ class Exporter
 		\JLog::add(new \JLogEntry('ids: ' . print_r($ids, true), \JLog::DEBUG, 'lib_j2xml'));
 		\JLog::add(new \JLogEntry('options: ' . print_r($options, true), \JLog::DEBUG, 'lib_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = $this->_root();
 		}
@@ -617,7 +617,7 @@ class Exporter
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
-		if (! $xml)
+		if (!$xml)
 		{
 			$xml = self::_root();
 		}

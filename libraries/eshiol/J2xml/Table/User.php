@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -188,7 +188,7 @@ class User extends Table
 
 		$import_users = $params->get('users', 1);
 		$import_superusers = $params->get('superusers', 0);
-		if (! $import_users)
+		if (!$import_users)
 			return;
 
 		$keepId = $params->get('keep_user_id', '0');
@@ -243,7 +243,7 @@ class User extends Table
 				unset($data['grouplist']);
 			}
 
-			if (! $import_superusers && isset($data['groups']) && in_array(8, $data['groups']))
+			if (!$import_superusers && isset($data['groups']) && in_array(8, $data['groups']))
 			{
 				\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_USER_SKIPPED', $data['name']), \JLog::NOTICE, 'lib_j2xml'));
 				continue;
@@ -273,7 +273,7 @@ class User extends Table
 						->where($db->quoteName('username') . ' = ' . $db->quote($data['username'])))
 				->loadResult();
 
-			if (! $data['id'] || ($import_users == 2))
+			if (!$data['id'] || ($import_users == 2))
 			{
 				$user = new $userModel();
 				$result = $user->save($data);
@@ -287,7 +287,7 @@ class User extends Table
 
 				if ($id)
 				{
-					$users[$id] = ! (bool) $data['id'];
+					$users[$id] = !(bool) $data['id'];
 
 					if ($error = $user->getError())
 					{
@@ -481,7 +481,7 @@ class User extends Table
 		$db = \JFactory::getDbo();
 
 		$item = new User($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -501,7 +501,7 @@ class User extends Table
 
 		$db = \JFactory::getDbo();
 
-		$query = $db->getQuery(true)
+		/*$query = $db->getQuery(true)
 			->select($db->quoteName('l.id'))
 			->from($db->quoteName('#__viewlevels', 'l'))
 			->join('', $db->quoteName('#__user_usergroup_map', 'm'))
@@ -512,7 +512,7 @@ class User extends Table
 		foreach ($ids_viewlevel as $id_viewlevel)
 		{
 			Viewlevel::export($id_viewlevel, $xml, $options);
-		}
+		}*/
 
 		if (isset($options['contacts']) && $options['contacts'])
 		{
@@ -544,6 +544,7 @@ class User extends Table
 			}
 		}
 
+		$version = new \JVersion();
 		if (isset($options['fields']) && $options['fields'] && $version->isCompatible('3.7'))
 		{
 			if ($version->isCompatible('4'))

@@ -2,9 +2,11 @@
  * @package     Joomla.Site
  * @subpackage  com_j2xml
  *
+ * @version     __DEPLOY_VERSION__
+ * 
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -22,7 +24,7 @@
 	];
 	console = window.console = window.console || {};
 	methods.forEach( function( method ){
-		if ( ! console[method] ){
+		if ( !console[method] ){
 			console[method] = function (){};
 		}
 	} );
@@ -67,53 +69,73 @@ eshiol.j2xml.importerModal = function(){
 	} );
 	window.top.setTimeout( 'window.parent.jQuery(\'#j2xmlImportModal\').modal(\'hide\')', 700 );
 
-	xmlDoc = jQuery.parseXML( base64.decode( jQuery( '#j2xml_data' ).val() ) );
-	$xml = jQuery( xmlDoc );
-	root = $xml.find( ':root' )[0];
-
-	$root = jQuery( root );
-	header =
-		'<?xml version="1.0" encoding="UTF-8" ?>'+"\n"+
-		'<j2xml version="' + $root.attr( 'version') + '">' + "\n";
-	footer = "\n</j2xml>";
-
 	var nodes = [];
 
-	$root.children( 'user' ).each( function( index ){
-		console.log( 'user: ' + header + eshiol.XMLToString( this ) + footer );
-		nodes.push( header + eshiol.XMLToString( this ) + footer );
-	} );
+	try {
+		xmlDoc = jQuery.parseXML( base64.decode( jQuery( '#j2xml_data' ).val() ) );
+		$xml = jQuery( xmlDoc );
+		root = $xml.find( ':root' )[0];
 
-	$root.children( 'tag' ).each( function( index ){
-		console.log( 'tag: ' + header + eshiol.XMLToString( this ) + footer );
-		nodes.push( header + eshiol.XMLToString( this ) + footer );
-	} );
+		$root = jQuery( root );
+		header =
+			'<?xml version="1.0" encoding="UTF-8" ?>'+"\n"+
+			'<j2xml version="' + $root.attr( 'version') + '">' + "\n";
+		footer = "\n</j2xml>";
 
-	$root.children( 'category' ).each( function( index ){
-		console.log( 'category: ' + header + eshiol.XMLToString( this ) + footer );
-		nodes.push( header + eshiol.XMLToString( this ) + footer );
-	} );
-
-	$root.children( 'fieldgroup' ).each( function( index ){
-		console.log( 'fieldgroup: ' + header + eshiol.XMLToString( this ) + footer );
-		nodes.push( header + eshiol.XMLToString( this ) + footer );
-	} );
-	$root.children( 'field' ).each( function( index ){
-		console.log( 'field: ' + header + eshiol.XMLToString( this ) + footer );
-		nodes.push( header + eshiol.XMLToString( this ) + footer );
-	} );
-
-	$root.children( 'content' ).each( function( index ){
-		console.log( 'content: ' + header + eshiol.XMLToString( this ) + footer );
-		nodes.push( header + eshiol.XMLToString( this ) + footer );
-	} );
-
-	$root.children(  ).each( function( index ){
-		if ( ['base', 'user', 'tag', 'category', 'content', 'fieldgroup', 'field'].indexOf( this.nodeName ) == -1 ){
-			console.log( 'other: ' + header + eshiol.XMLToString( this ) + footer );
+		$root.children( 'user' ).each( function( index ){
+			console.log( 'user: ' + header + eshiol.XMLToString( this ) + footer );
 			nodes.push( header + eshiol.XMLToString( this ) + footer );
-		}
-	} );
+		} );
+
+		$root.children( 'tag' ).each( function( index ){
+			console.log( 'tag: ' + header + eshiol.XMLToString( this ) + footer );
+			nodes.push( header + eshiol.XMLToString( this ) + footer );
+		} );
+
+		$root.children( 'category' ).each( function( index ){
+			console.log( 'category: ' + header + eshiol.XMLToString( this ) + footer );
+			nodes.push( header + eshiol.XMLToString( this ) + footer );
+		} );
+
+		$root.children( 'fieldgroup' ).each( function( index ){
+			console.log( 'fieldgroup: ' + header + eshiol.XMLToString( this ) + footer );
+			nodes.push( header + eshiol.XMLToString( this ) + footer );
+		} );
+		$root.children( 'field' ).each( function( index ){
+			console.log( 'field: ' + header + eshiol.XMLToString( this ) + footer );
+			nodes.push( header + eshiol.XMLToString( this ) + footer );
+		} );
+
+		$root.children( 'content' ).each( function( index ){
+			console.log( 'content: ' + header + eshiol.XMLToString( this ) + footer );
+			nodes.push( header + eshiol.XMLToString( this ) + footer );
+		} );
+
+		$root.children( 'menutype' ).each( function( index ){
+			console.log( 'menutype: ' + header + eshiol.XMLToString( this ) + footer );
+			nodes.push( header + eshiol.XMLToString( this ) + footer );
+		} );
+
+		$root.children( 'menu' ).each( function( index ){
+			console.log( 'menu: ' + header + eshiol.XMLToString( this ) + footer );
+			nodes.push( header + eshiol.XMLToString( this ) + footer );
+		} );
+
+		$root.children( 'module' ).each( function( index ){
+			console.log( 'module: ' + header + eshiol.XMLToString( this ) + footer );
+			nodes.push( header + eshiol.XMLToString( this ) + footer );
+		} );
+
+		$root.children(  ).each( function( index ){
+			if ( ['base', 'user', 'tag', 'category', 'content', 'fieldgroup', 'field', 'menutype', 'menu', 'module'].indexOf( this.nodeName ) == -1 ){
+				console.log( 'other: ' + header + eshiol.XMLToString( this ) + footer );
+				nodes.push( header + eshiol.XMLToString( this ) + footer );
+			}
+		} );
+	} catch(e) {
+		console.log( 'file: ' + base64.decode( jQuery( '#j2xml_data' ).val() ) );
+		nodes.push( base64.decode( jQuery( '#j2xml_data' ).val() ) );
+	}
 
 	eshiol.removeMessages();
 

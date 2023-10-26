@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -87,7 +87,7 @@ jimport('eshiol.J2xml.messages');
  * @package  Joomla.CLI
  * @since    2.5
  */
-class J2XMLCli extends JApplicationCli
+class J2xmlCli extends JApplicationCli
 {
 	private static $codes = array('message'=>'i','notice'=>'!','error'=>'x');
 
@@ -228,6 +228,8 @@ class J2XMLCli extends JApplicationCli
 				{
 					$iparams->set('content_category_forceto', $params->get('category'));
 				}
+
+				$iparams->set('keep_data', $params->get('keep_data'));
 
 				$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 				$importer->import($xml, $iparams);

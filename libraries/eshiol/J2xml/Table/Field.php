@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -152,7 +152,7 @@ class Field extends Table
 					->where($db->quoteName('name') . ' = ' . $db->quote($data['name'])))
 			->loadObject();
 
-			if (! $field || ($import_fields == 2))
+			if (!$field || ($import_fields == 2))
 			{
 				\JLoader::register('FieldTable', JPATH_ADMINISTRATOR . '/components/com_fields/Table/FieldTable.php');
 				if (class_exists('\Joomla\Component\Fields\Administrator\Table\FieldTable'))
@@ -165,7 +165,7 @@ class Field extends Table
 					$table = \JTable::getInstance('Field', 'FieldsTable');
 				}
 
-				if (! $field)
+				if (!$field)
 				{ // new field
 					$data['id'] = null;
 				}
@@ -205,7 +205,7 @@ class Field extends Table
 		$params->set('extension', 'com_fields');
 		parent::prepareData($record, $data, $params);
 
-		if (! isset($data['description']))
+		if (!isset($data['description']))
 		{
 			$data['description'] = '';
 		}
@@ -268,7 +268,7 @@ class Field extends Table
 
 		$db = \JFactory::getDbo();
 		$item = new Field($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}

@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -141,10 +141,10 @@ class Viewlevel extends Table
 				->where($db->quoteName('title') . ' = ' . $db->quote($data['title']));
 			$item = $db->setQuery($query)->loadObject();
 
-			if (! $item || ($import_viewlevels == 2))
+			if (!$item || ($import_viewlevels == 2))
 			{
 				$table = new \eshiol\J2xml\Table\Viewlevel($db);
-				if (! $item)
+				if (!$item)
 				{
 					$data['id'] = null;
 				}
@@ -248,7 +248,7 @@ class Viewlevel extends Table
 
 		$db = \JFactory::getDbo();
 		$item = new Viewlevel($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}

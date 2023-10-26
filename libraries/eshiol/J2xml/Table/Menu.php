@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -89,7 +89,7 @@ class Menu extends \eshiol\J2XML\Table\Table
 
 		$db = \JFactory::getDbo();
 		$item = new Menu($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -100,7 +100,7 @@ class Menu extends \eshiol\J2XML\Table\Table
 		}
 
 		$args = array();
-		parse_str(parse_url($item->link, PHP_URL_QUERY), $args);
+		parse_str(parse_url($item->link ?: '', PHP_URL_QUERY), $args);
 
 		if (isset($args['option']) && ($args['option'] == 'com_content'))
 		{
@@ -116,13 +116,24 @@ class Menu extends \eshiol\J2XML\Table\Table
 		$fragment->appendXML($item->toXML());
 		$doc->documentElement->appendChild($fragment);
 
+		if (isset($options['images']) && $options['images'])
+		{
+			if ($imgs = json_decode($item->params))
+			{
+				if (isset($imgs->menu_image))
+				{
+					Image::export($imgs->menu_image, $xml, $options);
+				}
+			}
+		}
+
 		/* export children */
 		$query = $db->getQuery(true)
-			->select($db->qn('id'))
-			->from($db->qn('#__menu'))
-			->where($db->qn('menutype') . ' = ' . $db->q($item->menutype))
-			->where($db->qn('parent_id') . ' = ' . $id)
-			->order($db->qn('lft'));
+			->select($db->quoteName('id'))
+			->from($db->quoteName('#__menu'))
+			->where($db->quoteName('menutype') . ' = ' . $db->quote($item->menutype))
+			->where($db->quoteName('parent_id') . ' = ' . $id)
+			->order($db->quoteName('lft'));
 		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 		$ids_menu = $db->setQuery($query)->loadColumn();
 
@@ -152,22 +163,22 @@ class Menu extends \eshiol\J2XML\Table\Table
 			self::prepareData($record, $data, $params);
 
 			$query = $db->getQuery(true)
-				->select($db->qn(array(
+				->select($db->quoteName(array(
 					'id',
 					'title'
 			)))
-				->from($db->qn('#__menu'))
-				->where($db->qn('path') . ' = ' . $db->q($data['path']));
+				->from($db->quoteName('#__menu'))
+				->where($db->quoteName('path') . ' = ' . $db->quote($data['path']));
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$db->setQuery($query);
 			$menu = $db->loadObject();
 
-			$import_menus == 2;
-			if (! $menu || ($import_menus == 2))
+			$import_menus = 2;
+			if (!$menu || ($import_menus == 2))
 			{
 				$table = new Menu($db);
 
-				if (! $menu)
+				if (!$menu)
 				{ // new menu
 					$data['id'] = null;
 				}
@@ -177,20 +188,21 @@ class Menu extends \eshiol\J2XML\Table\Table
 					$table->load($data['id']);
 				}
 
-				if ($data['component_id'])
+				if (isset($data['component_id']) && $data['component_id'])
 				{
 					$query = $db->getQuery(true)
-						->select($db->qn('extension_id'))
-						->from($db->qn('#__extensions'))
-						->where($db->qn('type') . ' = ' . $db->q('component'))
-						->where($db->qn('element') . ' = ' . $db->q($data['component_id']));
+						->select($db->quoteName('extension_id'))
+						->from($db->quoteName('#__extensions'))
+						->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+						->where($db->quoteName('element') . ' = ' . $db->quote($data['component_id']));
 					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 					$component = $db->setQuery($query)->loadResult();
 
-					if (! $component)
+					if (!$component)
 					{
-						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], \JText::_('LIB_J2XML_MSG_UNKNOWN_ERROR')), \JLog::ERROR, 'lib_j2xml'));
-						$component = -1;
+						$error = \JText::sprintf('LIB_J2XML_ERROR_COMPONENT_NOT_FOUND', $data['component_id']);
+						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $error), \JLog::WARNING, 'lib_j2xml'));
+						continue;
 					}
 				}
 				else
@@ -198,41 +210,75 @@ class Menu extends \eshiol\J2XML\Table\Table
 					$component = 0;
 				}
 
-				if ($component != - 1)
-				{
-					$data['component_id'] = $component;
+				$data['component_id'] = $component;
 
+				if ($data['type'] == 'component')
+				{
 					if (isset($data['link']) && $data['link'])
 					{
 						$args = array();
 						parse_str(parse_url($data['link'], PHP_URL_QUERY), $args);
-						if (isset($args['option']) && ($args['option'] == 'com_content'))
+						if (isset($args['option']))
 						{
-							if (isset($args['view']) && ($args['view'] == 'article'))
+							if ($args['option'] == 'com_content')
 							{
-								$args['id'] = self::getArticleId($data['article_id']);
-								$data['link'] = 'index.php?' . http_build_query($args);
+								if (isset($args['view']) && ($args['view'] == 'article'))
+								{
+									if (empty($data['article_id']))
+									{
+										$error = \JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_FOUND', 0);
+										\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $error), \JLog::ERROR, 'lib_j2xml'));
+										continue;
+
+									}
+
+									$args['id'] = self::getArticleId($data['article_id']);
+									if ($args['id'] == 0)
+									{
+										$error = \JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_FOUND', $data['article_id']);
+										\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $error), \JLog::ERROR, 'lib_j2xml'));
+										continue;
+									}
+									$data['link'] = 'index.php?' . http_build_query($args);
+								}
+							}
+							else
+							{
+								$query = $db->getQuery(true)
+									->select($db->quoteName('extension_id'))
+									->from($db->quoteName('#__extensions'))
+									->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+									->where($db->quoteName('element') . ' = ' . $db->quote($args['option']));
+								\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+								$component = $db->setQuery($query)->loadResult();
+								if (!$component)
+								{
+									$error = \JText::sprintf('LIB_J2XML_ERROR_COMPONENT_NOT_FOUND', $args['option']);
+									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $error), \JLog::WARNING, 'lib_j2xml'));
+									continue;
+								}
 							}
 						}
+						else
+						{
+							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], \JText::_('LIB_J2XML_ERROR_UNKNOWN')), \JLog::ERROR, 'lib_j2xml'));
+							continue;
+						}
 					}
-					\JLog::add(new \JLogEntry('data: ' . print_r($data, true), \JLog::DEBUG, 'lib_j2xml'));
+				}
 
-					// Trigger the onContentBeforeSave event.
-					$table->bind($data);
-					if ($table->store())
-					{
-						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
-						// Trigger the onContentAfterSave event.
-					}
-					else
-					{
-						\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $table->getError()), \JLog::ERROR, 'lib_j2xml'));
-					}
+				// Trigger the onContentBeforeSave event.
+				$table->bind($data);
+				if ($table->store())
+				{
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
+					// Trigger the onContentAfterSave event.
 				}
 				else
 				{
-					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_ERROR_COMPONENT_NOT_FOUND', $data['component_id']), \JLog::ERROR, 'lib_j2xml'));
+					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MENU_NOT_IMPORTED', $data['title'], $table->getError()), \JLog::ERROR, 'lib_j2xml'));
 				}
+
 				$table = null;
 			}
 		}

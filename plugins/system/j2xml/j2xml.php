@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -104,14 +104,14 @@ class plgSystemJ2xml extends JPlugin
 		// Only render in backend
 		if ($version->isCompatible('3.7'))
 		{
-			if (! $this->app->isClient('administrator'))
+			if (!$this->app->isClient('administrator'))
 			{
 				return;
 			}
 		}
 		else
 		{
-			if (! $this->app->isAdmin())
+			if (!$this->app->isAdmin())
 			{
 				return;
 			}
@@ -125,7 +125,7 @@ class plgSystemJ2xml extends JPlugin
 			->where($db->quoteName('name') . ' = ' . $db->quote('com_j2xml'));
 		JLog::add(new JLogEntry($query, JLog::DEBUG, 'plg_system_j2xml'));
 		$is_enabled = $db->setQuery($query)->loadResult();
-		if (! $is_enabled)
+		if (!$is_enabled)
 		{
 			JLog::add(new JLogEntry(JText::sprintf('PLG_SYSTEM_J2XML_MSG_REQUIREMENTS_COM', JText::_('PLG_SYSTEM_J2XML')), JLog::WARNING, 'plg_system_j2xml'));
 		}
@@ -156,14 +156,14 @@ class plgSystemJ2xml extends JPlugin
 
 		if ($version->isCompatible('3.7'))
 		{
-			if (! $this->app->isClient('administrator'))
+			if (!$this->app->isClient('administrator'))
 			{
 				return;
 			}
 		}
 		else
 		{
-			if (! $this->app->isAdmin())
+			if (!$this->app->isAdmin())
 			{
 				return;
 			}
@@ -178,7 +178,7 @@ class plgSystemJ2xml extends JPlugin
 		JLog::add(new JLogEntry($query, JLog::DEBUG, 'plg_system_j2xml'));
 
 		$is_enabled = $db->setQuery($query)->loadResult();
-		if (! $is_enabled)
+		if (!$is_enabled)
 		{
 			return;
 		}
@@ -219,7 +219,7 @@ class plgSystemJ2xml extends JPlugin
 		}
 
 		// Only render if J2XML view exists and J2XML Library is loaded
-        if (! JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/' . $contentType . '/view.raw.php'))
+        if (!JFile::exists(JPATH_ADMINISTRATOR . '/components/com_j2xml/views/' . $contentType . '/view.raw.php'))
 		{
 			return true;
 		}

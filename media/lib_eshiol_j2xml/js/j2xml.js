@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -186,9 +186,13 @@ if( typeof( eshiol.renderMessages ) === 'undefined' ){
 
 				const messageWrapper = document.createElement( 'div' );
 				messageWrapper.className = 'alert-wrapper';
-				typeMessages.forEach( typeMessage => {
-					messageWrapper.innerHTML += Joomla.sanitizeHtml( `<div class="alert-message">${typeMessage}</div>` );
-				});
+                if( typeof( messages[type] ) === 'string' ){
+                    messageWrapper.innerHTML += Joomla.sanitizeHtml( `<div class="alert-message">${messages[type]}</div>` );
+                } else {
+                    typeMessages.forEach( typeMessage => {
+                        messageWrapper.innerHTML += Joomla.sanitizeHtml( `<div class="alert-message">${typeMessage}</div>` );
+                    });
+                }
 				messagesBox.appendChild( messageWrapper );
 				messageContainer.appendChild( messagesBox );
 			});
@@ -350,8 +354,6 @@ eshiol.j2xml.sendItem = function( options, params ){
 						eshiol.j2xml.sendItem( options, params );
 					},
 					error: function( jqXHR, status, error ){
-						console.log( 'send.onError' );
-
 						msg = new Object();
 						if( jqXHR.status === 0 ){
 							msg['error'] = [Joomla.Text._( 'LIB_J2XML_ERROR_STATUS0' )];
@@ -492,4 +494,17 @@ if( typeof strstr === "undefined" ){
 			}
 		}
 	}
+}
+
+eshiol.download = function ( filename, text ){
+	var element = document.createElement( 'a' );
+	element.setAttribute( 'href', 'data:text/plain;charset=utf-8,' + encodeURIComponent( text ) );
+	element.setAttribute( 'download', filename );
+
+	element.style.display = 'none';
+	document.body.appendChild(element);
+
+	element.click();
+
+	document.body.removeChild( element );
 }

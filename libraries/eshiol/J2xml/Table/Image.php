@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -59,11 +59,11 @@ class Image
 		{
 			$src = JPATH_SITE . '/' . urldecode(html_entity_decode($image['src'], ENT_QUOTES, 'UTF-8'));
 			$data = $image;
-			if (! \JFile::exists($src) || ($import_images == 2))
+			if (!\JFile::exists($src) || ($import_images == 2))
 			{
 				// many thx to Stefanos Tzigiannis
 				$folder = dirname($src);
-				if (! \JFolder::exists($folder))
+				if (!\JFolder::exists($folder))
 				{
 					if (\JFolder::create($folder))
 					{
@@ -107,6 +107,9 @@ class Image
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 		\JLog::add(new \JLogEntry($image, \JLog::DEBUG, 'com_j2xml'));
+
+		// Joomla 4
+		$image = strtok($image, '#');
 
 		if ($xml->xpath("//j2xml/img[@src = '" . htmlentities($image, ENT_QUOTES, "UTF-8") . "']"))
 		{

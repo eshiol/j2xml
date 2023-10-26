@@ -6,10 +6,10 @@
 	<author>Helios Ciancio</author>
 	<authorEmail>info (at) eshiol (dot) it</authorEmail>
 	<authorUrl>www.eshiol.it</authorUrl>
-	<creationDate>16 September 2022</creationDate>
-	<copyright><![CDATA[(C) 2010 - 2022 Helios Ciancio. All Rights Reserved.]]></copyright>
+	<creationDate>__DEPLOY_DATE__</creationDate>
+	<copyright><![CDATA[(C) 2010 - 2023 Helios Ciancio. All Rights Reserved.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>22.5.370-beta3</version>
+	<version>__DEPLOY_VERSION__</version>
 	<files>
     	<filename>Exporter.php</filename>
 		<filename>Importer.php</filename>

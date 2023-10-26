@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -68,7 +68,7 @@ class J2xmlControllerJson extends JControllerLegacy
 	{
 		JLog::add(new JLogEntry(__METHOD__, JLog::DEBUG, 'com_j2xml'));
 
-		if (! JSession::checkToken('request')) {
+		if (!JSession::checkToken('request')) {
 			// Check for a valid token. If invalid, send a 403 with the error message.
 			JLog::add(new JLogEntry(JText::_('JINVALID_TOKEN'), JLog::WARNING, 'com_j2xml'));
 			echo new JResponseJson();
@@ -99,4 +99,4 @@ class J2xmlControllerJson extends JControllerLegacy
 
 		echo new JResponseJson($data);
 	}
-}
+}

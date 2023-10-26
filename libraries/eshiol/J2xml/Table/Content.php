@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -29,6 +29,7 @@ use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\SiteRouter;
+use Joomla\CMS\Version;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
 use Joomla\Utilities\ArrayHelper;
 
@@ -60,7 +61,7 @@ class Content extends Table
 	 */
 	public function __construct (\JDatabaseDriver $db)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		parent::__construct('#__content', 'id', $db);
 
@@ -81,7 +82,7 @@ class Content extends Table
 	 */
 	function toXML ($mapKeysToText = false)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		$this->_excluded = array_merge($this->_excluded, array(
 				'sectionid',
@@ -89,6 +90,8 @@ class Content extends Table
 				'title_alias',
 				'ordering'
 		));
+
+		$version = new \JVersion();
 
 		// $this->_aliases['featured'] = 'SELECT IFNULL(f.ordering,0) FROM
 		// #__content_frontpage f RIGHT JOIN #__content a ON f.content_id = a.id
@@ -99,6 +102,23 @@ class Content extends Table
 			->join('RIGHT',
 				$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
 			->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
+
+		if ($version->isCompatible('4'))
+		{
+			$this->_aliases['featured_up'] = (string) $this->_db->getQuery(true)
+				->select($this->_db->quoteName('f.featured_up'))
+				->from($this->_db->quoteName('#__content_frontpage', 'f'))
+				->join('RIGHT',
+					$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
+				->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
+
+			$this->_aliases['featured_down'] = (string) $this->_db->getQuery(true)
+				->select($this->_db->quoteName('f.featured_down'))
+				->from($this->_db->quoteName('#__content_frontpage', 'f'))
+				->join('RIGHT',
+					$this->_db->quoteName('#__content', 'a') . ' ON ' . $this->_db->quoteName('f.content_id') . ' = ' . $this->_db->quoteName('a.id'))
+				->where($this->_db->quoteName('a.id') . ' = ' . (int) $this->id);
+		}
 
 		// $this->_aliases['rating_sum'] = 'SELECT IFNULL(rating_sum,0) FROM
 		// #__content_rating f RIGHT JOIN #__content a ON f.content_id = a.id
@@ -122,7 +142,6 @@ class Content extends Table
 
 		$slug = $this->alias ? ($this->id . ':' . $this->alias) : $this->id;
 
-		$version = new \JVersion();
 		if ($version->isCompatible('4'))
 		{
 			// We need to make sure we are always using the site router, even if the language plugin is executed in admin app.
@@ -253,7 +272,7 @@ class Content extends Table
 	 * @param \JRegistry $params
 	 *			@option int 'content' 0: No (default); 1: Yes, if not exists;
 	 *			2: Yes, overwrite if exists
-	 *			@option int 'content_category_default'
+	 *			@option int 'com_content_category_default'
 	 *			@option int 'content_category_forceto'
 	 *			@option string 'context'
 	 *
@@ -265,7 +284,7 @@ class Content extends Table
 	 */
 	public static function import ($xml, &$params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		$import_content = $params->get('content', 0);
 		if ($import_content == 0)
@@ -273,7 +292,7 @@ class Content extends Table
 			return;
 		}
 
-		$params->def('content_category_default', self::getCategoryId('uncategorised', 'com_content'));
+		//$params->def('content_category_default', self::getCategoryId('uncategorised', 'com_content'));
 		$force_to = $params->get('content_category_forceto');
 		$context = $params->get('context', 'com_content.article');
 		$db = \JFactory::getDBO();
@@ -290,18 +309,10 @@ class Content extends Table
 			Category::import($xml, $params);
 		}
 
-		$keep_id = $params->get('keep_id', 0);
-		if ($keep_id)
-		{
-			$autoincrement = 0;
-			$maxid = $db->setQuery($db->getQuery(true)
-				->select('MAX(' . $db->quoteName('id') . ')')
-				->from($db->quoteName('#__content')))
-				->loadResult();
-		}
-
-		$keep_frontpage = $params->get('keep_frontpage', 0);
-		$keep_rating = $params->get('keep_rating', 0);
+		$keep_id        = $params->get('keep_id', 0);
+		$keep_frontpage = $params->get('keep_data', 0);
+		$keep_rating    = $params->get('keep_data', 0);
+		$keep_data      = $params->get('keep_data', 0);
 
 		if ($version->isCompatible('4'))
 		{
@@ -319,16 +330,16 @@ class Content extends Table
 			}
 
 			$content = $db->setQuery(
-					$query = $db->getQuery(true)
-						->select(
-							array(
-									$db->quoteName('id'),
-									$db->quoteName('title'),
-									'GREATEST(' . $db->quoteName('created') . ',' . $db->quoteName('modified') . ') ' . $db->quoteName('modified')
-							))
-						->from($db->quoteName('#__content'))
-						->where($db->quoteName('catid') . ' = ' . $db->quote($data['catid']))
-						->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias'])))
+				$query = $db->getQuery(true)
+					->select(
+						array(
+							$db->quoteName('id'),
+							$db->quoteName('title'),
+							'GREATEST(' . $db->quoteName('created') . ',' . $db->quoteName('modified') . ') ' . $db->quoteName('modified')
+						))
+					->from($db->quoteName('#__content'))
+					->where($db->quoteName('catid') . ' = ' . $db->quote($data['catid']))
+					->where($db->quoteName('alias') . ' = ' . $db->quote($data['alias'])))
 				->loadObject();
 
 			if ($version->isCompatible('4'))
@@ -363,7 +374,7 @@ class Content extends Table
 			}
 			else
 			{
-				if (! $content)
+				if (!$content)
 				{ // new article
 					$isNew = true;
 					$data['id'] = null;
@@ -392,70 +403,121 @@ class Content extends Table
 
 					// Trigger the onContentBeforeSave event.
 					$results = \JFactory::getApplication()->triggerEvent('onContentBeforeSave',
-							array(
-									$params->get('context', 'com_content.article'),
-									&$table,
-									$isNew
-							));
+						array(
+							$params->get('context', 'com_content.article'),
+							&$table,
+							$isNew
+						));
 				}
 
-				if (! in_array(false, $results, true))
+				if (!in_array(false, $results, true))
 				{
 					if ($version->isCompatible('4') ? $table->save($data) : $table->store())
 					{
 						if ($version->isCompatible('4'))
 						{
+							// fix hits
+							$table->save($data);
+
 							$item = $table->getItem();
 						}
 						else
 						{
 							$item = $table;
 						}
+						if ($keep_data == 1)
+						{
+							$sets = [];
+							if (isset($data['modified']))
+							{
+								$sets[] = $db->quoteName('modified') . ' = ' . $db->quote($data['modified']);
+							}
+							if (isset($data['modified_by']))
+							{
+								$sets[] = $db->quoteName('modified_by') . ' = ' . $data['modified_by'];
+							}
+							if (count($sets))
+							{
+								$query = $db->getQuery(true)
+									->update($db->quoteName('#__content'))
+									->where($db->quoteName('id') . ' = ' . $item->id);
+								foreach ($sets as $set)
+								{
+									$query->set($set);
+								}
+								$db->setQuery($query)->execute();	
+							}
+						}
+
+						if ($keep_frontpage == 0)
+						{
+							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
+						}
+						elseif ($data['featured'] == 0)
+						{
+							$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
+						}
+						else
+						{
+							$query = 'INSERT IGNORE INTO `#__content_frontpage`' . ' SET content_id = ' . $item->id 
+								. ',' . ' ordering = ' . $data['ordering'];
+							if ($version->isCompatible('4'))
+							{
+								if (!is_null($data['featured_up']))
+								{
+									$query .= ',' . ' featured_up = ' . $db->quote($data['featured_up']);
+								}
+								if (!is_null($data['featured_down']))
+								{
+									$query .= ',' . ' featured_down = ' . $db->quote($data['featured_down']);
+								}
+							}
+						}
+						$db->setQuery($query)->execute();
+
+						if (($keep_rating == 0) || (!isset($data['rating_count'])) || ($data['rating_count'] == 0))
+						{
+							$query = "DELETE FROM `#__content_rating` WHERE `content_id`=" . $item->id;
+							$db->setQuery($query)->execute();
+						}
+						else
+						{
+							$rating = new \stdClass();
+							$rating->content_id = $item->id;
+							$rating->rating_count = $data['rating_count'];
+							$rating->rating_sum = $data['rating_sum'];
+							$rating->lastip = $_SERVER['REMOTE_ADDR'];
+							try
+							{
+								$db->insertObject('#__content_rating', $rating);
+							}
+							catch (\Exception $ex)
+							{
+								$db->updateObject('#__content_rating', $rating, 'content_id');
+							}
+						}
+
+						if (!$version->isCompatible('4'))
+						{
+							self::setAssociations($item->id, $item->language, $data['associations'], 'com_content.item');
+
+							// Trigger the onContentAfterSave event.
+							$results = \JFactory::getApplication()->triggerEvent('onContentAfterSave',
+								array(
+									$params->get('context', 'com_content.article'),
+									&$table,
+									$isNew,
+									$data
+								));
+						}
+
 						if (($keep_id == 1) && ($id > 1))
 						{
 							try
 							{
-								$query = $db->getQuery(true)
-									->update($db->quoteName('#__content'))
-									->set($db->quoteName('id') . ' = ' . $id)
-									->where($db->quoteName('id') . ' = ' . $item->id);
-								$db->setQuery($query)->execute();
-
-								$query = $db->getQuery(true)
-									->update($db->quoteName('#__assets'))
-									->set($db->quoteName('name') . ' = ' . $db->quote('com_content.article.' . $id))
-									->where($db->quoteName('id') . ' = ' . $item->asset_id);
-								$db->setQuery($query)->execute();
-
-								$query = $db->getQuery(true)
-									->update($db->quoteName('#__contentitem_tag_map'))
-									->set($db->quoteName('content_item_id') . ' = ' . $id)
-									->where($db->quoteName('content_item_id') . ' = ' . $item->id)
-									->where($db->quoteName('type_alias') . ' = ' . $db->quote('com_content.article'));
-								$db->setQuery($query)->execute();
-
-								$query = $db->getQuery(true)
-									->update($db->quoteName('#__ucm_content'))
-									->set($db->quoteName('content_item_id') . ' = ' . $id)
-									->where($db->quoteName('content_item_id') . ' = ' . $item->id)
-									->where($db->quoteName('core_type_alias') . ' = ' . $db->quote('com_content.article'));
-								$db->setQuery($query)->execute();
+								self::changeId($item->id, $id);
 
 								$item->id = $id;
-
-								if ($id >= $autoincrement)
-								{
-									$autoincrement = $id + 1;
-								}
-
-								if ($id != $item->id)
-								{
-									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO, 'lib_j2xml'));
-								}
-								else
-								{
-									\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO, 'lib_j2xml'));
-								}
 							}
 							catch (\Exception $ex)
 							{
@@ -463,71 +525,14 @@ class Content extends Table
 								continue;
 							}
 						}
-						elseif ($id != $item->id)
+
+						if ($id != $item->id)
 						{
 							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_IMPORTED', $item->title, $id, $item->id), \JLog::INFO,	'lib_j2xml'));
 						}
 						else
 						{
 							\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_UPDATED', $item->title, $id), \JLog::INFO, 'lib_j2xml'));
-						}
-
-
-						if (! $version->isCompatible('4'))
-						{
-							// @todo add Joomla! 4 compatibility
-							if ($keep_frontpage == 0)
-							{
-								$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
-							}
-							elseif ($data['featured'] == 0)
-							{
-								$query = "DELETE FROM #__content_frontpage WHERE content_id = " . $item->id;
-							}
-							else
-							{
-								$query = 'INSERT IGNORE INTO `#__content_frontpage`' . ' SET content_id = ' . $item->id . ',' . ' ordering = ' .
-										 $data['ordering'];
-							}
-							$db->setQuery($query);
-							$db->query();
-
-							if (($keep_rating == 0) || (! isset($data['rating_count'])) || ($data['rating_count'] == 0))
-							{
-								$query = "DELETE FROM `#__content_rating` WHERE `content_id`=" . $item->id;
-								$db->setQuery($query);
-								$db->query();
-							}
-							else
-							{
-								$rating = new \stdClass();
-								$rating->content_id = $item->id;
-								$rating->rating_count = $data['rating_count'];
-								$rating->rating_sum = $data['rating_sum'];
-								$rating->lastip = $_SERVER['REMOTE_ADDR'];
-								try
-								{
-									$db->insertObject('#__content_rating', $rating);
-								}
-								catch (\Exception $ex)
-								{
-									$db->updateObject('#__content_rating', $rating, 'content_id');
-								}
-							}
-						}
-
-						if (! $version->isCompatible('4'))
-						{
-							self::setAssociations($item->id, $item->language, $data['associations'], 'com_content.item');
-
-							// Trigger the onContentAfterSave event.
-							$results = \JFactory::getApplication()->triggerEvent('onContentAfterSave',
-									array(
-											$params->get('context', 'com_content.article'),
-											&$table,
-											$isNew,
-											$data
-									));
 						}
 					}
 					else
@@ -539,22 +544,6 @@ class Content extends Table
 				{
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_ARTICLE_NOT_IMPORTED', $data['title'], $id, $table->getError()), \JLog::NOTICE, 'lib_j2xml'));
 				}
-			}
-
-			if ($keep_id && ($autoincrement > $maxid))
-			{
-				$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
-
-				if ($serverType === 'postgresql')
-				{
-					$query = 'ALTER SEQUENCE ' . $db->quoteName('#__content_id_seq') . ' RESTART WITH ' . $autoincrement;
-				}
-				else
-				{
-					$query = 'ALTER TABLE ' . $db->quoteName('#__content') . ' AUTO_INCREMENT = ' . $autoincrement;
-				}
-				$db->setQuery($query)->execute();
-				$maxid = $autoincrement;
 			}
 		}
 	}
@@ -568,7 +557,7 @@ class Content extends Table
 	 */
 	public static function prepareData ($record, &$data, $params)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		$db      = \JFactory::getDBO();
 		$version = new \JVersion();
@@ -581,29 +570,32 @@ class Content extends Table
 			$data['id'] = 0;
 		}
 
-		if (empty($data['alias']))
+		if (empty($data['alias']) || (trim($data['alias']) == ''))
 		{
-			$data['alias'] = $data['title'];
-			$data['alias'] = str_replace(' ', '-', $data['alias']);
+			$data['alias'] = htmlspecialchars_decode($data['title'], ENT_QUOTES);	
+		}
+		$data['alias'] = \JFilterOutput::stringURLSafe($data['alias']);
+		if (trim(str_replace('-', '', $data['alias'])) == '') {
+			$data['alias'] = \JFactory::getDate()->format('Y-m-d-H-i-s');
 		}
 
-		if (! isset($data['fulltext']))
+		if (!isset($data['fulltext']))
 		{
 			$data['fulltext'] = '';
 		}
-		if (! isset($data['metakey']))
+		if (!isset($data['metakey']))
 		{
 			$data['metakey'] = '';
 		}
-		if (! isset($data['metadesc']))
+		if (!isset($data['metadesc']))
 		{
 			$data['metadesc'] = '';
 		}
-		if (! isset($data['created_by']))
+		if (!isset($data['created_by']))
 		{
 			$data['created_by'] = \JFactory::getUser()->id;
 		}
-		if (! isset($data['language']))
+		if (!isset($data['language']))
 		{
 			$data['language'] = '*';
 		}
@@ -621,14 +613,14 @@ class Content extends Table
 		{
 			$data['ordering'] = 0;
 		}
-		elseif (! isset($data['ordering']))
+		elseif (!isset($data['ordering']))
 		{
 			$data['ordering'] = $data['featured'];
 		}
 
-		if (! isset($data['catid']))
+		if (!isset($data['catid']))
 		{
-			$data['catid'] = $params->get('content_category_default');
+			$data['catid'] = $params->get('com_content_category_default');
 		}
 
 		if (empty($data['associations']))
@@ -673,6 +665,14 @@ class Content extends Table
 			}
 			unset($data['association']);
 		}
+
+		if ($version->isCompatible('4'))
+		{
+			if (!isset($data['introtext']))
+			{
+				$data['introtext'] = '';
+			}
+		}
 	}
 
 	/**
@@ -692,7 +692,7 @@ class Content extends Table
 	 */
 	public static function export ($id, &$xml, $options)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		if ($xml->xpath("//j2xml/content/id[text() = '" . $id . "']"))
 		{
@@ -702,7 +702,7 @@ class Content extends Table
 		$version = new \JVersion();
 		$db = \JFactory::getDbo();
 		$item = new Content($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -711,9 +711,9 @@ class Content extends Table
 		\JPluginHelper::importPlugin('j2xml');
 
 		$results = \JFactory::getApplication()->triggerEvent('onJ2xmlBeforeExportContent', array(
-				'lib_j2xml.article',
-				&$item,
-				$params
+			'lib_j2xml.article',
+			&$item,
+			$params
 		));
 
 		if ($item->access > 6)
@@ -831,7 +831,7 @@ class Content extends Table
 					->where($db->quoteName('f.type') . ' = ' . $db->quote('media')))
 					->loadColumn() as $_image)
 				{
-					Image::export($image, $xml, $options);
+					Image::export($_image, $xml, $options);
 				}
 
 				foreach($db->setQuery($db->getQuery(true)
@@ -858,7 +858,7 @@ class Content extends Table
 					->where($db->quoteName('f.type') . ' = ' . $db->quote('editor')))
 					->loadColumn() as $text)
 				{
-					\JLog::add(new \JLogEntry($text, \JLog::DEBUG, 'com_j2xml'));
+					\JLog::add(new \JLogEntry($text, \JLog::DEBUG, 'lib_j2xml'));
 					$_image = preg_match_all(self::IMAGE_MATCH_STRING, $text, $matches, PREG_PATTERN_ORDER);
 					if (count($matches[1]) > 0)
 					{
@@ -884,8 +884,263 @@ class Content extends Table
 	 */
 	public static function getCategoryId ($category, $extension = 'com_content', $defaultCategoryId = 0)
 	{
-		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
+		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 
 		return parent::getCategoryId($category, $extension, $defaultCategoryId);
+	}
+
+	/**
+	 * Change the content ID
+	 *
+	 * @since 23.2.378
+	 */
+	public static function changeId($id, $newid)
+	{
+		\JLog::add(new \JLogEntry(__METHOD__ . '(' . $id . ', ' . $newid . ')', \JLog::DEBUG, 'lib_j2xml'));
+
+		if ($id == $newid)
+		{
+			return;
+		}
+
+		$db      = Factory::getDbo();
+		$version = new Version();
+		$context = 'com_content.article';
+
+		// Check id
+		$query = $db->getQuery(true)
+			->select($db->quoteName('title'))
+			->from($db->quoteName('#__content'))
+			->where($db->quoteName('id') . ' = ' . $id);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$title = $db->setQuery($query)->loadResult();
+		if (!$title)
+		{
+			throw new \Exception(\JText::sprintf('com_j2xml_ARTICLE_NOT_FOUND', $id));
+		}
+
+		// Check new id
+		$query = $db->getQuery(true)
+			->select($db->quoteName('title'))
+			->from($db->quoteName('#__content'))
+			->where($db->quoteName('id') . ' = ' . $newid);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		if ($db->setQuery($query)->loadObject())
+		{
+			throw new \Exception(\JText::sprintf('com_j2xml_ARTICLE_UNIQUE_ID', $newid));
+		}
+
+		// Content
+		$query = $db->getQuery(true)
+			->select('MAX(' . $db->quoteName('id') . ')')
+			->from($db->quoteName('#__content'));
+		$maxid = (int) $db->setQuery($query)->loadResult();
+		if ($newid > $maxid)
+		{
+			$serverType = $version->isCompatible('3.5') ? $db->getServerType() : 'mysql';
+
+			if ($serverType === 'postgresql')
+			{
+				$query = 'ALTER SEQUENCE ' . $db->quoteName('#__content_id_seq') . ' RESTART WITH ' . ($newid + 1);
+			}
+			else
+			{
+				$query = 'ALTER TABLE ' . $db->quoteName('#__content') . ' AUTO_INCREMENT = ' . ($newid + 1);
+			}
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+			$db->setQuery($query)->execute();
+		}
+
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__content'))
+			->set($db->quoteName('id') . ' = ' . $newid)
+			->where($db->quoteName('id') . ' = ' . $id);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Asset
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__assets'))
+			->set($db->quoteName('name') . ' = ' . $db->quote($context . '.' . $newid))
+			->where($db->quoteName('name') . ' = ' . $db->quote($context . '.' . $id));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Workflow
+		if ($version->isCompatible('4'))
+		{
+			$query = $db->getQuery(true)
+				->update($db->quoteName('#__workflow_associations'))
+				->set($db->quoteName('item_id') . ' = ' . $newid)
+				->where($db->quoteName('item_id') . ' = ' . $id)
+				->where($db->quoteName('extension') . ' = ' . $db->quote($context));
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+			$db->setQuery($query)->execute();
+		}
+
+		// Tag
+		$query = $db->getQuery(true)
+			->select($db->quoteName('type_id'))
+			->from($db->quoteName('#__content_types'))
+			->where($db->quoteName('type_alias') . ' = ' . $db->quote($context));
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$contentTypeId = $db->setQuery($query)->LoadResult();
+
+		$ucm_id = $db->getQuery(true)
+			->select($db->quoteName('ucm_id'))
+			->from($db->quoteName('#__ucm_base'))
+			->where($db->quoteName('ucm_item_id') . ' = ' . $id)
+			->where($db->quoteName('ucm_type_id') . ' = ' . $contentTypeId);
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__ucm_content'))
+			->set($db->quoteName('core_content_item_id') . ' = ' . $newid)
+			->where($db->quoteName('core_content_id') . ' = (' . $ucm_id . ')')
+			->where($db->quoteName('core_type_id') . ' = ' . $contentTypeId);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
+
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__ucm_base'))
+			->set($db->quoteName('ucm_item_id') . ' = ' . $newid)
+			->where($db->quoteName('ucm_item_id') . ' = ' . $id)
+			->where($db->quoteName('ucm_type_id') . ' = ' . $contentTypeId);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Field
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__fields_values'))
+			->set($db->quoteName('item_id') . ' = ' . $newid)
+			->where($db->quoteName('item_id') . ' = ' . $id);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// History
+		if ($version->isCompatible('4'))
+		{
+			$query = $db->getQuery(true)
+				->update($db->quoteName('#__history'))
+				->set($db->quoteName('item_id') . ' = ' . $db->quote($context . '.' . $newid))
+				->set($db->quoteName('version_data') . ' = REPLACE(' . $db->quoteName('version_data') . ', "{\"id\":' . $newid . ',", "{\"id\":' . $id . ',")')
+				->set($db->quoteName('sha1_hash') . ' = SHA1(REPLACE(' . $db->quoteName('version_data') . ', "{\"id\":' . $newid . ',", "{\"id\":' . $id . ',"))')
+				->where($db->quoteName('item_id') . ' = ' . $db->quote($context . '.' . $id));
+		}
+		else
+		{
+			$query = $db->getQuery(true)
+				->update($db->quoteName('#__ucm_history'))
+				->set($db->quoteName('ucm_item_id') . ' = ' . $newid)
+				->set($db->quoteName('version_data') . ' = REPLACE(' . $db->quoteName('version_data') . ', "{\"id\":' . $newid . ',", "{\"id\":' . $id . ',")')
+				->set($db->quoteName('sha1_hash') . ' = SHA1(REPLACE(' . $db->quoteName('version_data') . ', "{\"id\":' . $newid . ',", "{\"id\":' . $id . ',"))')
+				->where($db->quoteName('ucm_item_id') . ' = ' . $id)
+				->where($db->quoteName('ucm_type_id') . ' = ' . $contentTypeId);
+		}
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Menu
+		$contextPart = explode('.', $context);
+		$option      = $contextPart[0];
+		$view        = $contextPart[1];
+		$query = $db->getQuery(true)
+			->select($db->quoteName('extension_id'))
+			->from($db->quoteName('#__extensions'))
+			->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+			->where($db->quoteName('element') . ' = ' . $db->quote($option));
+		$componentId = $db->setQuery($query)->loadResult();
+
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__menu'))
+			->set($db->quoteName('link') . ' = ' . $db->quote('index.php?option=' . $option . '&view=' . $view . '&id=' . $newid))
+			->where($db->quoteName('link') . ' = ' . $db->quote('index.php?option=' . $option . '&view=' . $view . '&id=' . $id))
+			->where($db->quoteName('component_id') . ' = ' . $componentId);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Language association Joomla 3.2
+		if ($version->isCompatible('4'))
+		{
+			if (\JLanguageAssociations::isEnabled())
+			{
+				$contextLanguage = 'com_content.item';
+
+				$query = $db->getQuery(true)
+					->select($db->quoteName('key'))
+					->from($db->quoteName('#__associations'))
+					->where($db->quoteName('id') . ' = ' . (int) $id)
+					->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
+				\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+
+				$key = $db->setQuery($query)->loadResult();
+				\JLog::add(new \JLogEntry($key, \JLog::DEBUG, 'lib_j2xml'));
+
+				if ($key)
+				{
+					// update id
+					$query = $db->getQuery(true)
+						->update($db->quoteName('#__associations'))
+						->set($db->quoteName('id') . ' = ' . $newid)
+						->where($db->quoteName('id') . ' = ' . $id)
+						->where($db->quoteName('key') . ' = ' . $db->quote($key))
+						->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
+					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+					$db->setQuery($query)->execute();
+
+					// update key
+					$query = $db->getQuery(true)
+						->select($db->quoteName('c.id'))
+						->select($db->quoteName('c.language'))
+						->from($db->quoteName('#__associations', 'a'))
+						->join('INNER', $db->quoteName('#__content', 'c') . ' ON (' . $db->quoteName('c.id') . ' = ' . $db->quoteName('a.id') . ')')
+						->where($db->quoteName('key') . ' = ' . $db->quote($key))
+						->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
+					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+					$rows = $db->setQuery($query)->loadObjectList();
+					$associations = array();
+					foreach ($rows as $row)
+					{
+						$associations[$row->language] = (int) $row->id;
+					}
+					\JLog::add(new \JLogEntry(json_encode($associations), \JLog::DEBUG, 'lib_j2xml'));
+					$newkey   = md5(json_encode($associations));
+
+					$query = $db->getQuery(true)
+						->update($db->quoteName('#__associations'))
+						->set($db->quoteName('key') . ' = ' . $db->quote($newkey))
+						->where($db->quoteName('key') . ' = ' . $db->quote($key))
+						->where($db->quoteName('context') . ' = ' . $db->quote($contextLanguage));
+					\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+					$db->setQuery($query)->execute();
+				}
+			}
+		}
+
+		// Tags Joomla 3.1
+		if ($version->isCompatible('3.1'))
+		{
+			$query = $db->getQuery(true)
+				->update($db->quoteName('#__contentitem_tag_map'))
+				->set($db->quoteName('content_item_id') . ' = ' . $newid)
+				->where($db->quoteName('content_item_id') . ' = ' . $id)
+				->where($db->quoteName('type_alias') . ' = ' . $db->quote($context));
+			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+			$db->setQuery($query)->execute();
+		}
+
+		// Frontpage
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__content_frontpage'))
+			->set($db->quoteName('content_id') . ' = ' . $newid)
+			->where($db->quoteName('content_id') . ' = ' . $id);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
+
+		// Rating
+		$query = $db->getQuery(true)
+			->update($db->quoteName('#__content_rating'))
+			->set($db->quoteName('content_id') . ' = ' . $newid)
+			->where($db->quoteName('content_id') . ' = ' . $id);
+		\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+		$db->setQuery($query)->execute();
 	}
 }

@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -206,7 +206,7 @@ class Table extends \JTable
 		{
 			// If the value is null or non-scalar, or the field is internal
 			// ignore it.
-			if (! is_scalar($v) || ($k[0] == '_'))
+			if (!is_scalar($v) || ($k[0] == '_'))
 			{
 				continue;
 			}
@@ -275,7 +275,7 @@ class Table extends \JTable
 
 		$kOpen = $k;
 		/**
-		if (! is_null($attributes))
+		if (!is_null($attributes))
 		{
 			foreach ($attributes as $ak => $av)
 			{
@@ -522,7 +522,7 @@ class Table extends \JTable
 				->where($db->quoteName('c.alias') . ' = ' . $db->quote(substr($article, $i + 1)))
 				->where($db->quoteName('cc.path') . ' = ' . $db->quote(substr($article, 0, $i)));
 			$articleId = $db->setQuery($query)->loadResult();
-			if (! $articleId)
+			if (!$articleId)
 			{
 				$articleId = $defaultArticleId;
 			}
@@ -574,7 +574,7 @@ class Table extends \JTable
 		{
 			$usergroupId = \JComponentHelper::getParams('com_users')->get('new_usertype');
 		}
-		elseif (! is_numeric($usergroup))
+		elseif (!is_numeric($usergroup))
 		{
 			$db = \JFactory::getDBO();
 			$query = $db->getQuery(true)
@@ -584,7 +584,7 @@ class Table extends \JTable
 
 			$usergroupId = $db->setQuery($query)->loadResult();
 
-			if ($import && ! $usergroupId)
+			if ($import && !$usergroupId)
 			{
 				// import usergroup tree if it doesn't exists
 				$groups = json_decode($usergroup);
@@ -601,7 +601,7 @@ class Table extends \JTable
 						->where($db->quoteName('title') . ' = ' . $db->quote($groups[$j]))
 						->where($db->quoteName('parent_id') . ' = ' . $parentId);
 					$usergroupId = $db->setQuery($query)->loadResult();
-					if (! ($usergroupId = $db->setQuery($query)->loadResult()))
+					if (!($usergroupId = $db->setQuery($query)->loadResult()))
 					{
 						$u = \JTable::getInstance('Usergroup');
 						$u->save(array(
@@ -647,7 +647,7 @@ class Table extends \JTable
 				->where($db->quoteName('title') . ' = ' . $db->quote($access));
 			$accessId = $db->setQuery($query)->loadResult();
 		}
-		if (! $accessId)
+		if (!$accessId)
 		{
 			$accessId = 3;
 		}
@@ -672,7 +672,7 @@ class Table extends \JTable
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'com_j2xml'));
 
 		$db = \JFactory::getDBO();
-		if (! is_numeric($category))
+		if (!is_numeric($category))
 		{
 			$query = $db->getQuery(true)
 				->select($db->quoteName('id'))
@@ -690,7 +690,7 @@ class Table extends \JTable
 				->where($db->quoteName('extension') . ' = ' . $db->quote($extension));
 			$categoryId = $db->setQuery($query)->loadResult();
 		}
-		if (! $categoryId)
+		if (!$categoryId)
 		{
 			if ($defaultCategoryId)
 			{
@@ -701,7 +701,7 @@ class Table extends \JTable
 					->where($db->quoteName('extension') . ' = ' . $db->quote($extension));
 				$categoryId = $db->setQuery($query)->loadResult();
 			}
-			if (! $categoryId)
+			if (!$categoryId)
 			{
 				$query = $db->getQuery(true)
 					->select('MIN(' . $db->quoteName('id') . ')')
@@ -967,7 +967,7 @@ class Table extends \JTable
 				->where($path . ' = ' . $db->quote($menu));
 			$menuId = $db->setQuery($query)->loadResult();
 		}
-		if (! $menuId)
+		if (!$menuId)
 		{
 			$menuId = $defaultMenuId;
 		}
@@ -1131,7 +1131,7 @@ class Table extends \JTable
 				->where($db->quoteName('cc.path') . ' = ' . $db->quote(substr($contact, 0, $i)));
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'com_j2xml'));
 			$contactId = $db->setQuery($query)->loadResult();
-			if (! $contactId)
+			if (!$contactId)
 			{
 				$contactId = $defaultContactId;
 			}
@@ -1172,7 +1172,7 @@ class Table extends \JTable
 				->where($db->quoteName('c.alias') . ' = ' . $db->quote(substr($weblink, $i + 1)))
 				->where($db->quoteName('cc.path') . ' = ' . $db->quote(substr($weblink, 0, $i)));
 			$weblinkId = $db->setQuery($query)->loadResult();
-			if (! $weblinkId)
+			if (!$weblinkId)
 			{
 				$weblinkId = $defaultWeblinkId;
 			}

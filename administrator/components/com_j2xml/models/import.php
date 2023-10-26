@@ -7,7 +7,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -121,7 +121,7 @@ class J2xmlModelImport extends JModelForm
 
 		JLog::add(new JLogEntry('package: ' . print_r($package, true), JLog::DEBUG, 'com_j2xml'));
 
-		if (! ($data = implode(gzfile($package['packagefile'])))) {
+		if (!($data = implode(gzfile($package['packagefile'])))) {
 			$data = file_get_contents($package['packagefile']);
 		}
 		JLog::add(new JLogEntry('data: ' . $data, JLog::DEBUG, 'com_j2xml'));
@@ -141,9 +141,9 @@ class J2xmlModelImport extends JModelForm
 		$params->set('fields', $fparams->get('import_fields', $cparams->get('import_fields', 0)));
 		$params->set('images', $fparams->get('import_images', $cparams->get('import_images', 0)));
 		$params->set('keep_category', $fparams->get('import_keep_category', $cparams->get('import_keep_category', 1)));
-		if ($params->get('import_keep_category') == 2)
+		if ($params->get('keep_category') == 2)
 		{
-			$params->set('content_category_forceto', $fparams->get('import_category', $cparams->get('import_category')));
+			$params->set('content_category_forceto', $fparams->get('import_content_category_forceto', $cparams->get('com_content_category_default')));
 		}
 		$params->set('keep_id', $fparams->get('import_keep_id', $cparams->get('import_keep_id', 0)));
 		$params->set('keep_user_id', $fparams->get('import_keep_user_id', $cparams->get('import_keep_user_id', 0)));
@@ -153,14 +153,15 @@ class J2xmlModelImport extends JModelForm
 		$params->set('users', $fparams->get('import_users', $cparams->get('import_users', 1)));
 		$params->set('viewlevels', $fparams->get('import_viewlevels', $cparams->get('import_viewlevels', 1)));
 		$params->set('weblinks', $fparams->get('import_weblinks', $cparams->get('import_weblinks', 0)));
+		$params->set('keep_data', $fparams->get('import_keep_data', $cparams->get('import_keep_data', 0)));
 
 		JLog::add(new JLogEntry('params: ' . print_r($params->toArray(), true), JLog::DEBUG, 'com_j2xml'));
 
 		// This event allows a custom import of the data or a customization of the data:
 		JPluginHelper::importPlugin('j2xml');
-	
+
 		$results = JFactory::getApplication()->triggerEvent('onContentPrepareData', array('com_j2xml.import', &$data, $params));
-	
+
 		if (in_array(false, $results, true))
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_PLUGIN_ERROR'), JLog::ERROR, 'com_j2xml'));
@@ -174,13 +175,13 @@ class J2xmlModelImport extends JModelForm
 		}
 
 		$data = strstr($data, '<?xml version="1.0" ');
-		if (! defined('LIBXML_PARSEHUGE'))
+		if (!defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
 
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
-		if (! $xml)
+		if (!$xml)
 		{
 			return;
 		}
@@ -189,7 +190,7 @@ class J2xmlModelImport extends JModelForm
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLog::ERROR, 'com_j2xml'));
 			return false;
 		}
-		elseif (! isset($xml['version']))
+		elseif (!isset($xml['version']))
 		{
 			JLog::add(new JLogEntry(JText::_('LIB_J2XML_MSG_FILE_FORMAT_UNKNOWN'), JLog::ERROR, 'com_j2xml'));
 			return false;
@@ -203,7 +204,7 @@ class J2xmlModelImport extends JModelForm
 			$xmlVersionNumber = $version[0] . substr('0' . $version[1], strlen($version[1]) - 1) . substr('0' . $version[2], strlen($version[2]) - 1);
 
 			$results = JFactory::getApplication()->triggerEvent('onValidateData', array(&$xml, $params));
-		
+
 			$importer = class_exists('eshiol\J2xmlpro\Importer') ? new eshiol\J2xmlpro\Importer() : new eshiol\J2xml\Importer();
 			if ($importer->isSupported($xmlVersionNumber) || in_array(true, $results, true))
 			{

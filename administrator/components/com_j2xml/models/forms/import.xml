@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -153,7 +153,18 @@
 	</fieldset>
 	<fieldset name="content">
 		<field
-			name="keep_category"
+			name="import_keep_id"
+			type="radio"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher"
+			default="0"
+			label="COM_J2XML_CONFIG_KEEP_ID_LABEL"
+			description="COM_J2XML_CONFIG_KEEP_ID_DESC">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="import_keep_category"
 			type="list"
 			default="1"
 			label="COM_J2XML_CONFIG_KEEP_CATEGORY_LABEL"
@@ -161,15 +172,13 @@
 			<option value="1">JYES</option>
 			<option value="2">COM_J2XML_CONFIG_KEEP_CATEGORY_FORCE</option>
 		</field>
-
 		<field
-			name="content_category_forceto"
+			name="import_content_category_forceto"
 			type="category"
 			extension="com_content"
 			label="COM_J2XML_CONFIG_CATEGORY_FORCETO_LABEL"
 			description="COM_J2XML_CONFIG_CONTENT_CATEGORY_FORCETO_DESC"
-			showon="keep_category:2"
-			/>
+			showon="import_keep_category:2" />
 
 		<field
 			name="com_content_category_default"
@@ -177,8 +186,18 @@
 			extension="com_content"
 			label="COM_J2XML_CONFIG_IMPORT_CONTENT_DEFAULT_CATEGORY_LABEL"
 			description="COM_J2XML_CONFIG_IMPORT_CONTENT_DEFAULT_CATEGORY_DESC"
-			showon="import_categories:0[AND]keep_category:1"
-			/>
+			showon="import_categories:0[AND]import_keep_category:1" />
 
+		<field
+			name="import_keep_data"
+			type="radio"
+			label="COM_J2XML_CONFIG_KEEP_DATA_LABEL"
+			description="COM_J2XML_CONFIG_KEEP_DATA_DESC"
+			default="0"
+			class="btn-group btn-group-yesno"
+			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
 	</fieldset>
 </form>

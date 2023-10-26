@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.0" type="component" method="upgrade">
 	<name>com_j2xml</name>
-	<creationDate>16 September 2022</creationDate>
+	<creationDate>__DEPLOY_DATE__</creationDate>
 	<author>Helios Ciancio</author>
 	<authorUrl>www.eshiol.it</authorUrl>
 	<authorEmail>info (at) eshiol (dot) it</authorEmail>
-	<copyright><![CDATA[(C) 2010 - 2022 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.
-	]]></copyright>
+	<copyright><![CDATA[(C) 2010 - 2023 Helios Ciancio <info (at) eshiol (dot) it> (https://www.eshiol.it). All Rights Reserved.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>3.9.220-beta3</version>
+	<version>__DEPLOY_VERSION__</version>
 	<description>COM_J2XML_XML_DESCRIPTION</description>
+	<scriptfile>script.php</scriptfile>
 	<install>
 		<sql>
 			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>

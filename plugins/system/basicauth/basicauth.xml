@@ -1,31 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" group="system" method="upgrade">
-	<name>System - Basic HTTP authentication</name>
-	<description>This Joomla plugin allows users to login using basic HTTP authentication.</description>
-
+	<name>plg_system_basicauth</name>
+	<description>PLG_SYSTEM_BASICAUTH_XML_DESCRIPTION</description>
 	<author>Helios Ciancio</author>
 	<authorEmail>info (at) eshiol (dot) it</authorEmail>
 	<authorUrl>www.eshiol.it</authorUrl>
-	<creationDate>16 September 2022</creationDate>
-	<copyright><![CDATA[(C) 2016 - 2022 Helios Ciancio. All Rights Reserved.
+	<creationDate>14 September 2023</creationDate>
+	<copyright><![CDATA[(C) 2016 - 2023 Helios Ciancio. All Rights Reserved.
 	<br/>Copyright (C) 2011 - 2013 Johan Janssens and Timble CVBA.]]></copyright>
 	<license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3</license>
-	<version>3.9.2-beta3</version>
-
-	<updateservers>
-		<server type="extension" priority="2" name="Basic HTTP authentication">https://www.eshiol.it/files/plg_system_basicauth/plg_system_basicauth.xml
-		</server>
-	</updateservers>
+	<version>3.9.232</version>
 	<files>
 		<filename plugin="basicauth">basicauth.php</filename>
 		<filename>install.mysql.sql</filename>
 		<filename>install.postgresql.sql</filename>
+		<filename>install.sqlazure.sql</filename>
 	</files>
 	<install>
 		<sql>
 			<file driver="mysql" charset="utf8">install.mysql.sql</file>
 			<file driver="postgresql" charset="utf8">install.postgresql.sql</file>
-			<file driver="sqlsrv" charset="utf8">install.sqlsrv.sql</file>
+			<file driver="sqlazure" charset="utf8">install.sqlazure.sql</file>
 		</sql>
 	</install>
+	<languages folder="language">
+		<language tag="en-GB">en-GB/en-GB.plg_system_basicauth.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_system_basicauth.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+			<fieldset name="debug" label="PLG_SYSTEM_BASICAUTH_DEBUG_SYSTEM_LABEL">
+				<field name="debug" type="list" default="" filter="integer"
+					description="PLG_SYSTEM_BASICAUTH_DEBUG_SYSTEM_DESC" label="PLG_SYSTEM_BASICAUTH_DEBUG_SYSTEM_LABEL">
+					<option value="">JGLOBAL_USE_GLOBAL</option>
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+				<field name="log" type="text" label="PLG_SYSTEM_BASICAUTH_DEBUG_FILENAME_LABEL"
+					description="PLG_SYSTEM_BASICAUTH_DEBUG_FILENAME_DESC" default="eshiol.log.php"
+					showon="debug:1" />
+			</fieldset>
+		</fields>
+	</config>
 </extension>

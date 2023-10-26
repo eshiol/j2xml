@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -26,7 +26,7 @@ use eshiol\J2xml\Version;
 \JLoader::import('eshiol.J2xml.Messages');
 \JLoader::import('eshiol.J2xml.Version');
 
-if (file_exists('../phpxmlrpc/lib/xmlrpc.inc'))
+if (file_exists(JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpc.inc'))
 {
 	include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpc.inc';
 	include_once JPATH_LIBRARIES . '/eshiol/phpxmlrpc/lib/xmlrpcs.inc';
@@ -120,7 +120,7 @@ class Sender
 		$db = \JFactory::getDBO();
 		$query = 'SELECT `title`, `remote_url`, `username`, `password` ' . 'FROM `#__j2xml_websites` WHERE `state`= 1 AND `id` = ' . $sid;
 		$db->setQuery($query);
-		if (! ($server = $db->loadAssoc()))
+		if (!($server = $db->loadAssoc()))
 		{
 			return;
 		}
@@ -139,37 +139,27 @@ class Sender
 		$server['remote_url'] .= 'index.php?option=com_j2xml&task=services.import&format=xmlrpc';
 
 		$headers = false;
-		if (! function_exists('xmlrpc_set_type'))
-		{
-			$headers = false;
-			// $app->enqueueMessage(\JText::_('LIB_J2XML_MSG_XMLRPC_ERROR'),
-			// 'error');
-			// return;
-		}
-		else
-		{
-			$objData = $data;
-			xmlrpc_set_type($objData, 'base64');
-			$request = xmlrpc_encode_request('j2xml.import', array(
-				$objData,
-				$server['username'],
-				$server['password']
-			));
-			$context = stream_context_create(
-				array(
+		$objData = $data;
+		xmlrpc_set_type($objData, 'base64');
+		$request = xmlrpc_encode_request('j2xml.import', array(
+			$objData,
+			$server['username'],
+			$server['password']
+		));
+		$context = stream_context_create(
+			array(
+				'http' => array(
+					'method' => "POST",
+					'header' => "Content-Type: text/xml",
+					'user_agent' => Version::$PRODUCT . ' ' . Version::getFullVersion(),
+					'content' => $request,
 					'http' => array(
-						'method' => "POST",
-						'header' => "Content-Type: text/xml",
-						'user_agent' => Version::$PRODUCT . ' ' . Version::getFullVersion(),
-						'content' => $request,
-						'http' => array(
-							'header' => 'Accept-Charset: UTF-8, *;q=0'
-						)
+						'header' => 'Accept-Charset: UTF-8, *;q=0'
 					)
-				));
+				)
+			));
 
-			$headers = @get_headers($server['remote_url']);
-		}
+		$headers = @get_headers($server['remote_url']);
 
 		if ($headers === false)
 		{
@@ -189,7 +179,7 @@ class Sender
 					//$string = $msg->structmem('string')->scalarval();
 					$matches = $msg->structmem('strings');
 
-					if (! isset(Messages::$messages[$code]))
+					if (!isset(Messages::$messages[$code]))
 					{
 						$app->enqueueMessage($server['title'] . ': ' . $msg->structmem('message')
 							->scalarval(), 'notice');
@@ -248,7 +238,7 @@ class Sender
 					{
 						foreach ($response as $msg)
 						{
-							if (! isset(Messages::$messages[$msg['code']]))
+							if (!isset(Messages::$messages[$msg['code']]))
 							{
 								$app->enqueueMessage($server['title'] . ': ' . $msg['message'], 'notice');
 							}
@@ -311,7 +301,7 @@ class Sender
 
 		$res = $client->send($msg, 0);
 
-		if (! $res->faultcode())
+		if (!$res->faultcode())
 		{
 			return $res;
 		}
@@ -319,7 +309,7 @@ class Sender
 		if ($res->faultString() == "Didn't receive 200 OK from remote server. (HTTP/1.1 301 Foun)")
 		{
 			$res = $client->send($msg, 0, $protocol = 'http11');
-			if (! $res->faultcode())
+			if (!$res->faultcode())
 			{
 				return $res;
 			}
@@ -329,7 +319,7 @@ class Sender
 			$headers = http_parse_headers($res->raw_data);
 			$url = $headers['Location'];
 			$parse = parse_url($url);
-			if (! isset($parse['host']))
+			if (!isset($parse['host']))
 			{
 				$parse = parse_url($remote_url);
 				$url = $parse['scheme'] . '://' . $parse['host'] . $url;
@@ -345,7 +335,7 @@ class Sender
 	}
 }
 
-if (! function_exists('http_parse_headers'))
+if (!function_exists('http_parse_headers'))
 {
 
 	function http_parse_headers ($raw_headers)
@@ -361,7 +351,7 @@ if (! function_exists('http_parse_headers'))
 
 			if (isset($h[1]))
 			{
-				if (! isset($headers[$h[0]]))
+				if (!isset($headers[$h[0]]))
 					$headers[$h[0]] = trim($h[1]);
 				elseif (is_array($headers[$h[0]]))
 				{
@@ -383,7 +373,7 @@ if (! function_exists('http_parse_headers'))
 			{
 				if (substr($h[0], 0, 1) == "\t")
 					$headers[$key] .= "\r\n\t" . trim($h[0]);
-				elseif (! $key)
+				elseif (!$key)
 					$headers[0] = trim($h[0]);
 				trim($h[0]);
 			}

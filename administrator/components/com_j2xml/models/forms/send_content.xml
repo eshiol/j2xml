@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -22,8 +22,8 @@
 			name="send_content"
 			type="list"
 			default="2"
-			label="COM_J2XML_CONFIG_IMPORT_CONTENT_LABEL"
-			description="COM_J2XML_CONFIG_IMPORT_CONTENT_DESC">
+			label="COM_J2XML_CONFIG_CONTENT_LABEL"
+			description="COM_J2XML_CONFIG_SEND_CONTENT_DESC">
 			<option
 				value="">JGLOBAL_USE_GLOBAL
 			</option>
@@ -45,6 +45,16 @@
 			default="1"
 			class="btn-group btn-group-yesno"
 			layout="joomla.form.field.radio.switcher">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field
+			name="send_keep_data"
+			type="list"
+			label="COM_J2XML_CONFIG_KEEP_DATA_LABEL"
+			description="COM_J2XML_CONFIG_KEEP_DATA_DESC"
+			default="">
+			<option value="">JGLOBAL_USE_GLOBAL</option>
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>

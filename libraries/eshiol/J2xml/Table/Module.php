@@ -8,7 +8,7 @@
  *
  * @author      Helios Ciancio <info (at) eshiol (dot) it>
  * @link        https://www.eshiol.it
- * @copyright   Copyright (C) 2010 - 2022 Helios Ciancio. All Rights Reserved
+ * @copyright   Copyright (C) 2010 - 2023 Helios Ciancio. All Rights Reserved
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL v3
  * J2XML is free software. This version may have been modified pursuant
  * to the GNU General Public License, and as distributed it includes or
@@ -48,9 +48,9 @@ class Module extends \eshiol\J2XML\Table\Table
 	{
 		\JLog::add(new \JLogEntry(__METHOD__, \JLog::DEBUG, 'lib_j2xml'));
 		$this->_aliases['menus'] = "SELECT DISTINCT IF(SIGN(mm.menuid) > 0, 'include', 'exclude') FROM `#__modules_menu` mm INNER JOIN `#__menu` m ON ABS(mm.menuid) = m.id WHERE mm.moduleid = " .
-				 (int) $this->id . " UNION SELECT 'all' FROM `#__modules_menu` mm WHERE mm.moduleid = " . (int) $this->id . " AND mm.menuid = 0";
+			 (int) $this->id . " UNION SELECT 'all' FROM `#__modules_menu` mm WHERE mm.moduleid = " . (int) $this->id . " AND mm.menuid = 0";
 		$this->_aliases['menu'] = "SELECT CONCAT(m.menutype, '/', m.path) FROM `#__modules_menu` mm INNER JOIN `#__menu` m ON ABS(mm.menuid) = m.id WHERE mm.moduleid = " .
-				 (int) $this->id;
+			 (int) $this->id;
 
 		return parent::_serialize();
 	}
@@ -68,7 +68,7 @@ class Module extends \eshiol\J2XML\Table\Table
 
 		$db = \JFactory::getDbo();
 		$item = new Module($db);
-		if (! $item->load($id))
+		if (!$item->load($id))
 		{
 			return;
 		}
@@ -112,11 +112,11 @@ class Module extends \eshiol\J2XML\Table\Table
 			\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
 			$module = $db->setQuery($query)->loadObject();
 
-			if (! $module || ($import_modules == 2))
+			if (!$module || ($import_modules == 2))
 			{
 				$table = new Module($db);
 
-				if (! $module)
+				if (!$module)
 				{ // new menutype
 					$data['id'] = null;
 				}
@@ -154,11 +154,22 @@ class Module extends \eshiol\J2XML\Table\Table
 							{
 								foreach ($data['menulist']['menu'] as $v)
 								{
-									$query->values($table->id . ', ' . ($include * parent::getMenuId($v)));
+									if ($m = parent::getMenuId($v))
+									{
+										$query->values($table->id . ', ' . ($include * $m));
+									}
 								}
 							}
 						}
-						$db->setQuery($query)->execute();
+						try
+						{
+							\JLog::add(new \JLogEntry($query, \JLog::DEBUG, 'lib_j2xml'));
+							$db->setQuery($query)->execute();
+						}
+						catch(\Exception $ex)
+						{
+							\JLog::add(new \JLogEntry($query, \JLog::ERROR, 'lib_j2xml'));
+						}
 					}
 					\JLog::add(new \JLogEntry(\JText::sprintf('LIB_J2XML_MSG_MODULE_IMPORTED', $table->title), \JLog::INFO, 'lib_j2xml'));
 					// Trigger the onContentAfterSave event.
