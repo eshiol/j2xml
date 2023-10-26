@@ -355,6 +355,10 @@ eshiol.j2xml.sendItem = function( options, params ){
 						msg = new Object();
 						if( jqXHR.status === 0 ){
 							msg['error'] = [Joomla.Text._( 'LIB_J2XML_ERROR_STATUS0' )];
+							eshiol.renderMessages( msg, window.parent.document.getElementById( 'system-message-container' ) );
+							window.parent.jQuery('#send-progress').remove();
+
+							return;
 						/*} else if( jqXHR.status == 404 ){
 							// 404 page error
 							msg['error'] = ['Requested page not found. [404]'];
