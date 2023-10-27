@@ -368,11 +368,8 @@ eshiol.j2xml.sendItem = function( options, params ){
 								return;
 							}
 						}
-						else if ( error ){
-							msg['error'] = [error];
-						}
 						else{
-							msg['error'] = [Joomla.Text._( 'LIB_J2XML_ERROR_UNKNOWN' ).replace('%s', window.location.origin)];
+							msg['error'] = [Joomla.Text._( 'LIB_J2XML_ERROR_UNKNOWN' )];
 						}
 						eshiol.renderMessages( msg, window.parent.document.getElementById( 'system-message-container' ) );
 
