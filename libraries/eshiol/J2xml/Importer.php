@@ -69,6 +69,8 @@ class Importer
 
 	protected $_nullDate;
 
+	protected $_user;
+
 	protected $_user_id;
 
 	protected $_now;
