@@ -24,6 +24,8 @@ use Joomla\Utilities\ArrayHelper;
 
 \JLoader::import('eshiol.J2xml.Version');
 
+class_alias('\\Joomla\\Database\\DatabaseDriver', 'JDatabaseDriver');
+
 /**
  *
  * Table
