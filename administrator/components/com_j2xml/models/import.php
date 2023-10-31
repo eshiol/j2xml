@@ -121,10 +121,12 @@ class J2xmlModelImport extends JModelForm
 
 		JLog::add(new JLogEntry('package: ' . print_r($package, true), JLog::DEBUG, 'com_j2xml'));
 
-		if (!($data = implode(gzfile($package['packagefile'])))) {
-			$data = file_get_contents($package['packagefile']);
+		$data = new \stdClass();
+
+		if (!($data->content = implode(gzfile($package['packagefile'])))) {
+			$data->content = file_get_contents($package['packagefile']);
 		}
-		JLog::add(new JLogEntry('data: ' . $data, JLog::DEBUG, 'com_j2xml'));
+		JLog::add(new JLogEntry('data: ' . $data->content, JLog::DEBUG, 'com_j2xml'));
 
 		$jform = JFactory::getApplication()->input->post->get('jform', array(), 'array');
 
@@ -174,13 +176,13 @@ class J2xmlModelImport extends JModelForm
 			return false;
 		}
 
-		$data = strstr($data, '<?xml version="1.0" ');
+		$data->content = strstr($data->content, '<?xml version="1.0" ');
 		if (!defined('LIBXML_PARSEHUGE'))
 		{
 			define(LIBXML_PARSEHUGE, 524288);
 		}
 
-		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_PARSEHUGE);
+		$xml = simplexml_load_string($data->content, 'SimpleXMLElement', LIBXML_PARSEHUGE);
 		if (!$xml)
 		{
 			return;
